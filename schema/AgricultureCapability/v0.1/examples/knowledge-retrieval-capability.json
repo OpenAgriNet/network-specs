@@ -1,0 +1,22 @@
+{
+  "@type": [
+    "openagrinet:AgricultureCapability",
+    "openagrinet:KnowledgeRetrievalCapability"
+  ],
+  "subjectAreas": [
+    "Crop",
+    "Livestock",
+    "Scheme",
+    "Knowledge"
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "interactionTypes": [
+    "Observe"
+  ]
+}

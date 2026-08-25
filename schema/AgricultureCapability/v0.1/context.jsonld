@@ -1,0 +1,14 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "AgricultureCapability": "openagrinet:AgricultureCapability",
+      "KnowledgeRetrievalCapability": "openagrinet:KnowledgeRetrievalCapability",
+      "MandiPriceCapability": "openagrinet:MandiPriceCapability",
+      "WeatherObservationCapability": "openagrinet:WeatherObservationCapability",
+      "interactionTypes": { "@id": "openagrinet:interactionTypes", "@container": "@set" }
+    }
+  ]
+}

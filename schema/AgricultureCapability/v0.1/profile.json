@@ -1,0 +1,24 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1",
+  "name": "Agriculture Capability Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["AgricultureCapability"],
+  "discovery_fields": ["interactionTypes", "subjectAreas", "languages", "coverageAreaCodes"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "sortable_paths": [],
+  "privacy_notes": []
+}
+

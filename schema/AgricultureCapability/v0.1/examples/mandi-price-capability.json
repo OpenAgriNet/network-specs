@@ -1,0 +1,20 @@
+{
+  "@type": [
+    "openagrinet:AgricultureCapability",
+    "openagrinet:MandiPriceCapability"
+  ],
+  "subjectAreas": [
+    "Market"
+  ],
+  "languages": [
+    "en",
+    "hi",
+    "mr"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "interactionTypes": [
+    "Observe"
+  ]
+}

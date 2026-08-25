@@ -1,0 +1,103 @@
+{
+  "id": "catalog:agri-information-services:2026-08",
+  "bppId": "agri-information-services.example.org",
+  "bppUri": "https://agri-information-services.example.org/beckn",
+  "descriptor": {
+    "code": "AGRI_INFORMATION_SERVICES",
+    "name": "Agriculture Information Services",
+    "shortDesc": "Knowledge retrieval and mandi-price capabilities for agricultural applications.",
+    "longDesc": "This catalog advertises two independent capabilities from one Provider. Consumers may discover either capability and invoke it through the applicable Beckn interaction."
+  },
+  "isActive": true,
+  "provider": {
+    "id": "provider:agri-information-services",
+    "descriptor": {
+      "code": "AIS-01",
+      "name": "Agriculture Information Services",
+      "shortDesc": "Provider of governed agricultural knowledge and live mandi-price information.",
+      "longDesc": "The Provider maintains reviewed knowledge sources and connects to authoritative agricultural market information systems."
+    },
+    "url": "https://agri-information-services.example.org/beckn",
+    "availableAt": [
+      {
+        "geo": {
+          "type": "Point",
+          "coordinates": [
+            77.5946,
+            12.9716
+          ]
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "id": "capability:agri-information-services:knowledge-retrieval",
+      "descriptor": {
+        "code": "KNOWLEDGE_RETRIEVAL",
+        "name": "Agricultural knowledge retrieval",
+        "shortDesc": "Retrieves reviewed agricultural knowledge in supported languages.",
+        "longDesc": "Use this capability to retrieve general or subject-specific agricultural knowledge. A returned knowledge item uses the OpenAgriNet KnowledgeResource contract."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld",
+        "@type": [
+          "openagrinet:AgricultureCapability",
+          "openagrinet:KnowledgeRetrievalCapability"
+        ],
+        "subjectAreas": [
+          "Crop",
+          "Livestock",
+          "Scheme",
+          "Knowledge"
+        ],
+        "subjectScope": "General",
+        "languages": [
+          "en",
+          "hi"
+        ],
+        "coverageAreaCodes": [
+          "IN"
+        ],
+        "interactionTypes": [
+          "Observe"
+        ]
+      }
+    },
+    {
+      "id": "capability:agri-information-services:mandi-price",
+      "descriptor": {
+        "code": "MANDI_PRICE_OBSERVATION",
+        "name": "Live mandi-price observation",
+        "shortDesc": "Returns current commodity prices for supported agricultural markets.",
+        "longDesc": "Use this capability with a commodity, market, and applicable date. A successful result uses the OpenAgriNet MandiPriceObservation contract."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld",
+        "@type": [
+          "openagrinet:AgricultureCapability",
+          "openagrinet:MandiPriceCapability"
+        ],
+        "subjectAreas": [
+          "Market"
+        ],
+        "subjectScope": "General",
+        "languages": [
+          "en",
+          "hi",
+          "mr"
+        ],
+        "coverageAreaCodes": [
+          "IN"
+        ],
+        "interactionTypes": [
+          "Observe"
+        ]
+      }
+    }
+  ],
+  "validity": {
+    "startDate": "2026-08-01T00:00:00Z",
+    "endDate": "2027-08-01T00:00:00Z"
+  }
+}

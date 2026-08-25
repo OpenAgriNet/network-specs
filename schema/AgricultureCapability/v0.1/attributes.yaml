@@ -1,0 +1,31 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Agriculture Capability Attributes
+  version: 0.1.0
+  description: >
+    Common attributes for an agricultural capability represented as a Beckn
+    Resource. Combines with AgricultureResource through allOf and attaches through
+    resourceAttributes.
+
+components:
+  schemas:
+    AgricultureCapability:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld"
+        "@type": openagrinet:AgricultureCapability
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: [interactionTypes]
+          properties:
+            interactionTypes:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Business interactions supported by the capability.
+              items:
+                type: string
+                enum: [Advise, Observe, Act]
+              x-jsonld-id: "openagrinet:interactionTypes"
