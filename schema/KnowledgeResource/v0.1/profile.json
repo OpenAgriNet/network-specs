@@ -1,0 +1,35 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1",
+  "name": "Knowledge Resource Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["KnowledgeResource"],
+  "discovery_fields": ["resourceType", "subjectAreas", "subjectScope", "agricultureSubjects", "languages", "coverageAreaCodes", "lifecycleStatus"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.resourceType",
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects.subjectType",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.name",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes",
+    "beckn:resourceAttributes.lifecycleStatus",
+    "beckn:resourceAttributes.provenance.source.sourceId"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.resourceType",
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects.subjectType",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes",
+    "beckn:resourceAttributes.lifecycleStatus"
+  ],
+  "sortable_paths": ["beckn:resourceAttributes.provenance.publishedAt"],
+  "privacy_notes": []
+}

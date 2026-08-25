@@ -1,0 +1,102 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Knowledge Resource Attributes
+  version: 0.1.0
+  description: >
+    Attributes for a reusable and versioned unit of agricultural knowledge.
+    Combines with AgricultureResource through allOf and attaches through
+    resourceAttributes.
+
+components:
+  schemas:
+    KnowledgeResource:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld"
+        "@type": openagrinet:KnowledgeResource
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: [subjectScope, resourceType, languages, version, lifecycleStatus, content, provenance]
+          properties:
+            resourceType:
+              type: string
+              enum: [Article, FAQ, Guide, Document, Dataset, Audio, Video]
+              description: Presentation-neutral classification of the knowledge.
+              x-jsonld-id: "openagrinet:resourceType"
+            version:
+              type: string
+              pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+              description: Semantic version of the governed knowledge Resource.
+              x-jsonld-id: "openagrinet:version"
+            lifecycleStatus:
+              type: string
+              enum: [Draft, Published, Superseded, Withdrawn]
+              description: Publication lifecycle of this knowledge version, independent of Registry admission state.
+              x-jsonld-id: "openagrinet:lifecycleStatus"
+            content:
+              type: array
+              minItems: 1
+              description: Governed representations of the knowledge Resource.
+              items:
+                type: object
+                required: [contentUri, mediaType]
+                properties:
+                  contentUri:
+                    type: string
+                    format: uri
+                    description: Location of the governed content representation.
+                    x-jsonld-id: "openagrinet:contentUri"
+                  mediaType:
+                    type: string
+                    minLength: 1
+                    description: IANA media type of the representation.
+                    x-jsonld-id: "openagrinet:mediaType"
+                  language:
+                    type: string
+                    minLength: 2
+                    description: BCP 47 language tag for this representation.
+                    x-jsonld-id: "openagrinet:language"
+                  digest:
+                    type: string
+                    minLength: 1
+                    description: Optional integrity digest for the representation.
+                    x-jsonld-id: "openagrinet:digest"
+              x-jsonld-id: "openagrinet:content"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which this knowledge version is applicable.
+              x-jsonld-id: "openagrinet:validity"
+            provenance:
+              type: object
+              required: [source, publishedAt]
+              description: Source and review evidence for this knowledge version.
+              properties:
+                source:
+                  allOf:
+                    - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+                  description: Authoritative upstream source of the knowledge.
+                  x-jsonld-id: "openagrinet:source"
+                publishedAt:
+                  type: string
+                  format: date-time
+                  description: Publication time of this version.
+                  x-jsonld-id: "openagrinet:publishedAt"
+                lastReviewedAt:
+                  type: string
+                  format: date-time
+                  description: Most recent subject-matter review time.
+                  x-jsonld-id: "openagrinet:lastReviewedAt"
+                reviewedBy:
+                  type: string
+                  minLength: 1
+                  description: Identifier of the person or organization responsible for the review.
+                  x-jsonld-id: "openagrinet:reviewedBy"
+              x-jsonld-id: "openagrinet:provenance"
+            supersedes:
+              type: string
+              minLength: 1
+              description: Identifier of the knowledge Resource version replaced by this one.
+              x-jsonld-id: "openagrinet:supersedes"

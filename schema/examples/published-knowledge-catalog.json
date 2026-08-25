@@ -1,0 +1,154 @@
+{
+  "id": "catalog:agriculture-knowledge:2026-08",
+  "bppId": "knowledge.example.org",
+  "bppUri": "https://knowledge.example.org/beckn",
+  "descriptor": {
+    "code": "PUBLISHED_AGRICULTURE_KNOWLEDGE",
+    "name": "Published agricultural knowledge",
+    "shortDesc": "Reviewed, versioned knowledge available for direct discovery.",
+    "longDesc": "This catalog publishes reusable knowledge Resources rather than only advertising an invokable capability. Discovery may index the Resource metadata and return matching entries without invoking a live Provider workflow."
+  },
+  "isActive": true,
+  "provider": {
+    "id": "provider:agriculture-knowledge-organisation",
+    "descriptor": {
+      "code": "AKO-01",
+      "name": "Agriculture Knowledge Organisation",
+      "shortDesc": "Publisher of reviewed agricultural guidance.",
+      "longDesc": "The organisation curates, reviews, versions, and publishes multilingual agricultural knowledge for network discovery."
+    },
+    "url": "https://knowledge.example.org/beckn"
+  },
+  "resources": [
+    {
+      "id": "resource:knowledge:farm-safety:1.0.0",
+      "descriptor": {
+        "code": "FARM_SAFETY_GUIDE",
+        "name": "General farm safety guide",
+        "shortDesc": "A multilingual guide to safe agricultural work practices.",
+        "longDesc": "This Resource applies across crops and livestock. It demonstrates general agricultural knowledge that does not require a crop association."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@type": "openagrinet:KnowledgeResource",
+        "subjectAreas": [
+          "Crop",
+          "Livestock",
+          "Knowledge"
+        ],
+        "subjectScope": "General",
+        "languages": [
+          "en",
+          "hi"
+        ],
+        "coverageAreaCodes": [
+          "IN"
+        ],
+        "resourceType": "Guide",
+        "version": "1.0.0",
+        "lifecycleStatus": "Published",
+        "content": [
+          {
+            "contentUri": "https://knowledge.example.org/guides/farm-safety/1.0.0/en.pdf",
+            "mediaType": "application/pdf",
+            "language": "en",
+            "digest": "sha256:9dd5f8f5c7d393603302f8e7b5de6c54865d6ef82e7d5f3e6863a7e6170d3090"
+          },
+          {
+            "contentUri": "https://knowledge.example.org/guides/farm-safety/1.0.0/hi.pdf",
+            "mediaType": "application/pdf",
+            "language": "hi",
+            "digest": "sha256:3c9748ab5339701e5e7ad20f122e4c03b76df23c2207a144635f32e932737858"
+          }
+        ],
+        "validity": {
+          "startsAt": "2026-08-01T09:00:00Z",
+          "endsAt": "2027-08-01T09:00:00Z"
+        },
+        "provenance": {
+          "source": {
+            "sourceId": "provider:agriculture-knowledge-organisation",
+            "sourceName": "Agriculture Knowledge Organisation",
+            "sourceUri": "https://knowledge.example.org"
+          },
+          "publishedAt": "2026-08-01T09:00:00Z",
+          "lastReviewedAt": "2026-07-28T09:00:00Z",
+          "reviewedBy": "organisation:agriculture-subject-review-board"
+        }
+      }
+    },
+    {
+      "id": "resource:knowledge:cotton:kharif-sowing:1.2.0",
+      "descriptor": {
+        "code": "COTTON_KHARIF_SOWING_GUIDE",
+        "name": "Cotton sowing guide for the Kharif season",
+        "shortDesc": "Reviewed cotton-specific guidance for seed selection and sowing.",
+        "longDesc": "This Resource demonstrates subject-specific knowledge. The cotton association is explicit so Discovery can match a crop-specific query."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@type": "openagrinet:KnowledgeResource",
+        "subjectAreas": [
+          "Crop",
+          "Knowledge"
+        ],
+        "subjectScope": "Specific",
+        "agricultureSubjects": [
+          {
+            "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+            "subjectType": "Crop",
+            "descriptor": {
+              "code": "COTTON",
+              "name": "Cotton"
+            }
+          }
+        ],
+        "languages": [
+          "en",
+          "hi"
+        ],
+        "coverageAreaCodes": [
+          "IN-MH",
+          "IN-GJ",
+          "IN-TG"
+        ],
+        "resourceType": "Guide",
+        "version": "1.2.0",
+        "lifecycleStatus": "Published",
+        "content": [
+          {
+            "contentUri": "https://knowledge.example.org/guides/cotton/kharif-sowing/1.2.0/en.pdf",
+            "mediaType": "application/pdf",
+            "language": "en",
+            "digest": "sha256:72927c65f8583cc61168b513aaeca9fc8077f658252156282145cd8a24bd87ed"
+          },
+          {
+            "contentUri": "https://knowledge.example.org/guides/cotton/kharif-sowing/1.2.0/hi.pdf",
+            "mediaType": "application/pdf",
+            "language": "hi",
+            "digest": "sha256:b666423a0243a96e08ef768c2caa9c3d2f88c03f838154e78f6f1f6adbf72fe2"
+          }
+        ],
+        "validity": {
+          "startsAt": "2026-05-15T00:00:00Z",
+          "endsAt": "2026-08-31T23:59:59Z"
+        },
+        "provenance": {
+          "source": {
+            "sourceId": "provider:agriculture-knowledge-organisation",
+            "sourceName": "Agriculture Knowledge Organisation",
+            "sourceUri": "https://knowledge.example.org"
+          },
+          "publishedAt": "2026-05-01T09:00:00Z",
+          "lastReviewedAt": "2026-04-24T09:00:00Z",
+          "reviewedBy": "organisation:cotton-subject-review-board"
+        },
+        "supersedes": "resource:knowledge:cotton:kharif-sowing:1.1.0"
+      }
+    }
+  ],
+  "validity": {
+    "startDate": "2026-08-01T00:00:00Z",
+    "endDate": "2027-08-01T00:00:00Z"
+  }
+}

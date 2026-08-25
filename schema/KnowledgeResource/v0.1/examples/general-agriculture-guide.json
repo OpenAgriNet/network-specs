@@ -1,0 +1,35 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeResource",
+  "subjectAreas": [
+    "Crop",
+    "Livestock",
+    "Knowledge"
+  ],
+  "subjectScope": "General",
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "resourceType": "Guide",
+  "version": "1.0.0",
+  "lifecycleStatus": "Published",
+  "content": [
+    {
+      "contentUri": "https://knowledge.example.org/guides/farm-safety/1.0.0/en.pdf",
+      "mediaType": "application/pdf",
+      "language": "en"
+    }
+  ],
+  "provenance": {
+    "source": {
+      "sourceId": "participant:agri-information-provider",
+      "sourceName": "Agriculture Information Provider",
+      "sourceUri": "https://knowledge.example.org"
+    },
+    "publishedAt": "2026-08-01T09:00:00Z"
+  }
+}

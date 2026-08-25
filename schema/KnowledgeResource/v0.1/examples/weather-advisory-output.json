@@ -1,0 +1,50 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeResource",
+  "subjectAreas": [
+    "Crop",
+    "Weather",
+    "Knowledge"
+  ],
+  "subjectScope": "Specific",
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/rice",
+      "subjectType": "Crop",
+      "descriptor": {
+        "code": "RICE",
+        "name": "Rice"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN-MH"
+  ],
+  "resourceType": "Guide",
+  "version": "1.0.0",
+  "lifecycleStatus": "Published",
+  "content": [
+    {
+      "contentUri": "https://advisory.example.org/weather/rice-irrigation/2026-08-24T06:15:00Z/en.json",
+      "mediaType": "application/json",
+      "language": "en"
+    }
+  ],
+  "validity": {
+    "startsAt": "2026-08-24T06:15:00Z",
+    "endsAt": "2026-08-24T09:00:00Z"
+  },
+  "provenance": {
+    "source": {
+      "sourceId": "participant:weather-provider",
+      "sourceName": "Weather Services Provider",
+      "sourceUri": "https://weather.example.org"
+    },
+    "publishedAt": "2026-08-24T06:15:00Z",
+    "reviewedBy": "participant:weather-advisory-service"
+  }
+}

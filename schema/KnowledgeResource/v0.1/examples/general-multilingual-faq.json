@@ -1,0 +1,43 @@
+{
+  "@type": "openagrinet:KnowledgeResource",
+  "subjectAreas": [
+    "Crop",
+    "Livestock",
+    "Knowledge"
+  ],
+  "subjectScope": "General",
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "resourceType": "FAQ",
+  "version": "2.0.0",
+  "lifecycleStatus": "Published",
+  "content": [
+    {
+      "contentUri": "https://knowledge.example.org/faqs/farm-safety/2.0.0/en.json",
+      "mediaType": "application/json",
+      "language": "en",
+      "digest": "sha256:example-faq-en"
+    },
+    {
+      "contentUri": "https://knowledge.example.org/faqs/farm-safety/2.0.0/hi.json",
+      "mediaType": "application/json",
+      "language": "hi",
+      "digest": "sha256:example-faq-hi"
+    }
+  ],
+  "provenance": {
+    "source": {
+      "sourceId": "participant:agri-information-provider",
+      "sourceName": "Agriculture Information Provider"
+    },
+    "publishedAt": "2026-08-01T09:00:00Z",
+    "lastReviewedAt": "2026-07-28T09:00:00Z",
+    "reviewedBy": "participant:subject-review-board"
+  },
+  "supersedes": "resource:faq:farm-safety:1.4.0"
+}
