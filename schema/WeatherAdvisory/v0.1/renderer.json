@@ -1,0 +1,8 @@
+{
+  "schema": "WeatherAdvisory",
+  "version": "0.1.0",
+  "card_template": "Weather advisory | {{geographicGranularity}} | {{forecastHorizon}}",
+  "detail_template": "Parameters: {{weatherParameters}}\nGranularity: {{geographicGranularity}}\nForecast horizon: {{forecastHorizon}}\nRefresh: {{updateFrequency}}",
+  "html": "<div class=\"oan-weather-advisory\"><strong>Weather advisory</strong><span>{{geographicGranularity}} · {{forecastHorizon}}</span></div>",
+  "html_detail": "<div class=\"oan-weather-advisory-detail\"><p><strong>Parameters:</strong> {{weatherParameters}}</p><p><strong>Granularity:</strong> {{geographicGranularity}}</p><p><strong>Forecast horizon:</strong> {{forecastHorizon}}</p></div>"
+}

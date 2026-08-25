@@ -1,0 +1,46 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Weather Advisory Attributes
+  version: 0.1.0
+  description: >
+    Weather-informed agricultural advisory attributes. Combines with
+    AdvisoryCapability through allOf and attaches to a Beckn Resource through
+    resourceAttributes.
+
+components:
+  schemas:
+    WeatherAdvisory:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld"
+        "@type": openagrinet:WeatherAdvisory
+      allOf:
+        - $ref: "../../AdvisoryCapability/v0.1/attributes.yaml#/components/schemas/AdvisoryCapability"
+        - type: object
+          required: [weatherParameters, geographicGranularity]
+          properties:
+            weatherParameters:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Weather parameters used to produce the advisory.
+              items:
+                type: string
+                enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+              x-jsonld-id: "openagrinet:weatherParameters"
+            forecastHorizon:
+              type: string
+              format: duration
+              description: Maximum supported forecast horizon expressed as an ISO 8601 duration.
+              x-jsonld-id: "openagrinet:forecastHorizon"
+            updateFrequency:
+              type: string
+              format: duration
+              description: Expected refresh interval expressed as an ISO 8601 duration.
+              x-jsonld-id: "openagrinet:updateFrequency"
+            geographicGranularity:
+              type: string
+              enum: [Point, Village, Block, District, State]
+              description: Smallest geographic granularity for which the capability provides meaningful guidance.
+              x-jsonld-id: "openagrinet:geographicGranularity"

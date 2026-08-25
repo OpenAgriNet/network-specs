@@ -1,0 +1,26 @@
+{
+  "@type": "openagrinet:WeatherAdvisory",
+  "subjectAreas": [
+    "Crop",
+    "Weather"
+  ],
+  "subjectScope": "General",
+  "interactionTypes": [
+    "Advise"
+  ],
+  "advisoryType": "Weather",
+  "topics": [
+    "Irrigation",
+    "Sowing",
+    "CropProtection"
+  ],
+  "weatherParameters": [
+    "Rainfall",
+    "Temperature",
+    "Humidity",
+    "WindSpeed"
+  ],
+  "forecastHorizon": "P7D",
+  "updateFrequency": "PT3H",
+  "geographicGranularity": "Village"
+}

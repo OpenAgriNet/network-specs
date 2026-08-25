@@ -1,0 +1,30 @@
+{
+  "@type": "openagrinet:WeatherAdvisory",
+  "subjectAreas": [
+    "Crop",
+    "Weather"
+  ],
+  "subjectScope": "General",
+  "languages": [
+    "en"
+  ],
+  "coverageAreaCodes": [
+    "IN-KA"
+  ],
+  "interactionTypes": [
+    "Advise"
+  ],
+  "advisoryType": "Weather",
+  "topics": [
+    "Irrigation",
+    "Spraying"
+  ],
+  "weatherParameters": [
+    "Rainfall",
+    "WindSpeed",
+    "Humidity"
+  ],
+  "forecastHorizon": "P1D",
+  "updateFrequency": "PT1H",
+  "geographicGranularity": "Point"
+}

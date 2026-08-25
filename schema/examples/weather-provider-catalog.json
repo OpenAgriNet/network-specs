@@ -1,0 +1,114 @@
+{
+  "id": "catalog:weather-services:2026-08",
+  "bppId": "weather-services.example.org",
+  "bppUri": "https://weather-services.example.org/beckn",
+  "descriptor": {
+    "code": "WEATHER_SERVICES",
+    "name": "Agricultural weather services",
+    "shortDesc": "Live weather observations, forecasts, and weather-informed agricultural advisories.",
+    "longDesc": "This catalog advertises generic weather capabilities. Requested coordinates, observation times, forecasts, and measured values are returned only after capability invocation."
+  },
+  "isActive": true,
+  "provider": {
+    "id": "provider:weather-services",
+    "descriptor": {
+      "code": "WSP-01",
+      "name": "Weather Services Provider",
+      "shortDesc": "Provider of weather observations, forecasts, and agricultural advisories.",
+      "longDesc": "The Provider combines station observations and forecast models to serve agricultural weather use cases."
+    },
+    "url": "https://weather-services.example.org/beckn",
+    "availableAt": [
+      {
+        "geo": {
+          "type": "Point",
+          "coordinates": [
+            72.8777,
+            19.076
+          ]
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "id": "capability:weather-services:observation",
+      "descriptor": {
+        "code": "WEATHER_OBSERVATION",
+        "name": "Live weather observation and forecast",
+        "shortDesc": "Returns location-specific measured or forecast weather parameters.",
+        "longDesc": "The catalog advertises the supported subject, languages, coverage, and Observe interaction. The response supplies the requested geometry, applicable time, provenance, and parameter values."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld",
+        "@type": [
+          "openagrinet:AgricultureCapability",
+          "openagrinet:WeatherObservationCapability"
+        ],
+        "subjectAreas": [
+          "Weather"
+        ],
+        "subjectScope": "General",
+        "languages": [
+          "en",
+          "hi",
+          "mr"
+        ],
+        "coverageAreaCodes": [
+          "IN"
+        ],
+        "interactionTypes": [
+          "Observe"
+        ]
+      }
+    },
+    {
+      "id": "capability:weather-services:agricultural-advisory",
+      "descriptor": {
+        "code": "WEATHER_ADVISORY",
+        "name": "Weather-informed agricultural advisory",
+        "shortDesc": "Produces agricultural guidance using forecast weather parameters.",
+        "longDesc": "The capability supports point-level guidance for irrigation, spraying, and crop protection using rainfall, wind speed, humidity, and temperature forecasts."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
+        "@type": "openagrinet:WeatherAdvisory",
+        "subjectAreas": [
+          "Crop",
+          "Weather"
+        ],
+        "subjectScope": "General",
+        "languages": [
+          "en",
+          "hi",
+          "mr"
+        ],
+        "coverageAreaCodes": [
+          "IN"
+        ],
+        "interactionTypes": [
+          "Advise"
+        ],
+        "advisoryType": "Weather",
+        "topics": [
+          "Irrigation",
+          "Spraying",
+          "CropProtection"
+        ],
+        "weatherParameters": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed"
+        ],
+        "forecastHorizon": "P7D",
+        "updateFrequency": "PT3H",
+        "geographicGranularity": "Point"
+      }
+    }
+  ],
+  "validity": {
+    "startDate": "2026-08-01T00:00:00Z",
+    "endDate": "2027-08-01T00:00:00Z"
+  }
+}
