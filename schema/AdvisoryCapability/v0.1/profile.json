@@ -1,0 +1,25 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/AdvisoryCapability/v0.1",
+  "name": "Advisory Capability Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["AdvisoryCapability"],
+  "discovery_fields": ["advisoryType", "topics", "interactionTypes", "languages", "coverageAreaCodes"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.advisoryType",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.advisoryType",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "sortable_paths": [],
+  "privacy_notes": []
+}

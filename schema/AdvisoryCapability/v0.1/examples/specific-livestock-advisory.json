@@ -1,0 +1,33 @@
+{
+  "@type": "openagrinet:AdvisoryCapability",
+  "subjectAreas": [
+    "Livestock"
+  ],
+  "subjectScope": "Specific",
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/livestock/dairy-cattle",
+      "subjectType": "Livestock",
+      "descriptor": {
+        "code": "DAIRY_CATTLE",
+        "name": "Dairy cattle"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "interactionTypes": [
+    "Advise"
+  ],
+  "advisoryType": "Livestock",
+  "topics": [
+    "AnimalHealth",
+    "Nutrition",
+    "HeatStress"
+  ]
+}

@@ -1,0 +1,47 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Advisory Capability Attributes
+  version: 0.1.0
+  description: >
+    Attributes for an agricultural advisory capability represented as a Beckn
+    Resource. Combines with AgricultureCapability through allOf and attaches through
+    resourceAttributes.
+
+components:
+  schemas:
+    AdvisoryCapability:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/AdvisoryCapability/v0.1/context.jsonld"
+        "@type": openagrinet:AdvisoryCapability
+      allOf:
+        - $ref: "../../AgricultureCapability/v0.1/attributes.yaml#/components/schemas/AgricultureCapability"
+        - type: object
+          required: [subjectScope, advisoryType, topics]
+          properties:
+            interactionTypes:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              contains:
+                const: Advise
+              description: Constrains the composed interaction types by requiring Advise.
+              items:
+                type: string
+                enum: [Advise, Observe, Act]
+              x-jsonld-id: "openagrinet:interactionTypes"
+            advisoryType:
+              type: string
+              enum: [General, Crop, Livestock, Weather, Market, Scheme]
+              description: Agriculture subject classification of the advisory capability.
+              x-jsonld-id: "openagrinet:advisoryType"
+            topics:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Governed or Provider-declared topics covered by the capability.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"

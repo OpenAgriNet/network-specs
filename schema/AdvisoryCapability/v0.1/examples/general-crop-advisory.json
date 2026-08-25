@@ -1,0 +1,23 @@
+{
+  "@type": "openagrinet:AdvisoryCapability",
+  "subjectAreas": [
+    "Crop"
+  ],
+  "subjectScope": "General",
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ],
+  "interactionTypes": [
+    "Advise"
+  ],
+  "advisoryType": "Crop",
+  "topics": [
+    "Sowing",
+    "Irrigation",
+    "CropProtection"
+  ]
+}
