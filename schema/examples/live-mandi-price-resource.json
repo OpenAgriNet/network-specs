@@ -1,0 +1,65 @@
+{
+  "id": "resource:mandi-price:mh-lasalgaon:onion:red:2026-08-25",
+  "descriptor": {
+    "code": "MANDI_PRICE_OBSERVATION",
+    "name": "Onion price at Lasalgaon APMC",
+    "shortDesc": "Minimum, maximum, and modal onion prices for the requested arrival date.",
+    "longDesc": "This Resource was produced after invoking the discovered mandi-price capability for red onion at Lasalgaon APMC."
+  },
+  "resourceAttributes": {
+    "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld",
+    "@type": "openagrinet:MandiPriceObservation",
+    "subjectAreas": [
+      "Market"
+    ],
+    "subjectScope": "Specific",
+    "agricultureSubjects": [
+      {
+        "subjectId": "https://taxonomy.openagrinet.global/crops/onion",
+        "subjectType": "Crop",
+        "descriptor": {
+          "code": "ONION",
+          "name": "Onion"
+        }
+      }
+    ],
+    "coverageAreaCodes": [
+      "IN-MH"
+    ],
+    "source": {
+      "sourceId": "source:agmarknet",
+      "sourceName": "AGMARKNET",
+      "sourceUri": "https://agmarknet.gov.in"
+    },
+    "commodity": {
+      "name": "Onion",
+      "code": "ONION",
+      "shortDesc": "Red onion traded in agricultural produce markets."
+    },
+    "commodityGroup": "Vegetables",
+    "grade": "FAQ",
+    "variety": "Red",
+    "market": {
+      "marketCode": "MH-LASALGAON",
+      "marketName": "Lasalgaon APMC",
+      "district": "Nashik",
+      "state": "Maharashtra",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          74.2373,
+          20.1424
+        ]
+      }
+    },
+    "arrivalDate": "2026-08-25",
+    "prices": {
+      "minimum": 1800,
+      "maximum": 2450,
+      "modal": 2200,
+      "currency": "INR",
+      "unit": "quintal"
+    },
+    "generatedAt": "2026-08-25T10:30:00Z"
+  }
+}

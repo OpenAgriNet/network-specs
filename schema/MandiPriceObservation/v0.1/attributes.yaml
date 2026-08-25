@@ -1,0 +1,119 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Mandi Price Observation Attributes
+  version: 0.1.0
+  description: >
+    Attributes for a normalized commodity price observation at a mandi.
+    Combines with AgricultureResource through allOf and attaches through
+    resourceAttributes.
+
+components:
+  schemas:
+    MandiPriceObservation:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld"
+        "@type": openagrinet:MandiPriceObservation
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: [source, commodity, market, arrivalDate, prices, generatedAt]
+          properties:
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Authoritative upstream source of the market information.
+              x-jsonld-id: "openagrinet:source"
+            commodity:
+              allOf:
+                - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+              description: Commodity for which the price was observed.
+              x-jsonld-id: "openagrinet:commodity"
+            commodityGroup:
+              type: string
+              minLength: 1
+              description: Governed commodity group supplied by the source.
+              x-jsonld-id: "openagrinet:commodityGroup"
+            grade:
+              type: string
+              minLength: 1
+              description: Market grade reported by the source.
+              x-jsonld-id: "openagrinet:grade"
+            variety:
+              type: string
+              minLength: 1
+              description: Commodity variety reported by the source.
+              x-jsonld-id: "openagrinet:variety"
+            market:
+              type: object
+              required: [marketName]
+              description: Market or APMC to which the price observation applies.
+              properties:
+                marketCode:
+                  type: string
+                  minLength: 1
+                  description: Governed market code when available.
+                  x-jsonld-id: "openagrinet:marketCode"
+                marketName:
+                  type: string
+                  minLength: 1
+                  description: Market or APMC name.
+                  x-jsonld-id: "openagrinet:marketName"
+                district:
+                  type: string
+                  minLength: 1
+                  description: District name or governed code.
+                  x-jsonld-id: "openagrinet:district"
+                state:
+                  type: string
+                  minLength: 1
+                  description: State name or governed code.
+                  x-jsonld-id: "openagrinet:state"
+                location:
+                  allOf:
+                    - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+                  description: GeoJSON geometry of the market when available; Point coordinates use longitude, latitude order.
+                  x-jsonld-id: "openagrinet:location"
+              x-jsonld-id: "openagrinet:market"
+            arrivalDate:
+              type: string
+              format: date
+              description: Date for which the market arrival and prices apply.
+              x-jsonld-id: "openagrinet:arrivalDate"
+            prices:
+              type: object
+              required: [modal, currency, unit]
+              description: Normalized minimum, maximum, and modal prices.
+              properties:
+                minimum:
+                  type: number
+                  minimum: 0
+                  description: Minimum reported price.
+                  x-jsonld-id: "openagrinet:minimumPrice"
+                maximum:
+                  type: number
+                  minimum: 0
+                  description: Maximum reported price.
+                  x-jsonld-id: "openagrinet:maximumPrice"
+                modal:
+                  type: number
+                  minimum: 0
+                  description: Most frequently reported or representative price.
+                  x-jsonld-id: "openagrinet:modalPrice"
+                currency:
+                  type: string
+                  pattern: "^[A-Z]{3}$"
+                  description: ISO 4217 currency code.
+                  x-jsonld-id: "openagrinet:currency"
+                unit:
+                  type: string
+                  minLength: 1
+                  description: Governed unit to which each price applies.
+                  x-jsonld-id: "openagrinet:unit"
+              x-jsonld-id: "openagrinet:prices"
+            generatedAt:
+              type: string
+              format: date-time
+              description: Time at which the normalized observation was produced.
+              x-jsonld-id: "openagrinet:generatedAt"

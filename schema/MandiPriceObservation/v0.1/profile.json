@@ -1,0 +1,31 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1",
+  "name": "Mandi Price Observation Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["MandiPriceObservation"],
+  "discovery_fields": ["commodity.code", "commodityGroup", "variety", "market.marketCode", "arrivalDate"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.commodity.code",
+    "beckn:resourceAttributes.commodityGroup",
+    "beckn:resourceAttributes.variety",
+    "beckn:resourceAttributes.market.marketCode",
+    "beckn:resourceAttributes.market.state",
+    "beckn:resourceAttributes.arrivalDate",
+    "beckn:resourceAttributes.generatedAt"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.commodity.code",
+    "beckn:resourceAttributes.commodityGroup",
+    "beckn:resourceAttributes.variety",
+    "beckn:resourceAttributes.market.marketCode",
+    "beckn:resourceAttributes.market.state",
+    "beckn:resourceAttributes.arrivalDate"
+  ],
+  "sortable_paths": [
+    "beckn:resourceAttributes.arrivalDate",
+    "beckn:resourceAttributes.prices.modal"
+  ],
+  "privacy_notes": []
+}

@@ -1,0 +1,29 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "MandiPriceObservation": "openagrinet:MandiPriceObservation",
+      "source": "openagrinet:source",
+      "commodity": "openagrinet:commodity",
+      "commodityGroup": "openagrinet:commodityGroup",
+      "grade": "openagrinet:grade",
+      "variety": "openagrinet:variety",
+      "market": "openagrinet:market",
+      "marketCode": "openagrinet:marketCode",
+      "marketName": "openagrinet:marketName",
+      "district": "openagrinet:district",
+      "state": "openagrinet:state",
+      "location": "openagrinet:location",
+      "arrivalDate": "openagrinet:arrivalDate",
+      "prices": "openagrinet:prices",
+      "minimum": "openagrinet:minimumPrice",
+      "maximum": "openagrinet:maximumPrice",
+      "modal": "openagrinet:modalPrice",
+      "currency": "openagrinet:currency",
+      "unit": "openagrinet:unit",
+      "generatedAt": "openagrinet:generatedAt"
+    }
+  ]
+}

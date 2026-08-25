@@ -1,0 +1,34 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld",
+  "@type": "openagrinet:MandiPriceObservation",
+  "subjectAreas": [
+    "Market"
+  ],
+  "source": {
+    "sourceId": "source:agmarknet",
+    "sourceName": "AGMARKNET",
+    "sourceUri": "https://agmarknet.gov.in"
+  },
+  "commodity": {
+    "name": "Onion",
+    "code": "ONION"
+  },
+  "commodityGroup": "Vegetables",
+  "grade": "FAQ",
+  "variety": "Red",
+  "market": {
+    "marketCode": "MH-LASALGAON",
+    "marketName": "Lasalgaon",
+    "district": "Nashik",
+    "state": "Maharashtra"
+  },
+  "arrivalDate": "2026-08-24",
+  "prices": {
+    "minimum": 1800,
+    "maximum": 2450,
+    "modal": 2200,
+    "currency": "INR",
+    "unit": "quintal"
+  },
+  "generatedAt": "2026-08-24T10:30:00Z"
+}
