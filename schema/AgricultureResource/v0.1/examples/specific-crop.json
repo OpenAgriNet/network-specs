@@ -1,0 +1,25 @@
+{
+  "@type": "openagrinet:AgricultureResource",
+  "subjectAreas": [
+    "Crop",
+    "Knowledge"
+  ],
+  "subjectScope": "Specific",
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+      "subjectType": "Crop",
+      "descriptor": {
+        "code": "COTTON",
+        "name": "Cotton"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN-MH"
+  ]
+}

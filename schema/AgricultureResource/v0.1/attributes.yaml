@@ -1,0 +1,132 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Agriculture Resource Attributes
+  version: 0.1.0
+  description: >
+    Shared agriculture attributes for resources and capabilities published on
+    OpenAgriNet. Attaches to beckn:Resource through resourceAttributes.
+
+components:
+  schemas:
+    AgricultureResource:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld"
+        "@type": openagrinet:AgricultureResource
+      allOf:
+        - if:
+            required: [subjectScope]
+            properties:
+              subjectScope:
+                const: Specific
+          then:
+            required: [agricultureSubjects]
+        - if:
+            required: [subjectScope]
+            properties:
+              subjectScope:
+                const: General
+          then:
+            not:
+              required: [agricultureSubjects]
+      properties:
+        subjectAreas:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Agriculture subjects used to classify the Resource for discovery.
+          items:
+            type: string
+            enum: [Crop, Livestock, Weather, Market, Scheme, Knowledge]
+          x-jsonld-id: "openagrinet:subjectAreas"
+        subjectScope:
+          type: string
+          enum: [General, Specific]
+          description: Whether the Resource applies generally within its subject areas or only to the agricultureSubjects it names.
+          x-jsonld-id: "openagrinet:subjectScope"
+        agricultureSubjects:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Structured subjects required when subjectScope is Specific; omit when subjectScope is General.
+          items:
+            $ref: "#/components/schemas/AgricultureSubjectReference"
+          x-jsonld-id: "openagrinet:agricultureSubjects"
+        languages:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: BCP 47 language tags supported by or present in the Resource.
+          items:
+            type: string
+            minLength: 2
+          x-jsonld-id: "openagrinet:languages"
+        coverageAreaCodes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Governed geographic area codes within which the Resource applies.
+          items:
+            type: string
+            minLength: 1
+          x-jsonld-id: "openagrinet:coverageAreaCodes"
+
+    AgricultureSubjectReference:
+      type: object
+      description: Stable reference to a governed agriculture subject and its human-readable Beckn descriptor.
+      required: [subjectId, subjectType, descriptor]
+      properties:
+        subjectId:
+          type: string
+          format: uri
+          description: Stable identifier from a governed agriculture taxonomy.
+          x-jsonld-id: "openagrinet:subjectId"
+        subjectType:
+          type: string
+          enum: [Crop, Livestock, Commodity, Pest, Disease, Practice, Scheme, Market]
+          description: Kind of agricultural subject referenced by subjectId.
+          x-jsonld-id: "openagrinet:subjectType"
+        descriptor:
+          $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+          description: Beckn descriptor carrying the governed code and display name.
+          x-jsonld-id: "beckn:descriptor"
+      additionalProperties: false
+
+    SourceReference:
+      type: object
+      description: Reference to the authoritative upstream source of information.
+      required: [sourceId]
+      properties:
+        sourceId:
+          type: string
+          minLength: 1
+          description: Stable identifier of the upstream source.
+          x-jsonld-id: "openagrinet:sourceId"
+        sourceName:
+          type: string
+          minLength: 1
+          description: Human-readable source name.
+          x-jsonld-id: "openagrinet:sourceName"
+        sourceUri:
+          type: string
+          format: uri
+          description: Authoritative public or Provider-supplied source URI.
+          x-jsonld-id: "openagrinet:sourceUri"
+      additionalProperties: false
+
+    TimePeriod:
+      type: object
+      description: Inclusive validity or applicability period.
+      properties:
+        startsAt:
+          type: string
+          format: date-time
+          description: Start of the period.
+          x-jsonld-id: "openagrinet:startsAt"
+        endsAt:
+          type: string
+          format: date-time
+          description: End of the period.
+          x-jsonld-id: "openagrinet:endsAt"
+      additionalProperties: false

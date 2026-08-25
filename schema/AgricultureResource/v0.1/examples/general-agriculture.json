@@ -1,0 +1,16 @@
+{
+  "@type": "openagrinet:AgricultureResource",
+  "subjectAreas": [
+    "Crop",
+    "Livestock",
+    "Knowledge"
+  ],
+  "subjectScope": "General",
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "coverageAreaCodes": [
+    "IN"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1",
+  "name": "Agriculture Resource Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["AgricultureResource"],
+  "discovery_fields": ["subjectAreas", "subjectScope", "agricultureSubjects", "languages", "coverageAreaCodes"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects.subjectType",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.name",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects.subjectType",
+    "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreaCodes"
+  ],
+  "sortable_paths": [],
+  "privacy_notes": []
+}
