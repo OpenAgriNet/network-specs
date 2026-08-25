@@ -1,0 +1,26 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1",
+  "name": "Weather Observation Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["WeatherObservation"],
+  "discovery_fields": ["observationType", "parameters[].parameter", "coverageAreaCodes"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.observationType",
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.location",
+    "beckn:resourceAttributes.parameters[].parameter",
+    "beckn:resourceAttributes.generatedAt"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.observationType",
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.location",
+    "beckn:resourceAttributes.parameters[].parameter"
+  ],
+  "sortable_paths": ["beckn:resourceAttributes.generatedAt"],
+  "privacy_notes": [
+    "A precise location becomes sensitive when linked to a person or private farm profile; such linkage is outside this public Resource schema."
+  ]
+}

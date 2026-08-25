@@ -1,0 +1,75 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Weather Observation Attributes
+  version: 0.1.0
+  description: >
+    Attributes for measured or forecast weather information used in agriculture.
+    Combines with AgricultureResource through allOf and attaches through
+    resourceAttributes.
+
+components:
+  schemas:
+    WeatherObservation:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld"
+        "@type": openagrinet:WeatherObservation
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: [observationType, source, location, generatedAt, parameters]
+          properties:
+            observationType:
+              type: string
+              enum: [Observation, Forecast]
+              description: Whether the Resource reports measured or forecast conditions.
+              x-jsonld-id: "openagrinet:observationType"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Authoritative upstream source of the weather information.
+              x-jsonld-id: "openagrinet:source"
+            location:
+              allOf:
+                - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+              description: GeoJSON geometry to which the observation or forecast applies; Point coordinates use longitude, latitude order.
+              x-jsonld-id: "openagrinet:location"
+            generatedAt:
+              type: string
+              format: date-time
+              description: Time at which the record was generated.
+              x-jsonld-id: "openagrinet:generatedAt"
+            modelRunAt:
+              type: string
+              format: date-time
+              description: Model run time from which a forecast was produced.
+              x-jsonld-id: "openagrinet:modelRunAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period for which the reported conditions apply.
+              x-jsonld-id: "openagrinet:validity"
+            parameters:
+              type: array
+              minItems: 1
+              description: Measured or forecast weather values.
+              items:
+                type: object
+                required: [parameter, value, unit]
+                properties:
+                  parameter:
+                    type: string
+                    enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+                    description: Weather parameter represented by this value.
+                    x-jsonld-id: "openagrinet:parameter"
+                  value:
+                    type: [number, string, boolean]
+                    description: Observed or forecast numeric, coded, or Boolean value.
+                    x-jsonld-id: "openagrinet:value"
+                  unit:
+                    type: string
+                    minLength: 1
+                    description: Governed unit code, or `1` when the value is unitless.
+                    x-jsonld-id: "openagrinet:unit"
+              x-jsonld-id: "openagrinet:parameters"

@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "WeatherObservation": "openagrinet:WeatherObservation",
+      "observationType": "openagrinet:observationType",
+      "source": "openagrinet:source",
+      "location": "openagrinet:location",
+      "generatedAt": "openagrinet:generatedAt",
+      "modelRunAt": "openagrinet:modelRunAt",
+      "validity": "openagrinet:validity",
+      "parameters": {
+        "@id": "openagrinet:parameters",
+        "@container": "@set"
+      },
+      "parameter": "openagrinet:parameter",
+      "value": "openagrinet:value",
+      "unit": "openagrinet:unit"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
+  "@type": "openagrinet:WeatherObservation",
+  "subjectAreas": [
+    "Weather"
+  ],
+  "observationType": "Forecast",
+  "source": {
+    "sourceId": "provider:weather-service",
+    "sourceName": "Weather Services Provider",
+    "sourceUri": "https://weather.example.org"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      72.8777,
+      19.076
+    ]
+  },
+  "generatedAt": "2026-08-24T06:05:00Z",
+  "modelRunAt": "2026-08-24T06:00:00Z",
+  "validity": {
+    "startsAt": "2026-08-24T06:00:00Z",
+    "endsAt": "2026-08-24T09:00:00Z"
+  },
+  "parameters": [
+    {
+      "parameter": "Temperature",
+      "value": 29.4,
+      "unit": "Cel"
+    },
+    {
+      "parameter": "Humidity",
+      "value": 82,
+      "unit": "%"
+    },
+    {
+      "parameter": "Rainfall",
+      "value": 5.2,
+      "unit": "mm"
+    }
+  ]
+}

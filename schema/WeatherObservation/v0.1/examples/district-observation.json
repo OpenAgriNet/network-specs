@@ -1,0 +1,55 @@
+{
+  "@type": "openagrinet:WeatherObservation",
+  "subjectAreas": [
+    "Weather"
+  ],
+  "observationType": "Observation",
+  "source": {
+    "sourceId": "provider:automatic-weather-station-network",
+    "sourceName": "Automatic Weather Station Network"
+  },
+  "location": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          73.55,
+          19.65
+        ],
+        [
+          74.15,
+          19.65
+        ],
+        [
+          74.15,
+          20.15
+        ],
+        [
+          73.55,
+          20.15
+        ],
+        [
+          73.55,
+          19.65
+        ]
+      ]
+    ]
+  },
+  "generatedAt": "2026-08-25T06:15:00Z",
+  "validity": {
+    "startsAt": "2026-08-25T05:00:00Z",
+    "endsAt": "2026-08-25T06:00:00Z"
+  },
+  "parameters": [
+    {
+      "parameter": "Rainfall",
+      "value": 12.8,
+      "unit": "mm"
+    },
+    {
+      "parameter": "SoilMoisture",
+      "value": 31.4,
+      "unit": "%"
+    }
+  ]
+}

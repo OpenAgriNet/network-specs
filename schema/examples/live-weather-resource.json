@@ -1,0 +1,61 @@
+{
+  "id": "resource:weather:forecast:19.0760-72.8777:2026-08-25T09:00:00Z",
+  "descriptor": {
+    "code": "POINT_WEATHER_FORECAST",
+    "name": "Three-hour weather forecast",
+    "shortDesc": "Forecast weather conditions for the requested point in Mumbai.",
+    "longDesc": "This Resource was produced after invoking the discovered weather observation capability. It is specific to the requested location and validity window."
+  },
+  "resourceAttributes": {
+    "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
+    "@type": "openagrinet:WeatherObservation",
+    "subjectAreas": [
+      "Weather"
+    ],
+    "subjectScope": "General",
+    "coverageAreaCodes": [
+      "IN-MH"
+    ],
+    "observationType": "Forecast",
+    "source": {
+      "sourceId": "provider:weather-services",
+      "sourceName": "Weather Services Provider",
+      "sourceUri": "https://weather-services.example.org"
+    },
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        72.8777,
+        19.076
+      ]
+    },
+    "generatedAt": "2026-08-25T06:05:00Z",
+    "modelRunAt": "2026-08-25T06:00:00Z",
+    "validity": {
+      "startsAt": "2026-08-25T09:00:00Z",
+      "endsAt": "2026-08-25T12:00:00Z"
+    },
+    "parameters": [
+      {
+        "parameter": "Temperature",
+        "value": 29.4,
+        "unit": "Cel"
+      },
+      {
+        "parameter": "Humidity",
+        "value": 82,
+        "unit": "%"
+      },
+      {
+        "parameter": "Rainfall",
+        "value": 5.2,
+        "unit": "mm"
+      },
+      {
+        "parameter": "WindSpeed",
+        "value": 18.5,
+        "unit": "km/h"
+      }
+    ]
+  }
+}
