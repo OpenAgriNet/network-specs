@@ -1,6 +1,6 @@
 {
   "@type": "openagrinet:WeatherObservation",
-  "subjectAreas": [
+  "subjectCategories": [
     "Weather"
   ],
   "observationType": "Forecast",

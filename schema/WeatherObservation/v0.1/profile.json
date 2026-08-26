@@ -5,7 +5,7 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["WeatherObservation"],
-  "discovery_fields": ["observationType", "parameters[].parameter", "coverageAreaCodes"],
+  "result_fields": ["observationType", "parameters[].parameter", "location", "generatedAt", "validity"],
   "indexable_paths": [
     "beckn:resourceAttributes.observationType",
     "beckn:resourceAttributes.source.sourceId",
