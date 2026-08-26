@@ -1,7 +1,7 @@
 {
   "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld",
   "@type": "openagrinet:MandiPriceObservation",
-  "subjectAreas": [
+  "subjectCategories": [
     "Market"
   ],
   "source": {

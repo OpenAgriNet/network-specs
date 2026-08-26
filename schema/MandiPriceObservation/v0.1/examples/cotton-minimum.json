@@ -1,6 +1,6 @@
 {
   "@type": "openagrinet:MandiPriceObservation",
-  "subjectAreas": [
+  "subjectCategories": [
     "Market"
   ],
   "source": {

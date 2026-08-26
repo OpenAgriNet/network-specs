@@ -5,7 +5,7 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["MandiPriceObservation"],
-  "discovery_fields": ["commodity.code", "commodityGroup", "variety", "market.marketCode", "arrivalDate"],
+  "result_fields": ["commodity.code", "commodityGroup", "variety", "market.marketCode", "arrivalDate", "prices", "generatedAt"],
   "indexable_paths": [
     "beckn:resourceAttributes.commodity.code",
     "beckn:resourceAttributes.commodityGroup",
