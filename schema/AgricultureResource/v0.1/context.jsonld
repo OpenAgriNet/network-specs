@@ -1,38 +1,45 @@
 {
-  "@context": {
-    "@version": 1.1,
-    "schema": "https://schema.org/",
-    "beckn": "https://schema.beckn.io/",
-    "openagrinet": "https://schemas.openagrinet.global/vocab#",
-    "AgricultureResource": "openagrinet:AgricultureResource",
-    "subjectAreas": {
-      "@id": "openagrinet:subjectAreas",
-      "@container": "@set"
-    },
-    "subjectScope": "openagrinet:subjectScope",
-    "agricultureSubjects": {
-      "@id": "openagrinet:agricultureSubjects",
-      "@container": "@set"
-    },
-    "AgricultureSubjectReference": "openagrinet:AgricultureSubjectReference",
-    "subjectId": {
-      "@id": "openagrinet:subjectId",
-      "@type": "@id"
-    },
-    "subjectType": "openagrinet:subjectType",
-    "descriptor": "beckn:descriptor",
-    "languages": {
-      "@id": "openagrinet:languages",
-      "@container": "@set"
-    },
-    "coverageAreaCodes": {
-      "@id": "openagrinet:coverageAreaCodes",
-      "@container": "@set"
-    },
-    "sourceId": "openagrinet:sourceId",
-    "sourceName": "openagrinet:sourceName",
-    "sourceUri": "openagrinet:sourceUri",
-    "startsAt": "openagrinet:startsAt",
-    "endsAt": "openagrinet:endsAt"
-  }
+  "@context": [
+    "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld",
+    {
+      "@version": 1.1,
+      "schema": "https://schema.org/",
+      "beckn": "https://schema.beckn.io/",
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "AgricultureResource": "openagrinet:AgricultureResource",
+      "subjectCategories": {
+        "@id": "openagrinet:subjectCategories",
+        "@container": "@set"
+      },
+      "agricultureSubjects": {
+        "@id": "openagrinet:agricultureSubjects",
+        "@container": "@set"
+      },
+      "AgricultureSubjectReference": "openagrinet:AgricultureSubjectReference",
+      "subjectId": {
+        "@id": "openagrinet:subjectId",
+        "@type": "@id"
+      },
+      "subjectType": "openagrinet:subjectType",
+      "descriptor": "beckn:descriptor",
+      "languages": {
+        "@id": "openagrinet:languages",
+        "@container": "@set"
+      },
+      "coverageAreas": {
+        "@id": "openagrinet:coverageAreas",
+        "@container": "@set"
+      },
+      "AdministrativeAreaReference": "openagrinet:AdministrativeAreaReference",
+      "codeScheme": "openagrinet:areaCodeScheme",
+      "areaCode": "openagrinet:areaCode",
+      "areaLevel": "openagrinet:areaLevel",
+      "areaName": "openagrinet:areaName",
+      "sourceId": "openagrinet:sourceId",
+      "sourceName": "openagrinet:sourceName",
+      "sourceUri": "openagrinet:sourceUri",
+      "startsAt": "openagrinet:startsAt",
+      "endsAt": "openagrinet:endsAt"
+    }
+  ]
 }

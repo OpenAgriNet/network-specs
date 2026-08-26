@@ -1,16 +1,19 @@
 {
   "@type": "openagrinet:AgricultureResource",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Livestock",
     "Knowledge"
   ],
-  "subjectScope": "General",
   "languages": [
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ]
 }

@@ -1,10 +1,9 @@
 {
   "@type": "openagrinet:AgricultureResource",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Knowledge"
   ],
-  "subjectScope": "Specific",
   "agricultureSubjects": [
     {
       "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
@@ -19,7 +18,18 @@
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN-MH"
+  "coverageAreas": [
+    {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [75.0, 19.0],
+          [76.0, 19.0],
+          [76.0, 20.0],
+          [75.0, 20.0],
+          [75.0, 19.0]
+        ]
+      ]
+    }
   ]
 }

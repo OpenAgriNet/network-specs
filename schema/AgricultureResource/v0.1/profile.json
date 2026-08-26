@@ -5,25 +5,31 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["AgricultureResource"],
-  "discovery_fields": ["subjectAreas", "subjectScope", "agricultureSubjects", "languages", "coverageAreaCodes"],
+  "discovery_fields": ["subjectCategories", "agricultureSubjects", "languages", "coverageAreas"],
   "indexable_paths": [
-    "beckn:resourceAttributes.subjectAreas",
-    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
     "beckn:resourceAttributes.agricultureSubjects.subjectType",
     "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
     "beckn:resourceAttributes.agricultureSubjects.descriptor.name",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.areaLevel",
+    "beckn:resourceAttributes.coverageAreas.type",
+    "beckn:resourceAttributes.coverageAreas.bbox",
+    "beckn:resourceAttributes.coverageAreas.coordinates"
   ],
   "filterable_paths": [
-    "beckn:resourceAttributes.subjectAreas",
-    "beckn:resourceAttributes.subjectScope",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
     "beckn:resourceAttributes.agricultureSubjects.subjectType",
     "beckn:resourceAttributes.agricultureSubjects.descriptor.code",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.areaLevel",
+    "beckn:resourceAttributes.coverageAreas.type"
   ],
   "sortable_paths": [],
   "privacy_notes": []
