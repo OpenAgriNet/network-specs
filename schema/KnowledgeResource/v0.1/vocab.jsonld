@@ -10,11 +10,12 @@
       "rdfs:label": "Knowledge Resource",
       "rdfs:comment": "A reusable and versioned unit of agricultural knowledge."
     },
-    { "@id": "openagrinet:resourceType", "@type": "rdfs:Property", "rdfs:label": "resource type" },
+    { "@id": "openagrinet:knowledgeType", "@type": "rdfs:Property", "rdfs:label": "knowledge type" },
     { "@id": "openagrinet:version", "@type": "rdfs:Property", "rdfs:label": "version" },
     { "@id": "openagrinet:lifecycleStatus", "@type": "rdfs:Property", "rdfs:label": "lifecycle status" },
     { "@id": "openagrinet:content", "@type": "rdfs:Property", "rdfs:label": "content" },
     { "@id": "openagrinet:contentUri", "@type": "rdfs:Property", "rdfs:label": "content URI" },
+    { "@id": "openagrinet:inlineContent", "@type": "rdfs:Property", "rdfs:label": "inline content" },
     { "@id": "openagrinet:mediaType", "@type": "rdfs:Property", "rdfs:label": "media type" },
     { "@id": "openagrinet:language", "@type": "rdfs:Property", "rdfs:label": "language" },
     { "@id": "openagrinet:digest", "@type": "rdfs:Property", "rdfs:label": "digest" },

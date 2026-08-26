@@ -1,8 +1,8 @@
 {
   "schema": "KnowledgeResource",
   "version": "0.1.0",
-  "card_template": "{{resourceType}} | {{subjectScope}} | {{agricultureSubjects}} | {{languages}} | {{lifecycleStatus}}",
-  "detail_template": "Type: {{resourceType}}\nScope: {{subjectScope}}\nAgriculture subjects: {{agricultureSubjects}}\nLanguages: {{languages}}\nVersion: {{version}}\nStatus: {{lifecycleStatus}}\nPublished: {{provenance.publishedAt}}",
-  "html": "<div class=\"oan-knowledge\"><strong>{{resourceType}}</strong><span>{{subjectScope}}</span><span>{{agricultureSubjects}}</span><span>{{languages}} · {{lifecycleStatus}}</span></div>",
-  "html_detail": "<div class=\"oan-knowledge-detail\"><p><strong>Scope:</strong> {{subjectScope}}</p><p><strong>Agriculture subjects:</strong> {{agricultureSubjects}}</p><p><strong>Version:</strong> {{version}}</p><p><strong>Status:</strong> {{lifecycleStatus}}</p><p><strong>Published:</strong> {{provenance.publishedAt}}</p></div>"
+  "card_template": "{{knowledgeType}} | {{subjectCategories}} | {{agricultureSubjects}} | {{languages}} | {{lifecycleStatus}}",
+  "detail_template": "Type: {{knowledgeType}}\nCategories: {{subjectCategories}}\nAgriculture subjects: {{agricultureSubjects}}\nLanguages: {{languages}}\nVersion: {{version}}\nStatus: {{lifecycleStatus}}\nPublished: {{provenance.publishedAt}}",
+  "html": "<div class=\"oan-knowledge\"><strong>{{knowledgeType}}</strong><span>{{subjectCategories}}</span><span>{{agricultureSubjects}}</span><span>{{languages}} · {{lifecycleStatus}}</span></div>",
+  "html_detail": "<div class=\"oan-knowledge-detail\"><p><strong>Categories:</strong> {{subjectCategories}}</p><p><strong>Agriculture subjects:</strong> {{agricultureSubjects}}</p><p><strong>Version:</strong> {{version}}</p><p><strong>Status:</strong> {{lifecycleStatus}}</p><p><strong>Published:</strong> {{provenance.publishedAt}}</p></div>"
 }

@@ -1,10 +1,9 @@
 {
   "@type": "openagrinet:KnowledgeResource",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Knowledge"
   ],
-  "subjectScope": "Specific",
   "agricultureSubjects": [
     {
       "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
@@ -19,7 +18,7 @@
     "en",
     "hi"
   ],
-  "resourceType": "Guide",
+  "knowledgeType": "Guide",
   "version": "1.2.0",
   "lifecycleStatus": "Published",
   "content": [

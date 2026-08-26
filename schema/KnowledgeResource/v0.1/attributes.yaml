@@ -18,13 +18,13 @@ components:
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
         - type: object
-          required: [subjectScope, resourceType, languages, version, lifecycleStatus, content, provenance]
+          required: [knowledgeType, languages, version, lifecycleStatus, content, provenance]
           properties:
-            resourceType:
+            knowledgeType:
               type: string
-              enum: [Article, FAQ, Guide, Document, Dataset, Audio, Video]
-              description: Presentation-neutral classification of the knowledge.
-              x-jsonld-id: "openagrinet:resourceType"
+              enum: [Article, FAQ, Guide, Dataset, TrainingMaterial, Reference]
+              description: Semantic kind of knowledge, independent of whether a representation is PDF, HTML, audio, video, JSON, or inline content.
+              x-jsonld-id: "openagrinet:knowledgeType"
             version:
               type: string
               pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
@@ -41,13 +41,24 @@ components:
               description: Governed representations of the knowledge Resource.
               items:
                 type: object
-                required: [contentUri, mediaType]
+                required: [mediaType]
+                oneOf:
+                  - required: [contentUri]
+                    not:
+                      required: [inlineContent]
+                  - required: [inlineContent]
+                    not:
+                      required: [contentUri]
                 properties:
                   contentUri:
                     type: string
                     format: uri
-                    description: Location of the governed content representation.
+                    description: Provider-hosted location of the representation. It may require access through the Provider and does not imply a public download.
                     x-jsonld-id: "openagrinet:contentUri"
+                  inlineContent:
+                    type: [string, object, array]
+                    description: Content carried directly in the Resource when no external representation is needed.
+                    x-jsonld-id: "openagrinet:inlineContent"
                   mediaType:
                     type: string
                     minLength: 1
@@ -63,6 +74,7 @@ components:
                     minLength: 1
                     description: Optional integrity digest for the representation.
                     x-jsonld-id: "openagrinet:digest"
+                additionalProperties: false
               x-jsonld-id: "openagrinet:content"
             validity:
               allOf:

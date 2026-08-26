@@ -1,20 +1,23 @@
 {
   "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
   "@type": "openagrinet:KnowledgeResource",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Livestock",
     "Knowledge"
   ],
-  "subjectScope": "General",
   "languages": [
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ],
-  "resourceType": "Guide",
+  "knowledgeType": "Guide",
   "version": "1.0.0",
   "lifecycleStatus": "Published",
   "content": [

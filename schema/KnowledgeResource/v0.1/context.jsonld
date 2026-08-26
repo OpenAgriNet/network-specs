@@ -5,7 +5,7 @@
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "KnowledgeResource": "openagrinet:KnowledgeResource",
-      "resourceType": "openagrinet:resourceType",
+      "knowledgeType": "openagrinet:knowledgeType",
       "version": "openagrinet:version",
       "lifecycleStatus": "openagrinet:lifecycleStatus",
       "content": {
@@ -13,6 +13,7 @@
         "@container": "@set"
       },
       "contentUri": "openagrinet:contentUri",
+      "inlineContent": "openagrinet:inlineContent",
       "mediaType": "openagrinet:mediaType",
       "language": "openagrinet:language",
       "digest": "openagrinet:digest",

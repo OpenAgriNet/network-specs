@@ -1,33 +1,41 @@
 {
+  "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
   "@type": "openagrinet:KnowledgeResource",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Livestock",
     "Knowledge"
   ],
-  "subjectScope": "General",
   "languages": [
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ],
-  "resourceType": "FAQ",
+  "knowledgeType": "FAQ",
   "version": "2.0.0",
   "lifecycleStatus": "Published",
   "content": [
     {
-      "contentUri": "https://knowledge.example.org/faqs/farm-safety/2.0.0/en.json",
+      "inlineContent": {
+        "question": "When should farm machinery be inspected?",
+        "answer": "Inspect guards, controls, tyres, and visible damage before each use."
+      },
       "mediaType": "application/json",
-      "language": "en",
-      "digest": "sha256:example-faq-en"
+      "language": "en"
     },
     {
-      "contentUri": "https://knowledge.example.org/faqs/farm-safety/2.0.0/hi.json",
+      "inlineContent": {
+        "question": "कृषि मशीनरी की जाँच कब करनी चाहिए?",
+        "answer": "हर उपयोग से पहले गार्ड, नियंत्रण, टायर और दिखाई देने वाली क्षति की जाँच करें।"
+      },
       "mediaType": "application/json",
-      "language": "hi",
-      "digest": "sha256:example-faq-hi"
+      "language": "hi"
     }
   ],
   "provenance": {
