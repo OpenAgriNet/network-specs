@@ -1,0 +1,32 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/WeatherAdvisoryCapability/v0.1",
+  "name": "Weather Advisory Capability Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["WeatherAdvisoryCapability"],
+  "interaction_type": "Advise",
+  "outcome_type": "openagrinet:WeatherAdvisory",
+  "discovery_fields": ["topics", "weatherParameters", "geographicGranularity", "languages", "coverageAreas"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.weatherParameters",
+    "beckn:resourceAttributes.geographicGranularity",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type",
+    "beckn:resourceAttributes.coverageAreas.bbox",
+    "beckn:resourceAttributes.coverageAreas.coordinates"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.weatherParameters",
+    "beckn:resourceAttributes.geographicGranularity",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type"
+  ],
+  "sortable_paths": ["beckn:resourceAttributes.forecastHorizon"],
+  "privacy_notes": []
+}

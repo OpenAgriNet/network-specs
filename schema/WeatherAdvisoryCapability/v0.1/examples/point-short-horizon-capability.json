@@ -1,0 +1,30 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisoryCapability/v0.1/context.jsonld",
+  "@type": "openagrinet:WeatherAdvisoryCapability",
+  "subjectCategories": [
+    "Crop",
+    "Weather"
+  ],
+  "languages": [
+    "en"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-2",
+      "areaCode": "IN-KA",
+      "areaLevel": "State"
+    }
+  ],
+  "topics": [
+    "Spraying",
+    "Irrigation"
+  ],
+  "weatherParameters": [
+    "Rainfall",
+    "WindSpeed",
+    "Humidity"
+  ],
+  "forecastHorizon": "P3D",
+  "updateFrequency": "PT1H",
+  "geographicGranularity": "Point"
+}

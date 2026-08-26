@@ -1,0 +1,18 @@
+{
+  "@context": {
+    "openagrinet": "https://schemas.openagrinet.global/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:WeatherAdvisoryCapability",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Weather Advisory Capability",
+      "rdfs:comment": "A Provider capability for producing weather-informed agricultural advice."
+    },
+    { "@id": "openagrinet:weatherParameters", "@type": "rdfs:Property", "rdfs:label": "weather parameters" },
+    { "@id": "openagrinet:forecastHorizon", "@type": "rdfs:Property", "rdfs:label": "forecast horizon" },
+    { "@id": "openagrinet:updateFrequency", "@type": "rdfs:Property", "rdfs:label": "update frequency" },
+    { "@id": "openagrinet:geographicGranularity", "@type": "rdfs:Property", "rdfs:label": "geographic granularity" }
+  ]
+}
