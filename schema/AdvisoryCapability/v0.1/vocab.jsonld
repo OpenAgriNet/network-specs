@@ -11,11 +11,6 @@
       "rdfs:comment": "An agricultural advisory capability represented as a Beckn Resource."
     },
     {
-      "@id": "openagrinet:advisoryType",
-      "@type": "rdfs:Property",
-      "rdfs:label": "advisory type"
-    },
-    {
       "@id": "openagrinet:topics",
       "@type": "rdfs:Property",
       "rdfs:label": "topics"

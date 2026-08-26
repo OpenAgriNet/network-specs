@@ -1,9 +1,8 @@
 {
   "@type": "openagrinet:AdvisoryCapability",
-  "subjectAreas": [
+  "subjectCategories": [
     "Livestock"
   ],
-  "subjectScope": "Specific",
   "agricultureSubjects": [
     {
       "subjectId": "https://taxonomy.openagrinet.global/livestock/dairy-cattle",
@@ -18,13 +17,13 @@
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ],
-  "interactionTypes": [
-    "Advise"
-  ],
-  "advisoryType": "Livestock",
   "topics": [
     "AnimalHealth",
     "Nutrition",

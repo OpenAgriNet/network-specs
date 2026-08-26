@@ -5,7 +5,6 @@
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "AdvisoryCapability": "openagrinet:AdvisoryCapability",
-      "advisoryType": "openagrinet:advisoryType",
       "topics": {
         "@id": "openagrinet:topics",
         "@container": "@set"

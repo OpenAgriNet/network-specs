@@ -1,20 +1,19 @@
 {
   "@type": "openagrinet:AdvisoryCapability",
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop"
   ],
-  "subjectScope": "General",
   "languages": [
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ],
-  "interactionTypes": [
-    "Advise"
-  ],
-  "advisoryType": "Crop",
   "topics": [
     "Sowing",
     "Irrigation",

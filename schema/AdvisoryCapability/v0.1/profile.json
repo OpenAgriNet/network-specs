@@ -5,20 +5,25 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["AdvisoryCapability"],
-  "discovery_fields": ["advisoryType", "topics", "interactionTypes", "languages", "coverageAreaCodes"],
+  "interaction_type": "Advise",
+  "discovery_fields": ["topics", "subjectCategories", "languages", "coverageAreas"],
   "indexable_paths": [
-    "beckn:resourceAttributes.advisoryType",
     "beckn:resourceAttributes.topics",
-    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type",
+    "beckn:resourceAttributes.coverageAreas.bbox",
+    "beckn:resourceAttributes.coverageAreas.coordinates"
   ],
   "filterable_paths": [
-    "beckn:resourceAttributes.advisoryType",
     "beckn:resourceAttributes.topics",
-    "beckn:resourceAttributes.interactionTypes",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type"
   ],
   "sortable_paths": [],
   "privacy_notes": []

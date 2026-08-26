@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the advisory fields added to an agricultural capability that produces advice.
+Defines the advisory fields added to an agricultural capability. The profile fixes the interaction type as `Advise`; Provider entries do not repeat it.
 
 ## Attachment point
 
@@ -10,13 +10,12 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource` listed in a 
 
 ## Composition
 
-`AdvisoryCapability` combines the Agriculture Resource, Agriculture Capability, and Advisory Capability field sets with `allOf`. The composed contract requires `Advise` among its interaction types.
+`AdvisoryCapability` combines the Agriculture Resource, Agriculture Capability, and Advisory Capability field sets with `allOf`.
 
 ## Fields
 
 | Field | Meaning |
 |---|---|
-| `advisoryType` | Advisory classification such as crop, weather, market, or scheme |
 | `topics` | Governed or Provider-declared topics covered by the capability |
 
 ## Non-goals
