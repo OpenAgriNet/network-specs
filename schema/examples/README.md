@@ -11,6 +11,7 @@ These examples show OAN domain attributes inside complete Beckn objects. They co
 | [Published knowledge catalog](published-knowledge-catalog.json) | Catalog | One Provider publishes both general and crop-specific knowledge Resources for discovery |
 | [Live weather Resource](live-weather-resource.json) | Resource | A location-specific weather result returned after invoking a discovered capability |
 | [Live mandi-price Resource](live-mandi-price-resource.json) | Resource | A market, commodity, date, and price result returned after invoking a discovered capability |
+| [Live weather advisory Resource](live-weather-advisory-resource.json) | Resource | Actual location- and time-specific guidance returned after invoking a weather advisory capability |
 
 The Catalog examples use the complete Beckn [Catalog](https://github.com/beckn/schemas/tree/draft/schema/Catalog), [Provider](https://github.com/beckn/schemas/tree/draft/schema/Provider), and [Resource](https://github.com/beckn/schemas/tree/draft/schema/Resource) boundaries. Their `resourceAttributes` values use the selected OAN schema pack.
 
@@ -18,7 +19,7 @@ The two live examples are complete Beckn Resources, not protocol request or resp
 
 ## Catalog metadata and live values
 
-Provider catalogs advertise stable capability metadata such as supported interaction, subject area, language, coverage, forecast horizon, and geographic granularity. They do not contain the requested location, observation time, market, commodity, or current value.
+Provider catalogs advertise stable capability metadata such as capability type, subject category, language, coverage, forecast horizon, and geographic granularity. The governed capability profile supplies the interaction type. Catalogs do not contain the requested location, observation time, market, commodity, current value, or actual advice.
 
 Live Resources contain those request-specific values. Discovery can index the capability or a published knowledge Resource without treating a live observation as stored catalog metadata.
 

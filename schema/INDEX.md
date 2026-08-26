@@ -8,11 +8,12 @@ Read the [complete examples](examples/README.md) to see these packs composed ins
 
 | Pack | Contract kind | Fields declared by this pack | Reused field sets | Typical placement | Examples |
 |---|---|---|---|---|---|
-| [Agriculture Resource](AgricultureResource/v0.1/README.md) | Shared agriculture field set | subject areas, subject scope, agriculture subjects, languages, coverage | Beckn Resource boundary | Reused by OAN capability and outcome contracts | [JSON](AgricultureResource/v0.1/examples/) |
-| [Agriculture Capability](AgricultureCapability/v0.1/README.md) | Invokable capability | interaction types and governed capability profile type | Agriculture Resource | Provider catalog | [JSON](AgricultureCapability/v0.1/examples/) |
-| [Advisory Capability](AdvisoryCapability/v0.1/README.md) | Advisory capability | advisory type and topics | Agriculture Resource, Agriculture Capability | Provider catalog | [JSON](AdvisoryCapability/v0.1/examples/) |
-| [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed advisory capability | weather parameters, forecast horizon, update frequency, geographic granularity | Agriculture Resource, Agriculture Capability, Advisory Capability | Provider catalog | [JSON](WeatherAdvisory/v0.1/examples/) |
-| [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Published or returned resource | knowledge classification, version, content, validity, provenance, supersession | Agriculture Resource | Published catalog or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
+| [Agriculture Resource](AgricultureResource/v0.1/README.md) | Shared agriculture field set | subject categories, optional agriculture subjects, languages, structured coverage | Beckn Resource boundary | Reused by OAN capability and outcome contracts | [JSON](AgricultureResource/v0.1/examples/) |
+| [Agriculture Capability](AgricultureCapability/v0.1/README.md) | Invokable capability | governed capability type | Agriculture Resource | Provider catalog | [JSON](AgricultureCapability/v0.1/examples/) |
+| [Advisory Capability](AdvisoryCapability/v0.1/README.md) | Advisory capability | topics | Agriculture Resource, Agriculture Capability | Provider catalog | [JSON](AdvisoryCapability/v0.1/examples/) |
+| [Weather Advisory Capability](WeatherAdvisoryCapability/v0.1/README.md) | Weather-informed advisory capability | weather parameters, forecast horizon, update frequency, geographic granularity | Agriculture Resource, Agriculture Capability, Advisory Capability | Provider catalog | [JSON](WeatherAdvisoryCapability/v0.1/examples/) |
+| [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed advisory outcome | topics, location, issue and validity times, recommendations, weather basis, source | Agriculture Resource | Provider response | [JSON](WeatherAdvisory/v0.1/examples/) |
+| [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Published or returned resource | knowledge type, version, URI or inline representations, validity, provenance, supersession | Agriculture Resource | Published catalog or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
 | [Weather Observation](WeatherObservation/v0.1/README.md) | Live observation or forecast | source, location, time, validity, weather parameters | Agriculture Resource | Provider response | [JSON](WeatherObservation/v0.1/examples/) |
 | [Mandi Price Observation](MandiPriceObservation/v0.1/README.md) | Live market observation | source, commodity, market, arrival date, price values | Agriculture Resource | Provider response | [JSON](MandiPriceObservation/v0.1/examples/) |
 
@@ -22,7 +23,7 @@ The `Reused field sets` column describes validation composition. It is not a par
 
 JSON Schema `allOf` applies each referenced field set to the same JSON object. The selected pack remains the effective contract and declares its own canonical `@type`.
 
-For example, selecting `WeatherAdvisory` validates one object against the agriculture, capability, advisory, and weather-advisory constraints. It does not create four nested objects and does not establish a subtype relationship among the packs.
+For example, selecting `WeatherAdvisoryCapability` validates one object against the agriculture, capability, advisory, and weather-advisory capability constraints. It does not create four nested objects and does not establish a subtype relationship among the packs. `WeatherAdvisory` is a separate outcome contract.
 
 Provider-defined contracts may combine an OAN pack with additional Provider-owned constraints. A resource intended to interoperate as an OAN contract retains the applicable canonical OAN type.
 
@@ -30,13 +31,14 @@ Provider-defined contracts may combine an OAN pack with additional Provider-owne
 
 `AgricultureCapability` supplies common capability fields. A specific type identifies the governed invocation profile:
 
-| Capability type | Intended outcome |
-|---|---|
-| `openagrinet:KnowledgeRetrievalCapability` | `openagrinet:KnowledgeResource` |
-| `openagrinet:MandiPriceCapability` | `openagrinet:MandiPriceObservation` |
-| `openagrinet:WeatherObservationCapability` | `openagrinet:WeatherObservation` |
+| Capability type | Interaction | Intended outcome |
+|---|---|---|
+| `openagrinet:KnowledgeRetrievalCapability` | Observe | `openagrinet:KnowledgeResource` |
+| `openagrinet:MandiPriceCapability` | Observe | `openagrinet:MandiPriceObservation` |
+| `openagrinet:WeatherObservationCapability` | Observe | `openagrinet:WeatherObservation` |
+| `openagrinet:WeatherAdvisoryCapability` | Advise | `openagrinet:WeatherAdvisory` |
 
-An instance declares `openagrinet:AgricultureCapability` and the applicable specific capability type. The Provider catalog does not repeat schema references; the selected governed type supplies that meaning.
+An instance declares the applicable governed capability type. Its profile supplies the interaction and outcome type, so the Provider catalog does not repeat them.
 
 ## Pack contents
 

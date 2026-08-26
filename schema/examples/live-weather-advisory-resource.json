@@ -1,0 +1,55 @@
+{
+  "id": "resource:weather-advisory:rice:district-501:2026-08-26T06:00:00Z",
+  "descriptor": {
+    "code": "WEATHER_INFORMED_CROP_ADVISORY",
+    "name": "Rice irrigation advisory",
+    "shortDesc": "Postpone irrigation because moderate rainfall is expected.",
+    "longDesc": "This Resource was produced after invoking a discovered weather advisory capability. It applies to rice fields in the requested district and validity window."
+  },
+  "resourceAttributes": {
+    "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
+    "@type": "openagrinet:WeatherAdvisory",
+    "subjectCategories": ["Crop", "Weather"],
+    "agricultureSubjects": [
+      {
+        "subjectId": "https://taxonomy.openagrinet.global/crops/rice",
+        "subjectType": "Crop",
+        "descriptor": { "code": "RICE", "name": "Rice" }
+      }
+    ],
+    "languages": ["en", "hi"],
+    "topics": ["Irrigation", "CropProtection"],
+    "location": {
+      "type": "Polygon",
+      "coordinates": [[[78.1, 19.1], [78.5, 19.1], [78.5, 19.5], [78.1, 19.5], [78.1, 19.1]]]
+    },
+    "issuedAt": "2026-08-26T06:00:00Z",
+    "validity": {
+      "startsAt": "2026-08-26T06:00:00Z",
+      "endsAt": "2026-08-27T06:00:00Z"
+    },
+    "recommendations": [
+      {
+        "topic": "Irrigation",
+        "message": "Postpone irrigation for the next 24 hours because moderate rainfall is expected.",
+        "language": "en",
+        "priority": "Watch",
+        "actions": ["Postpone irrigation", "Check field drainage"]
+      },
+      {
+        "topic": "Irrigation",
+        "message": "मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।",
+        "language": "hi",
+        "priority": "Watch"
+      }
+    ],
+    "weatherBasis": {
+      "parameters": ["Rainfall", "Humidity"],
+      "supportingResourceIds": ["resource:weather:forecast:district-501:2026-08-26T06:00:00Z"]
+    },
+    "source": {
+      "sourceId": "participant:weather-advisory-provider",
+      "sourceName": "Agricultural Weather Advisory Service"
+    }
+  }
+}

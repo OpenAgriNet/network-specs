@@ -31,20 +31,23 @@
       "resourceAttributes": {
         "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
-        "subjectAreas": [
+        "subjectCategories": [
           "Crop",
           "Livestock",
           "Knowledge"
         ],
-        "subjectScope": "General",
         "languages": [
           "en",
           "hi"
         ],
-        "coverageAreaCodes": [
-          "IN"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
         ],
-        "resourceType": "Guide",
+        "knowledgeType": "Guide",
         "version": "1.0.0",
         "lifecycleStatus": "Published",
         "content": [
@@ -88,11 +91,10 @@
       "resourceAttributes": {
         "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
-        "subjectAreas": [
+        "subjectCategories": [
           "Crop",
           "Knowledge"
         ],
-        "subjectScope": "Specific",
         "agricultureSubjects": [
           {
             "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
@@ -107,12 +109,24 @@
           "en",
           "hi"
         ],
-        "coverageAreaCodes": [
-          "IN-MH",
-          "IN-GJ",
-          "IN-TG"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-2",
+            "areaCode": "IN-MH",
+            "areaLevel": "State"
+          },
+          {
+            "codeScheme": "ISO-3166-2",
+            "areaCode": "IN-GJ",
+            "areaLevel": "State"
+          },
+          {
+            "codeScheme": "ISO-3166-2",
+            "areaCode": "IN-TG",
+            "areaLevel": "State"
+          }
         ],
-        "resourceType": "Guide",
+        "knowledgeType": "Guide",
         "version": "1.2.0",
         "lifecycleStatus": "Published",
         "content": [

@@ -9,12 +9,15 @@
   "resourceAttributes": {
     "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
     "@type": "openagrinet:WeatherObservation",
-    "subjectAreas": [
+    "subjectCategories": [
       "Weather"
     ],
-    "subjectScope": "General",
-    "coverageAreaCodes": [
-      "IN-MH"
+    "coverageAreas": [
+      {
+        "codeScheme": "ISO-3166-2",
+        "areaCode": "IN-MH",
+        "areaLevel": "State"
+      }
     ],
     "observationType": "Forecast",
     "source": {

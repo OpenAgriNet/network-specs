@@ -45,22 +45,22 @@
           "openagrinet:AgricultureCapability",
           "openagrinet:KnowledgeRetrievalCapability"
         ],
-        "subjectAreas": [
+        "subjectCategories": [
           "Crop",
           "Livestock",
           "Scheme",
           "Knowledge"
         ],
-        "subjectScope": "General",
         "languages": [
           "en",
           "hi"
         ],
-        "coverageAreaCodes": [
-          "IN"
-        ],
-        "interactionTypes": [
-          "Observe"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
         ]
       }
     },
@@ -78,20 +78,20 @@
           "openagrinet:AgricultureCapability",
           "openagrinet:MandiPriceCapability"
         ],
-        "subjectAreas": [
+        "subjectCategories": [
           "Market"
         ],
-        "subjectScope": "General",
         "languages": [
           "en",
           "hi",
           "mr"
         ],
-        "coverageAreaCodes": [
-          "IN"
-        ],
-        "interactionTypes": [
-          "Observe"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
         ]
       }
     }

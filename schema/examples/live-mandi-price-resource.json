@@ -9,10 +9,9 @@
   "resourceAttributes": {
     "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld",
     "@type": "openagrinet:MandiPriceObservation",
-    "subjectAreas": [
+    "subjectCategories": [
       "Market"
     ],
-    "subjectScope": "Specific",
     "agricultureSubjects": [
       {
         "subjectId": "https://taxonomy.openagrinet.global/crops/onion",
@@ -23,8 +22,12 @@
         }
       }
     ],
-    "coverageAreaCodes": [
-      "IN-MH"
+    "coverageAreas": [
+      {
+        "codeScheme": "ISO-3166-2",
+        "areaCode": "IN-MH",
+        "areaLevel": "State"
+      }
     ],
     "source": {
       "sourceId": "source:agmarknet",

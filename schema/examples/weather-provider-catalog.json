@@ -45,20 +45,20 @@
           "openagrinet:AgricultureCapability",
           "openagrinet:WeatherObservationCapability"
         ],
-        "subjectAreas": [
+        "subjectCategories": [
           "Weather"
         ],
-        "subjectScope": "General",
         "languages": [
           "en",
           "hi",
           "mr"
         ],
-        "coverageAreaCodes": [
-          "IN"
-        ],
-        "interactionTypes": [
-          "Observe"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
         ]
       }
     },
@@ -71,25 +71,24 @@
         "longDesc": "The capability supports point-level guidance for irrigation, spraying, and crop protection using rainfall, wind speed, humidity, and temperature forecasts."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
-        "@type": "openagrinet:WeatherAdvisory",
-        "subjectAreas": [
+        "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisoryCapability/v0.1/context.jsonld",
+        "@type": "openagrinet:WeatherAdvisoryCapability",
+        "subjectCategories": [
           "Crop",
           "Weather"
         ],
-        "subjectScope": "General",
         "languages": [
           "en",
           "hi",
           "mr"
         ],
-        "coverageAreaCodes": [
-          "IN"
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
         ],
-        "interactionTypes": [
-          "Advise"
-        ],
-        "advisoryType": "Weather",
         "topics": [
           "Irrigation",
           "Spraying",
