@@ -1,17 +1,27 @@
 {
   "@context": [
-    "https://schemas.openagrinet.global/schema/AdvisoryCapability/v0.1/context.jsonld",
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
     {
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "WeatherAdvisory": "openagrinet:WeatherAdvisory",
-      "weatherParameters": {
-        "@id": "openagrinet:weatherParameters",
+      "topics": {
+        "@id": "openagrinet:topics",
         "@container": "@set"
       },
-      "forecastHorizon": "openagrinet:forecastHorizon",
-      "updateFrequency": "openagrinet:updateFrequency",
-      "geographicGranularity": "openagrinet:geographicGranularity"
+      "location": "openagrinet:location",
+      "issuedAt": "openagrinet:issuedAt",
+      "validity": "openagrinet:validity",
+      "recommendations": { "@id": "openagrinet:recommendations", "@container": "@set" },
+      "topic": "openagrinet:topic",
+      "message": "openagrinet:message",
+      "language": "openagrinet:language",
+      "priority": "openagrinet:priority",
+      "actions": { "@id": "openagrinet:actions", "@container": "@set" },
+      "weatherBasis": "openagrinet:weatherBasis",
+      "parameters": { "@id": "openagrinet:weatherParameters", "@container": "@set" },
+      "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },
+      "source": "openagrinet:source"
     }
   ]
 }

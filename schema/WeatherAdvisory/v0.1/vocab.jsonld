@@ -8,27 +8,34 @@
       "@id": "openagrinet:WeatherAdvisory",
       "@type": "rdfs:Class",
       "rdfs:label": "Weather Advisory",
-      "rdfs:comment": "A weather-informed agricultural advisory capability."
+      "rdfs:comment": "Weather-informed agricultural guidance issued for a place and validity period."
     },
     {
-      "@id": "openagrinet:weatherParameters",
+      "@id": "openagrinet:topics",
       "@type": "rdfs:Property",
-      "rdfs:label": "weather parameters"
+      "rdfs:label": "topics"
     },
     {
-      "@id": "openagrinet:forecastHorizon",
+      "@id": "openagrinet:location",
       "@type": "rdfs:Property",
-      "rdfs:label": "forecast horizon"
+      "rdfs:label": "location"
     },
     {
-      "@id": "openagrinet:updateFrequency",
+      "@id": "openagrinet:issuedAt",
       "@type": "rdfs:Property",
-      "rdfs:label": "update frequency"
+      "rdfs:label": "issued at"
     },
     {
-      "@id": "openagrinet:geographicGranularity",
+      "@id": "openagrinet:recommendations",
       "@type": "rdfs:Property",
-      "rdfs:label": "geographic granularity"
-    }
+      "rdfs:label": "recommendations"
+    },
+    { "@id": "openagrinet:topic", "@type": "rdfs:Property", "rdfs:label": "topic" },
+    { "@id": "openagrinet:message", "@type": "rdfs:Property", "rdfs:label": "message" },
+    { "@id": "openagrinet:priority", "@type": "rdfs:Property", "rdfs:label": "priority" },
+    { "@id": "openagrinet:actions", "@type": "rdfs:Property", "rdfs:label": "actions" },
+    { "@id": "openagrinet:weatherBasis", "@type": "rdfs:Property", "rdfs:label": "weather basis" },
+    { "@id": "openagrinet:weatherParameters", "@type": "rdfs:Property", "rdfs:label": "weather parameters" },
+    { "@id": "openagrinet:supportingResourceIds", "@type": "rdfs:Property", "rdfs:label": "supporting Resource identifiers" }
   ]
 }

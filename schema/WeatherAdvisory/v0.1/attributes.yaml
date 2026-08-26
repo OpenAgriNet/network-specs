@@ -1,11 +1,11 @@
 openapi: 3.1.1
 info:
-  title: OpenAgriNet - Weather Advisory Attributes
+  title: OpenAgriNet - Weather Advisory Outcome Attributes
   version: 0.1.0
   description: >
-    Weather-informed agricultural advisory attributes. Combines with
-    AdvisoryCapability through allOf and attaches to a Beckn Resource through
-    resourceAttributes.
+    Actual weather-informed agricultural guidance returned by a Provider.
+    Combines with AgricultureResource through allOf and attaches to a Beckn
+    Resource through resourceAttributes.
 
 components:
   schemas:
@@ -16,31 +16,99 @@ components:
         "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld"
         "@type": openagrinet:WeatherAdvisory
       allOf:
-        - $ref: "../../AdvisoryCapability/v0.1/attributes.yaml#/components/schemas/AdvisoryCapability"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
         - type: object
-          required: [weatherParameters, geographicGranularity]
+          required: [topics, location, issuedAt, validity, recommendations, source]
           properties:
-            weatherParameters:
+            topics:
               type: array
               minItems: 1
               uniqueItems: true
-              description: Weather parameters used to produce the advisory.
+              description: Topics addressed by this advisory outcome.
               items:
                 type: string
-                enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
-              x-jsonld-id: "openagrinet:weatherParameters"
-            forecastHorizon:
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"
+            location:
+              allOf:
+                - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+              description: Place to which the advice applies; Point coordinates use longitude, latitude order.
+              x-jsonld-id: "openagrinet:location"
+            issuedAt:
               type: string
-              format: duration
-              description: Maximum supported forecast horizon expressed as an ISO 8601 duration.
-              x-jsonld-id: "openagrinet:forecastHorizon"
-            updateFrequency:
-              type: string
-              format: duration
-              description: Expected refresh interval expressed as an ISO 8601 duration.
-              x-jsonld-id: "openagrinet:updateFrequency"
-            geographicGranularity:
-              type: string
-              enum: [Point, Village, Block, District, State]
-              description: Smallest geographic granularity for which the capability provides meaningful guidance.
-              x-jsonld-id: "openagrinet:geographicGranularity"
+              format: date-time
+              description: Time at which the Provider issued the advisory.
+              x-jsonld-id: "openagrinet:issuedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which the advice applies.
+              x-jsonld-id: "openagrinet:validity"
+            recommendations:
+              type: array
+              minItems: 1
+              description: Human-readable recommendations issued for this place and validity period.
+              items:
+                type: object
+                required: [message, language]
+                properties:
+                  topic:
+                    type: string
+                    minLength: 1
+                    description: Advisory topic addressed by this recommendation.
+                    x-jsonld-id: "openagrinet:topic"
+                  message:
+                    type: string
+                    minLength: 1
+                    description: Recommendation expressed in the declared language.
+                    x-jsonld-id: "openagrinet:message"
+                  language:
+                    type: string
+                    minLength: 2
+                    description: BCP 47 language tag of the recommendation.
+                    x-jsonld-id: "openagrinet:language"
+                  priority:
+                    type: string
+                    enum: [Information, Watch, Warning, Critical]
+                    description: Urgency of the recommendation.
+                    x-jsonld-id: "openagrinet:priority"
+                  actions:
+                    type: array
+                    minItems: 1
+                    uniqueItems: true
+                    description: Concise actions the recipient may take.
+                    items:
+                      type: string
+                      minLength: 1
+                    x-jsonld-id: "openagrinet:actions"
+                additionalProperties: false
+              x-jsonld-id: "openagrinet:recommendations"
+            weatherBasis:
+              type: object
+              description: Weather information used to produce the advice.
+              required: [parameters]
+              properties:
+                parameters:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  items:
+                    type: string
+                    enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+                  x-jsonld-id: "openagrinet:weatherParameters"
+                supportingResourceIds:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Beckn Resource identifiers for observations or forecasts that support this advice.
+                  items:
+                    type: string
+                    minLength: 1
+                  x-jsonld-id: "openagrinet:supportingResourceIds"
+              additionalProperties: false
+              x-jsonld-id: "openagrinet:weatherBasis"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Provider or authoritative source that issued the advisory.
+              x-jsonld-id: "openagrinet:source"

@@ -1,26 +1,46 @@
 {
+  "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherAdvisory",
-  "subjectAreas": [
-    "Crop",
-    "Weather"
+  "subjectCategories": ["Crop", "Weather"],
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/rice",
+      "subjectType": "Crop",
+      "descriptor": { "code": "RICE", "name": "Rice" }
+    }
   ],
-  "subjectScope": "General",
-  "interactionTypes": [
-    "Advise"
+  "languages": ["en", "hi"],
+  "topics": ["Irrigation", "CropProtection"],
+  "location": {
+    "type": "Polygon",
+    "coordinates": [[[78.1, 19.1], [78.5, 19.1], [78.5, 19.5], [78.1, 19.5], [78.1, 19.1]]]
+  },
+  "issuedAt": "2026-08-26T06:00:00Z",
+  "validity": {
+    "startsAt": "2026-08-26T06:00:00Z",
+    "endsAt": "2026-08-27T06:00:00Z"
+  },
+  "recommendations": [
+    {
+      "topic": "Irrigation",
+      "message": "Postpone irrigation for the next 24 hours because moderate rainfall is expected.",
+      "language": "en",
+      "priority": "Watch",
+      "actions": ["Postpone irrigation", "Check field drainage"]
+    },
+    {
+      "topic": "Irrigation",
+      "message": "मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।",
+      "language": "hi",
+      "priority": "Watch"
+    }
   ],
-  "advisoryType": "Weather",
-  "topics": [
-    "Irrigation",
-    "Sowing",
-    "CropProtection"
-  ],
-  "weatherParameters": [
-    "Rainfall",
-    "Temperature",
-    "Humidity",
-    "WindSpeed"
-  ],
-  "forecastHorizon": "P7D",
-  "updateFrequency": "PT3H",
-  "geographicGranularity": "Village"
+  "weatherBasis": {
+    "parameters": ["Rainfall", "Humidity"],
+    "supportingResourceIds": ["weather-forecast:imd:2026-08-26:district-501"]
+  },
+  "source": {
+    "sourceId": "participant:weather-advisory-provider",
+    "sourceName": "Agricultural Weather Advisory Service"
+  }
 }
