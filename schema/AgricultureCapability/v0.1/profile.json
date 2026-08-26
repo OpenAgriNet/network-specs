@@ -5,20 +5,39 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["AgricultureCapability"],
-  "discovery_fields": ["interactionTypes", "subjectAreas", "languages", "coverageAreaCodes"],
+  "capability_types": {
+    "openagrinet:KnowledgeRetrievalCapability": {
+      "interaction_type": "Observe",
+      "outcome_type": "openagrinet:KnowledgeResource"
+    },
+    "openagrinet:MandiPriceCapability": {
+      "interaction_type": "Observe",
+      "outcome_type": "openagrinet:MandiPriceObservation"
+    },
+    "openagrinet:WeatherObservationCapability": {
+      "interaction_type": "Observe",
+      "outcome_type": "openagrinet:WeatherObservation"
+    }
+  },
+  "discovery_fields": ["@type", "subjectCategories", "languages", "coverageAreas"],
   "indexable_paths": [
-    "beckn:resourceAttributes.interactionTypes",
-    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.@type",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type",
+    "beckn:resourceAttributes.coverageAreas.bbox",
+    "beckn:resourceAttributes.coverageAreas.coordinates"
   ],
   "filterable_paths": [
-    "beckn:resourceAttributes.interactionTypes",
-    "beckn:resourceAttributes.subjectAreas",
+    "beckn:resourceAttributes.@type",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.languages",
-    "beckn:resourceAttributes.coverageAreaCodes"
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type"
   ],
   "sortable_paths": [],
   "privacy_notes": []
 }
-

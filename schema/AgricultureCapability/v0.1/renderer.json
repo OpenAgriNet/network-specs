@@ -1,9 +1,8 @@
 {
   "schema": "AgricultureCapability",
   "version": "0.1.0",
-  "card_template": "{{interactionTypes}} capability | {{subjectAreas}}",
-  "detail_template": "Interactions: {{interactionTypes}}\nSubjects: {{subjectAreas}}\nLanguages: {{languages}}\nCoverage: {{coverageAreaCodes}}",
-  "html": "<div class=\"oan-capability\"><strong>{{interactionTypes}}</strong><span>{{subjectAreas}}</span></div>",
-  "html_detail": "<div class=\"oan-capability-detail\"><p><strong>Interactions:</strong> {{interactionTypes}}</p><p><strong>Subjects:</strong> {{subjectAreas}}</p><p><strong>Coverage:</strong> {{coverageAreaCodes}}</p></div>"
+  "card_template": "Agriculture capability | {{subjectCategories}}",
+  "detail_template": "Type: {{@type}}\nCategories: {{subjectCategories}}\nLanguages: {{languages}}\nCoverage: {{coverageAreas}}",
+  "html": "<div class=\"oan-capability\"><strong>{{@type}}</strong><span>{{subjectCategories}}</span></div>",
+  "html_detail": "<div class=\"oan-capability-detail\"><p><strong>Type:</strong> {{@type}}</p><p><strong>Categories:</strong> {{subjectCategories}}</p><p><strong>Coverage:</strong> {{coverageAreas}}</p></div>"
 }
-

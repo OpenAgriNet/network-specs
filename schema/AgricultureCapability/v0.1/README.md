@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the common metadata used to discover and invoke an agricultural capability.
+Defines the common agriculture metadata used to discover an agricultural capability. The governed capability type supplies its interaction semantics and expected outcome type.
 
 ## Attachment point
 
@@ -12,15 +12,15 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. The enclosi
 
 `AgricultureCapability` combines the Agriculture Resource and Agriculture Capability field sets with `allOf`. Advisory compositions may add further field sets to the same effective contract.
 
-## Fields
+## Capability types
 
-| Field | Meaning |
-|---|---|
-| `interactionTypes` | Supported business interactions: `Advise`, `Observe`, or `Act` |
+| Type | Interaction | Outcome |
+|---|---|---|
+| `KnowledgeRetrievalCapability` | Observe | `KnowledgeResource` |
+| `MandiPriceCapability` | Observe | `MandiPriceObservation` |
+| `WeatherObservationCapability` | Observe | `WeatherObservation` |
 
-The capability type and its governed profile define the invocation input and outcome Resource types. Provider catalog entries do not repeat those schemas.
-
-The initial governed profile types are `KnowledgeRetrievalCapability`, `MandiPriceCapability`, and `WeatherObservationCapability`. A Resource declares `AgricultureCapability` together with the applicable profile type.
+A Provider catalog entry declares `AgricultureCapability` together with one governed capability type. It does not repeat the interaction or outcome schemas.
 
 ## Non-goals
 

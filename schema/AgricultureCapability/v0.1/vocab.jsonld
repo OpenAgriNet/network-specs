@@ -27,7 +27,6 @@
       "@type": "rdfs:Class",
       "rdfs:label": "Weather Observation Capability",
       "rdfs:comment": "Governed capability profile for requesting Weather Observations or forecasts."
-    },
-    { "@id": "openagrinet:interactionTypes", "@type": "rdfs:Property", "rdfs:label": "interaction types" }
+    }
   ]
 }

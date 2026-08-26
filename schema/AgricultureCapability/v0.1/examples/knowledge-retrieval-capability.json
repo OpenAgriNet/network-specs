@@ -3,7 +3,7 @@
     "openagrinet:AgricultureCapability",
     "openagrinet:KnowledgeRetrievalCapability"
   ],
-  "subjectAreas": [
+  "subjectCategories": [
     "Crop",
     "Livestock",
     "Scheme",
@@ -13,10 +13,11 @@
     "en",
     "hi"
   ],
-  "coverageAreaCodes": [
-    "IN"
-  ],
-  "interactionTypes": [
-    "Observe"
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
   ]
 }

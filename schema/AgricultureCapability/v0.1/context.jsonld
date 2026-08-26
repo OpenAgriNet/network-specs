@@ -7,8 +7,7 @@
       "AgricultureCapability": "openagrinet:AgricultureCapability",
       "KnowledgeRetrievalCapability": "openagrinet:KnowledgeRetrievalCapability",
       "MandiPriceCapability": "openagrinet:MandiPriceCapability",
-      "WeatherObservationCapability": "openagrinet:WeatherObservationCapability",
-      "interactionTypes": { "@id": "openagrinet:interactionTypes", "@container": "@set" }
+      "WeatherObservationCapability": "openagrinet:WeatherObservationCapability"
     }
   ]
 }
