@@ -1,6 +1,6 @@
 # OpenAgriNet schema pack index
 
-This index lists the active OpenAgriNet domain contracts. Each contract is an independently selectable schema pack applied to Beckn `Resource.resourceAttributes`.
+This index lists the active OpenAgriNet domain contracts. Each contract is an independently selectable schema pack applied to Beckn `Resource.resourceAttributes`. The shared Agriculture Resource field set supplies `informationMode`, agriculture classification, language, and coverage to all six domain packs.
 
 Read the [complete examples](examples/README.md) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
 
@@ -8,14 +8,12 @@ Read the [complete examples](examples/README.md) to see these packs composed ins
 
 | Pack | Contract kind | Fields declared by this pack | Reused field sets | Typical placement | Examples |
 |---|---|---|---|---|---|
-| [Agriculture Resource](AgricultureResource/v0.1/README.md) | Shared agriculture field set | subject categories, optional agriculture subjects, languages, structured coverage | Beckn Resource boundary | Reused by OAN capability and outcome contracts | [JSON](AgricultureResource/v0.1/examples/) |
-| [Agriculture Capability](AgricultureCapability/v0.1/README.md) | Invokable capability | governed capability type | Agriculture Resource | Provider catalog | [JSON](AgricultureCapability/v0.1/examples/) |
-| [Advisory Capability](AdvisoryCapability/v0.1/README.md) | Advisory capability | topics | Agriculture Resource, Agriculture Capability | Provider catalog | [JSON](AdvisoryCapability/v0.1/examples/) |
-| [Weather Advisory Capability](WeatherAdvisoryCapability/v0.1/README.md) | Weather-informed advisory capability | weather parameters, forecast horizon, update frequency, geographic granularity | Agriculture Resource, Agriculture Capability, Advisory Capability | Provider catalog | [JSON](WeatherAdvisoryCapability/v0.1/examples/) |
-| [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed advisory outcome | topics, location, issue and validity times, recommendations, weather basis, source | Agriculture Resource | Provider response | [JSON](WeatherAdvisory/v0.1/examples/) |
-| [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Published or returned resource | knowledge type, version, URI or inline representations, validity, provenance, supersession | Agriculture Resource | Published catalog or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
-| [Weather Observation](WeatherObservation/v0.1/README.md) | Live observation or forecast | source, location, time, validity, weather parameters | Agriculture Resource | Provider response | [JSON](WeatherObservation/v0.1/examples/) |
-| [Mandi Price Observation](MandiPriceObservation/v0.1/README.md) | Live market observation | source, commodity, market, arrival date, price values | Agriculture Resource | Provider response | [JSON](MandiPriceObservation/v0.1/examples/) |
+| [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Reusable agricultural knowledge | topics, supported knowledge types, representations, validity, and provenance | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
+| [Knowledge Advisory](KnowledgeAdvisory/v0.1/README.md) | Knowledge-based agricultural guidance | topics, recommendations, supporting Resources, validity, rationale, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeAdvisory/v0.1/examples/) |
+| [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed agricultural advice | topics, supported weather basis, recommendation, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherAdvisory/v0.1/examples/) |
+| [Weather Observation](WeatherObservation/v0.1/README.md) | Weather observation or forecast | supported and actual weather parameters, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherObservation/v0.1/examples/) |
+| [Mandi Price](MandiPrice/v0.1/README.md) | Commodity market price | supported commodities and price fields, market, date, prices, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MandiPrice/v0.1/examples/) |
+| [Market Intelligence](MarketIntelligence/v0.1/README.md) | Market trends, forecasts, and opportunities | supported insight types and commodities, insights, periods, indicators, markets, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MarketIntelligence/v0.1/examples/) |
 
 The `Reused field sets` column describes validation composition. It is not a parent-child model.
 
@@ -23,22 +21,20 @@ The `Reused field sets` column describes validation composition. It is not a par
 
 JSON Schema `allOf` applies each referenced field set to the same JSON object. The selected pack remains the effective contract and declares its own canonical `@type`.
 
-For example, selecting `WeatherAdvisoryCapability` validates one object against the agriculture, capability, advisory, and weather-advisory capability constraints. It does not create four nested objects and does not establish a subtype relationship among the packs. `WeatherAdvisory` is a separate outcome contract.
+For example, selecting `WeatherAdvisory` validates one flat object against the Agriculture Resource and Weather Advisory constraints. It does not create nested base objects and does not establish a parent-child hierarchy among the packs.
 
 Provider-defined contracts may combine an OAN pack with additional Provider-owned constraints. A resource intended to interoperate as an OAN contract retains the applicable canonical OAN type.
 
-## Capability profiles
+## Information modes
 
-`AgricultureCapability` supplies common capability fields. A specific type identifies the governed invocation profile:
+Every domain pack supports two information modes:
 
-| Capability type | Interaction | Intended outcome |
+| Mode | Meaning | Pack requirements |
 |---|---|---|
-| `openagrinet:KnowledgeRetrievalCapability` | Observe | `openagrinet:KnowledgeResource` |
-| `openagrinet:MandiPriceCapability` | Observe | `openagrinet:MandiPriceObservation` |
-| `openagrinet:WeatherObservationCapability` | Observe | `openagrinet:WeatherObservation` |
-| `openagrinet:WeatherAdvisoryCapability` | Advise | `openagrinet:WeatherAdvisory` |
+| `OnDemand` | A Provider invocation is required to obtain specific information | Supported topics, parameters, formats, commodities, horizons, languages, or coverage as applicable |
+| `Direct` | The Resource contains or directly references specific information | Actual content, values, recommendation, place, time, validity, and provenance as applicable |
 
-An instance declares the applicable governed capability type. Its profile supplies the interaction and outcome type, so the Provider catalog does not repeat them.
+An `OnDemand` Resource advertises what a Provider can supply without introducing a separate capability schema. A Provider invocation normally returns a `Direct` Resource of the same `@type`. Direct information may also be published to Discovery without a preceding invocation.
 
 ## Pack contents
 
@@ -75,6 +71,19 @@ OAN terms use `openagrinet:` for `https://schemas.openagrinet.global/vocab#`. Ve
 
 ## Scope boundary
 
-The packs cover agriculture capability and resource attributes. Protocol envelopes, Registry records, onboarding APIs, signatures, authentication, protected-data contracts, channel adapters, observability, and network federation require separate contracts.
+The packs cover portable agriculture information attributes. Protocol envelopes, Registry records, onboarding APIs, signatures, authentication, protected-data contracts, channel adapters, observability, and network federation require separate contracts.
 
 Use each pack README and its colocated JSON examples to review the effective contract.
+
+## Open item
+
+The proposed field and values are `informationMode: OnDemand | Direct`.
+
+| Alternative | Values | Tradeoff |
+|---|---|---|
+| `informationMode` | `ProviderResolved`, `Materialized` | More precise, but more technical |
+| `resourceForm` | `Resolvable`, `Materialized` | Schema-oriented, but resolution may be confused with Registry or endpoint resolution |
+| `availabilityMode` | `OnDemand`, `Published` | Business-friendly, but published may incorrectly imply storage in Discovery |
+| `accessMode` | `ProviderInvocation`, `Direct` | Makes the access path explicit, but says less about completeness |
+
+The terminology requires review before the v0.1 contracts are accepted. The underlying distinction is required: `OnDemand` needs a Provider invocation; `Direct` contains or directly references specific information.

@@ -5,8 +5,8 @@
   "descriptor": {
     "code": "AGRI_INFORMATION_SERVICES",
     "name": "Agriculture Information Services",
-    "shortDesc": "Knowledge retrieval and mandi-price capabilities for agricultural applications.",
-    "longDesc": "This catalog advertises two independent capabilities from one Provider. Consumers may discover either capability and invoke it through the applicable Beckn interaction."
+    "shortDesc": "On-demand knowledge, agricultural advisory, mandi-price, and market-intelligence information for agricultural applications.",
+    "longDesc": "This catalog advertises four OnDemand information types from one Provider. Consumers may discover the applicable Resource and invoke the Provider to obtain Direct information."
   },
   "isActive": true,
   "provider": {
@@ -37,14 +37,12 @@
         "code": "KNOWLEDGE_RETRIEVAL",
         "name": "Agricultural knowledge retrieval",
         "shortDesc": "Retrieves reviewed agricultural knowledge in supported languages.",
-        "longDesc": "Use this capability to retrieve general or subject-specific agricultural knowledge. A returned knowledge item uses the OpenAgriNet KnowledgeResource contract."
+        "longDesc": "Use this Resource to retrieve general or subject-specific agricultural knowledge. A returned result uses the same KnowledgeResource type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld",
-        "@type": [
-          "openagrinet:AgricultureCapability",
-          "openagrinet:KnowledgeRetrievalCapability"
-        ],
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@type": "openagrinet:KnowledgeResource",
+        "informationMode": "OnDemand",
         "subjectCategories": [
           "Crop",
           "Livestock",
@@ -54,6 +52,52 @@
         "languages": [
           "en",
           "hi"
+        ],
+        "topics": [
+          "Crop management",
+          "Livestock management",
+          "Government schemes"
+        ],
+        "supportedKnowledgeTypes": [
+          "Article",
+          "FAQ",
+          "Guide"
+        ],
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
+        ]
+      }
+    },
+    {
+      "id": "capability:agri-information-services:knowledge-advisory",
+      "descriptor": {
+        "code": "KNOWLEDGE_ADVISORY",
+        "name": "Agricultural knowledge advisory",
+        "shortDesc": "Produces actionable agricultural guidance from reviewed knowledge.",
+        "longDesc": "Use this Resource with an agricultural topic and optional governed subject. A returned result uses the same KnowledgeAdvisory type with Direct information mode."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+        "@type": "openagrinet:KnowledgeAdvisory",
+        "informationMode": "OnDemand",
+        "subjectCategories": [
+          "Crop",
+          "Livestock",
+          "Knowledge"
+        ],
+        "languages": [
+          "en",
+          "hi"
+        ],
+        "topics": [
+          "Crop establishment",
+          "Nutrient management",
+          "Pest management",
+          "Livestock management"
         ],
         "coverageAreas": [
           {
@@ -70,14 +114,12 @@
         "code": "MANDI_PRICE_OBSERVATION",
         "name": "Live mandi-price observation",
         "shortDesc": "Returns current commodity prices for supported agricultural markets.",
-        "longDesc": "Use this capability with a commodity, market, and applicable date. A successful result uses the OpenAgriNet MandiPriceObservation contract."
+        "longDesc": "Use this Resource with a commodity, market, and applicable date. A returned result uses the same MandiPrice type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/AgricultureCapability/v0.1/context.jsonld",
-        "@type": [
-          "openagrinet:AgricultureCapability",
-          "openagrinet:MandiPriceCapability"
-        ],
+        "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld",
+        "@type": "openagrinet:MandiPrice",
+        "informationMode": "OnDemand",
         "subjectCategories": [
           "Market"
         ],
@@ -85,6 +127,64 @@
           "en",
           "hi",
           "mr"
+        ],
+        "supportedCommodities": [
+          {
+            "code": "COTTON",
+            "name": "Cotton"
+          },
+          {
+            "code": "ONION",
+            "name": "Onion"
+          }
+        ],
+        "supportedPriceFields": [
+          "Minimum",
+          "Maximum",
+          "Modal"
+        ],
+        "historicalDataAvailable": true,
+        "historyPeriod": "P5Y",
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
+        ]
+      }
+    },
+    {
+      "id": "capability:agri-information-services:market-intelligence",
+      "descriptor": {
+        "code": "MARKET_INTELLIGENCE",
+        "name": "Market intelligence",
+        "shortDesc": "Returns price trends, demand forecasts, and nearby market opportunities.",
+        "longDesc": "Use this Resource with a commodity and applicable area. A returned result uses the same MarketIntelligence type with Direct information mode."
+      },
+      "resourceAttributes": {
+        "@context": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1/context.jsonld",
+        "@type": "openagrinet:MarketIntelligence",
+        "informationMode": "OnDemand",
+        "subjectCategories": [
+          "Market"
+        ],
+        "supportedCommodities": [
+          {
+            "code": "COTTON",
+            "name": "Cotton"
+          }
+        ],
+        "supportedInsightTypes": [
+          "PriceTrend",
+          "DemandForecast",
+          "MarketOpportunity"
+        ],
+        "historyPeriod": "P5Y",
+        "forecastHorizon": "P30D",
+        "languages": [
+          "en",
+          "hi"
         ],
         "coverageAreas": [
           {

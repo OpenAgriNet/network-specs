@@ -31,6 +31,7 @@
       "resourceAttributes": {
         "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
+        "informationMode": "Direct",
         "subjectCategories": [
           "Crop",
           "Livestock",
@@ -39,6 +40,9 @@
         "languages": [
           "en",
           "hi"
+        ],
+        "topics": [
+          "Farm safety"
         ],
         "coverageAreas": [
           {
@@ -91,6 +95,7 @@
       "resourceAttributes": {
         "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
+        "informationMode": "Direct",
         "subjectCategories": [
           "Crop",
           "Knowledge"
@@ -108,6 +113,9 @@
         "languages": [
           "en",
           "hi"
+        ],
+        "topics": [
+          "Kharif sowing"
         ],
         "coverageAreas": [
           {

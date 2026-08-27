@@ -7,8 +7,9 @@
     "longDesc": "This Resource was produced after invoking the discovered mandi-price capability for red onion at Lasalgaon APMC."
   },
   "resourceAttributes": {
-    "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld",
-    "@type": "openagrinet:MandiPriceObservation",
+    "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld",
+    "@type": "openagrinet:MandiPrice",
+    "informationMode": "Direct",
     "subjectCategories": [
       "Market"
     ],

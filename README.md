@@ -4,7 +4,7 @@ Status: Proposed for review
 
 ## Purpose
 
-This repository contains the versioned OpenAgriNet domain contracts used to describe agricultural capabilities and resources in Beckn catalogs and Provider responses.
+This repository contains the versioned OpenAgriNet domain contracts used to describe agricultural information in Beckn catalogs, Discovery results, and Provider responses.
 
 The contracts add agriculture-specific fields to Beckn `Resource.resourceAttributes`. Beckn continues to define Catalog, Provider, Resource identity, Resource descriptor, and protocol envelopes. Registry records, onboarding APIs, transport, signatures, authentication, deployment, and network federation remain separate specifications.
 
@@ -56,9 +56,9 @@ OAN does not redefine the Beckn objects that carry its domain attributes. The li
 
 The schema packs are composable field sets. A selected contract uses JSON Schema `allOf` to validate one `resourceAttributes` object against every referenced field set. Pack relationships are composition-only.
 
-For example, the effective `WeatherAdvisory` contract combines agriculture fields, capability fields, advisory fields, and weather-advisory fields. This composition does not make one runtime object a child of another, and it does not require an intermediate Domain payload.
+For example, the effective `WeatherAdvisory` contract combines the shared Agriculture Resource fields with Weather Advisory fields. This composition does not make one runtime object a child of another, and it does not require an intermediate Domain payload.
 
-Specific capability types select governed invocation profiles. A Provider advertises a capability using the applicable OAN type; the profile defines its expected invocation and outcome semantics. Provider catalog entries do not repeat contract references.
+Each domain pack supports `OnDemand` and `Direct` information. An `OnDemand` Resource describes information that requires a Provider invocation. A `Direct` Resource contains or directly references specific information. The mode does not indicate freshness; timestamps and validity express when the information applies.
 
 ## Canonical identifiers
 
