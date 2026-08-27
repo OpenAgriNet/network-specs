@@ -5,8 +5,13 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["WeatherObservation"],
+  "discovery_fields": ["informationMode", "supportedObservationTypes", "supportedParameters", "forecastHorizon", "geographicGranularities", "coverageAreas"],
   "result_fields": ["observationType", "parameters[].parameter", "location", "generatedAt", "validity"],
   "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedObservationTypes",
+    "beckn:resourceAttributes.supportedParameters",
+    "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.observationType",
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
@@ -14,6 +19,10 @@
     "beckn:resourceAttributes.generatedAt"
   ],
   "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedObservationTypes",
+    "beckn:resourceAttributes.supportedParameters",
+    "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.observationType",
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",

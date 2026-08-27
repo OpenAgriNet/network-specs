@@ -1,5 +1,6 @@
 {
   "@type": "openagrinet:WeatherObservation",
+  "informationMode": "Direct",
   "subjectCategories": [
     "Weather"
   ],

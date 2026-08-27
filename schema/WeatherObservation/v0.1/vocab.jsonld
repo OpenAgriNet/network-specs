@@ -10,6 +10,11 @@
       "rdfs:label": "Weather Observation",
       "rdfs:comment": "Measured or forecast weather information used in agriculture."
     },
+    { "@id": "openagrinet:supportedObservationTypes", "@type": "rdfs:Property", "rdfs:label": "supported observation types" },
+    { "@id": "openagrinet:supportedParameters", "@type": "rdfs:Property", "rdfs:label": "supported parameters" },
+    { "@id": "openagrinet:forecastHorizon", "@type": "rdfs:Property", "rdfs:label": "forecast horizon" },
+    { "@id": "openagrinet:updateFrequency", "@type": "rdfs:Property", "rdfs:label": "update frequency" },
+    { "@id": "openagrinet:geographicGranularities", "@type": "rdfs:Property", "rdfs:label": "geographic granularities" },
     { "@id": "openagrinet:observationType", "@type": "rdfs:Property", "rdfs:label": "observation type" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
     { "@id": "openagrinet:location", "@type": "rdfs:Property", "rdfs:label": "location" },

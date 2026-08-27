@@ -1,6 +1,7 @@
 {
   "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherObservation",
+  "informationMode": "Direct",
   "subjectCategories": [
     "Weather"
   ],

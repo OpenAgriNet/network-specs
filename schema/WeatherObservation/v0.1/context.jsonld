@@ -5,6 +5,20 @@
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "WeatherObservation": "openagrinet:WeatherObservation",
+      "supportedObservationTypes": {
+        "@id": "openagrinet:supportedObservationTypes",
+        "@container": "@set"
+      },
+      "supportedParameters": {
+        "@id": "openagrinet:supportedParameters",
+        "@container": "@set"
+      },
+      "forecastHorizon": "openagrinet:forecastHorizon",
+      "updateFrequency": "openagrinet:updateFrequency",
+      "geographicGranularities": {
+        "@id": "openagrinet:geographicGranularities",
+        "@container": "@set"
+      },
       "observationType": "openagrinet:observationType",
       "source": "openagrinet:source",
       "location": "openagrinet:location",
