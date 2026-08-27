@@ -1,0 +1,8 @@
+{
+  "schema": "MarketIntelligence",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} market intelligence | {{commodity.name}} | {{generatedAt}}",
+  "detail_template": "Mode: {{informationMode}}\nSupported insights: {{supportedInsightTypes}}\nCommodity: {{commodity.name}}\nGenerated: {{generatedAt}}\nInsights: {{insights}}",
+  "html": "<div class=\"oan-market-intelligence\"><strong>{{informationMode}} market intelligence</strong><span>{{commodity.name}} · {{generatedAt}}</span></div>",
+  "html_detail": "<div class=\"oan-market-intelligence-detail\"><p><strong>Mode:</strong> {{informationMode}}</p><p><strong>Commodity:</strong> {{commodity.name}}</p><p><strong>Generated:</strong> {{generatedAt}}</p><p><strong>Insights:</strong> {{insights}}</p></div>"
+}

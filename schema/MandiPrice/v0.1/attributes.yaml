@@ -1,25 +1,60 @@
 openapi: 3.1.1
 info:
-  title: OpenAgriNet - Mandi Price Observation Attributes
+  title: OpenAgriNet - Mandi Price Attributes
   version: 0.1.0
   description: >
-    Attributes for a normalized commodity price observation at a mandi.
-    Combines with AgricultureResource through allOf and attaches through
-    resourceAttributes.
+    Attributes for mandi prices that may be obtained on demand or supplied
+    directly. Combines with AgricultureResource through allOf and attaches
+    through resourceAttributes.
 
 components:
   schemas:
-    MandiPriceObservation:
+    MandiPrice:
       type: object
       x-beckn-container: resourceAttributes
       x-jsonld:
-        "@context": "https://schemas.openagrinet.global/schema/MandiPriceObservation/v0.1/context.jsonld"
-        "@type": openagrinet:MandiPriceObservation
+        "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld"
+        "@type": openagrinet:MandiPrice
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
         - type: object
-          required: [source, commodity, market, arrivalDate, prices, generatedAt]
+          required: ["@type"]
           properties:
+            "@type":
+              type: string
+              const: openagrinet:MandiPrice
+              description: Canonical OAN type for this schema pack.
+            supportedCommodities:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Commodities for which the Provider can supply prices on demand.
+              items:
+                $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+              x-jsonld-id: "openagrinet:supportedCommodities"
+            supportedPriceFields:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Price values the Provider can return on demand.
+              items:
+                type: string
+                enum: [Minimum, Maximum, Modal]
+              x-jsonld-id: "openagrinet:supportedPriceFields"
+            historicalDataAvailable:
+              type: boolean
+              description: Whether historical price records can be requested.
+              x-jsonld-id: "openagrinet:historicalDataAvailable"
+            historyPeriod:
+              type: string
+              format: duration
+              description: Maximum available historical period expressed as an ISO 8601 duration.
+              x-jsonld-id: "openagrinet:historyPeriod"
+            updateFrequency:
+              type: string
+              format: duration
+              description: Expected refresh interval for current prices.
+              x-jsonld-id: "openagrinet:updateFrequency"
             source:
               allOf:
                 - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
@@ -117,3 +152,24 @@ components:
               format: date-time
               description: Time at which the normalized observation was produced.
               x-jsonld-id: "openagrinet:generatedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which a current price snapshot should be treated as applicable.
+              x-jsonld-id: "openagrinet:validity"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [supportedCommodities, supportedPriceFields]
+            not:
+              required: [prices]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [source, commodity, market, arrivalDate, prices, generatedAt]

@@ -1,0 +1,8 @@
+{
+  "schema": "MandiPrice",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{commodity.name}} | {{market.marketName}} | {{prices.modal}} {{prices.currency}}/{{prices.unit}}",
+  "detail_template": "Mode: {{informationMode}}\nSupported commodities: {{supportedCommodities}}\nCommodity: {{commodity.name}}\nMarket: {{market.marketName}}\nArrival date: {{arrivalDate}}\nMinimum: {{prices.minimum}}\nMaximum: {{prices.maximum}}\nModal: {{prices.modal}} {{prices.currency}}/{{prices.unit}}",
+  "html": "<div class=\"oan-mandi-price\"><strong>{{informationMode}}</strong><span>{{commodity.name}} · {{market.marketName}} · {{prices.modal}} {{prices.currency}}/{{prices.unit}}</span></div>",
+  "html_detail": "<div class=\"oan-mandi-price-detail\"><p><strong>Mode:</strong> {{informationMode}}</p><p><strong>Supported commodities:</strong> {{supportedCommodities}}</p><p><strong>Market:</strong> {{market.marketName}}</p><p><strong>Arrival date:</strong> {{arrivalDate}}</p><p><strong>Price range:</strong> {{prices.minimum}}-{{prices.maximum}} {{prices.currency}}/{{prices.unit}}</p></div>"
+}

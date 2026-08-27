@@ -1,0 +1,34 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "MarketIntelligence": "openagrinet:MarketIntelligence",
+      "supportedCommodities": { "@id": "openagrinet:supportedCommodities", "@container": "@set" },
+      "supportedInsightTypes": { "@id": "openagrinet:supportedInsightTypes", "@container": "@set" },
+      "historyPeriod": "openagrinet:historyPeriod",
+      "forecastHorizon": "openagrinet:forecastHorizon",
+      "commodity": "openagrinet:commodity",
+      "generatedAt": "openagrinet:generatedAt",
+      "validity": "openagrinet:validity",
+      "insights": { "@id": "openagrinet:insights", "@container": "@set" },
+      "insightType": "openagrinet:insightType",
+      "summary": "openagrinet:summary",
+      "market": "openagrinet:market",
+      "marketCode": "openagrinet:marketCode",
+      "marketName": "openagrinet:marketName",
+      "district": "openagrinet:district",
+      "state": "openagrinet:state",
+      "location": "openagrinet:location",
+      "period": "openagrinet:period",
+      "indicator": "openagrinet:indicator",
+      "name": "openagrinet:indicatorName",
+      "value": "openagrinet:indicatorValue",
+      "unit": "openagrinet:unit",
+      "distance": "openagrinet:distance",
+      "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },
+      "source": "openagrinet:source"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1/context.jsonld",
+  "@type": "openagrinet:MarketIntelligence",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Market"
+  ],
+  "supportedCommodities": [
+    {
+      "code": "COTTON",
+      "name": "Cotton"
+    },
+    {
+      "code": "PADDY",
+      "name": "Paddy"
+    }
+  ],
+  "supportedInsightTypes": [
+    "PriceTrend",
+    "DemandForecast",
+    "MarketOpportunity"
+  ],
+  "historyPeriod": "P5Y",
+  "forecastHorizon": "P30D",
+  "languages": [
+    "en",
+    "hi",
+    "te"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-2",
+      "areaCode": "IN-TS",
+      "areaLevel": "State",
+      "areaName": "Telangana"
+    }
+  ]
+}

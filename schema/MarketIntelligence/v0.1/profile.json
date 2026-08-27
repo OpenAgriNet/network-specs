@@ -1,0 +1,28 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1",
+  "name": "Market Intelligence Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["MarketIntelligence"],
+  "discovery_fields": ["informationMode", "supportedCommodities", "supportedInsightTypes", "historyPeriod", "forecastHorizon", "languages", "coverageAreas"],
+  "result_fields": ["commodity", "generatedAt", "validity", "insights", "source"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedCommodities.code",
+    "beckn:resourceAttributes.supportedInsightTypes",
+    "beckn:resourceAttributes.commodity.code",
+    "beckn:resourceAttributes.generatedAt",
+    "beckn:resourceAttributes.insights.insightType",
+    "beckn:resourceAttributes.insights.market.marketCode"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedCommodities.code",
+    "beckn:resourceAttributes.supportedInsightTypes",
+    "beckn:resourceAttributes.commodity.code",
+    "beckn:resourceAttributes.insights.insightType"
+  ],
+  "sortable_paths": ["beckn:resourceAttributes.generatedAt"],
+  "privacy_notes": []
+}

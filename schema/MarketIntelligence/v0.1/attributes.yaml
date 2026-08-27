@@ -1,0 +1,204 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Market Intelligence Attributes
+  version: 0.1.0
+  description: >
+    Price trends, demand forecasts, and nearby market opportunities that may be
+    obtained on demand or supplied directly. Combines with AgricultureResource
+    through allOf and attaches through resourceAttributes.
+
+components:
+  schemas:
+    MarketIntelligence:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1/context.jsonld"
+        "@type": openagrinet:MarketIntelligence
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: ["@type"]
+          properties:
+            "@type":
+              type: string
+              const: openagrinet:MarketIntelligence
+              description: Canonical OAN type for this schema pack.
+            supportedCommodities:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Commodities for which the Provider can supply market intelligence on demand.
+              items:
+                $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+              x-jsonld-id: "openagrinet:supportedCommodities"
+            supportedInsightTypes:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Market-intelligence categories the Provider can supply on demand.
+              items:
+                type: string
+                enum: [PriceTrend, DemandForecast, MarketOpportunity]
+              x-jsonld-id: "openagrinet:supportedInsightTypes"
+            historyPeriod:
+              type: string
+              format: duration
+              description: Maximum historical period available for analysis, expressed as an ISO 8601 duration.
+              x-jsonld-id: "openagrinet:historyPeriod"
+            forecastHorizon:
+              type: string
+              format: duration
+              description: Maximum demand-forecast horizon, expressed as an ISO 8601 duration.
+              x-jsonld-id: "openagrinet:forecastHorizon"
+            commodity:
+              allOf:
+                - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+              description: Commodity to which the intelligence applies.
+              x-jsonld-id: "openagrinet:commodity"
+            generatedAt:
+              type: string
+              format: date-time
+              description: Time at which the Provider generated the intelligence.
+              x-jsonld-id: "openagrinet:generatedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which the intelligence should be treated as applicable.
+              x-jsonld-id: "openagrinet:validity"
+            insights:
+              type: array
+              minItems: 1
+              description: Price-trend, demand-forecast, or market-opportunity information.
+              items:
+                $ref: "#/components/schemas/MarketInsight"
+              x-jsonld-id: "openagrinet:insights"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Provider or authoritative source that generated the intelligence.
+              x-jsonld-id: "openagrinet:source"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [supportedCommodities, supportedInsightTypes, languages]
+            not:
+              required: [insights]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [commodity, generatedAt, insights, source]
+
+    MarketInsight:
+      type: object
+      required: [insightType, summary]
+      properties:
+        insightType:
+          type: string
+          enum: [PriceTrend, DemandForecast, MarketOpportunity]
+          description: Category of market intelligence represented by this item.
+          x-jsonld-id: "openagrinet:insightType"
+        summary:
+          type: string
+          minLength: 1
+          description: Provider-supplied explanation of the insight.
+          x-jsonld-id: "openagrinet:summary"
+        market:
+          $ref: "#/components/schemas/MarketReference"
+          description: Market associated with the insight when applicable.
+          x-jsonld-id: "openagrinet:market"
+        period:
+          allOf:
+            - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+          description: Historical or forecast period represented by the insight.
+          x-jsonld-id: "openagrinet:period"
+        indicator:
+          $ref: "#/components/schemas/Indicator"
+          description: Optional quantitative or qualitative indicator supplied by the Provider.
+          x-jsonld-id: "openagrinet:indicator"
+        distance:
+          $ref: "#/components/schemas/Measure"
+          description: Distance to a market opportunity when applicable.
+          x-jsonld-id: "openagrinet:distance"
+        supportingResourceIds:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Beckn Resource identifiers of supporting MandiPrice or other market information.
+          items:
+            type: string
+            minLength: 1
+          x-jsonld-id: "openagrinet:supportingResourceIds"
+      additionalProperties: false
+
+    MarketReference:
+      type: object
+      required: [marketName]
+      description: Governed market or APMC reference.
+      properties:
+        marketCode:
+          type: string
+          minLength: 1
+          x-jsonld-id: "openagrinet:marketCode"
+        marketName:
+          type: string
+          minLength: 1
+          x-jsonld-id: "openagrinet:marketName"
+        district:
+          type: string
+          minLength: 1
+          x-jsonld-id: "openagrinet:district"
+        state:
+          type: string
+          minLength: 1
+          x-jsonld-id: "openagrinet:state"
+        location:
+          allOf:
+            - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+          description: GeoJSON location of the market when available.
+          x-jsonld-id: "openagrinet:location"
+      additionalProperties: false
+
+    Indicator:
+      type: object
+      required: [name, value]
+      description: Provider-defined quantitative or qualitative market indicator.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Provider-defined indicator name.
+          x-jsonld-id: "openagrinet:indicatorName"
+        value:
+          oneOf:
+            - type: number
+            - type: string
+              minLength: 1
+          description: Indicator value.
+          x-jsonld-id: "openagrinet:indicatorValue"
+        unit:
+          type: string
+          minLength: 1
+          description: Unit for a quantitative indicator when applicable.
+          x-jsonld-id: "openagrinet:unit"
+      additionalProperties: false
+
+    Measure:
+      type: object
+      required: [value, unit]
+      properties:
+        value:
+          type: number
+          minimum: 0
+          x-jsonld-id: "openagrinet:value"
+        unit:
+          type: string
+          minLength: 1
+          x-jsonld-id: "openagrinet:unit"
+      additionalProperties: false

@@ -4,7 +4,18 @@
     {
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
-      "MandiPriceObservation": "openagrinet:MandiPriceObservation",
+      "MandiPrice": "openagrinet:MandiPrice",
+      "supportedCommodities": {
+        "@id": "openagrinet:supportedCommodities",
+        "@container": "@set"
+      },
+      "supportedPriceFields": {
+        "@id": "openagrinet:supportedPriceFields",
+        "@container": "@set"
+      },
+      "historicalDataAvailable": "openagrinet:historicalDataAvailable",
+      "historyPeriod": "openagrinet:historyPeriod",
+      "updateFrequency": "openagrinet:updateFrequency",
       "source": "openagrinet:source",
       "commodity": "openagrinet:commodity",
       "commodityGroup": "openagrinet:commodityGroup",
@@ -23,7 +34,8 @@
       "modal": "openagrinet:modalPrice",
       "currency": "openagrinet:currency",
       "unit": "openagrinet:unit",
-      "generatedAt": "openagrinet:generatedAt"
+      "generatedAt": "openagrinet:generatedAt",
+      "validity": "openagrinet:validity"
     }
   ]
 }
