@@ -1,12 +1,16 @@
 {
   "id": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1",
-  "name": "Weather Advisory Outcome Attributes",
+  "name": "Weather Advisory Attributes",
   "version": "0.1.0",
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["WeatherAdvisory"],
+  "discovery_fields": ["informationMode", "topics", "supportedWeatherParameters", "forecastHorizon", "geographicGranularities", "coverageAreas"],
   "result_fields": ["topics", "subjectCategories", "agricultureSubjects", "location", "issuedAt", "validity", "recommendations", "weatherBasis", "source"],
   "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedWeatherParameters",
+    "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
@@ -15,6 +19,9 @@
     "beckn:resourceAttributes.validity.endsAt"
   ],
   "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedWeatherParameters",
+    "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",

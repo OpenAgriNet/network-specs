@@ -15,6 +15,10 @@
       "@type": "rdfs:Property",
       "rdfs:label": "topics"
     },
+    { "@id": "openagrinet:supportedWeatherParameters", "@type": "rdfs:Property", "rdfs:label": "supported weather parameters" },
+    { "@id": "openagrinet:forecastHorizon", "@type": "rdfs:Property", "rdfs:label": "forecast horizon" },
+    { "@id": "openagrinet:updateFrequency", "@type": "rdfs:Property", "rdfs:label": "update frequency" },
+    { "@id": "openagrinet:geographicGranularities", "@type": "rdfs:Property", "rdfs:label": "geographic granularities" },
     {
       "@id": "openagrinet:location",
       "@type": "rdfs:Property",

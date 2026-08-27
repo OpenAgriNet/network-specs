@@ -1,8 +1,8 @@
 {
   "schema": "WeatherAdvisory",
   "version": "0.1.0",
-  "card_template": "Weather advisory | {{topics}} | {{issuedAt}}",
-  "detail_template": "Topics: {{topics}}\nLocation: {{location}}\nIssued: {{issuedAt}}\nValid: {{validity}}\nRecommendations: {{recommendations}}",
-  "html": "<div class=\"oan-weather-advisory\"><strong>Weather advisory</strong><span>{{topics}} · {{issuedAt}}</span></div>",
-  "html_detail": "<div class=\"oan-weather-advisory-detail\"><p><strong>Topics:</strong> {{topics}}</p><p><strong>Location:</strong> {{location}}</p><p><strong>Validity:</strong> {{validity}}</p><p><strong>Recommendations:</strong> {{recommendations}}</p></div>"
+  "card_template": "{{informationMode}} weather advisory | {{topics}} | {{issuedAt}}",
+  "detail_template": "Mode: {{informationMode}}\nTopics: {{topics}}\nSupported parameters: {{supportedWeatherParameters}}\nLocation: {{location}}\nIssued: {{issuedAt}}\nValid: {{validity}}\nRecommendations: {{recommendations}}",
+  "html": "<div class=\"oan-weather-advisory\"><strong>{{informationMode}} weather advisory</strong><span>{{topics}} · {{issuedAt}}</span></div>",
+  "html_detail": "<div class=\"oan-weather-advisory-detail\"><p><strong>Mode:</strong> {{informationMode}}</p><p><strong>Topics:</strong> {{topics}}</p><p><strong>Supported parameters:</strong> {{supportedWeatherParameters}}</p><p><strong>Location:</strong> {{location}}</p><p><strong>Validity:</strong> {{validity}}</p><p><strong>Recommendations:</strong> {{recommendations}}</p></div>"
 }

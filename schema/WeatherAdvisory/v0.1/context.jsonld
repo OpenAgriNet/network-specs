@@ -9,6 +9,16 @@
         "@id": "openagrinet:topics",
         "@container": "@set"
       },
+      "supportedWeatherParameters": {
+        "@id": "openagrinet:supportedWeatherParameters",
+        "@container": "@set"
+      },
+      "forecastHorizon": "openagrinet:forecastHorizon",
+      "updateFrequency": "openagrinet:updateFrequency",
+      "geographicGranularities": {
+        "@id": "openagrinet:geographicGranularities",
+        "@container": "@set"
+      },
       "location": "openagrinet:location",
       "issuedAt": "openagrinet:issuedAt",
       "validity": "openagrinet:validity",

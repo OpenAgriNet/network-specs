@@ -1,6 +1,7 @@
 {
   "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherAdvisory",
+  "informationMode": "Direct",
   "subjectCategories": ["Crop", "Weather"],
   "languages": ["en"],
   "topics": ["Spraying"],
