@@ -5,8 +5,9 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["AgricultureResource"],
-  "discovery_fields": ["subjectCategories", "agricultureSubjects", "languages", "coverageAreas"],
+  "discovery_fields": ["informationMode", "subjectCategories", "agricultureSubjects", "languages", "coverageAreas"],
   "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
     "beckn:resourceAttributes.agricultureSubjects.subjectType",
@@ -21,6 +22,7 @@
     "beckn:resourceAttributes.coverageAreas.coordinates"
   ],
   "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
     "beckn:resourceAttributes.agricultureSubjects.subjectType",

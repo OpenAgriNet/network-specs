@@ -7,6 +7,7 @@
       "beckn": "https://schema.beckn.io/",
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "AgricultureResource": "openagrinet:AgricultureResource",
+      "informationMode": "openagrinet:informationMode",
       "subjectCategories": {
         "@id": "openagrinet:subjectCategories",
         "@container": "@set"

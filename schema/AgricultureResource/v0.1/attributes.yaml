@@ -3,8 +3,8 @@ info:
   title: OpenAgriNet - Agriculture Resource Attributes
   version: 0.1.0
   description: >
-    Shared agriculture attributes for resources and capabilities published on
-    OpenAgriNet. Attaches to beckn:Resource through resourceAttributes.
+    Shared agriculture attributes for information published on OpenAgriNet.
+    Attaches to beckn:Resource through resourceAttributes.
 
 components:
   schemas:
@@ -14,8 +14,13 @@ components:
       x-jsonld:
         "@context": "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld"
         "@type": openagrinet:AgricultureResource
-      required: [subjectCategories]
+      required: [informationMode, subjectCategories]
       properties:
+        informationMode:
+          type: string
+          enum: [OnDemand, Direct]
+          description: Whether obtaining specific information requires a Provider invocation or the Resource already contains or directly references that information.
+          x-jsonld-id: "openagrinet:informationMode"
         subjectCategories:
           type: array
           minItems: 1

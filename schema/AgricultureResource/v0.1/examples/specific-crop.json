@@ -1,5 +1,6 @@
 {
   "@type": "openagrinet:AgricultureResource",
+  "informationMode": "Direct",
   "subjectCategories": [
     "Crop",
     "Knowledge"

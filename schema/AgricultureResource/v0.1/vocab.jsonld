@@ -11,6 +11,12 @@
       "rdfs:comment": "Shared agriculture attributes attached to a Beckn Resource."
     },
     {
+      "@id": "openagrinet:informationMode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "information mode",
+      "rdfs:comment": "Whether obtaining specific information requires a Provider invocation or the Resource already contains or directly references that information."
+    },
+    {
       "@id": "openagrinet:subjectCategories",
       "@type": "rdfs:Property",
       "rdfs:label": "subject categories",

@@ -4,7 +4,7 @@ Status: Proposed for review
 
 ## Purpose
 
-Agriculture Resource defines the shared agriculture fields used by OAN capability and outcome contracts. It adds broad agriculture categories, optional governed subject references, language, and geographic applicability to a Beckn Resource.
+Agriculture Resource defines the shared agriculture fields used by OAN domain information contracts. It identifies whether information is obtained on demand or is directly available, then adds broad agriculture categories, optional governed subject references, language, and geographic applicability to a Beckn Resource.
 
 ## Attachment point
 
@@ -18,6 +18,7 @@ This pack declares the shared agriculture field set. Other selected contracts re
 
 | Field | Purpose |
 |---|---|
+| `informationMode` | Uses `OnDemand` when a Provider invocation is required and `Direct` when the Resource contains or directly references specific information |
 | `subjectCategories` | Classifies the Resource using broad categories such as crop, weather, or market |
 | `agricultureSubjects` | Optionally identifies governed subjects such as Cotton, Rice, or a commodity; absence means broad applicability within the declared categories |
 | `languages` | Declares supported or available BCP 47 languages |
@@ -27,7 +28,7 @@ An administrative area reference carries a code system such as ISO 3166, LGD, or
 
 ## Non-goals
 
-This pack does not identify a Provider, define a Catalog, carry a protocol envelope, or establish a runtime Domain object.
+This pack does not identify a Provider, define a Catalog, carry a protocol envelope, or define how fresh the information is. Freshness is expressed by the selected domain pack through timestamps and validity.
 
 ## Examples
 

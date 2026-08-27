@@ -1,4 +1,5 @@
 {
+  "informationMode": "OnDemand",
   "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisoryCapability/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherAdvisoryCapability",
   "subjectCategories": [
