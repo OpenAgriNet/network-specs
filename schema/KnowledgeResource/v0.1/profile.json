@@ -5,8 +5,11 @@
   "protocol_version": "2.0",
   "semantic_model": "generalised",
   "included_schemas": ["KnowledgeResource"],
-  "discovery_fields": ["knowledgeType", "subjectCategories", "agricultureSubjects", "languages", "coverageAreas", "lifecycleStatus"],
+  "discovery_fields": ["informationMode", "topics", "supportedKnowledgeTypes", "knowledgeType", "subjectCategories", "agricultureSubjects", "languages", "coverageAreas", "lifecycleStatus"],
   "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.supportedKnowledgeTypes",
     "beckn:resourceAttributes.knowledgeType",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",
@@ -23,6 +26,9 @@
     "beckn:resourceAttributes.provenance.source.sourceId"
   ],
   "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.supportedKnowledgeTypes",
     "beckn:resourceAttributes.knowledgeType",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects.subjectId",

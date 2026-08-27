@@ -8,8 +8,11 @@
       "@id": "openagrinet:KnowledgeResource",
       "@type": "rdfs:Class",
       "rdfs:label": "Knowledge Resource",
-      "rdfs:comment": "A reusable and versioned unit of agricultural knowledge."
+      "rdfs:comment": "Agricultural knowledge that may be obtained on demand or supplied directly."
     },
+    { "@id": "openagrinet:topics", "@type": "rdfs:Property", "rdfs:label": "topics" },
+    { "@id": "openagrinet:supportedKnowledgeTypes", "@type": "rdfs:Property", "rdfs:label": "supported knowledge types" },
+    { "@id": "openagrinet:supportedMediaTypes", "@type": "rdfs:Property", "rdfs:label": "supported media types" },
     { "@id": "openagrinet:knowledgeType", "@type": "rdfs:Property", "rdfs:label": "knowledge type" },
     { "@id": "openagrinet:version", "@type": "rdfs:Property", "rdfs:label": "version" },
     { "@id": "openagrinet:lifecycleStatus", "@type": "rdfs:Property", "rdfs:label": "lifecycle status" },

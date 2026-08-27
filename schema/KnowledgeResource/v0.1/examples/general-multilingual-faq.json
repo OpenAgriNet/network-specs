@@ -1,6 +1,7 @@
 {
   "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
   "@type": "openagrinet:KnowledgeResource",
+  "informationMode": "Direct",
   "subjectCategories": [
     "Crop",
     "Livestock",
@@ -9,6 +10,9 @@
   "languages": [
     "en",
     "hi"
+  ],
+  "topics": [
+    "Farm machinery safety"
   ],
   "coverageAreas": [
     {

@@ -3,9 +3,9 @@ info:
   title: OpenAgriNet - Knowledge Resource Attributes
   version: 0.1.0
   description: >
-    Attributes for a reusable and versioned unit of agricultural knowledge.
-    Combines with AgricultureResource through allOf and attaches through
-    resourceAttributes.
+    Attributes for agricultural knowledge that may be obtained on demand or
+    supplied directly. Combines with AgricultureResource through allOf and
+    attaches through resourceAttributes.
 
 components:
   schemas:
@@ -18,8 +18,39 @@ components:
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
         - type: object
-          required: [knowledgeType, languages, version, lifecycleStatus, content, provenance]
+          required: ["@type"]
           properties:
+            "@type":
+              type: string
+              const: openagrinet:KnowledgeResource
+              description: Canonical OAN type for this schema pack.
+            topics:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Knowledge topics used for discovery and matching.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"
+            supportedKnowledgeTypes:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Semantic kinds of knowledge the Provider can supply on demand.
+              items:
+                type: string
+                enum: [Article, FAQ, Guide, Dataset, TrainingMaterial, Reference]
+              x-jsonld-id: "openagrinet:supportedKnowledgeTypes"
+            supportedMediaTypes:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: IANA media types the Provider can return on demand.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:supportedMediaTypes"
             knowledgeType:
               type: string
               enum: [Article, FAQ, Guide, Dataset, TrainingMaterial, Reference]
@@ -112,3 +143,19 @@ components:
               minLength: 1
               description: Identifier of the knowledge Resource version replaced by this one.
               x-jsonld-id: "openagrinet:supersedes"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [topics, languages, supportedKnowledgeTypes]
+            not:
+              required: [content]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [topics, languages, knowledgeType, version, lifecycleStatus, content, provenance]

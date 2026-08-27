@@ -5,6 +5,18 @@
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "KnowledgeResource": "openagrinet:KnowledgeResource",
+      "topics": {
+        "@id": "openagrinet:topics",
+        "@container": "@set"
+      },
+      "supportedKnowledgeTypes": {
+        "@id": "openagrinet:supportedKnowledgeTypes",
+        "@container": "@set"
+      },
+      "supportedMediaTypes": {
+        "@id": "openagrinet:supportedMediaTypes",
+        "@container": "@set"
+      },
       "knowledgeType": "openagrinet:knowledgeType",
       "version": "openagrinet:version",
       "lifecycleStatus": "openagrinet:lifecycleStatus",
