@@ -1,0 +1,110 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Knowledge Advisory Attributes
+  version: 0.1.0
+  description: >
+    Actionable agricultural guidance based on knowledge that may be obtained on
+    demand or supplied directly. Combines with AgricultureResource through
+    allOf and attaches through resourceAttributes.
+
+components:
+  schemas:
+    KnowledgeAdvisory:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld"
+        "@type": openagrinet:KnowledgeAdvisory
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - type: object
+          required: ["@type"]
+          properties:
+            "@type":
+              type: string
+              const: openagrinet:KnowledgeAdvisory
+              description: Canonical OAN type for this schema pack.
+            topics:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Advisory topics used for discovery and matching.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"
+            issuedAt:
+              type: string
+              format: date-time
+              description: Time at which the Provider issued the advisory.
+              x-jsonld-id: "openagrinet:issuedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which the advisory applies, when time-bounded.
+              x-jsonld-id: "openagrinet:validity"
+            recommendations:
+              type: array
+              minItems: 1
+              description: Actions or guidance issued by the Provider.
+              items:
+                type: object
+                required: [message, language]
+                properties:
+                  action:
+                    type: string
+                    minLength: 1
+                    description: Concise recommended action when one applies.
+                    x-jsonld-id: "openagrinet:action"
+                  message:
+                    type: string
+                    minLength: 1
+                    description: Human-readable guidance.
+                    x-jsonld-id: "openagrinet:message"
+                  language:
+                    type: string
+                    minLength: 2
+                    description: BCP 47 language tag of the guidance.
+                    x-jsonld-id: "openagrinet:language"
+                  priority:
+                    type: string
+                    enum: [Low, Normal, High, Critical]
+                    description: Relative urgency assigned by the Provider.
+                    x-jsonld-id: "openagrinet:priority"
+                additionalProperties: false
+              x-jsonld-id: "openagrinet:recommendations"
+            supportingResourceIds:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Beckn Resource identifiers of supporting KnowledgeResource information when available.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:supportingResourceIds"
+            rationale:
+              type: string
+              minLength: 1
+              description: Concise explanation of how the Provider reached the recommendation.
+              x-jsonld-id: "openagrinet:rationale"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Provider or authoritative source that issued the advisory.
+              x-jsonld-id: "openagrinet:source"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [topics, languages]
+            not:
+              required: [recommendations]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [topics, issuedAt, recommendations, source]

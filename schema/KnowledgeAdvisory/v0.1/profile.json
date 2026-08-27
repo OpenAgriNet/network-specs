@@ -1,0 +1,33 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1",
+  "name": "Knowledge Advisory Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["KnowledgeAdvisory"],
+  "discovery_fields": ["informationMode", "topics", "subjectCategories", "agricultureSubjects", "languages", "coverageAreas", "issuedAt", "validity"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects.subjectType",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas.codeScheme",
+    "beckn:resourceAttributes.coverageAreas.areaCode",
+    "beckn:resourceAttributes.coverageAreas.type",
+    "beckn:resourceAttributes.issuedAt",
+    "beckn:resourceAttributes.validity.startsAt",
+    "beckn:resourceAttributes.validity.endsAt"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas.areaCode"
+  ],
+  "sortable_paths": ["beckn:resourceAttributes.issuedAt"],
+  "privacy_notes": []
+}

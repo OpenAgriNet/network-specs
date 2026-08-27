@@ -1,0 +1,21 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "KnowledgeAdvisory": "openagrinet:KnowledgeAdvisory",
+      "topics": { "@id": "openagrinet:topics", "@container": "@set" },
+      "issuedAt": "openagrinet:issuedAt",
+      "validity": "openagrinet:validity",
+      "recommendations": { "@id": "openagrinet:recommendations", "@container": "@set" },
+      "action": "openagrinet:action",
+      "message": "openagrinet:message",
+      "language": "openagrinet:language",
+      "priority": "openagrinet:priority",
+      "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },
+      "rationale": "openagrinet:rationale",
+      "source": "openagrinet:source"
+    }
+  ]
+}

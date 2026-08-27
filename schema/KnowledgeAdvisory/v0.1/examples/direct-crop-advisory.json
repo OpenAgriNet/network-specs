@@ -1,0 +1,55 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeAdvisory",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Crop",
+    "Knowledge"
+  ],
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+      "subjectType": "Crop",
+      "descriptor": {
+        "code": "COTTON",
+        "name": "Cotton"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "topics": [
+    "Early-season cotton management"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-2",
+      "areaCode": "IN-MH",
+      "areaLevel": "State"
+    }
+  ],
+  "issuedAt": "2026-06-20T05:30:00Z",
+  "validity": {
+    "startsAt": "2026-06-20T05:30:00Z",
+    "endsAt": "2026-07-20T23:59:59Z"
+  },
+  "recommendations": [
+    {
+      "action": "Inspect seedlings",
+      "message": "Inspect the field twice each week during establishment and replace failed seedlings promptly.",
+      "language": "en",
+      "priority": "Normal"
+    }
+  ],
+  "supportingResourceIds": [
+    "resource:knowledge:cotton-establishment-guide:1.0.0"
+  ],
+  "rationale": "The recommendation follows the reviewed cotton establishment guide for the applicable growing period.",
+  "source": {
+    "sourceId": "participant:agriculture-knowledge-provider",
+    "sourceName": "Agriculture Knowledge Provider",
+    "sourceUri": "https://knowledge.example.org"
+  }
+}

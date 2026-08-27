@@ -1,0 +1,35 @@
+{
+  "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeAdvisory",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Crop",
+    "Knowledge"
+  ],
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+      "subjectType": "Crop",
+      "descriptor": {
+        "code": "COTTON",
+        "name": "Cotton"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "topics": [
+    "Crop establishment",
+    "Nutrient management",
+    "Pest management"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country"
+    }
+  ]
+}
