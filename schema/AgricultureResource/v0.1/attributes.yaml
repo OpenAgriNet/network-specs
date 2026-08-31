@@ -28,7 +28,7 @@ components:
           description: Broad agriculture categories used to classify the Resource for discovery.
           items:
             type: string
-            enum: [Crop, Livestock, Weather, Market, Scheme, Knowledge]
+            enum: [Crop, Livestock, Weather, Market, Scheme, Knowledge, Service]
           x-jsonld-id: "openagrinet:subjectCategories"
         agricultureSubjects:
           type: array

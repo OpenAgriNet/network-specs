@@ -1,6 +1,6 @@
 # OpenAgriNet schema pack index
 
-This index lists the active OpenAgriNet domain contracts. Each contract is an independently selectable schema pack applied to Beckn `Resource.resourceAttributes`. The shared Agriculture Resource field set supplies `informationMode`, agriculture classification, language, and coverage to all six domain packs.
+This index lists the active OpenAgriNet domain contracts. Each contract is an independently selectable schema pack applied to Beckn `Resource.resourceAttributes`. The shared Agriculture Resource field set supplies `informationMode`, agriculture classification, language, and coverage to all seven domain packs.
 
 Read the [complete examples](examples/README.md) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
 
@@ -14,6 +14,7 @@ Read the [complete examples](examples/README.md) to see these packs composed ins
 | [Weather Observation](WeatherObservation/v0.1/README.md) | Weather observation or forecast | supported and actual weather parameters, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherObservation/v0.1/examples/) |
 | [Mandi Price](MandiPrice/v0.1/README.md) | Commodity market price | supported commodities and price fields, market, date, prices, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MandiPrice/v0.1/examples/) |
 | [Market Intelligence](MarketIntelligence/v0.1/README.md) | Market trends, forecasts, and opportunities | supported insight types and commodities, insights, periods, indicators, markets, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MarketIntelligence/v0.1/examples/) |
+| [Agriculture Facility](AgricultureFacility/v0.1/README.md) | Agricultural service facility | supported facility types, facility type, location or address, services, capacity, public contact, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](AgricultureFacility/v0.1/examples/) |
 
 The `Reused field sets` column describes validation composition. It is not a parent-child model.
 
@@ -62,6 +63,9 @@ The packs reuse Beckn-owned definitions rather than copying them:
 | Attributes | [Beckn Attributes](https://github.com/beckn/schemas/tree/draft/schema/Attributes) | JSON-LD extension container |
 | Descriptor | [Beckn Descriptor](https://github.com/beckn/schemas/tree/draft/schema/Descriptor) | Human-readable and coded descriptions |
 | GeoJSONGeometry | [Beckn GeoJSONGeometry](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry) | Point and area geometry |
+| Location | [Beckn Location](https://github.com/beckn/schemas/tree/main/schema/Location) | Verified facility geometry with optional postal address |
+| Address | [Beckn Address](https://github.com/beckn/schemas/tree/main/schema/Address) | Human-readable facility address |
+| Contact | [Beckn Contact](https://github.com/beckn/schemas/tree/main/schema/Contact) | Provider-approved public organizational contact |
 | Participant | [Beckn Participant](https://github.com/beckn/schemas/tree/draft/schema/Participant) | Protocol participant boundary, not redefined by OAN |
 | Consumer | [Beckn Consumer](https://github.com/beckn/schemas/tree/draft/schema/Consumer) | Consumer data when required by an interaction |
 

@@ -1,0 +1,33 @@
+{
+  "id": "https://schemas.openagrinet.global/schema/AgricultureFacility/v0.1",
+  "name": "Agriculture Facility Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": ["AgricultureFacility"],
+  "discovery_fields": ["informationMode", "supportedFacilityTypes", "coverageAreas", "languages"],
+  "result_fields": ["facilityType", "location", "address", "services", "capacity", "publicContact", "website", "source"],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedFacilityTypes",
+    "beckn:resourceAttributes.facilityType",
+    "beckn:resourceAttributes.location.geo",
+    "beckn:resourceAttributes.address.addressLocality",
+    "beckn:resourceAttributes.address.addressRegion",
+    "beckn:resourceAttributes.address.postalCode",
+    "beckn:resourceAttributes.services.code"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedFacilityTypes",
+    "beckn:resourceAttributes.facilityType",
+    "beckn:resourceAttributes.address.addressLocality",
+    "beckn:resourceAttributes.address.addressRegion",
+    "beckn:resourceAttributes.address.postalCode",
+    "beckn:resourceAttributes.services.code"
+  ],
+  "sortable_paths": [],
+  "privacy_notes": [
+    "publicContact is limited to organizational contact data explicitly approved for catalog publication."
+  ]
+}

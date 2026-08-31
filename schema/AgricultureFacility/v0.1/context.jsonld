@@ -1,0 +1,32 @@
+{
+  "@context": [
+    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "beckn": "https://schema.beckn.io/",
+      "AgricultureFacility": "openagrinet:AgricultureFacility",
+      "supportedFacilityTypes": {
+        "@id": "openagrinet:supportedFacilityTypes",
+        "@container": "@set"
+      },
+      "facilityType": "openagrinet:facilityType",
+      "location": "openagrinet:location",
+      "address": "openagrinet:address",
+      "services": {
+        "@id": "openagrinet:services",
+        "@container": "@set"
+      },
+      "capacity": "openagrinet:capacity",
+      "publicContact": "openagrinet:publicContact",
+      "website": {
+        "@id": "openagrinet:website",
+        "@type": "@id"
+      },
+      "source": "openagrinet:source",
+      "value": "openagrinet:value",
+      "unit": "openagrinet:unit",
+      "basis": "openagrinet:capacityBasis"
+    }
+  ]
+}

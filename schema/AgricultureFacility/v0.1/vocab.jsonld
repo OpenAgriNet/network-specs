@@ -1,0 +1,23 @@
+{
+  "@context": {
+    "openagrinet": "https://schemas.openagrinet.global/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:AgricultureFacility",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Agriculture Facility",
+      "rdfs:comment": "An agricultural service facility that may be discovered on demand or described directly."
+    },
+    { "@id": "openagrinet:supportedFacilityTypes", "@type": "rdfs:Property", "rdfs:label": "supported facility types" },
+    { "@id": "openagrinet:facilityType", "@type": "rdfs:Property", "rdfs:label": "facility type" },
+    { "@id": "openagrinet:location", "@type": "rdfs:Property", "rdfs:label": "location" },
+    { "@id": "openagrinet:address", "@type": "rdfs:Property", "rdfs:label": "address" },
+    { "@id": "openagrinet:services", "@type": "rdfs:Property", "rdfs:label": "services" },
+    { "@id": "openagrinet:capacity", "@type": "rdfs:Property", "rdfs:label": "capacity" },
+    { "@id": "openagrinet:publicContact", "@type": "rdfs:Property", "rdfs:label": "public contact" },
+    { "@id": "openagrinet:website", "@type": "rdfs:Property", "rdfs:label": "website" },
+    { "@id": "openagrinet:capacityBasis", "@type": "rdfs:Property", "rdfs:label": "capacity basis" }
+  ]
+}
