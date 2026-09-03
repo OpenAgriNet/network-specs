@@ -14,7 +14,6 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 |---|---|
 | [Schema pack index](schema/INDEX.md) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
 | [Complete examples](schema/examples/README.md) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
-| [Provider mappings](mappings/README.md) | See Provider-specific transformations between native APIs and canonical OAN Resources |
 
 ## Active version
 
@@ -25,7 +24,6 @@ The active review line is `v0.1`; pack metadata uses semantic version `0.1.0`. T
 | Path | Contents |
 |---|---|
 | [`schema/`](schema/) | Versioned domain schema packs and examples that validate directly against each pack |
-| [`mappings/`](mappings/) | Versioned Provider-specific JSONata transformations, mapping decisions, and fixtures |
 
 Each versioned schema pack contains:
 
@@ -38,8 +36,6 @@ Each versioned schema pack contains:
 - `examples/`: complete JSON instances that validate against the pack.
 
 Examples that demonstrate a single contract live with that schema pack. Complete composition examples live in [`schema/examples/`](schema/examples/) and show those attributes inside Beckn-owned objects.
-
-Provider mappings are adapters around these contracts. They may translate native field names, values, and legacy protocol shapes, but they do not redefine canonical OAN fields.
 
 ## Beckn dependencies
 
