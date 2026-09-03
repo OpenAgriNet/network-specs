@@ -1,0 +1,5 @@
+# macOS
+.DS_Store
+
+# Local tooling state, regenerated per session and never part of the specs
+.claude-flow/
