@@ -34,8 +34,7 @@
         "informationMode": "Direct",
         "subjectCategories": [
           "Crop",
-          "Livestock",
-          "Knowledge"
+          "Livestock"
         ],
         "languages": [
           "en",
@@ -59,13 +58,19 @@
             "contentUri": "https://knowledge.example.org/guides/farm-safety/1.0.0/en.pdf",
             "mediaType": "application/pdf",
             "language": "en",
-            "digest": "sha256:9dd5f8f5c7d393603302f8e7b5de6c54865d6ef82e7d5f3e6863a7e6170d3090"
+            "digest": {
+              "algorithm": "sha256",
+              "digestValue": "9dd5f8f5c7d393603302f8e7b5de6c54865d6ef82e7d5f3e6863a7e6170d3090"
+            }
           },
           {
             "contentUri": "https://knowledge.example.org/guides/farm-safety/1.0.0/hi.pdf",
             "mediaType": "application/pdf",
             "language": "hi",
-            "digest": "sha256:3c9748ab5339701e5e7ad20f122e4c03b76df23c2207a144635f32e932737858"
+            "digest": {
+              "algorithm": "sha256",
+              "digestValue": "3c9748ab5339701e5e7ad20f122e4c03b76df23c2207a144635f32e932737858"
+            }
           }
         ],
         "validity": {
@@ -97,8 +102,7 @@
         "@type": "openagrinet:KnowledgeResource",
         "informationMode": "Direct",
         "subjectCategories": [
-          "Crop",
-          "Knowledge"
+          "Crop"
         ],
         "agricultureSubjects": [
           {
@@ -142,13 +146,19 @@
             "contentUri": "https://knowledge.example.org/guides/cotton/kharif-sowing/1.2.0/en.pdf",
             "mediaType": "application/pdf",
             "language": "en",
-            "digest": "sha256:72927c65f8583cc61168b513aaeca9fc8077f658252156282145cd8a24bd87ed"
+            "digest": {
+              "algorithm": "sha256",
+              "digestValue": "72927c65f8583cc61168b513aaeca9fc8077f658252156282145cd8a24bd87ed"
+            }
           },
           {
             "contentUri": "https://knowledge.example.org/guides/cotton/kharif-sowing/1.2.0/hi.pdf",
             "mediaType": "application/pdf",
             "language": "hi",
-            "digest": "sha256:b666423a0243a96e08ef768c2caa9c3d2f88c03f838154e78f6f1f6adbf72fe2"
+            "digest": {
+              "algorithm": "sha256",
+              "digestValue": "b666423a0243a96e08ef768c2caa9c3d2f88c03f838154e78f6f1f6adbf72fe2"
+            }
           }
         ],
         "validity": {

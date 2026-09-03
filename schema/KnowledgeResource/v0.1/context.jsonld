@@ -29,6 +29,8 @@
       "mediaType": "openagrinet:mediaType",
       "language": "openagrinet:language",
       "digest": "openagrinet:digest",
+      "algorithm": "openagrinet:digestAlgorithm",
+      "digestValue": "openagrinet:digestValue",
       "validity": "openagrinet:validity",
       "provenance": "openagrinet:provenance",
       "source": "openagrinet:source",

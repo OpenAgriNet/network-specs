@@ -24,7 +24,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 | `agricultureSubjects` | Optional governed subjects such as a crop, livestock species, pest, or scheme |
 | `version` | Semantic version of the governed knowledge |
 | `lifecycleStatus` | Publication lifecycle of the knowledge version |
-| `content` | One or more representations, each carrying either `contentUri` or `inlineContent` and a media type |
+| `content` | One or more representations, each carrying either `contentUri` or `inlineContent`, a media type, and an optional structured integrity digest |
 | `validity` | Optional applicability period |
 | `provenance` | Source, publication, and review evidence |
 | `supersedes` | Identifier of a replaced Resource version |
@@ -34,6 +34,8 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 This schema does not define search requests, Registry admission, or content-generation internals.
 
 `contentUri` points to a Provider-hosted completed representation. It does not require a public download. `inlineContent` carries an answer or representation directly in the Resource. A Provider that keeps its corpus private and answers questions publishes an `OnDemand` Knowledge Resource rather than cataloging every source document.
+
+An integrity digest contains `algorithm` and `digestValue`. Review evidence supplies `lastReviewedAt` and `reviewedBy` together.
 
 ## Examples
 

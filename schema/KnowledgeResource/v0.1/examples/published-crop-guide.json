@@ -3,8 +3,7 @@
   "@type": "openagrinet:KnowledgeResource",
   "informationMode": "Direct",
   "subjectCategories": [
-    "Crop",
-    "Knowledge"
+    "Crop"
   ],
   "agricultureSubjects": [
     {

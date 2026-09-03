@@ -10,24 +10,110 @@
       "rdfs:label": "Knowledge Resource",
       "rdfs:comment": "Agricultural knowledge that may be obtained on demand or supplied directly."
     },
-    { "@id": "openagrinet:topics", "@type": "rdfs:Property", "rdfs:label": "topics" },
-    { "@id": "openagrinet:supportedKnowledgeTypes", "@type": "rdfs:Property", "rdfs:label": "supported knowledge types" },
-    { "@id": "openagrinet:supportedMediaTypes", "@type": "rdfs:Property", "rdfs:label": "supported media types" },
-    { "@id": "openagrinet:knowledgeType", "@type": "rdfs:Property", "rdfs:label": "knowledge type" },
-    { "@id": "openagrinet:version", "@type": "rdfs:Property", "rdfs:label": "version" },
-    { "@id": "openagrinet:lifecycleStatus", "@type": "rdfs:Property", "rdfs:label": "lifecycle status" },
-    { "@id": "openagrinet:content", "@type": "rdfs:Property", "rdfs:label": "content" },
-    { "@id": "openagrinet:contentUri", "@type": "rdfs:Property", "rdfs:label": "content URI" },
-    { "@id": "openagrinet:inlineContent", "@type": "rdfs:Property", "rdfs:label": "inline content" },
-    { "@id": "openagrinet:mediaType", "@type": "rdfs:Property", "rdfs:label": "media type" },
-    { "@id": "openagrinet:language", "@type": "rdfs:Property", "rdfs:label": "language" },
-    { "@id": "openagrinet:digest", "@type": "rdfs:Property", "rdfs:label": "digest" },
-    { "@id": "openagrinet:validity", "@type": "rdfs:Property", "rdfs:label": "validity" },
-    { "@id": "openagrinet:provenance", "@type": "rdfs:Property", "rdfs:label": "provenance" },
-    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
-    { "@id": "openagrinet:publishedAt", "@type": "rdfs:Property", "rdfs:label": "published at" },
-    { "@id": "openagrinet:lastReviewedAt", "@type": "rdfs:Property", "rdfs:label": "last reviewed at" },
-    { "@id": "openagrinet:reviewedBy", "@type": "rdfs:Property", "rdfs:label": "reviewed by" },
-    { "@id": "openagrinet:supersedes", "@type": "rdfs:Property", "rdfs:label": "supersedes" }
+    {
+      "@id": "openagrinet:topics",
+      "@type": "rdfs:Property",
+      "rdfs:label": "topics"
+    },
+    {
+      "@id": "openagrinet:supportedKnowledgeTypes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported knowledge types"
+    },
+    {
+      "@id": "openagrinet:supportedMediaTypes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported media types"
+    },
+    {
+      "@id": "openagrinet:knowledgeType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "knowledge type"
+    },
+    {
+      "@id": "openagrinet:version",
+      "@type": "rdfs:Property",
+      "rdfs:label": "version"
+    },
+    {
+      "@id": "openagrinet:lifecycleStatus",
+      "@type": "rdfs:Property",
+      "rdfs:label": "lifecycle status"
+    },
+    {
+      "@id": "openagrinet:content",
+      "@type": "rdfs:Property",
+      "rdfs:label": "content"
+    },
+    {
+      "@id": "openagrinet:contentUri",
+      "@type": "rdfs:Property",
+      "rdfs:label": "content URI"
+    },
+    {
+      "@id": "openagrinet:inlineContent",
+      "@type": "rdfs:Property",
+      "rdfs:label": "inline content"
+    },
+    {
+      "@id": "openagrinet:mediaType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "media type"
+    },
+    {
+      "@id": "openagrinet:language",
+      "@type": "rdfs:Property",
+      "rdfs:label": "language"
+    },
+    {
+      "@id": "openagrinet:digest",
+      "@type": "rdfs:Property",
+      "rdfs:label": "digest"
+    },
+    {
+      "@id": "openagrinet:validity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "validity"
+    },
+    {
+      "@id": "openagrinet:provenance",
+      "@type": "rdfs:Property",
+      "rdfs:label": "provenance"
+    },
+    {
+      "@id": "openagrinet:source",
+      "@type": "rdfs:Property",
+      "rdfs:label": "source"
+    },
+    {
+      "@id": "openagrinet:publishedAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "published at"
+    },
+    {
+      "@id": "openagrinet:lastReviewedAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "last reviewed at"
+    },
+    {
+      "@id": "openagrinet:reviewedBy",
+      "@type": "rdfs:Property",
+      "rdfs:label": "reviewed by"
+    },
+    {
+      "@id": "openagrinet:supersedes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supersedes"
+    },
+    {
+      "@id": "openagrinet:digestAlgorithm",
+      "@type": "rdfs:Property",
+      "rdfs:label": "digest algorithm"
+    },
+    {
+      "@id": "openagrinet:digestValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "digest value"
+    }
   ]
 }
