@@ -11,10 +11,10 @@ Read the [complete examples](examples/README.md) to see these packs composed ins
 | [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Reusable agricultural knowledge | topics, supported knowledge types, representations, validity, and provenance | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
 | [Knowledge Advisory](KnowledgeAdvisory/v0.1/README.md) | Knowledge-based agricultural guidance | topics, recommendations, supporting Resources, validity, rationale, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeAdvisory/v0.1/examples/) |
 | [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed agricultural advice | topics, supported weather basis, recommendation, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherAdvisory/v0.1/examples/) |
-| [Weather Observation](WeatherObservation/v0.1/README.md) | Weather observation or forecast | supported and actual weather parameters, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherObservation/v0.1/examples/) |
+| [Weather Observation](WeatherObservation/v0.1/README.md) | Weather observation or forecast | supported and actual weather parameters, place, observation or model time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherObservation/v0.1/examples/) |
 | [Mandi Price](MandiPrice/v0.1/README.md) | Commodity market price | supported commodities and price fields, market, date, prices, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MandiPrice/v0.1/examples/) |
 | [Market Intelligence](MarketIntelligence/v0.1/README.md) | Market trends, forecasts, and opportunities | supported insight types and commodities, insights, periods, indicators, markets, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MarketIntelligence/v0.1/examples/) |
-| [Agriculture Facility](AgricultureFacility/v0.1/README.md) | Agricultural service facility | supported facility types, facility type, location or address, services, capacity, public contact, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](AgricultureFacility/v0.1/examples/) |
+| [Agriculture Facility](AgricultureFacility/v0.1/README.md) | Agricultural service facility | supported facility types, facility type, location or address, services, capacity, public contact, source, and record freshness | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](AgricultureFacility/v0.1/examples/) |
 
 The `Reused field sets` column describes validation composition. It is not a parent-child model.
 
@@ -36,6 +36,8 @@ Every domain pack supports two information modes:
 | `Direct` | The Resource contains or directly references specific information | Actual content, values, recommendation, place, time, validity, and provenance as applicable |
 
 An `OnDemand` Resource advertises what a Provider can supply without introducing a separate capability schema. A Provider invocation normally returns a `Direct` Resource of the same `@type`. Direct information may also be published to Discovery without a preceding invocation.
+
+The schemas formerly named `AgricultureCapability`, `AdvisoryCapability`, and `WeatherAdvisoryCapability` are retired. Their capability declarations are represented by the corresponding active pack in `OnDemand` mode.
 
 ## Pack contents
 

@@ -14,6 +14,7 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 |---|---|
 | [Schema pack index](schema/INDEX.md) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
 | [Complete examples](schema/examples/README.md) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
+| [Provider mappings](mappings/README.md) | See Provider-specific transformations between native APIs and canonical OAN Resources |
 
 ## Active version
 
@@ -24,6 +25,7 @@ The active review line is `v0.1`; pack metadata uses semantic version `0.1.0`. T
 | Path | Contents |
 |---|---|
 | [`schema/`](schema/) | Versioned domain schema packs and examples that validate directly against each pack |
+| [`mappings/`](mappings/) | Versioned Provider-specific JSONata transformations, mapping decisions, and fixtures |
 
 Each versioned schema pack contains:
 
@@ -37,18 +39,20 @@ Each versioned schema pack contains:
 
 Examples that demonstrate a single contract live with that schema pack. Complete composition examples live in [`schema/examples/`](schema/examples/) and show those attributes inside Beckn-owned objects.
 
+Provider mappings are adapters around these contracts. They may translate native field names, values, and legacy protocol shapes, but they do not redefine canonical OAN fields.
+
 ## Beckn dependencies
 
 OAN does not redefine the Beckn objects that carry its domain attributes. The links below point to the current Beckn schema source. The OAN schemas pin the applicable version in each `$ref`.
 
 | Beckn definition | Use in OAN |
 |---|---|
-| [Catalog](https://github.com/beckn/schemas/tree/draft/schema/Catalog) | Groups a Provider's advertised Resources |
-| [Provider](https://github.com/beckn/schemas/tree/draft/schema/Provider) | Identifies the entity offering the Resources in a Catalog |
-| [Resource](https://github.com/beckn/schemas/tree/draft/schema/Resource) | Carries OAN data in `resourceAttributes` |
-| [Attributes](https://github.com/beckn/schemas/tree/draft/schema/Attributes) | Provides the JSON-LD extension container used by `resourceAttributes` |
-| [Descriptor](https://github.com/beckn/schemas/tree/draft/schema/Descriptor) | Supplies names, codes, and human-readable descriptions |
-| [GeoJSONGeometry](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry) | Represents points and geographic areas using GeoJSON |
+| [Catalog 2.2](https://github.com/beckn/schemas/tree/draft/schema/Catalog/v2.2) | Groups a Provider's advertised Resources |
+| [Provider 2.1](https://github.com/beckn/schemas/tree/draft/schema/Provider/v2.1) | Identifies the entity offering the Resources in a Catalog |
+| [Resource 2.0](https://github.com/beckn/schemas/tree/draft/schema/Resource/v2.0) | Carries OAN data in `resourceAttributes` |
+| [Attributes 2.0](https://github.com/beckn/schemas/tree/draft/schema/Attributes/v2.0) | Provides the JSON-LD extension container used by `resourceAttributes` |
+| [Descriptor 2.1](https://github.com/beckn/schemas/tree/draft/schema/Descriptor/v2.1) | Supplies names, codes, and human-readable descriptions |
+| [GeoJSONGeometry 2.0](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry/v2.0) | Represents points and geographic areas using GeoJSON |
 | [Participant](https://github.com/beckn/schemas/tree/draft/schema/Participant) | Defines the Beckn participant boundary; OAN does not introduce `OANParticipant` |
 | [Consumer](https://github.com/beckn/schemas/tree/draft/schema/Consumer) | Defines the Beckn consumer object where a protocol interaction requires one |
 
@@ -59,6 +63,10 @@ The schema packs are composable field sets. A selected contract uses JSON Schema
 For example, the effective `WeatherAdvisory` contract combines the shared Agriculture Resource fields with Weather Advisory fields. This composition does not make one runtime object a child of another, and it does not require an intermediate Domain payload.
 
 Each domain pack supports `OnDemand` and `Direct` information. An `OnDemand` Resource describes information that requires a Provider invocation. A `Direct` Resource contains or directly references specific information. The mode does not indicate freshness; timestamps and validity express when the information applies.
+
+The selected domain pack is also the capability type. `OnDemand` advertises what the Provider can supply, and `Direct` carries the supplied information. OAN does not define parallel `*Capability` schema packs.
+
+The canonical OAN `@type` is required. A Provider extension may use a JSON-LD type array only when that array retains the canonical OAN type. A pack-local `@context` is optional inside `resourceAttributes` when the enclosing Beckn document already establishes the same context; standalone JSON-LD documents include it explicitly.
 
 ## Canonical identifiers
 

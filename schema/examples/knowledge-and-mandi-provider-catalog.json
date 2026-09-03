@@ -46,8 +46,7 @@
         "subjectCategories": [
           "Crop",
           "Livestock",
-          "Scheme",
-          "Knowledge"
+          "Scheme"
         ],
         "languages": [
           "en",
@@ -86,8 +85,7 @@
         "informationMode": "OnDemand",
         "subjectCategories": [
           "Crop",
-          "Livestock",
-          "Knowledge"
+          "Livestock"
         ],
         "languages": [
           "en",
