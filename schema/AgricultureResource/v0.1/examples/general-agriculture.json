@@ -1,10 +1,10 @@
 {
+  "@context": "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
   "@type": "openagrinet:AgricultureResource",
   "informationMode": "OnDemand",
   "subjectCategories": [
     "Crop",
-    "Livestock",
-    "Knowledge"
+    "Livestock"
   ],
   "languages": [
     "en",

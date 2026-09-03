@@ -4,7 +4,6 @@
     {
       "@version": 1.1,
       "schema": "https://schema.org/",
-      "beckn": "https://schema.beckn.io/",
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "AgricultureResource": "openagrinet:AgricultureResource",
       "informationMode": "openagrinet:informationMode",
@@ -22,7 +21,10 @@
         "@type": "@id"
       },
       "subjectType": "openagrinet:subjectType",
-      "descriptor": "beckn:descriptor",
+      "descriptor": {
+        "@id": "https://schema.beckn.io/descriptor",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
       "languages": {
         "@id": "openagrinet:languages",
         "@container": "@set"

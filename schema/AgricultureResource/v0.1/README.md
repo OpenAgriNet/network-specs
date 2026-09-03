@@ -19,12 +19,14 @@ This pack declares the shared agriculture field set. Other selected contracts re
 | Field | Purpose |
 |---|---|
 | `informationMode` | Uses `OnDemand` when a Provider invocation is required and `Direct` when the Resource contains or directly references specific information |
-| `subjectCategories` | Classifies the Resource using broad categories such as crop, weather, or market |
+| `subjectCategories` | Optionally classifies what the Resource is about using broad categories such as crop, weather, or market; it never repeats the Resource type |
 | `agricultureSubjects` | Optionally identifies governed subjects such as Cotton, Rice, or a commodity; absence means broad applicability within the declared categories |
 | `languages` | Declares supported or available BCP 47 languages |
 | `coverageAreas` | Declares geographic applicability using an administrative area reference or a Beckn GeoJSON geometry |
 
 An administrative area reference carries a code system such as ISO 3166, LGD, or PIN and the corresponding code. A GeoJSON geometry carries a Point, Polygon, MultiPolygon, or another geometry supported by Beckn `GeoJSONGeometry`. Use the reference when a governed area code is sufficient. Use geometry when the boundary or service area is coordinate-defined.
+
+`TimePeriod` requires at least one boundary. Packs that need a bounded window use `ClosedTimePeriod`, which requires both `startsAt` and `endsAt`. Conformance checks verify that the start is not after the end.
 
 ## Non-goals
 
