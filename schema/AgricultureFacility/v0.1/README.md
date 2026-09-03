@@ -28,6 +28,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 | `publicContact` | Public organizational contact approved for catalog publication |
 | `website` | Public facility or service website |
 | `source` | Authoritative source of the facility record |
+| `lastUpdatedAt` | Time at which the Provider last updated or verified the facility record |
 
 ## Mapping rules
 

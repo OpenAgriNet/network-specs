@@ -2,9 +2,6 @@
   "@context": "https://schemas.openagrinet.global/schema/AgricultureFacility/v0.1/context.jsonld",
   "@type": "openagrinet:AgricultureFacility",
   "informationMode": "Direct",
-  "subjectCategories": [
-    "Service"
-  ],
   "languages": [
     "en",
     "mr"
@@ -38,5 +35,6 @@
   "source": {
     "sourceId": "provider:warehouse-services",
     "sourceName": "Warehouse Services Provider"
-  }
+  },
+  "lastUpdatedAt": "2026-08-29T00:00:00Z"
 }

@@ -21,9 +21,22 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:AgricultureFacility
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:AgricultureFacility
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:AgricultureFacility
+                  items:
+                    oneOf:
+                      - const: openagrinet:AgricultureFacility
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             supportedFacilityTypes:
               type: array
               minItems: 1
@@ -39,12 +52,12 @@ components:
               x-jsonld-id: "openagrinet:facilityType"
             location:
               allOf:
-                - $ref: "https://schema.beckn.io/Location/v2.0/attributes.yaml#/components/schemas/Location"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation"
               description: Verified facility geometry and optional address. Do not populate it with the search origin or another inferred point.
               x-jsonld-id: "openagrinet:location"
             address:
               allOf:
-                - $ref: "https://schema.beckn.io/Address/v2.0/attributes.yaml#/components/schemas/Address"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress"
               description: Human-readable facility address when verified geometry is unavailable.
               x-jsonld-id: "openagrinet:address"
             services:
@@ -53,7 +66,7 @@ components:
               uniqueItems: true
               description: Services publicly offered at the facility.
               items:
-                $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               x-jsonld-id: "openagrinet:services"
             capacity:
               allOf:
@@ -75,6 +88,11 @@ components:
                 - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
               description: Provider or authoritative source of the facility record.
               x-jsonld-id: "openagrinet:source"
+            lastUpdatedAt:
+              type: string
+              format: date-time
+              description: Time at which the Provider last updated or verified the facility record.
+              x-jsonld-id: "openagrinet:lastUpdatedAt"
         - if:
             properties:
               informationMode:
@@ -83,7 +101,16 @@ components:
           then:
             required: [supportedFacilityTypes]
             not:
-              required: [facilityType]
+              anyOf:
+                - required: [facilityType]
+                - required: [location]
+                - required: [address]
+                - required: [services]
+                - required: [capacity]
+                - required: [publicContact]
+                - required: [website]
+                - required: [source]
+                - required: [lastUpdatedAt]
         - if:
             properties:
               informationMode:

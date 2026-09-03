@@ -4,9 +4,26 @@
   "version": "0.1.0",
   "protocol_version": "2.0",
   "semantic_model": "generalised",
-  "included_schemas": ["AgricultureFacility"],
-  "discovery_fields": ["informationMode", "supportedFacilityTypes", "coverageAreas", "languages"],
-  "result_fields": ["facilityType", "location", "address", "services", "capacity", "publicContact", "website", "source"],
+  "included_schemas": [
+    "AgricultureFacility"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "supportedFacilityTypes",
+    "coverageAreas",
+    "languages"
+  ],
+  "result_fields": [
+    "facilityType",
+    "location",
+    "address",
+    "services",
+    "capacity",
+    "publicContact",
+    "website",
+    "source",
+    "lastUpdatedAt"
+  ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.supportedFacilityTypes",
@@ -15,7 +32,7 @@
     "beckn:resourceAttributes.address.addressLocality",
     "beckn:resourceAttributes.address.addressRegion",
     "beckn:resourceAttributes.address.postalCode",
-    "beckn:resourceAttributes.services.code"
+    "beckn:resourceAttributes.services[].code"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -24,10 +41,21 @@
     "beckn:resourceAttributes.address.addressLocality",
     "beckn:resourceAttributes.address.addressRegion",
     "beckn:resourceAttributes.address.postalCode",
-    "beckn:resourceAttributes.services.code"
+    "beckn:resourceAttributes.services[].code"
   ],
-  "sortable_paths": [],
+  "sortable_paths": [
+    "beckn:resourceAttributes.lastUpdatedAt"
+  ],
   "privacy_notes": [
     "publicContact is limited to organizational contact data explicitly approved for catalog publication."
-  ]
+  ],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1"
+  },
+  "interaction_type": "Observe",
+  "outcome_type": "openagrinet:AgricultureFacility"
 }
