@@ -26,13 +26,20 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `source` | Authoritative upstream source |
 | `location` | Beckn GeoJSON geometry to which the result applies |
 | `generatedAt` | Result-generation time |
+| `observedAt` | Measurement time, required for an observation |
 | `modelRunAt` | Forecast model run time |
-| `validity` | Applicability period |
+| `validity` | Bounded applicability period, required for a forecast |
 | `parameters` | Weather values and units |
 
 ## Non-goals
 
 An `OnDemand` Resource never carries location-specific values. A `Direct` Resource does. Spatial indexes such as H3 are implementation projections and are not part of the portable domain contract.
+
+A measured observation requires `observedAt`. A forecast requires `modelRunAt` and a validity window with both `startsAt` and `endsAt`. `generatedAt` records when the normalized Resource was produced and does not replace either domain timestamp.
+
+## Naming open item
+
+This pack currently covers measured observations and forecasts. `WeatherInformation` is a clearer candidate name if both remain in one pack. `AgriWeatherInformation` and `AgriWeatherAdvisory` are not recommended because the `openagrinet:` namespace and the selected OAN schema already establish the agricultural context.
 
 ## Examples
 

@@ -1,4 +1,5 @@
 {
+  "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherObservation",
   "informationMode": "Direct",
   "subjectCategories": [
@@ -36,5 +37,6 @@
       "value": 5.2,
       "unit": "mm"
     }
-  ]
+  ],
+  "modelRunAt": "2026-08-24T06:00:00Z"
 }

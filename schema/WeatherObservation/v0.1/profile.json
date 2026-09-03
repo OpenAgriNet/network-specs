@@ -4,9 +4,28 @@
   "version": "0.1.0",
   "protocol_version": "2.0",
   "semantic_model": "generalised",
-  "included_schemas": ["WeatherObservation"],
-  "discovery_fields": ["informationMode", "supportedObservationTypes", "supportedParameters", "forecastHorizon", "geographicGranularities", "coverageAreas"],
-  "result_fields": ["observationType", "parameters[].parameter", "location", "generatedAt", "validity"],
+  "included_schemas": [
+    "WeatherObservation"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "supportedObservationTypes",
+    "supportedParameters",
+    "forecastHorizon",
+    "updateFrequency",
+    "geographicGranularities",
+    "coverageAreas"
+  ],
+  "result_fields": [
+    "observationType",
+    "parameters[].parameter",
+    "location",
+    "generatedAt",
+    "observedAt",
+    "modelRunAt",
+    "validity",
+    "source"
+  ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.supportedObservationTypes",
@@ -16,7 +35,11 @@
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
     "beckn:resourceAttributes.parameters[].parameter",
-    "beckn:resourceAttributes.generatedAt"
+    "beckn:resourceAttributes.generatedAt",
+    "beckn:resourceAttributes.observedAt",
+    "beckn:resourceAttributes.modelRunAt",
+    "beckn:resourceAttributes.validity.startsAt",
+    "beckn:resourceAttributes.validity.endsAt"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -28,8 +51,21 @@
     "beckn:resourceAttributes.location",
     "beckn:resourceAttributes.parameters[].parameter"
   ],
-  "sortable_paths": ["beckn:resourceAttributes.generatedAt"],
+  "sortable_paths": [
+    "beckn:resourceAttributes.observedAt",
+    "beckn:resourceAttributes.modelRunAt",
+    "beckn:resourceAttributes.generatedAt"
+  ],
   "privacy_notes": [
     "A precise location becomes sensitive when linked to a person or private farm profile; such linkage is outside this public Resource schema."
-  ]
+  ],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1"
+  },
+  "interaction_type": "Observe",
+  "outcome_type": "openagrinet:WeatherObservation"
 }

@@ -23,6 +23,7 @@
       "source": "openagrinet:source",
       "location": "openagrinet:location",
       "generatedAt": "openagrinet:generatedAt",
+      "observedAt": "openagrinet:observedAt",
       "modelRunAt": "openagrinet:modelRunAt",
       "validity": "openagrinet:validity",
       "parameters": {

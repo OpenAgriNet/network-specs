@@ -21,9 +21,22 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:WeatherObservation
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:WeatherObservation
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:WeatherObservation
+                  items:
+                    oneOf:
+                      - const: openagrinet:WeatherObservation
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             supportedObservationTypes:
               type: array
               minItems: 1
@@ -73,7 +86,7 @@ components:
               x-jsonld-id: "openagrinet:source"
             location:
               allOf:
-                - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
               description: GeoJSON geometry to which the observation or forecast applies; Point coordinates use longitude, latitude order.
               x-jsonld-id: "openagrinet:location"
             generatedAt:
@@ -81,6 +94,11 @@ components:
               format: date-time
               description: Time at which the record was generated.
               x-jsonld-id: "openagrinet:generatedAt"
+            observedAt:
+              type: string
+              format: date-time
+              description: Time at which measured conditions were observed. Required when observationType is Observation.
+              x-jsonld-id: "openagrinet:observedAt"
             modelRunAt:
               type: string
               format: date-time
@@ -113,6 +131,7 @@ components:
                     minLength: 1
                     description: Governed unit code, or `1` when the value is unitless.
                     x-jsonld-id: "openagrinet:unit"
+                additionalProperties: false
               x-jsonld-id: "openagrinet:parameters"
         - if:
             properties:
@@ -122,7 +141,15 @@ components:
           then:
             required: [supportedObservationTypes, supportedParameters, geographicGranularities]
             not:
-              required: [parameters]
+              anyOf:
+                - required: [observationType]
+                - required: [source]
+                - required: [location]
+                - required: [generatedAt]
+                - required: [observedAt]
+                - required: [modelRunAt]
+                - required: [validity]
+                - required: [parameters]
         - if:
             properties:
               informationMode:
@@ -130,3 +157,24 @@ components:
             required: [informationMode]
           then:
             required: [observationType, source, location, generatedAt, parameters]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+              observationType:
+                const: Observation
+            required: [informationMode, observationType]
+          then:
+            required: [observedAt]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+              observationType:
+                const: Forecast
+            required: [informationMode, observationType]
+          then:
+            required: [modelRunAt, validity]
+            properties:
+              validity:
+                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/ClosedTimePeriod"
