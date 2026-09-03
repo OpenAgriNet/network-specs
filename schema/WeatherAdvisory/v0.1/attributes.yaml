@@ -21,9 +21,22 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:WeatherAdvisory
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:WeatherAdvisory
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:WeatherAdvisory
+                  items:
+                    oneOf:
+                      - const: openagrinet:WeatherAdvisory
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             topics:
               type: array
               minItems: 1
@@ -63,7 +76,7 @@ components:
               x-jsonld-id: "openagrinet:geographicGranularities"
             location:
               allOf:
-                - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
               description: Place to which the advice applies; Point coordinates use longitude, latitude order.
               x-jsonld-id: "openagrinet:location"
             issuedAt:
@@ -73,7 +86,7 @@ components:
               x-jsonld-id: "openagrinet:issuedAt"
             validity:
               allOf:
-                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/ClosedTimePeriod"
               description: Period during which the advice applies.
               x-jsonld-id: "openagrinet:validity"
             recommendations:
@@ -99,11 +112,11 @@ components:
                     minLength: 2
                     description: BCP 47 language tag of the recommendation.
                     x-jsonld-id: "openagrinet:language"
-                  priority:
+                  severity:
                     type: string
                     enum: [Information, Watch, Warning, Critical]
-                    description: Urgency of the recommendation.
-                    x-jsonld-id: "openagrinet:priority"
+                    description: Weather-related severity associated with the recommendation.
+                    x-jsonld-id: "openagrinet:severity"
                   actions:
                     type: array
                     minItems: 1
@@ -152,7 +165,13 @@ components:
           then:
             required: [topics, supportedWeatherParameters, geographicGranularities, languages]
             not:
-              required: [recommendations]
+              anyOf:
+                - required: [location]
+                - required: [issuedAt]
+                - required: [validity]
+                - required: [recommendations]
+                - required: [weatherBasis]
+                - required: [source]
         - if:
             properties:
               informationMode:

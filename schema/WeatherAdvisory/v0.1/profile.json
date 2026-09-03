@@ -4,16 +4,37 @@
   "version": "0.1.0",
   "protocol_version": "2.0",
   "semantic_model": "generalised",
-  "included_schemas": ["WeatherAdvisory"],
-  "discovery_fields": ["informationMode", "topics", "supportedWeatherParameters", "forecastHorizon", "geographicGranularities", "coverageAreas"],
-  "result_fields": ["topics", "subjectCategories", "agricultureSubjects", "location", "issuedAt", "validity", "recommendations", "weatherBasis", "source"],
+  "included_schemas": [
+    "WeatherAdvisory"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "topics",
+    "supportedWeatherParameters",
+    "forecastHorizon",
+    "updateFrequency",
+    "geographicGranularities",
+    "languages",
+    "coverageAreas"
+  ],
+  "result_fields": [
+    "topics",
+    "subjectCategories",
+    "agricultureSubjects",
+    "location",
+    "issuedAt",
+    "validity",
+    "recommendations",
+    "weatherBasis",
+    "source"
+  ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.supportedWeatherParameters",
     "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
-    "beckn:resourceAttributes.agricultureSubjects.subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
     "beckn:resourceAttributes.issuedAt",
     "beckn:resourceAttributes.validity.startsAt",
     "beckn:resourceAttributes.validity.endsAt"
@@ -24,10 +45,21 @@
     "beckn:resourceAttributes.geographicGranularities",
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
-    "beckn:resourceAttributes.agricultureSubjects.subjectId",
-    "beckn:resourceAttributes.recommendations.language",
-    "beckn:resourceAttributes.recommendations.priority"
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.recommendations[].language",
+    "beckn:resourceAttributes.recommendations[].severity"
   ],
-  "sortable_paths": ["beckn:resourceAttributes.issuedAt"],
-  "privacy_notes": []
+  "sortable_paths": [
+    "beckn:resourceAttributes.issuedAt"
+  ],
+  "privacy_notes": [],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1"
+  },
+  "interaction_type": "Advise",
+  "outcome_type": "openagrinet:WeatherAdvisory"
 }

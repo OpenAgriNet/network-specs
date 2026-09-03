@@ -26,7 +26,7 @@
       "topic": "openagrinet:topic",
       "message": "openagrinet:message",
       "language": "openagrinet:language",
-      "priority": "openagrinet:priority",
+      "severity": "openagrinet:severity",
       "actions": { "@id": "openagrinet:actions", "@container": "@set" },
       "weatherBasis": "openagrinet:weatherBasis",
       "parameters": { "@id": "openagrinet:weatherParameters", "@container": "@set" },

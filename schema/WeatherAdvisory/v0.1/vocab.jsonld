@@ -15,10 +15,26 @@
       "@type": "rdfs:Property",
       "rdfs:label": "topics"
     },
-    { "@id": "openagrinet:supportedWeatherParameters", "@type": "rdfs:Property", "rdfs:label": "supported weather parameters" },
-    { "@id": "openagrinet:forecastHorizon", "@type": "rdfs:Property", "rdfs:label": "forecast horizon" },
-    { "@id": "openagrinet:updateFrequency", "@type": "rdfs:Property", "rdfs:label": "update frequency" },
-    { "@id": "openagrinet:geographicGranularities", "@type": "rdfs:Property", "rdfs:label": "geographic granularities" },
+    {
+      "@id": "openagrinet:supportedWeatherParameters",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported weather parameters"
+    },
+    {
+      "@id": "openagrinet:forecastHorizon",
+      "@type": "rdfs:Property",
+      "rdfs:label": "forecast horizon"
+    },
+    {
+      "@id": "openagrinet:updateFrequency",
+      "@type": "rdfs:Property",
+      "rdfs:label": "update frequency"
+    },
+    {
+      "@id": "openagrinet:geographicGranularities",
+      "@type": "rdfs:Property",
+      "rdfs:label": "geographic granularities"
+    },
     {
       "@id": "openagrinet:location",
       "@type": "rdfs:Property",
@@ -34,12 +50,55 @@
       "@type": "rdfs:Property",
       "rdfs:label": "recommendations"
     },
-    { "@id": "openagrinet:topic", "@type": "rdfs:Property", "rdfs:label": "topic" },
-    { "@id": "openagrinet:message", "@type": "rdfs:Property", "rdfs:label": "message" },
-    { "@id": "openagrinet:priority", "@type": "rdfs:Property", "rdfs:label": "priority" },
-    { "@id": "openagrinet:actions", "@type": "rdfs:Property", "rdfs:label": "actions" },
-    { "@id": "openagrinet:weatherBasis", "@type": "rdfs:Property", "rdfs:label": "weather basis" },
-    { "@id": "openagrinet:weatherParameters", "@type": "rdfs:Property", "rdfs:label": "weather parameters" },
-    { "@id": "openagrinet:supportingResourceIds", "@type": "rdfs:Property", "rdfs:label": "supporting Resource identifiers" }
+    {
+      "@id": "openagrinet:topic",
+      "@type": "rdfs:Property",
+      "rdfs:label": "topic"
+    },
+    {
+      "@id": "openagrinet:message",
+      "@type": "rdfs:Property",
+      "rdfs:label": "message"
+    },
+    {
+      "@id": "openagrinet:actions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "actions"
+    },
+    {
+      "@id": "openagrinet:weatherBasis",
+      "@type": "rdfs:Property",
+      "rdfs:label": "weather basis"
+    },
+    {
+      "@id": "openagrinet:weatherParameters",
+      "@type": "rdfs:Property",
+      "rdfs:label": "weather parameters"
+    },
+    {
+      "@id": "openagrinet:supportingResourceIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supporting Resource identifiers"
+    },
+    {
+      "@id": "openagrinet:validity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "validity"
+    },
+    {
+      "@id": "openagrinet:language",
+      "@type": "rdfs:Property",
+      "rdfs:label": "language"
+    },
+    {
+      "@id": "openagrinet:severity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "severity"
+    },
+    {
+      "@id": "openagrinet:source",
+      "@type": "rdfs:Property",
+      "rdfs:label": "source"
+    }
   ]
 }

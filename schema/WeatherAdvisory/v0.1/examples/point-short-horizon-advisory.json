@@ -2,12 +2,22 @@
   "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherAdvisory",
   "informationMode": "Direct",
-  "subjectCategories": ["Crop", "Weather"],
-  "languages": ["en"],
-  "topics": ["Spraying"],
+  "subjectCategories": [
+    "Crop",
+    "Weather"
+  ],
+  "languages": [
+    "en"
+  ],
+  "topics": [
+    "Spraying"
+  ],
   "location": {
     "type": "Point",
-    "coordinates": [77.5946, 12.9716]
+    "coordinates": [
+      77.5946,
+      12.9716
+    ]
   },
   "issuedAt": "2026-08-26T08:00:00Z",
   "validity": {
@@ -19,13 +29,21 @@
       "topic": "Spraying",
       "message": "Avoid spraying until wind speed falls below the recommended threshold.",
       "language": "en",
-      "priority": "Warning",
-      "actions": ["Delay spraying", "Review conditions after 14:00 UTC"]
+      "actions": [
+        "Delay spraying",
+        "Review conditions after 14:00 UTC"
+      ],
+      "severity": "Warning"
     }
   ],
   "weatherBasis": {
-    "parameters": ["WindSpeed", "Rainfall"],
-    "supportingResourceIds": ["weather-forecast:provider:2026-08-26:77.5946,12.9716"]
+    "parameters": [
+      "WindSpeed",
+      "Rainfall"
+    ],
+    "supportingResourceIds": [
+      "weather-forecast:provider:2026-08-26:77.5946,12.9716"
+    ]
   },
   "source": {
     "sourceId": "participant:weather-advisory-provider",
