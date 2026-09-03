@@ -1,8 +1,0 @@
-{
-  "schema": "WeatherAdvisoryCapability",
-  "version": "0.1.0",
-  "card_template": "Weather advisory capability | {{geographicGranularity}} | {{forecastHorizon}}",
-  "detail_template": "Topics: {{topics}}\nParameters: {{weatherParameters}}\nGranularity: {{geographicGranularity}}\nForecast horizon: {{forecastHorizon}}\nRefresh: {{updateFrequency}}",
-  "html": "<div class=\"oan-weather-advisory-capability\"><strong>Weather advisory capability</strong><span>{{geographicGranularity}} · {{forecastHorizon}}</span></div>",
-  "html_detail": "<div class=\"oan-weather-advisory-capability-detail\"><p><strong>Topics:</strong> {{topics}}</p><p><strong>Parameters:</strong> {{weatherParameters}}</p><p><strong>Granularity:</strong> {{geographicGranularity}}</p><p><strong>Forecast horizon:</strong> {{forecastHorizon}}</p></div>"
-}
