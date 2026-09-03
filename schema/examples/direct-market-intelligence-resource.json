@@ -31,9 +31,9 @@
           "endsAt": "2026-08-26T00:00:00Z"
         },
         "indicator": {
-          "name": "modalPriceChange",
-          "value": 4.8,
-          "unit": "percent"
+          "indicatorValue": 4.8,
+          "indicatorUnit": "percent",
+          "indicatorName": "modalPriceChange"
         },
         "supportingResourceIds": [
           "resource:mandi-price:telangana:cotton:2026-07-27",
@@ -48,8 +48,8 @@
           "endsAt": "2026-09-09T00:00:00Z"
         },
         "indicator": {
-          "name": "demandClass",
-          "value": "High"
+          "indicatorValue": "High",
+          "indicatorName": "demandClass"
         }
       },
       {
@@ -63,7 +63,7 @@
           "location": {
             "type": "Point",
             "coordinates": [
-              78.5320,
+              78.532,
               19.6641
             ]
           }

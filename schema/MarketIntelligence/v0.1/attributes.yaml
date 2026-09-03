@@ -21,16 +21,29 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:MarketIntelligence
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:MarketIntelligence
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:MarketIntelligence
+                  items:
+                    oneOf:
+                      - const: openagrinet:MarketIntelligence
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             supportedCommodities:
               type: array
               minItems: 1
               uniqueItems: true
               description: Commodities for which the Provider can supply market intelligence on demand.
               items:
-                $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               x-jsonld-id: "openagrinet:supportedCommodities"
             supportedInsightTypes:
               type: array
@@ -53,7 +66,7 @@ components:
               x-jsonld-id: "openagrinet:forecastHorizon"
             commodity:
               allOf:
-                - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               description: Commodity to which the intelligence applies.
               x-jsonld-id: "openagrinet:commodity"
             generatedAt:
@@ -86,7 +99,12 @@ components:
           then:
             required: [supportedCommodities, supportedInsightTypes, languages]
             not:
-              required: [insights]
+              anyOf:
+                - required: [commodity]
+                - required: [generatedAt]
+                - required: [validity]
+                - required: [insights]
+                - required: [source]
         - if:
             properties:
               informationMode:
@@ -136,6 +154,14 @@ components:
             minLength: 1
           x-jsonld-id: "openagrinet:supportingResourceIds"
       additionalProperties: false
+      allOf:
+        - if:
+            properties:
+              insightType:
+                enum: [PriceTrend, DemandForecast]
+            required: [insightType]
+          then:
+            required: [period]
 
     MarketReference:
       type: object
@@ -160,33 +186,33 @@ components:
           x-jsonld-id: "openagrinet:state"
         location:
           allOf:
-            - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+            - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
           description: GeoJSON location of the market when available.
           x-jsonld-id: "openagrinet:location"
       additionalProperties: false
 
     Indicator:
       type: object
-      required: [name, value]
+      required: [indicatorName, indicatorValue]
       description: Provider-defined quantitative or qualitative market indicator.
       properties:
-        name:
+        indicatorName:
           type: string
           minLength: 1
           description: Provider-defined indicator name.
           x-jsonld-id: "openagrinet:indicatorName"
-        value:
+        indicatorValue:
           oneOf:
             - type: number
             - type: string
               minLength: 1
           description: Indicator value.
           x-jsonld-id: "openagrinet:indicatorValue"
-        unit:
+        indicatorUnit:
           type: string
           minLength: 1
           description: Unit for a quantitative indicator when applicable.
-          x-jsonld-id: "openagrinet:unit"
+          x-jsonld-id: "openagrinet:indicatorUnit"
       additionalProperties: false
 
     Measure:

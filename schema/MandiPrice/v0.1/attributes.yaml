@@ -21,16 +21,29 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:MandiPrice
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:MandiPrice
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:MandiPrice
+                  items:
+                    oneOf:
+                      - const: openagrinet:MandiPrice
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             supportedCommodities:
               type: array
               minItems: 1
               uniqueItems: true
               description: Commodities for which the Provider can supply prices on demand.
               items:
-                $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               x-jsonld-id: "openagrinet:supportedCommodities"
             supportedPriceFields:
               type: array
@@ -62,7 +75,7 @@ components:
               x-jsonld-id: "openagrinet:source"
             commodity:
               allOf:
-                - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               description: Commodity for which the price was observed.
               x-jsonld-id: "openagrinet:commodity"
             commodityGroup:
@@ -107,9 +120,10 @@ components:
                   x-jsonld-id: "openagrinet:state"
                 location:
                   allOf:
-                    - $ref: "https://schema.beckn.io/GeoJSONGeometry/v2.0/attributes.yaml#/components/schemas/GeoJSONGeometry"
+                    - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
                   description: GeoJSON geometry of the market when available; Point coordinates use longitude, latitude order.
                   x-jsonld-id: "openagrinet:location"
+              additionalProperties: false
               x-jsonld-id: "openagrinet:market"
             arrivalDate:
               type: string
@@ -118,7 +132,11 @@ components:
               x-jsonld-id: "openagrinet:arrivalDate"
             prices:
               type: object
-              required: [modal, currency, unit]
+              required: [currency, unit]
+              anyOf:
+                - required: [minimum]
+                - required: [maximum]
+                - required: [modal]
               description: Normalized minimum, maximum, and modal prices.
               properties:
                 minimum:
@@ -146,6 +164,7 @@ components:
                   minLength: 1
                   description: Governed unit to which each price applies.
                   x-jsonld-id: "openagrinet:unit"
+              additionalProperties: false
               x-jsonld-id: "openagrinet:prices"
             generatedAt:
               type: string
@@ -165,7 +184,17 @@ components:
           then:
             required: [supportedCommodities, supportedPriceFields]
             not:
-              required: [prices]
+              anyOf:
+                - required: [source]
+                - required: [commodity]
+                - required: [commodityGroup]
+                - required: [grade]
+                - required: [variety]
+                - required: [market]
+                - required: [arrivalDate]
+                - required: [prices]
+                - required: [generatedAt]
+                - required: [validity]
         - if:
             properties:
               informationMode:

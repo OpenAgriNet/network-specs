@@ -10,23 +10,135 @@
       "rdfs:label": "Market Intelligence",
       "rdfs:comment": "Price trends, demand forecasts, and nearby market opportunities that may be obtained on demand or supplied directly."
     },
-    { "@id": "openagrinet:supportedCommodities", "@type": "rdfs:Property", "rdfs:label": "supported commodities" },
-    { "@id": "openagrinet:supportedInsightTypes", "@type": "rdfs:Property", "rdfs:label": "supported insight types" },
-    { "@id": "openagrinet:historyPeriod", "@type": "rdfs:Property", "rdfs:label": "history period" },
-    { "@id": "openagrinet:forecastHorizon", "@type": "rdfs:Property", "rdfs:label": "forecast horizon" },
-    { "@id": "openagrinet:commodity", "@type": "rdfs:Property", "rdfs:label": "commodity" },
-    { "@id": "openagrinet:generatedAt", "@type": "rdfs:Property", "rdfs:label": "generated at" },
-    { "@id": "openagrinet:validity", "@type": "rdfs:Property", "rdfs:label": "validity" },
-    { "@id": "openagrinet:insights", "@type": "rdfs:Property", "rdfs:label": "insights" },
-    { "@id": "openagrinet:insightType", "@type": "rdfs:Property", "rdfs:label": "insight type" },
-    { "@id": "openagrinet:summary", "@type": "rdfs:Property", "rdfs:label": "summary" },
-    { "@id": "openagrinet:market", "@type": "rdfs:Property", "rdfs:label": "market" },
-    { "@id": "openagrinet:marketCode", "@type": "rdfs:Property", "rdfs:label": "market code" },
-    { "@id": "openagrinet:marketName", "@type": "rdfs:Property", "rdfs:label": "market name" },
-    { "@id": "openagrinet:period", "@type": "rdfs:Property", "rdfs:label": "period" },
-    { "@id": "openagrinet:indicator", "@type": "rdfs:Property", "rdfs:label": "indicator" },
-    { "@id": "openagrinet:distance", "@type": "rdfs:Property", "rdfs:label": "distance" },
-    { "@id": "openagrinet:supportingResourceIds", "@type": "rdfs:Property", "rdfs:label": "supporting Resource identifiers" },
-    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" }
+    {
+      "@id": "openagrinet:supportedCommodities",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported commodities"
+    },
+    {
+      "@id": "openagrinet:supportedInsightTypes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported insight types"
+    },
+    {
+      "@id": "openagrinet:historyPeriod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "history period"
+    },
+    {
+      "@id": "openagrinet:forecastHorizon",
+      "@type": "rdfs:Property",
+      "rdfs:label": "forecast horizon"
+    },
+    {
+      "@id": "openagrinet:commodity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "commodity"
+    },
+    {
+      "@id": "openagrinet:generatedAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "generated at"
+    },
+    {
+      "@id": "openagrinet:validity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "validity"
+    },
+    {
+      "@id": "openagrinet:insights",
+      "@type": "rdfs:Property",
+      "rdfs:label": "insights"
+    },
+    {
+      "@id": "openagrinet:insightType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "insight type"
+    },
+    {
+      "@id": "openagrinet:summary",
+      "@type": "rdfs:Property",
+      "rdfs:label": "summary"
+    },
+    {
+      "@id": "openagrinet:market",
+      "@type": "rdfs:Property",
+      "rdfs:label": "market"
+    },
+    {
+      "@id": "openagrinet:marketCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "market code"
+    },
+    {
+      "@id": "openagrinet:marketName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "market name"
+    },
+    {
+      "@id": "openagrinet:period",
+      "@type": "rdfs:Property",
+      "rdfs:label": "period"
+    },
+    {
+      "@id": "openagrinet:indicator",
+      "@type": "rdfs:Property",
+      "rdfs:label": "indicator"
+    },
+    {
+      "@id": "openagrinet:distance",
+      "@type": "rdfs:Property",
+      "rdfs:label": "distance"
+    },
+    {
+      "@id": "openagrinet:supportingResourceIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supporting Resource identifiers"
+    },
+    {
+      "@id": "openagrinet:source",
+      "@type": "rdfs:Property",
+      "rdfs:label": "source"
+    },
+    {
+      "@id": "openagrinet:district",
+      "@type": "rdfs:Property",
+      "rdfs:label": "district"
+    },
+    {
+      "@id": "openagrinet:state",
+      "@type": "rdfs:Property",
+      "rdfs:label": "state"
+    },
+    {
+      "@id": "openagrinet:location",
+      "@type": "rdfs:Property",
+      "rdfs:label": "location"
+    },
+    {
+      "@id": "openagrinet:indicatorName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "indicator name"
+    },
+    {
+      "@id": "openagrinet:indicatorValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "indicator value"
+    },
+    {
+      "@id": "openagrinet:indicatorUnit",
+      "@type": "rdfs:Property",
+      "rdfs:label": "indicator unit"
+    },
+    {
+      "@id": "openagrinet:value",
+      "@type": "rdfs:Property",
+      "rdfs:label": "value"
+    },
+    {
+      "@id": "openagrinet:unit",
+      "@type": "rdfs:Property",
+      "rdfs:label": "unit"
+    }
   ]
 }

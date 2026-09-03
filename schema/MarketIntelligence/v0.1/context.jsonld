@@ -5,11 +5,18 @@
       "@version": 1.1,
       "openagrinet": "https://schemas.openagrinet.global/vocab#",
       "MarketIntelligence": "openagrinet:MarketIntelligence",
-      "supportedCommodities": { "@id": "openagrinet:supportedCommodities", "@container": "@set" },
+      "supportedCommodities": {
+        "@id": "openagrinet:supportedCommodities",
+        "@container": "@set",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
       "supportedInsightTypes": { "@id": "openagrinet:supportedInsightTypes", "@container": "@set" },
       "historyPeriod": "openagrinet:historyPeriod",
       "forecastHorizon": "openagrinet:forecastHorizon",
-      "commodity": "openagrinet:commodity",
+      "commodity": {
+        "@id": "openagrinet:commodity",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
       "generatedAt": "openagrinet:generatedAt",
       "validity": "openagrinet:validity",
       "insights": { "@id": "openagrinet:insights", "@container": "@set" },
@@ -23,8 +30,10 @@
       "location": "openagrinet:location",
       "period": "openagrinet:period",
       "indicator": "openagrinet:indicator",
-      "name": "openagrinet:indicatorName",
-      "value": "openagrinet:indicatorValue",
+      "indicatorName": "openagrinet:indicatorName",
+      "indicatorValue": "openagrinet:indicatorValue",
+      "indicatorUnit": "openagrinet:indicatorUnit",
+      "value": "openagrinet:value",
       "unit": "openagrinet:unit",
       "distance": "openagrinet:distance",
       "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },

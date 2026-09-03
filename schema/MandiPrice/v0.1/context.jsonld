@@ -7,7 +7,8 @@
       "MandiPrice": "openagrinet:MandiPrice",
       "supportedCommodities": {
         "@id": "openagrinet:supportedCommodities",
-        "@container": "@set"
+        "@container": "@set",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
       },
       "supportedPriceFields": {
         "@id": "openagrinet:supportedPriceFields",
@@ -17,7 +18,10 @@
       "historyPeriod": "openagrinet:historyPeriod",
       "updateFrequency": "openagrinet:updateFrequency",
       "source": "openagrinet:source",
-      "commodity": "openagrinet:commodity",
+      "commodity": {
+        "@id": "openagrinet:commodity",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
       "commodityGroup": "openagrinet:commodityGroup",
       "grade": "openagrinet:grade",
       "variety": "openagrinet:variety",

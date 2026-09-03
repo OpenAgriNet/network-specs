@@ -32,7 +32,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 
 `MandiPrice` carries individual market-price facts. `MarketIntelligence` carries trends, forecasts, and opportunities derived from market information. It does not prescribe a sell, hold, or market-selection action and does not define market transactions.
 
-The schema does not govern the calculation method, demand scale, or indicator vocabulary. Providers may publish those definitions separately while using `indicator.name`, `indicator.value`, and `indicator.unit` for portable results.
+The schema does not govern the calculation method, demand scale, or indicator vocabulary. Providers may publish those definitions separately while using `indicator.indicatorName`, `indicator.indicatorValue`, and `indicator.indicatorUnit` for portable results. Price trends and demand forecasts require an explicit `period`.
 
 ## Examples
 

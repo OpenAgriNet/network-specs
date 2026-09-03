@@ -1,4 +1,5 @@
 {
+  "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld",
   "@type": "openagrinet:MandiPrice",
   "informationMode": "Direct",
   "subjectCategories": [

@@ -4,12 +4,33 @@
   "version": "0.1.0",
   "protocol_version": "2.0",
   "semantic_model": "generalised",
-  "included_schemas": ["MandiPrice"],
-  "discovery_fields": ["informationMode", "supportedCommodities", "supportedPriceFields", "historicalDataAvailable", "historyPeriod", "coverageAreas"],
-  "result_fields": ["commodity.code", "commodityGroup", "variety", "market.marketCode", "arrivalDate", "prices", "generatedAt"],
+  "included_schemas": [
+    "MandiPrice"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "supportedCommodities",
+    "supportedPriceFields",
+    "historicalDataAvailable",
+    "historyPeriod",
+    "updateFrequency",
+    "coverageAreas"
+  ],
+  "result_fields": [
+    "commodity.code",
+    "commodityGroup",
+    "grade",
+    "variety",
+    "market.marketCode",
+    "arrivalDate",
+    "prices",
+    "generatedAt",
+    "validity",
+    "source"
+  ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
-    "beckn:resourceAttributes.supportedCommodities.code",
+    "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedPriceFields",
     "beckn:resourceAttributes.commodity.code",
     "beckn:resourceAttributes.commodityGroup",
@@ -21,7 +42,7 @@
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
-    "beckn:resourceAttributes.supportedCommodities.code",
+    "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedPriceFields",
     "beckn:resourceAttributes.commodity.code",
     "beckn:resourceAttributes.commodityGroup",
@@ -34,5 +55,14 @@
     "beckn:resourceAttributes.arrivalDate",
     "beckn:resourceAttributes.prices.modal"
   ],
-  "privacy_notes": []
+  "privacy_notes": [],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1"
+  },
+  "interaction_type": "Observe",
+  "outcome_type": "openagrinet:MandiPrice"
 }

@@ -26,13 +26,15 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `commodityGroup`, `grade`, `variety` | Source classifications |
 | `market` | Market identity and optional location |
 | `arrivalDate` | Date to which arrivals and prices apply |
-| `prices` | Minimum, maximum, and modal prices |
+| `prices` | Currency, unit, and at least one of minimum, maximum, or modal price |
 | `generatedAt` | Normalization time |
 | `validity` | Optional applicability period for a current snapshot |
 
 ## Non-goals
 
 This schema does not define a price-query protocol request. An `OnDemand` Resource declares the searchable scope; the Beckn Intent carries the requested values.
+
+Conformance checks verify price ordering when multiple values are present: minimum must not exceed modal or maximum, and modal must not exceed maximum.
 
 ## Examples
 
