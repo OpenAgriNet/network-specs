@@ -10,15 +10,60 @@
       "rdfs:label": "Knowledge Advisory",
       "rdfs:comment": "Actionable agricultural guidance based on knowledge that may be obtained on demand or supplied directly."
     },
-    { "@id": "openagrinet:topics", "@type": "rdfs:Property", "rdfs:label": "topics" },
-    { "@id": "openagrinet:issuedAt", "@type": "rdfs:Property", "rdfs:label": "issued at" },
-    { "@id": "openagrinet:validity", "@type": "rdfs:Property", "rdfs:label": "validity" },
-    { "@id": "openagrinet:recommendations", "@type": "rdfs:Property", "rdfs:label": "recommendations" },
-    { "@id": "openagrinet:action", "@type": "rdfs:Property", "rdfs:label": "action" },
-    { "@id": "openagrinet:message", "@type": "rdfs:Property", "rdfs:label": "message" },
-    { "@id": "openagrinet:priority", "@type": "rdfs:Property", "rdfs:label": "priority" },
-    { "@id": "openagrinet:supportingResourceIds", "@type": "rdfs:Property", "rdfs:label": "supporting Resource identifiers" },
-    { "@id": "openagrinet:rationale", "@type": "rdfs:Property", "rdfs:label": "rationale" },
-    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" }
+    {
+      "@id": "openagrinet:topics",
+      "@type": "rdfs:Property",
+      "rdfs:label": "topics"
+    },
+    {
+      "@id": "openagrinet:issuedAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "issued at"
+    },
+    {
+      "@id": "openagrinet:validity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "validity"
+    },
+    {
+      "@id": "openagrinet:recommendations",
+      "@type": "rdfs:Property",
+      "rdfs:label": "recommendations"
+    },
+    {
+      "@id": "openagrinet:message",
+      "@type": "rdfs:Property",
+      "rdfs:label": "message"
+    },
+    {
+      "@id": "openagrinet:priority",
+      "@type": "rdfs:Property",
+      "rdfs:label": "priority"
+    },
+    {
+      "@id": "openagrinet:supportingResourceIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supporting Resource identifiers"
+    },
+    {
+      "@id": "openagrinet:rationale",
+      "@type": "rdfs:Property",
+      "rdfs:label": "rationale"
+    },
+    {
+      "@id": "openagrinet:source",
+      "@type": "rdfs:Property",
+      "rdfs:label": "source"
+    },
+    {
+      "@id": "openagrinet:actions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "actions"
+    },
+    {
+      "@id": "openagrinet:language",
+      "@type": "rdfs:Property",
+      "rdfs:label": "language"
+    }
   ]
 }

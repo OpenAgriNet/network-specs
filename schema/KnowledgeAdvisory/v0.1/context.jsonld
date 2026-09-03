@@ -9,7 +9,7 @@
       "issuedAt": "openagrinet:issuedAt",
       "validity": "openagrinet:validity",
       "recommendations": { "@id": "openagrinet:recommendations", "@container": "@set" },
-      "action": "openagrinet:action",
+      "actions": { "@id": "openagrinet:actions", "@container": "@set" },
       "message": "openagrinet:message",
       "language": "openagrinet:language",
       "priority": "openagrinet:priority",

@@ -3,8 +3,7 @@
   "@type": "openagrinet:KnowledgeAdvisory",
   "informationMode": "OnDemand",
   "subjectCategories": [
-    "Crop",
-    "Knowledge"
+    "Crop"
   ],
   "agricultureSubjects": [
     {

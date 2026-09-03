@@ -23,7 +23,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 | `agricultureSubjects` | Optional governed subjects such as a crop, livestock species, pest, or scheme |
 | `issuedAt` | Time at which the Provider issued the advisory |
 | `validity` | Optional period during which the advisory applies |
-| `recommendations` | Human-readable guidance and optional actions and priorities |
+| `recommendations` | Human-readable guidance with optional action lists and Provider-assigned priority |
 | `supportingResourceIds` | Optional Beckn Resource identifiers for supporting Knowledge Resources |
 | `rationale` | Optional explanation for the recommendation |
 | `source` | Provider or authoritative source that issued the advisory |

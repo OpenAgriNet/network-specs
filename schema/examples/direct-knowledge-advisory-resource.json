@@ -11,8 +11,7 @@
     "@type": "openagrinet:KnowledgeAdvisory",
     "informationMode": "Direct",
     "subjectCategories": [
-      "Crop",
-      "Knowledge"
+      "Crop"
     ],
     "agricultureSubjects": [
       {
@@ -44,10 +43,12 @@
     },
     "recommendations": [
       {
-        "action": "Inspect seedlings",
         "message": "Inspect the field twice each week during establishment and replace failed seedlings promptly.",
         "language": "en",
-        "priority": "Normal"
+        "priority": "Normal",
+        "actions": [
+          "Inspect seedlings"
+        ]
       }
     ],
     "supportingResourceIds": [

@@ -21,9 +21,22 @@ components:
           required: ["@type"]
           properties:
             "@type":
-              type: string
-              const: openagrinet:KnowledgeAdvisory
-              description: Canonical OAN type for this schema pack.
+              oneOf:
+                - type: string
+                  const: openagrinet:KnowledgeAdvisory
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:KnowledgeAdvisory
+                  items:
+                    oneOf:
+                      - const: openagrinet:KnowledgeAdvisory
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
             topics:
               type: array
               minItems: 1
@@ -51,11 +64,15 @@ components:
                 type: object
                 required: [message, language]
                 properties:
-                  action:
-                    type: string
-                    minLength: 1
-                    description: Concise recommended action when one applies.
-                    x-jsonld-id: "openagrinet:action"
+                  actions:
+                    type: array
+                    minItems: 1
+                    uniqueItems: true
+                    description: Concise recommended actions when they apply.
+                    items:
+                      type: string
+                      minLength: 1
+                    x-jsonld-id: "openagrinet:actions"
                   message:
                     type: string
                     minLength: 1
@@ -100,7 +117,13 @@ components:
           then:
             required: [topics, languages]
             not:
-              required: [recommendations]
+              anyOf:
+                - required: [issuedAt]
+                - required: [validity]
+                - required: [recommendations]
+                - required: [supportingResourceIds]
+                - required: [rationale]
+                - required: [source]
         - if:
             properties:
               informationMode:

@@ -1,8 +1,0 @@
-{
-  "schema": "AdvisoryCapability",
-  "version": "0.1.0",
-  "card_template": "Advisory capability | {{topics}}",
-  "detail_template": "Topics: {{topics}}\nCategories: {{subjectCategories}}\nLanguages: {{languages}}",
-  "html": "<div class=\"oan-advisory\"><strong>Advisory capability</strong><span>{{topics}}</span></div>",
-  "html_detail": "<div class=\"oan-advisory-detail\"><p><strong>Topics:</strong> {{topics}}</p><p><strong>Categories:</strong> {{subjectCategories}}</p><p><strong>Languages:</strong> {{languages}}</p></div>"
-}
