@@ -16,7 +16,7 @@ components:
         "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.1/context.jsonld"
         "@type": openagrinet:AgricultureFacility
       allOf:
-        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
           required: ["@type"]
           properties:
@@ -100,17 +100,6 @@ components:
             required: [informationMode]
           then:
             required: [supportedFacilityTypes]
-            not:
-              anyOf:
-                - required: [facilityType]
-                - required: [location]
-                - required: [address]
-                - required: [services]
-                - required: [capacity]
-                - required: [publicContact]
-                - required: [website]
-                - required: [source]
-                - required: [lastUpdatedAt]
         - if:
             properties:
               informationMode:

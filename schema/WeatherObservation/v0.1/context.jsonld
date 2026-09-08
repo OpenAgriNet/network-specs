@@ -32,7 +32,8 @@
       },
       "parameter": "openagrinet:parameter",
       "value": "openagrinet:value",
-      "unit": "openagrinet:unit"
+      "unit": "openagrinet:unit",
+      "aggregationType": "openagrinet:aggregationType"
     }
   ]
 }

@@ -1,7 +1,7 @@
 # Mandi Price
 
 <nav class="artifact-links" aria-label="Schema artifacts">
-  <a href="../../INDEX.html">All schemas</a>
+  <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
   <a href="context.jsonld">context.jsonld</a>
   <a href="vocab.jsonld">vocab.jsonld</a>
@@ -24,21 +24,28 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 
 ## Fields
 
-| Field | Meaning |
-|---|---|
-| `informationMode` | `OnDemand` requires a Provider invocation; `Direct` contains specific prices |
-| `supportedCommodities` | Commodities available on demand |
-| `supportedPriceFields` | Price values available on demand |
-| `historicalDataAvailable`, `historyPeriod` | Availability and maximum period of historical data |
-| `updateFrequency` | Expected refresh interval for current prices |
-| `source` | Authoritative upstream source |
-| `commodity` | Beckn descriptor for the commodity |
-| `commodityGroup`, `grade`, `variety` | Source classifications |
-| `market` | Market identity and optional location |
-| `arrivalDate` | Date to which arrivals and prices apply |
-| `prices` | Currency, unit, and at least one of minimum, maximum, or modal price |
-| `generatedAt` | Normalization time |
-| `validity` | Optional applicability period for a current snapshot |
+"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+
+| Field | Required when | Meaning |
+|---|---|---|
+| `@type` | Always | Identifies the Resource as `openagrinet:MandiPrice` |
+| `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific prices |
+| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `agricultureSubjects` | Optional | Governed commodity or market references when available |
+| `languages` | Optional | Languages used by textual descriptors |
+| `coverageAreas` | Optional | Geographic applicability or supported market coverage |
+| `supportedCommodities` | `OnDemand` | Commodities available on demand |
+| `supportedPriceFields` | `OnDemand` | Price values available on demand |
+| `historicalDataAvailable`, `historyPeriod` | Optional | Availability and maximum period of historical data |
+| `updateFrequency` | Optional | Expected refresh interval for current prices |
+| `source` | `Direct` | Authoritative upstream source |
+| `commodity` | `Direct` | Beckn descriptor for the commodity |
+| `commodityGroup`, `grade`, `variety` | Optional in `Direct` | Source classifications |
+| `market` | `Direct` | Market identity and optional location |
+| `arrivalDate` | `Direct` | Date to which arrivals and prices apply |
+| `prices` | `Direct` | Currency, unit, and at least one of minimum, maximum, or modal price |
+| `generatedAt` | `Direct` | Time at which the normalized Resource was produced |
+| `validity` | Optional in `Direct` | Applicability period for a current snapshot |
 
 ## Non-goals
 

@@ -16,7 +16,7 @@ components:
         "@context": "https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld"
         "@type": openagrinet:WeatherObservation
       allOf:
-        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
           required: ["@type"]
           properties:
@@ -131,6 +131,11 @@ components:
                     minLength: 1
                     description: Governed unit code, or `1` when the value is unitless.
                     x-jsonld-id: "openagrinet:unit"
+                  aggregationType:
+                    type: string
+                    enum: [Instantaneous, Minimum, Maximum, Mean, Sum]
+                    description: Statistical treatment represented by the value over its applicable reporting period, normally the Resource validity period. Omit it when the value is an unqualified point-in-time observation.
+                    x-jsonld-id: "openagrinet:aggregationType"
                 additionalProperties: false
               x-jsonld-id: "openagrinet:parameters"
         - if:
@@ -140,16 +145,6 @@ components:
             required: [informationMode]
           then:
             required: [supportedObservationTypes, supportedParameters, geographicGranularities]
-            not:
-              anyOf:
-                - required: [observationType]
-                - required: [source]
-                - required: [location]
-                - required: [generatedAt]
-                - required: [observedAt]
-                - required: [modelRunAt]
-                - required: [validity]
-                - required: [parameters]
         - if:
             properties:
               informationMode:

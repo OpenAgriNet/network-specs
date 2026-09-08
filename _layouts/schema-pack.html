@@ -1,0 +1,112 @@
+---
+layout: default
+---
+{% assign pack = site.data.schema_packs[page.schema_key] %}
+<article class="schema-pack-page">
+  <p class="schema-pack-page__eyebrow">OpenAgriNet Schema</p>
+  <h1>{{ pack.display_name }}</h1>
+  <p class="page-intro">{{ pack.description }}</p>
+
+  <div class="schema-tags" aria-label="Schema metadata">
+    <span>{{ pack.version_dir }}</span>
+    <span>Beckn {{ pack.protocol_version }}</span>
+    {% if pack.interaction_type %}<span>{{ pack.interaction_type }}</span>{% endif %}
+    <span><code>{{ pack.canonical_type }}</code></span>
+  </div>
+
+  <nav class="artifact-links" aria-label="Schema artifacts">
+    {% for artifact in pack.artifacts %}
+      <a href="{{ artifact }}">{{ artifact }}</a>
+    {% endfor %}
+  </nav>
+
+  <h2>How this schema is composed</h2>
+  <p><code>allOf</code> applies every component below to the same <code>resourceAttributes</code> object. It is composition, not inheritance or nesting.</p>
+  <div class="composition-expansion">
+    {% for component in pack.composition %}
+      {% unless forloop.first %}<span class="composition-operator" aria-hidden="true">+</span>{% endunless %}
+      <section>
+        <span class="schema-card__meta">{{ component.role }}</span>
+        <h3>{{ component.name }}</h3>
+        {% if component.reference %}<p><code>{{ component.reference }}</code></p>{% endif %}
+      </section>
+    {% endfor %}
+    <span class="composition-operator" aria-hidden="true">=</span>
+    <section class="composition-result">
+      <span class="schema-card__meta">Effective contract</span>
+      <h3>{{ pack.schema_name }}</h3>
+      <p>{{ pack.fields | size }} visible field paths after local references are expanded.</p>
+    </section>
+  </div>
+
+  <div class="schema-note">
+    <strong>Required means required in a conforming Resource.</strong>
+    Protocol filters, partial Intent objects, and Provider-specific inputs are separate contracts. <code>OnDemand</code> and <code>Direct</code> set minimum requirements; neither mode forbids additional fields.
+  </div>
+
+  <h2 id="effective-fields">Complete composed field view</h2>
+  <p>This table combines the shared Agriculture Resource fields with this pack's fields. Nested paths are expanded where their definitions are local; Beckn-owned objects remain linked references.</p>
+  <div class="schema-table-wrap">
+    <table class="effective-schema-table">
+      <thead>
+        <tr>
+          <th>Field path</th>
+          <th>Type</th>
+          <th>Required when</th>
+          <th>Description and allowed values</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for field in pack.fields %}
+          <tr>
+            <td><code>{{ field.path }}</code></td>
+            <td>
+              <strong>{{ field.type }}</strong>
+              <p class="field-origin">Defined by {{ field.origin }}</p>
+              {% if field.reference %}<details><summary>Reference</summary><code>{{ field.reference }}</code></details>{% endif %}
+            </td>
+            <td>
+              {% if field.requirement == "Optional" %}
+                <span class="optional-tag">Optional</span>
+              {% elsif field.requirement == "Always" %}
+                <span class="required-tag">Required</span>
+              {% else %}
+                <span class="required-tag">Required</span>
+                <span class="requirement-condition">{{ field.requirement }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <p>{{ field.description }}</p>
+              {% if field.enum %}
+                <p><strong>Allowed:</strong> {% for value in field.enum %}<code>{{ value }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}</p>
+              {% endif %}
+              {% if field.constraints != "" %}<p class="field-constraints">{{ field.constraints }}</p>{% endif %}
+            </td>
+            <td>{% if field.example %}<pre class="field-example"><code>{{ field.example | escape }}</code></pre>{% else %}<span aria-label="No example">—</span>{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="examples">Complete examples</h2>
+  <p>Each example is a complete <code>resourceAttributes</code> object for this schema pack, rather than a fragment of only the pack-specific fields.</p>
+  <div class="example-grid">
+    {% for example in pack.examples %}
+      <details class="schema-example">
+        <summary>
+          <strong>{{ example.name }}</strong>
+          {% if example.mode %}<span class="schema-card__meta">{{ example.mode }}</span>{% endif %}
+        </summary>
+        <div>
+          <p><a href="{{ example.file }}">Open source JSON</a></p>
+          <pre><code>{{ example.json | escape }}</code></pre>
+        </div>
+      </details>
+    {% endfor %}
+  </div>
+
+  <h2>Repository documentation</h2>
+  <p>The <a href="https://github.com/OpenAgriNet/network-specs/blob/{{ site.github.build_revision }}/schema/{{ pack.name }}/{{ pack.version_dir }}/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the pack's purpose, boundaries, field semantics, and examples for contributors reviewing the source.</p>
+</article>

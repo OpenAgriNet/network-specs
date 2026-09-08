@@ -10,3 +10,7 @@ plugins:
 relative_links:
   enabled: true
   collections: true
+
+exclude:
+  - DEVELOPMENT.md
+  - scripts

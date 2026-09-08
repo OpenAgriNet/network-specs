@@ -1,7 +1,5 @@
 # OpenAgriNet Network Specifications
 
-Status: Proposed for review
-
 ## Purpose
 
 This repository contains the versioned OpenAgriNet domain contracts used to describe agricultural information in Beckn catalogs, Discovery results, and Provider responses.
@@ -12,23 +10,12 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 
 | Entry point | Use it for |
 |---|---|
-| [Schema Pack Index](schema/INDEX.md) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
-| [Complete Examples](schema/examples/README.md) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
+| [Schema Pack](schema/) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
+| [Complete Examples](schema/examples/) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
 
 ## Active version
 
-The active review line is `v0.1`; pack metadata uses semantic version `0.1.0`. The singular `schema/` directory is authoritative.
-
-## Local preview
-
-Install the GitHub Pages dependencies once, then run Jekyll through Bundler:
-
-```bash
-bundle install
-bundle exec jekyll serve --host 127.0.0.1 --port 4173
-```
-
-Open `http://127.0.0.1:4173/network-specs/schema/INDEX.html`. Jekyll rebuilds after source changes; refresh the page to see them.
+The current version line is `v0.1`; pack metadata uses semantic version `0.1.0`. The singular `schema/` directory is authoritative.
 
 ## Repository layout
 
@@ -69,11 +56,17 @@ The schema packs are composable field sets. A selected contract uses JSON Schema
 
 For example, the effective `WeatherAdvisory` contract combines the shared Agriculture Resource fields with Weather Advisory fields. This composition does not make one runtime object a child of another, and it does not require an intermediate Domain payload.
 
-Each domain pack supports `OnDemand` and `Direct` information. An `OnDemand` Resource describes information that requires a Provider invocation. A `Direct` Resource contains or directly references specific information. The mode does not indicate freshness; timestamps and validity express when the information applies.
+Each domain pack supports `OnDemand` and `Direct` information. An `OnDemand` Resource describes information that requires a Provider invocation and may also contain current or representative values. A `Direct` Resource contains or directly references specific information that is usable without another Provider invocation. These modes define minimum requirements rather than mutually exclusive field sets. The mode does not indicate freshness; timestamps and validity express when the information applies.
 
 The selected domain pack is also the capability type. `OnDemand` advertises what the Provider can supply, and `Direct` carries the supplied information. OAN does not define parallel `*Capability` schema packs.
 
 The canonical OAN `@type` is required. A Provider extension may use a JSON-LD type array only when that array retains the canonical OAN type. A pack-local `@context` is optional inside `resourceAttributes` when the enclosing Beckn document already establishes the same context; standalone JSON-LD documents include it explicitly.
+
+## Validation boundary
+
+Each pack validates a complete `Resource.resourceAttributes` object when that object is present. It does not validate a Beckn discovery `Intent`, a JSONPath filter, or an identifier-only reference to a previously discovered Resource.
+
+Required fields in a pack describe a conforming Resource, not every protocol request. `OnDemand` requirements apply to a Resource that advertises what a Provider can supply. `Direct` requirements apply to a Resource that contains or directly references the supplied information. An adapter that accepts a partial Provider-specific input must validate that input separately before mapping the completed result to an OAN Resource.
 
 ## Canonical identifiers
 
@@ -110,7 +103,7 @@ Those contracts may reference the domain types defined here without duplicating 
 - JSON-LD 1.1 context and vocabulary per pack
 - one `openagrinet:` namespace for OAN-governed terms
 - lowerCamelCase property names
-- UpperCamelCase governed values in the review draft
+- UpperCamelCase governed values
 - semantic versions for schema packs and versioned Resources
 - composition through named `allOf` references
 - no personal profiles, credentials, transport addresses, prompts, embeddings, or model traces

@@ -1,7 +1,7 @@
 # Weather Advisory
 
 <nav class="artifact-links" aria-label="Schema artifacts">
-  <a href="../../INDEX.html">All schemas</a>
+  <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
   <a href="context.jsonld">context.jsonld</a>
   <a href="vocab.jsonld">vocab.jsonld</a>
@@ -24,20 +24,27 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 
 ## Fields
 
-| Field | Meaning |
-|---|---|
-| `informationMode` | `OnDemand` requires a Provider invocation; `Direct` contains specific advice |
-| `topics` | Topics addressed by the advisory |
-| `supportedWeatherParameters` | Weather parameters available as the basis for on-demand advice |
-| `forecastHorizon` | Maximum supported forecast horizon |
-| `updateFrequency` | Expected refresh interval |
-| `geographicGranularities` | Geographic levels at which advice is available |
-| `location` | Place to which the advice applies |
-| `issuedAt` | Time at which the Provider issued the advice |
-| `validity` | Period during which the advice applies |
-| `recommendations` | Localized guidance, weather severity, and suggested actions |
-| `weatherBasis` | Weather parameters and supporting Resource identifiers used to produce the advice |
-| `source` | Provider or authoritative source that issued the advice |
+"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+
+| Field | Required when | Meaning |
+|---|---|---|
+| `@type` | Always | Identifies the Resource as `openagrinet:WeatherAdvisory` |
+| `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific advice |
+| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `agricultureSubjects` | Optional | Governed crop, pest, disease, or practice references when relevant |
+| `languages` | `OnDemand`; optional in `Direct` | Supported response languages; each Direct recommendation declares its own language |
+| `coverageAreas` | Optional | Geographic applicability or supported coverage |
+| `topics` | Both modes | Topics addressed by the advisory |
+| `supportedWeatherParameters` | `OnDemand` | Weather parameters available as the basis for on-demand advice |
+| `forecastHorizon` | Optional | Maximum supported forecast horizon |
+| `updateFrequency` | Optional | Expected refresh interval |
+| `geographicGranularities` | `OnDemand` | Geographic levels at which advice is available |
+| `location` | `Direct` | Place to which the advice applies |
+| `issuedAt` | `Direct` | Time at which the Provider issued the advice |
+| `validity` | `Direct` | Period during which the advice applies |
+| `recommendations` | `Direct` | Localized guidance, weather severity, and suggested actions |
+| `weatherBasis` | `Direct` | Weather parameters and supporting Resource identifiers used to produce the advice |
+| `source` | `Direct` | Provider or authoritative source that issued the advice |
 
 ## Non-goals
 

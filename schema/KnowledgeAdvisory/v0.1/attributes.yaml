@@ -16,7 +16,7 @@ components:
         "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeAdvisory/v0.1/context.jsonld"
         "@type": openagrinet:KnowledgeAdvisory
       allOf:
-        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
           required: ["@type"]
           properties:
@@ -116,14 +116,6 @@ components:
             required: [informationMode]
           then:
             required: [topics, languages]
-            not:
-              anyOf:
-                - required: [issuedAt]
-                - required: [validity]
-                - required: [recommendations]
-                - required: [supportingResourceIds]
-                - required: [rationale]
-                - required: [source]
         - if:
             properties:
               informationMode:

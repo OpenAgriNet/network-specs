@@ -86,6 +86,12 @@
       "rdfs:label": "unit"
     },
     {
+      "@id": "openagrinet:aggregationType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "aggregation type",
+      "rdfs:comment": "Statistical treatment represented by a weather value over its applicable period."
+    },
+    {
       "@id": "openagrinet:observedAt",
       "@type": "rdfs:Property",
       "rdfs:label": "observed at"

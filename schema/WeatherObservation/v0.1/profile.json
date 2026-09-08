@@ -19,6 +19,7 @@
   "result_fields": [
     "observationType",
     "parameters[].parameter",
+    "parameters[].aggregationType",
     "location",
     "generatedAt",
     "observedAt",
@@ -35,6 +36,7 @@
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
     "beckn:resourceAttributes.parameters[].parameter",
+    "beckn:resourceAttributes.parameters[].aggregationType",
     "beckn:resourceAttributes.generatedAt",
     "beckn:resourceAttributes.observedAt",
     "beckn:resourceAttributes.modelRunAt",
@@ -49,7 +51,8 @@
     "beckn:resourceAttributes.observationType",
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
-    "beckn:resourceAttributes.parameters[].parameter"
+    "beckn:resourceAttributes.parameters[].parameter",
+    "beckn:resourceAttributes.parameters[].aggregationType"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.observedAt",

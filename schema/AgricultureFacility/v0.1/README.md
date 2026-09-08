@@ -1,7 +1,7 @@
 # Agriculture Facility
 
 <nav class="artifact-links" aria-label="Schema artifacts">
-  <a href="../../INDEX.html">All schemas</a>
+  <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
   <a href="context.jsonld">context.jsonld</a>
   <a href="vocab.jsonld">vocab.jsonld</a>
@@ -26,19 +26,25 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 
 ## Fields
 
-| Field | Meaning |
-|---|---|
-| `informationMode` | `OnDemand` requires Provider invocation; `Direct` describes a specific facility |
-| `supportedFacilityTypes` | Facility categories available on demand |
-| `facilityType` | Governed category of a Direct facility |
-| `location` | Verified Beckn Location with GeoJSON geometry |
-| `address` | Beckn Address used when verified geometry is unavailable |
-| `services` | Public services offered at the facility |
-| `capacity` | Optional published capacity and unit |
-| `publicContact` | Public organizational contact approved for catalog publication |
-| `website` | Public facility or service website |
-| `source` | Authoritative source of the facility record |
-| `lastUpdatedAt` | Time at which the Provider last updated or verified the facility record |
+"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+
+| Field | Required when | Meaning |
+|---|---|---|
+| `@type` | Always | Identifies the Resource as `openagrinet:AgricultureFacility` |
+| `informationMode` | Always | `OnDemand` requires Provider invocation; `Direct` describes a specific facility |
+| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `agricultureSubjects` | Optional | Governed crop, commodity, scheme, or other subject references when relevant |
+| `languages` | Optional | Languages supported by or present in the facility information |
+| `coverageAreas` | Optional | Geographic service or discovery coverage |
+| `supportedFacilityTypes` | `OnDemand` | Facility categories available on demand |
+| `facilityType` | `Direct` | Governed category of a specific facility |
+| `location`, `address` | `Direct`: at least one | Verified Beckn Location, or a non-empty Beckn Address when verified geometry is unavailable |
+| `services` | Optional in `Direct` | Public services offered at the facility |
+| `capacity` | Optional in `Direct` | Published capacity and unit |
+| `publicContact` | Optional in `Direct` | Public organizational contact approved for catalog publication |
+| `website` | Optional in `Direct` | Public facility or service website |
+| `source` | `Direct` | Authoritative source of the facility record |
+| `lastUpdatedAt` | Optional in `Direct` | Time at which the Provider last updated or verified the facility record |
 
 ## Mapping rules
 

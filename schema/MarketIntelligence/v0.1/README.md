@@ -1,7 +1,7 @@
 # Market Intelligence
 
 <nav class="artifact-links" aria-label="Schema artifacts">
-  <a href="../../INDEX.html">All schemas</a>
+  <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
   <a href="context.jsonld">context.jsonld</a>
   <a href="vocab.jsonld">vocab.jsonld</a>
@@ -9,8 +9,6 @@
   <a href="renderer.json">renderer.json</a>
   <a href="#examples">Examples</a>
 </nav>
-
-Status: Proposed for review
 
 ## Purpose
 
@@ -26,17 +24,25 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 
 ## Fields
 
-| Field | Meaning |
-|---|---|
-| `informationMode` | `OnDemand` requires a Provider invocation; `Direct` contains specific market intelligence |
-| `supportedCommodities` | Commodities for which intelligence is available on demand |
-| `supportedInsightTypes` | Supported categories: price trend, demand forecast, and market opportunity |
-| `historyPeriod` | Maximum historical period available for analysis |
-| `forecastHorizon` | Maximum demand-forecast horizon |
-| `commodity` | Commodity to which direct intelligence applies |
-| `generatedAt`, `validity` | Generation time and optional applicability period |
-| `insights` | Provider-supplied summaries with optional market, period, indicator, distance, and supporting Resources |
-| `source` | Provider or authoritative source that generated the intelligence |
+"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+
+| Field | Required when | Meaning |
+|---|---|---|
+| `@type` | Always | Identifies the Resource as `openagrinet:MarketIntelligence` |
+| `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific market intelligence |
+| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `agricultureSubjects` | Optional | Governed commodity or market references when available |
+| `languages` | `OnDemand`; optional in `Direct` | Supported or available BCP 47 languages |
+| `coverageAreas` | Optional | Geographic applicability or supported market coverage |
+| `supportedCommodities` | `OnDemand` | Commodities for which intelligence is available on demand |
+| `supportedInsightTypes` | `OnDemand` | Supported categories: price trend, demand forecast, and market opportunity |
+| `historyPeriod` | Optional | Maximum historical period available for analysis |
+| `forecastHorizon` | Optional | Maximum demand-forecast horizon |
+| `commodity` | `Direct` | Commodity to which the intelligence applies |
+| `generatedAt` | `Direct` | Time at which the intelligence Resource was produced |
+| `validity` | Optional in `Direct` | Applicability period |
+| `insights` | `Direct` | Provider-supplied summaries with optional market, period, indicator, distance, and supporting Resources |
+| `source` | `Direct` | Provider or authoritative source that generated the intelligence |
 
 ## Boundaries
 

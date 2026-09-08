@@ -24,18 +24,27 @@
   "parameters": [
     {
       "parameter": "Temperature",
-      "value": 29.4,
-      "unit": "Cel"
+      "value": 26.1,
+      "unit": "Cel",
+      "aggregationType": "Minimum"
+    },
+    {
+      "parameter": "Temperature",
+      "value": 31.4,
+      "unit": "Cel",
+      "aggregationType": "Maximum"
     },
     {
       "parameter": "Humidity",
       "value": 82,
-      "unit": "%"
+      "unit": "%",
+      "aggregationType": "Mean"
     },
     {
       "parameter": "Rainfall",
       "value": 5.2,
-      "unit": "mm"
+      "unit": "mm",
+      "aggregationType": "Sum"
     }
   ],
   "modelRunAt": "2026-08-24T06:00:00Z"

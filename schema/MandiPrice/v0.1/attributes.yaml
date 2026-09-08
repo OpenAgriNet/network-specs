@@ -16,7 +16,7 @@ components:
         "@context": "https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld"
         "@type": openagrinet:MandiPrice
       allOf:
-        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
           required: ["@type"]
           properties:
@@ -183,18 +183,6 @@ components:
             required: [informationMode]
           then:
             required: [supportedCommodities, supportedPriceFields]
-            not:
-              anyOf:
-                - required: [source]
-                - required: [commodity]
-                - required: [commodityGroup]
-                - required: [grade]
-                - required: [variety]
-                - required: [market]
-                - required: [arrivalDate]
-                - required: [prices]
-                - required: [generatedAt]
-                - required: [validity]
         - if:
             properties:
               informationMode:

@@ -16,7 +16,7 @@ components:
         "@context": "https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld"
         "@type": openagrinet:MarketIntelligence
       allOf:
-        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
           required: ["@type"]
           properties:
@@ -98,13 +98,6 @@ components:
             required: [informationMode]
           then:
             required: [supportedCommodities, supportedInsightTypes, languages]
-            not:
-              anyOf:
-                - required: [commodity]
-                - required: [generatedAt]
-                - required: [validity]
-                - required: [insights]
-                - required: [source]
         - if:
             properties:
               informationMode:
@@ -171,18 +164,22 @@ components:
         marketCode:
           type: string
           minLength: 1
+          description: Governed identifier for the market or APMC, when one is available.
           x-jsonld-id: "openagrinet:marketCode"
         marketName:
           type: string
           minLength: 1
+          description: Human-readable name of the market or APMC.
           x-jsonld-id: "openagrinet:marketName"
         district:
           type: string
           minLength: 1
+          description: District in which the market is located.
           x-jsonld-id: "openagrinet:district"
         state:
           type: string
           minLength: 1
+          description: State or union territory in which the market is located.
           x-jsonld-id: "openagrinet:state"
         location:
           allOf:
@@ -222,9 +219,11 @@ components:
         value:
           type: number
           minimum: 0
+          description: Non-negative numeric magnitude of the measure.
           x-jsonld-id: "openagrinet:value"
         unit:
           type: string
           minLength: 1
+          description: Unit in which the measure is expressed, such as kilometre.
           x-jsonld-id: "openagrinet:unit"
       additionalProperties: false

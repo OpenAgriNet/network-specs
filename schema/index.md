@@ -1,57 +1,43 @@
-# OpenAgriNet Schema Pack Index
+# OpenAgriNet Schema Pack
 
 <p class="page-intro">Browse the shared agriculture field set and the active OpenAgriNet domain contracts. Each domain pack applies to Beckn <code>Resource.resourceAttributes</code> and keeps its versioned artifacts together.</p>
 
-Read the [Complete Examples](examples/README.md) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
+Read the [Complete Examples](examples/) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
 
-## Shared field set
+## Schema Packs
 
+The index is generated from the versioned `profile.json` files. Adding a schema directory with a profile makes it appear here automatically.
+
+{% assign profile_files = site.static_files | where: "name", "profile.json" | sort: "path" %}
 <div class="schema-grid">
-  <a class="schema-card" href="AgricultureResource/v0.1/">
-    <span class="schema-card__meta">Shared · v0.1</span>
-    <h3>Agriculture Resource</h3>
-    <p>Information mode, agriculture classification, governed subjects, language, geography, time and source definitions reused by the domain packs.</p>
-  </a>
-</div>
-
-## Domain packs
-
-<div class="schema-grid">
-  <a class="schema-card" href="KnowledgeResource/v0.1/">
-    <span class="schema-card__meta">Knowledge · v0.1</span>
-    <h3>Knowledge Resource</h3>
-    <p>Reusable agricultural knowledge with inline or URI-based representations, validity and provenance.</p>
-  </a>
-  <a class="schema-card" href="KnowledgeAdvisory/v0.1/">
-    <span class="schema-card__meta">Advisory · v0.1</span>
-    <h3>Knowledge Advisory</h3>
-    <p>Knowledge-based agricultural guidance with recommendations, supporting resources, validity and source.</p>
-  </a>
-  <a class="schema-card" href="WeatherObservation/v0.1/">
-    <span class="schema-card__meta">Observation · v0.1</span>
-    <h3>Weather Observation</h3>
-    <p>Measured weather and forecasts with place, observation or model time, validity and source.</p>
-  </a>
-  <a class="schema-card" href="WeatherAdvisory/v0.1/">
-    <span class="schema-card__meta">Advisory · v0.1</span>
-    <h3>Weather Advisory</h3>
-    <p>Weather-informed agricultural guidance with its weather basis, place, time, validity and source.</p>
-  </a>
-  <a class="schema-card" href="MandiPrice/v0.1/">
-    <span class="schema-card__meta">Observation · v0.1</span>
-    <h3>Mandi Price</h3>
-    <p>Commodity market prices with market, date, units, supported price fields and source.</p>
-  </a>
-  <a class="schema-card" href="MarketIntelligence/v0.1/">
-    <span class="schema-card__meta">Intelligence · v0.1</span>
-    <h3>Market Intelligence</h3>
-    <p>Market trends, forecasts and opportunities with periods, indicators, markets and source.</p>
-  </a>
-  <a class="schema-card" href="AgricultureFacility/v0.1/">
-    <span class="schema-card__meta">Directory · v0.1</span>
-    <h3>Agriculture Facility</h3>
-    <p>Agricultural service facilities with type, location, services, capacity and public contact.</p>
-  </a>
+{% for profile in profile_files %}
+  {% assign path_parts = profile.path | split: "/" %}
+  {% assign schema_name = path_parts[2] %}
+  {% assign schema_version = path_parts[3] %}
+  {% assign pack_root = profile.path | remove: "/profile.json" %}
+  {% assign pack_index_path = pack_root | remove_first: "/" | append: "/index.md" %}
+  {% assign pack_index = site.pages | where: "path", pack_index_path | first %}
+  <article class="schema-card">
+    <span class="schema-card__meta">{{ schema_version }}</span>
+    {% if pack_index %}
+      <h3><a class="schema-card__title" href="{{ pack_root | append: '/' | relative_url }}">{{ schema_name }}</a></h3>
+    {% else %}
+      <h3><a class="schema-card__title" href="{{ pack_root | append: '/README.md' | relative_url }}">{{ schema_name }}</a></h3>
+    {% endif %}
+    <nav class="schema-card__links" aria-label="{{ schema_name }} artifacts">
+      <a href="{{ pack_root | append: '/vocab.jsonld' | relative_url }}">Vocabulary</a>
+      <a href="{{ pack_root | append: '/context.jsonld' | relative_url }}">Context</a>
+      <a href="{{ pack_root | append: '/attributes.yaml' | relative_url }}">Attributes</a>
+      <a href="{{ profile.path | relative_url }}">Profile</a>
+      <a href="{{ pack_root | append: '/renderer.json' | relative_url }}">Renderer</a>
+      {% if pack_index %}
+        <a href="{{ pack_root | append: '/#examples' | relative_url }}">Examples</a>
+      {% else %}
+        <a href="{{ pack_root | append: '/examples/' | relative_url }}">Examples</a>
+      {% endif %}
+    </nav>
+  </article>
+{% endfor %}
 </div>
 
 ## How composition works
@@ -71,7 +57,7 @@ Every domain pack supports two information modes:
 | `OnDemand` | A Provider invocation is required to obtain specific information | Supported topics, parameters, formats, commodities, horizons, languages, or coverage as applicable |
 | `Direct` | The Resource contains or directly references specific information | Actual content, values, recommendation, place, time, validity, and provenance as applicable |
 
-An `OnDemand` Resource advertises what a Provider can supply without introducing a separate capability schema. A Provider invocation normally returns a `Direct` Resource of the same `@type`. Direct information may also be published to Discovery without a preceding invocation.
+An `OnDemand` Resource advertises what a Provider can supply without introducing a separate capability schema. It may also include current, representative, or precomputed information; the mode still indicates that a Provider invocation is required to fulfil a specific request. A Provider invocation normally returns a `Direct` Resource of the same `@type`. Direct information may also be published to Discovery without a preceding invocation. These modes define minimum requirements and do not prohibit additional fields.
 
 The schemas formerly named `AgricultureCapability`, `AdvisoryCapability`, and `WeatherAdvisoryCapability` are retired. Their capability declarations are represented by the corresponding active pack in `OnDemand` mode.
 
@@ -116,16 +102,3 @@ OAN terms use `openagrinet:` for `https://openagrinet.github.io/network-specs/vo
 The packs cover portable agriculture information attributes. Protocol envelopes, Registry records, onboarding APIs, signatures, authentication, protected-data contracts, channel adapters, observability, and network federation require separate contracts.
 
 Use each pack README and its colocated JSON examples to review the effective contract.
-
-## Open item
-
-The proposed field and values are `informationMode: OnDemand | Direct`.
-
-| Alternative | Values | Tradeoff |
-|---|---|---|
-| `informationMode` | `ProviderResolved`, `Materialized` | More precise, but more technical |
-| `resourceForm` | `Resolvable`, `Materialized` | Schema-oriented, but resolution may be confused with Registry or endpoint resolution |
-| `availabilityMode` | `OnDemand`, `Published` | Business-friendly, but published may incorrectly imply storage in Discovery |
-| `accessMode` | `ProviderInvocation`, `Direct` | Makes the access path explicit, but says less about completeness |
-
-The terminology requires review before the v0.1 contracts are accepted. The underlying distinction is required: `OnDemand` needs a Provider invocation; `Direct` contains or directly references specific information.

@@ -1,7 +1,7 @@
 # Knowledge Advisory
 
 <nav class="artifact-links" aria-label="Schema artifacts">
-  <a href="../../INDEX.html">All schemas</a>
+  <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
   <a href="context.jsonld">context.jsonld</a>
   <a href="vocab.jsonld">vocab.jsonld</a>
@@ -26,17 +26,23 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 
 ## Fields
 
-| Field | Meaning |
-|---|---|
-| `informationMode` | `OnDemand` requires a Provider invocation; `Direct` contains specific guidance |
-| `topics` | Advisory topics used for discovery and matching |
-| `agricultureSubjects` | Optional governed subjects such as a crop, livestock species, pest, or scheme |
-| `issuedAt` | Time at which the Provider issued the advisory |
-| `validity` | Optional period during which the advisory applies |
-| `recommendations` | Human-readable guidance with optional action lists and Provider-assigned priority |
-| `supportingResourceIds` | Optional Beckn Resource identifiers for supporting Knowledge Resources |
-| `rationale` | Optional explanation for the recommendation |
-| `source` | Provider or authoritative source that issued the advisory |
+"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+
+| Field | Required when | Meaning |
+|---|---|---|
+| `@type` | Always | Identifies the Resource as `openagrinet:KnowledgeAdvisory` |
+| `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific guidance |
+| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `agricultureSubjects` | Optional | Governed subjects such as a crop, livestock species, pest, or scheme |
+| `languages` | `OnDemand`; optional in `Direct` | Supported response languages; each Direct recommendation declares its own language |
+| `coverageAreas` | Optional | Geographic applicability or supported coverage |
+| `topics` | Both modes | Advisory topics used for discovery and matching |
+| `issuedAt` | `Direct` | Time at which the Provider issued the advisory |
+| `validity` | Optional in `Direct` | Period during which the advisory applies |
+| `recommendations` | `Direct` | Human-readable guidance with optional action lists and Provider-assigned priority |
+| `supportingResourceIds` | Optional in `Direct` | Beckn Resource identifiers for supporting Knowledge Resources |
+| `rationale` | Optional in `Direct` | Explanation for the recommendation |
+| `source` | `Direct` | Provider or authoritative source that issued the advisory |
 
 ## Non-goals
 
