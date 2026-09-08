@@ -7,7 +7,7 @@
     "longDesc": "This Resource was produced after invoking the discovered weather observation capability. It is specific to the requested location and validity window."
   },
   "resourceAttributes": {
-    "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
+    "@context": "https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld",
     "@type": "openagrinet:WeatherObservation",
     "informationMode": "Direct",
     "subjectCategories": [

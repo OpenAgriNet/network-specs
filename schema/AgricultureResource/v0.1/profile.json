@@ -1,5 +1,5 @@
 {
-  "id": "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1",
+  "id": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1",
   "name": "Agriculture Resource Attributes",
   "version": "0.1.0",
   "protocol_version": "2.0",

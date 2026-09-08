@@ -13,7 +13,7 @@ components:
       type: object
       x-beckn-container: resourceAttributes
       x-jsonld:
-        "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld"
+        "@context": "https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld"
         "@type": openagrinet:MandiPrice
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"

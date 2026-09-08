@@ -1,5 +1,5 @@
 {
-  "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+  "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
   "@type": "openagrinet:KnowledgeResource",
   "informationMode": "OnDemand",
   "subjectCategories": [

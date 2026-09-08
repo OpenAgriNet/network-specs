@@ -1,5 +1,5 @@
 {
-  "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
+  "@context": "https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld",
   "@type": "openagrinet:WeatherObservation",
   "informationMode": "Direct",
   "subjectCategories": [

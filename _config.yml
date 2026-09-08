@@ -1,0 +1,12 @@
+title: OpenAgriNet Schemas
+description: Versioned agriculture domain contracts for the OpenAgriNet stack.
+url: https://openagrinet.github.io
+baseurl: /network-specs
+theme: jekyll-theme-primer
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: true

@@ -1,5 +1,15 @@
 # Weather Advisory
 
+<nav class="artifact-links" aria-label="Schema artifacts">
+  <a href="../../INDEX.html">All schemas</a>
+  <a href="attributes.yaml">attributes.yaml</a>
+  <a href="context.jsonld">context.jsonld</a>
+  <a href="vocab.jsonld">vocab.jsonld</a>
+  <a href="profile.json">profile.json</a>
+  <a href="renderer.json">renderer.json</a>
+  <a href="#examples">Examples</a>
+</nav>
+
 ## Purpose
 
 Defines weather-informed agricultural guidance that a Provider can supply on demand or make directly available.

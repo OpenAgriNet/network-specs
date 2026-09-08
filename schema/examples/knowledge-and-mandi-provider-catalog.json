@@ -40,7 +40,7 @@
         "longDesc": "Use this Resource to retrieve general or subject-specific agricultural knowledge. A returned result uses the same KnowledgeResource type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
         "informationMode": "OnDemand",
         "subjectCategories": [
@@ -80,7 +80,7 @@
         "longDesc": "Use this Resource with an agricultural topic and optional governed subject. A returned result uses the same KnowledgeAdvisory type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeAdvisory/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeAdvisory",
         "informationMode": "OnDemand",
         "subjectCategories": [
@@ -115,7 +115,7 @@
         "longDesc": "Use this Resource with a commodity, market, and applicable date. A returned result uses the same MandiPrice type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/MandiPrice/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld",
         "@type": "openagrinet:MandiPrice",
         "informationMode": "OnDemand",
         "subjectCategories": [
@@ -161,7 +161,7 @@
         "longDesc": "Use this Resource with a commodity and applicable area. A returned result uses the same MarketIntelligence type with Direct information mode."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld",
         "@type": "openagrinet:MarketIntelligence",
         "informationMode": "OnDemand",
         "subjectCategories": [

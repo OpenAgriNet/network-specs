@@ -29,7 +29,7 @@
         "longDesc": "This Resource applies across crops and livestock. It demonstrates general agricultural knowledge that does not require a crop association."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
         "informationMode": "Direct",
         "subjectCategories": [
@@ -98,7 +98,7 @@
         "longDesc": "This Resource demonstrates subject-specific knowledge. The cotton association is explicit so Discovery can match a crop-specific query."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/KnowledgeResource/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
         "@type": "openagrinet:KnowledgeResource",
         "informationMode": "Direct",
         "subjectCategories": [

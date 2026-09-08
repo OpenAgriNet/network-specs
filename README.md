@@ -1,4 +1,4 @@
-# OpenAgriNet network specifications
+# OpenAgriNet Network Specifications
 
 Status: Proposed for review
 
@@ -12,12 +12,23 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 
 | Entry point | Use it for |
 |---|---|
-| [Schema pack index](schema/INDEX.md) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
-| [Complete examples](schema/examples/README.md) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
+| [Schema Pack Index](schema/INDEX.md) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
+| [Complete Examples](schema/examples/README.md) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
 
 ## Active version
 
 The active review line is `v0.1`; pack metadata uses semantic version `0.1.0`. The singular `schema/` directory is authoritative.
+
+## Local preview
+
+Install the GitHub Pages dependencies once, then run Jekyll through Bundler:
+
+```bash
+bundle install
+bundle exec jekyll serve --host 127.0.0.1 --port 4173
+```
+
+Open `http://127.0.0.1:4173/network-specs/schema/INDEX.html`. Jekyll rebuilds after source changes; refresh the page to see them.
 
 ## Repository layout
 
@@ -69,13 +80,13 @@ The canonical OAN `@type` is required. A Provider extension may use a JSON-LD ty
 OAN-governed terms use the `openagrinet:` prefix:
 
 ```text
-https://schemas.openagrinet.global/vocab#
+https://openagrinet.github.io/network-specs/vocab#
 ```
 
 Versioned schema artifacts are published below:
 
 ```text
-https://schemas.openagrinet.global/schema/
+https://openagrinet.github.io/network-specs/schema/
 ```
 
 Taxonomy identifiers use separately governed taxonomy URLs. They are references from the schema, not schema-host aliases.

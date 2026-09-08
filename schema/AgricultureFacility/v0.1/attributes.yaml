@@ -13,7 +13,7 @@ components:
       type: object
       x-beckn-container: resourceAttributes
       x-jsonld:
-        "@context": "https://schemas.openagrinet.global/schema/AgricultureFacility/v0.1/context.jsonld"
+        "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.1/context.jsonld"
         "@type": openagrinet:AgricultureFacility
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResource"

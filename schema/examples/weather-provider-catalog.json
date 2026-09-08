@@ -40,7 +40,7 @@
         "longDesc": "The catalog advertises the supported subject, languages, coverage, and Observe interaction. The response supplies the requested geometry, applicable time, provenance, and parameter values."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/WeatherObservation/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld",
         "@type": "openagrinet:WeatherObservation",
         "informationMode": "OnDemand",
         "subjectCategories": [
@@ -85,7 +85,7 @@
         "longDesc": "The capability supports point-level guidance for irrigation, spraying, and crop protection using rainfall, wind speed, humidity, and temperature forecasts."
       },
       "resourceAttributes": {
-        "@context": "https://schemas.openagrinet.global/schema/WeatherAdvisory/v0.1/context.jsonld",
+        "@context": "https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld",
         "@type": "openagrinet:WeatherAdvisory",
         "informationMode": "OnDemand",
         "subjectCategories": [

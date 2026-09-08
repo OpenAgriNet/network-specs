@@ -1,4 +1,4 @@
-# Complete OpenAgriNet schema examples
+# Complete OpenAgriNet Schema Examples
 
 These examples show OAN domain attributes inside complete Beckn objects. They complement the smaller validation fixtures stored with each schema pack.
 

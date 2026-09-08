@@ -1,9 +1,9 @@
 {
   "@context": [
-    "https://schemas.openagrinet.global/schema/AgricultureResource/v0.1/context.jsonld",
+    "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1/context.jsonld",
     {
       "@version": 1.1,
-      "openagrinet": "https://schemas.openagrinet.global/vocab#",
+      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
       "KnowledgeResource": "openagrinet:KnowledgeResource",
       "topics": {
         "@id": "openagrinet:topics",

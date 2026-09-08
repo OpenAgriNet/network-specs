@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ page.description | default: site.description | escape }}">
+    <title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-brand" href="{{ '/' | relative_url }}">
+          <img class="site-logo" src="{{ '/assets/images/openagrinet-logo.png' | relative_url }}" alt="OpenAgriNet" width="183" height="91">
+          <span class="site-brand__section">Schemas</span>
+        </a>
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a href="{{ '/schema/INDEX.html' | relative_url }}">Schemas</a>
+          <a href="{{ '/schema/examples/' | relative_url }}">Examples</a>
+          <a href="https://github.com/OpenAgriNet/network-specs">GitHub</a>
+        </nav>
+      </div>
+    </header>
+    <main id="content" class="site-content markdown-body">
+      {{ content }}
+    </main>
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>OpenAgriNet Schemas</span>
+        <span>Versioned artifacts remain available at their published URLs.</span>
+      </div>
+    </footer>
+  </body>
+</html>

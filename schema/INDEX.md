@@ -1,22 +1,58 @@
-# OpenAgriNet schema pack index
+# OpenAgriNet Schema Pack Index
 
-This index lists the active OpenAgriNet domain contracts. Each contract is an independently selectable schema pack applied to Beckn `Resource.resourceAttributes`. The shared Agriculture Resource field set supplies `informationMode`, agriculture classification, language, and coverage to all seven domain packs.
+<p class="page-intro">Browse the shared agriculture field set and the active OpenAgriNet domain contracts. Each domain pack applies to Beckn <code>Resource.resourceAttributes</code> and keeps its versioned artifacts together.</p>
 
-Read the [complete examples](examples/README.md) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
+Read the [Complete Examples](examples/README.md) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
 
-## Active packs
+## Shared field set
 
-| Pack | Contract kind | Fields declared by this pack | Reused field sets | Typical placement | Examples |
-|---|---|---|---|---|---|
-| [Knowledge Resource](KnowledgeResource/v0.1/README.md) | Reusable agricultural knowledge | topics, supported knowledge types, representations, validity, and provenance | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeResource/v0.1/examples/) |
-| [Knowledge Advisory](KnowledgeAdvisory/v0.1/README.md) | Knowledge-based agricultural guidance | topics, recommendations, supporting Resources, validity, rationale, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](KnowledgeAdvisory/v0.1/examples/) |
-| [Weather Advisory](WeatherAdvisory/v0.1/README.md) | Weather-informed agricultural advice | topics, supported weather basis, recommendation, place, time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherAdvisory/v0.1/examples/) |
-| [Weather Observation](WeatherObservation/v0.1/README.md) | Weather observation or forecast | supported and actual weather parameters, place, observation or model time, validity, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](WeatherObservation/v0.1/examples/) |
-| [Mandi Price](MandiPrice/v0.1/README.md) | Commodity market price | supported commodities and price fields, market, date, prices, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MandiPrice/v0.1/examples/) |
-| [Market Intelligence](MarketIntelligence/v0.1/README.md) | Market trends, forecasts, and opportunities | supported insight types and commodities, insights, periods, indicators, markets, and source | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](MarketIntelligence/v0.1/examples/) |
-| [Agriculture Facility](AgricultureFacility/v0.1/README.md) | Agricultural service facility | supported facility types, facility type, location or address, services, capacity, public contact, source, and record freshness | Agriculture Resource | Provider catalog, Discovery result, or Provider response | [JSON](AgricultureFacility/v0.1/examples/) |
+<div class="schema-grid">
+  <a class="schema-card" href="AgricultureResource/v0.1/">
+    <span class="schema-card__meta">Shared · v0.1</span>
+    <h3>Agriculture Resource</h3>
+    <p>Information mode, agriculture classification, governed subjects, language, geography, time and source definitions reused by the domain packs.</p>
+  </a>
+</div>
 
-The `Reused field sets` column describes validation composition. It is not a parent-child model.
+## Domain packs
+
+<div class="schema-grid">
+  <a class="schema-card" href="KnowledgeResource/v0.1/">
+    <span class="schema-card__meta">Knowledge · v0.1</span>
+    <h3>Knowledge Resource</h3>
+    <p>Reusable agricultural knowledge with inline or URI-based representations, validity and provenance.</p>
+  </a>
+  <a class="schema-card" href="KnowledgeAdvisory/v0.1/">
+    <span class="schema-card__meta">Advisory · v0.1</span>
+    <h3>Knowledge Advisory</h3>
+    <p>Knowledge-based agricultural guidance with recommendations, supporting resources, validity and source.</p>
+  </a>
+  <a class="schema-card" href="WeatherObservation/v0.1/">
+    <span class="schema-card__meta">Observation · v0.1</span>
+    <h3>Weather Observation</h3>
+    <p>Measured weather and forecasts with place, observation or model time, validity and source.</p>
+  </a>
+  <a class="schema-card" href="WeatherAdvisory/v0.1/">
+    <span class="schema-card__meta">Advisory · v0.1</span>
+    <h3>Weather Advisory</h3>
+    <p>Weather-informed agricultural guidance with its weather basis, place, time, validity and source.</p>
+  </a>
+  <a class="schema-card" href="MandiPrice/v0.1/">
+    <span class="schema-card__meta">Observation · v0.1</span>
+    <h3>Mandi Price</h3>
+    <p>Commodity market prices with market, date, units, supported price fields and source.</p>
+  </a>
+  <a class="schema-card" href="MarketIntelligence/v0.1/">
+    <span class="schema-card__meta">Intelligence · v0.1</span>
+    <h3>Market Intelligence</h3>
+    <p>Market trends, forecasts and opportunities with periods, indicators, markets and source.</p>
+  </a>
+  <a class="schema-card" href="AgricultureFacility/v0.1/">
+    <span class="schema-card__meta">Directory · v0.1</span>
+    <h3>Agriculture Facility</h3>
+    <p>Agricultural service facilities with type, location, services, capacity and public contact.</p>
+  </a>
+</div>
 
 ## How composition works
 
@@ -73,7 +109,7 @@ The packs reuse Beckn-owned definitions rather than copying them:
 
 ## Namespace
 
-OAN terms use `openagrinet:` for `https://schemas.openagrinet.global/vocab#`. Versioned artifacts are published under `https://schemas.openagrinet.global/schema/`.
+OAN terms use `openagrinet:` for `https://openagrinet.github.io/network-specs/vocab#`. Versioned artifacts are published under `https://openagrinet.github.io/network-specs/schema/`.
 
 ## Scope boundary
 

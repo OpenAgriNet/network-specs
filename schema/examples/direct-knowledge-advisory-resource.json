@@ -7,7 +7,7 @@
     "longDesc": "This Direct Resource was produced after invoking an OnDemand KnowledgeAdvisory Resource for cotton."
   },
   "resourceAttributes": {
-    "@context": "https://schemas.openagrinet.global/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+    "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeAdvisory/v0.1/context.jsonld",
     "@type": "openagrinet:KnowledgeAdvisory",
     "informationMode": "Direct",
     "subjectCategories": [

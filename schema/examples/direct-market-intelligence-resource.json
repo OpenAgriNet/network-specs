@@ -7,7 +7,7 @@
     "longDesc": "This Direct Resource was produced after invoking an OnDemand MarketIntelligence Resource for cotton."
   },
   "resourceAttributes": {
-    "@context": "https://schemas.openagrinet.global/schema/MarketIntelligence/v0.1/context.jsonld",
+    "@context": "https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld",
     "@type": "openagrinet:MarketIntelligence",
     "informationMode": "Direct",
     "subjectCategories": [
