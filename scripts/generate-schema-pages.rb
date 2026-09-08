@@ -289,6 +289,11 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "reference" => nil,
     "role" => "Pack-specific constraints"
   }]
+  pack_schema = root_schema.merge(
+    "allOf" => Array(root_schema["allOf"]).reject do |member|
+      member.is_a?(Hash) && member["$ref"] && !member["$ref"].start_with?("#")
+    end
+  )
 
   key = "#{pack_name}-#{version_dir}"
   packs[key] = {
@@ -303,6 +308,7 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "canonical_type" => root_schema.dig("x-jsonld", "@type"),
     "schema_name" => schema_name,
     "composition" => composition,
+    "pack_fields" => collect_fields(resolver, pack_schema, attributes_path, examples, {}, [], nil, 0, pack_name),
     "fields" => collect_fields(resolver, root_schema, attributes_path, examples, root_origins),
     "conditions" => collect_conditionals(root_schema).map { |field, condition| { "field" => field, "condition" => condition } },
     "examples" => examples.map { |example| example.reject { |key_name, _| key_name == "data" } },

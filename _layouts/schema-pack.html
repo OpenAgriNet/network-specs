@@ -44,6 +44,36 @@ layout: default
     Protocol filters, partial Intent objects, and Provider-specific inputs are separate contracts. <code>OnDemand</code> and <code>Direct</code> set minimum requirements; neither mode forbids additional fields.
   </div>
 
+  <h2 id="pack-fields">Fields defined by this schema pack</h2>
+  <p>This compact view excludes fields composed from other schema packs.</p>
+  <table class="pack-field-table">
+    <thead>
+      <tr>
+        <th>Field path</th>
+        <th>Type</th>
+        <th>Required when</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for field in pack.pack_fields %}
+        <tr>
+          <td><code>{{ field.path }}</code></td>
+          <td>{{ field.type | escape }}</td>
+          <td>
+            {% if field.requirement == "Optional" %}
+              <span class="optional-tag">Optional</span>
+            {% elsif field.requirement == "Always" %}
+              <span class="required-tag">Required</span>
+            {% else %}
+              <span class="required-tag">Required</span>
+              <span class="requirement-condition">{{ field.requirement }}</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
   <h2 id="effective-fields">Complete composed field view</h2>
   <p>This table combines the shared Agriculture Resource fields with this pack's fields. Nested paths are expanded where their definitions are local; Beckn-owned objects remain linked references.</p>
   <div class="schema-table-wrap">
@@ -62,7 +92,7 @@ layout: default
           <tr>
             <td><code>{{ field.path }}</code></td>
             <td>
-              <strong>{{ field.type }}</strong>
+              <strong>{{ field.type | escape }}</strong>
               <p class="field-origin">Defined by {{ field.origin }}</p>
               {% if field.reference %}<details><summary>Reference</summary><code>{{ field.reference }}</code></details>{% endif %}
             </td>

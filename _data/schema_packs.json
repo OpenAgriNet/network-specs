@@ -22,6 +22,222 @@
         "role": "Pack-specific constraints"
       }
     ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"openagrinet:AgricultureFacility\"",
+        "enum": null
+      },
+      {
+        "path": "supportedFacilityTypes",
+        "type": "array<object>",
+        "requirement": "OnDemand",
+        "description": "Facility types the Provider can return on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "[\n  \"CustomHiringCentre\",\n  \"KrishiVigyanKendra\",\n  \"Warehouse\",\n  \"SoilTestingFacility\"\n]",
+        "enum": null
+      },
+      {
+        "path": "facilityType",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Governed agriculture facility category. SoilTestingFacility covers a Soil Health Centre or Soil Testing Laboratory that provides soil-testing services.",
+        "constraints": "enum: CustomHiringCentre, KrishiVigyanKendra, Warehouse, SoilTestingFacility",
+        "reference": "#/components/schemas/FacilityType",
+        "origin": "AgricultureFacility",
+        "example": "\"CustomHiringCentre\"",
+        "enum": [
+          "CustomHiringCentre",
+          "KrishiVigyanKendra",
+          "Warehouse",
+          "SoilTestingFacility"
+        ]
+      },
+      {
+        "path": "location",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "AgricultureFacility",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "location.geo",
+        "type": "choice",
+        "requirement": "When location is supplied",
+        "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
+        "constraints": "",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "AgricultureFacility",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "AgricultureFacility",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "AgricultureFacility",
+        "example": "{\n  \"streetAddress\": \"Krushisafalya Farmer Producer Company Limited\",\n  \"addressLocality\": \"Gogalgaon\",\n  \"addressRegion\": \"Maharashtra\",\n  \"postalCode\": \"423107\",\n  \"addressCountry\": \"IN\",\n  \"extendedAddress\": \"Rahta, Ahmednagar district\"\n}",
+        "enum": null
+      },
+      {
+        "path": "services",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Services publicly offered at the facility.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "[\n  {\n    \"code\": \"FARM_MACHINERY_HIRE\",\n    \"name\": \"Farm machinery hire\",\n    \"shortDesc\": \"Access to agricultural machinery and implements.\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "capacity",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Published operating or storage capacity when applicable.",
+        "constraints": "additionalProperties: false",
+        "reference": "#/components/schemas/FacilityCapacity",
+        "origin": "AgricultureFacility",
+        "example": "{\n  \"value\": 500,\n  \"unit\": \"metric tonne\",\n  \"basis\": \"total storage\"\n}",
+        "enum": null
+      },
+      {
+        "path": "capacity.value",
+        "type": "number",
+        "requirement": "When capacity is supplied",
+        "description": "Numeric capacity value.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "500",
+        "enum": null
+      },
+      {
+        "path": "capacity.unit",
+        "type": "string",
+        "requirement": "When capacity is supplied",
+        "description": "Governed or source unit, such as metric tonne.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"metric tonne\"",
+        "enum": null
+      },
+      {
+        "path": "capacity.basis",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Capacity basis when required, such as total storage or daily throughput.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"total storage\"",
+        "enum": null
+      },
+      {
+        "path": "publicContact",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Public organizational contact explicitly approved by the Provider for catalog publication. Do not use for private personal contact data.",
+        "constraints": "",
+        "reference": "https://schema.beckn.io/Contact/v2.0/attributes.yaml#/components/schemas/Contact",
+        "origin": "AgricultureFacility",
+        "example": "{\n  \"company\": \"Example Warehouse Services\",\n  \"phone\": \"+910000000000\",\n  \"email\": \"warehouse@example.org\"\n}",
+        "enum": null
+      },
+      {
+        "path": "website",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Public facility or service website.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"https://warehouse.example.org/facilities/musalgaon\"",
+        "enum": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "AgricultureFacility",
+        "example": "{\n  \"sourceId\": \"provider:agriculture-common-services\",\n  \"sourceName\": \"Agriculture Common Services Provider\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"provider:agriculture-common-services\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"Agriculture Common Services Provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "lastUpdatedAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Time at which the Provider last updated or verified the facility record.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "AgricultureFacility",
+        "example": "\"2026-08-29T00:00:00Z\"",
+        "enum": null
+      }
+    ],
     "fields": [
       {
         "path": "informationMode",
@@ -422,6 +638,126 @@
         "role": "Pack-specific constraints"
       }
     ],
+    "pack_fields": [
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Whether obtaining specific information requires a Provider invocation or the Resource already contains or directly references that information.",
+        "constraints": "enum: OnDemand, Direct",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "\"OnDemand\"",
+        "enum": [
+          "OnDemand",
+          "Direct"
+        ]
+      },
+      {
+        "path": "subjectCategories",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Optional broad agricultural subjects used for discovery. The Resource type is expressed by @type, not repeated here.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "[\n  \"Crop\",\n  \"Livestock\"\n]",
+        "enum": [
+          "Crop",
+          "Livestock",
+          "Weather",
+          "Market",
+          "Scheme",
+          "Practice"
+        ]
+      },
+      {
+        "path": "agricultureSubjects",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Optional governed subjects such as a named crop, livestock species, pest, or scheme. Absence means the Resource applies broadly within subjectCategories.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "[\n  {\n    \"subjectId\": \"https://taxonomy.openagrinet.global/crops/cotton\",\n    \"subjectType\": \"Crop\",\n    \"descriptor\": {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    }\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "agricultureSubjects[].subjectId",
+        "type": "string",
+        "requirement": "When agricultureSubjects is supplied",
+        "description": "Stable identifier from a governed agriculture taxonomy.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "\"https://taxonomy.openagrinet.global/crops/cotton\"",
+        "enum": null
+      },
+      {
+        "path": "agricultureSubjects[].subjectType",
+        "type": "string",
+        "requirement": "When agricultureSubjects is supplied",
+        "description": "Kind of agricultural subject referenced by subjectId.",
+        "constraints": "enum: Crop, Livestock, Commodity, Pest, Disease, Practice, Scheme, Market",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "\"Crop\"",
+        "enum": [
+          "Crop",
+          "Livestock",
+          "Commodity",
+          "Pest",
+          "Disease",
+          "Practice",
+          "Scheme",
+          "Market"
+        ]
+      },
+      {
+        "path": "agricultureSubjects[].descriptor",
+        "type": "object",
+        "requirement": "When agricultureSubjects is supplied",
+        "description": "Beckn descriptor carrying the governed code and display name.",
+        "constraints": "",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "AgricultureResource",
+        "example": "{\n  \"code\": \"COTTON\",\n  \"name\": \"Cotton\"\n}",
+        "enum": null
+      },
+      {
+        "path": "languages",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "BCP 47 language tags supported by or present in the Resource.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "[\n  \"en\",\n  \"hi\"\n]",
+        "enum": null
+      },
+      {
+        "path": "coverageAreas",
+        "type": "array<choice>",
+        "requirement": "Optional",
+        "description": "Geographic areas within which the Resource applies. Each item is either an administrative area reference or a GeoJSON geometry.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-1\",\n    \"areaCode\": \"IN\",\n    \"areaLevel\": \"Country\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "AgricultureResource",
+        "example": "\"openagrinet:AgricultureResource\"",
+        "enum": null
+      }
+    ],
     "fields": [
       {
         "path": "informationMode",
@@ -588,6 +924,200 @@
         "name": "KnowledgeAdvisory fields and rules",
         "reference": null,
         "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"openagrinet:KnowledgeAdvisory\"",
+        "enum": null
+      },
+      {
+        "path": "topics",
+        "type": "array<string>",
+        "requirement": "OnDemand or Direct",
+        "description": "Advisory topics used for discovery and matching.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "[\n  \"Early-season cotton management\"\n]",
+        "enum": null
+      },
+      {
+        "path": "issuedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Time at which the Provider issued the advisory.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"2026-06-20T05:30:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "KnowledgeAdvisory",
+        "example": "{\n  \"startsAt\": \"2026-06-20T05:30:00Z\",\n  \"endsAt\": \"2026-07-20T23:59:59Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"2026-06-20T05:30:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"2026-07-20T23:59:59Z\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations",
+        "type": "array<object>",
+        "requirement": "Direct",
+        "description": "Actions or guidance issued by the Provider.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "[\n  {\n    \"message\": \"Inspect the field twice each week during establishment and replace failed seedlings promptly.\",\n    \"language\": \"en\",\n    \"priority\": \"Normal\",\n    \"actions\": [\n      \"Inspect seedlings\"\n    ]\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].actions",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Concise recommended actions when they apply.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "[\n  \"Inspect seedlings\"\n]",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].message",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Human-readable guidance.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"Inspect the field twice each week during establishment and replace failed seedlings promptly.\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].language",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "BCP 47 language tag of the guidance.",
+        "constraints": "minLength: 2",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"en\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].priority",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Relative urgency assigned by the Provider.",
+        "constraints": "enum: Low, Normal, High, Critical",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"Normal\"",
+        "enum": [
+          "Low",
+          "Normal",
+          "High",
+          "Critical"
+        ]
+      },
+      {
+        "path": "supportingResourceIds",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Beckn Resource identifiers of supporting KnowledgeResource information when available.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "[\n  \"resource:knowledge:cotton-establishment-guide:1.0.0\"\n]",
+        "enum": null
+      },
+      {
+        "path": "rationale",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Concise explanation of how the Provider reached the recommendation.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"The recommendation follows the reviewed cotton establishment guide for the applicable growing period.\"",
+        "enum": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "KnowledgeAdvisory",
+        "example": "{\n  \"sourceId\": \"participant:agriculture-knowledge-provider\",\n  \"sourceName\": \"Agriculture Knowledge Provider\",\n  \"sourceUri\": \"https://knowledge.example.org\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"participant:agriculture-knowledge-provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"Agriculture Knowledge Provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "KnowledgeAdvisory",
+        "example": "\"https://knowledge.example.org\"",
+        "enum": null
       }
     ],
     "fields": [
@@ -960,6 +1490,332 @@
         "name": "KnowledgeResource fields and rules",
         "reference": null,
         "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"openagrinet:KnowledgeResource\"",
+        "enum": null
+      },
+      {
+        "path": "topics",
+        "type": "array<string>",
+        "requirement": "OnDemand or Direct",
+        "description": "Knowledge topics used for discovery and matching.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "[\n  \"Farm safety\"\n]",
+        "enum": null
+      },
+      {
+        "path": "supportedKnowledgeTypes",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Semantic kinds of knowledge the Provider can supply on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "[\n  \"Article\",\n  \"FAQ\",\n  \"Guide\"\n]",
+        "enum": [
+          "Article",
+          "FAQ",
+          "Guide",
+          "Dataset",
+          "TrainingMaterial",
+          "Reference"
+        ]
+      },
+      {
+        "path": "supportedMediaTypes",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "IANA media types the Provider can return on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "[\n  \"application/json\",\n  \"text/plain\"\n]",
+        "enum": null
+      },
+      {
+        "path": "knowledgeType",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Semantic kind of knowledge, independent of whether a representation is PDF, HTML, audio, video, JSON, or inline content.",
+        "constraints": "enum: Article, FAQ, Guide, Dataset, TrainingMaterial, Reference",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"Guide\"",
+        "enum": [
+          "Article",
+          "FAQ",
+          "Guide",
+          "Dataset",
+          "TrainingMaterial",
+          "Reference"
+        ]
+      },
+      {
+        "path": "version",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Semantic version of the governed knowledge Resource.",
+        "constraints": "pattern: \"^[0-9]+\\\\.[0-9]+\\\\.[0-9]+$\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"1.0.0\"",
+        "enum": null
+      },
+      {
+        "path": "lifecycleStatus",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Publication lifecycle of this knowledge version, independent of Registry admission state.",
+        "constraints": "enum: Draft, Published, Superseded, Withdrawn",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"Published\"",
+        "enum": [
+          "Draft",
+          "Published",
+          "Superseded",
+          "Withdrawn"
+        ]
+      },
+      {
+        "path": "content",
+        "type": "array<object>",
+        "requirement": "Direct",
+        "description": "Governed representations of the knowledge Resource.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "[\n  {\n    \"contentUri\": \"https://knowledge.example.org/guides/farm-safety/1.0.0/en.pdf\",\n    \"mediaType\": \"application/pdf\",\n    \"language\": \"en\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "content[].contentUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Provider-hosted location of the representation. It may require access through the Provider and does not imply a public download.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"https://knowledge.example.org/guides/farm-safety/1.0.0/en.pdf\"",
+        "enum": null
+      },
+      {
+        "path": "content[].inlineContent",
+        "type": [
+          "string",
+          "object",
+          "array"
+        ],
+        "requirement": "Optional",
+        "description": "Content carried directly in the Resource when no external representation is needed.",
+        "constraints": "",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "{\n  \"question\": \"When should farm machinery be inspected?\",\n  \"answer\": \"Inspect guards, controls, tyres, and visible damage before each use.\"\n}",
+        "enum": null
+      },
+      {
+        "path": "content[].mediaType",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "IANA media type of the representation.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"application/pdf\"",
+        "enum": null
+      },
+      {
+        "path": "content[].language",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "BCP 47 language tag for this representation.",
+        "constraints": "minLength: 2",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"en\"",
+        "enum": null
+      },
+      {
+        "path": "content[].digest",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional integrity digest for the representation.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "content[].digest.algorithm",
+        "type": "string",
+        "requirement": "When content.[].digest is supplied",
+        "description": "Digest algorithm.",
+        "constraints": "enum: sha256, sha384, sha512",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": [
+          "sha256",
+          "sha384",
+          "sha512"
+        ]
+      },
+      {
+        "path": "content[].digest.digestValue",
+        "type": "string",
+        "requirement": "When content.[].digest is supplied",
+        "description": "Hex-encoded digest value.",
+        "constraints": "pattern: \"^[A-Fa-f0-9]+$\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "provenance",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Source and review evidence for this knowledge version.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "{\n  \"source\": {\n    \"sourceId\": \"participant:agri-information-provider\",\n    \"sourceName\": \"Agriculture Information Provider\",\n    \"sourceUri\": \"https://knowledge.example.org\"\n  },\n  \"publishedAt\": \"2026-08-01T09:00:00Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "provenance.source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "KnowledgeResource",
+        "example": "{\n  \"sourceId\": \"participant:agri-information-provider\",\n  \"sourceName\": \"Agriculture Information Provider\",\n  \"sourceUri\": \"https://knowledge.example.org\"\n}",
+        "enum": null
+      },
+      {
+        "path": "provenance.source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"participant:agri-information-provider\"",
+        "enum": null
+      },
+      {
+        "path": "provenance.source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"Agriculture Information Provider\"",
+        "enum": null
+      },
+      {
+        "path": "provenance.source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"https://knowledge.example.org\"",
+        "enum": null
+      },
+      {
+        "path": "provenance.publishedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Publication time of this version.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"2026-08-01T09:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "provenance.lastReviewedAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Most recent subject-matter review time.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"2026-07-28T09:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "provenance.reviewedBy",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Identifier of the person or organization responsible for the review.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"participant:subject-review-board\"",
+        "enum": null
+      },
+      {
+        "path": "supersedes",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Identifier of the knowledge Resource version replaced by this one.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "KnowledgeResource",
+        "example": "\"resource:faq:farm-safety:1.4.0\"",
+        "enum": null
       }
     ],
     "fields": [
@@ -1492,6 +2348,353 @@
         "name": "MandiPrice fields and rules",
         "reference": null,
         "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"openagrinet:MandiPrice\"",
+        "enum": null
+      },
+      {
+        "path": "supportedCommodities",
+        "type": "array<object>",
+        "requirement": "OnDemand",
+        "description": "Commodities for which the Provider can supply prices on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "supportedPriceFields",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Price values the Provider can return on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "[\n  \"Minimum\",\n  \"Maximum\",\n  \"Modal\"\n]",
+        "enum": [
+          "Minimum",
+          "Maximum",
+          "Modal"
+        ]
+      },
+      {
+        "path": "historicalDataAvailable",
+        "type": "boolean",
+        "requirement": "Optional",
+        "description": "Whether historical price records can be requested.",
+        "constraints": "",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "true",
+        "enum": null
+      },
+      {
+        "path": "historyPeriod",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Maximum available historical period expressed as an ISO 8601 duration.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"P5Y\"",
+        "enum": null
+      },
+      {
+        "path": "updateFrequency",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected refresh interval for current prices.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"P1D\"",
+        "enum": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "MandiPrice",
+        "example": "{\n  \"sourceId\": \"source:state-market-board\",\n  \"sourceName\": \"State Market Board\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"source:state-market-board\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"State Market Board\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"https://agmarknet.gov.in\"",
+        "enum": null
+      },
+      {
+        "path": "commodity",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "MandiPrice",
+        "example": "{\n  \"name\": \"Cotton\",\n  \"code\": \"COTTON\"\n}",
+        "enum": null
+      },
+      {
+        "path": "commodityGroup",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Governed commodity group supplied by the source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"Vegetables\"",
+        "enum": null
+      },
+      {
+        "path": "grade",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Market grade reported by the source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"FAQ\"",
+        "enum": null
+      },
+      {
+        "path": "variety",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Commodity variety reported by the source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"Red\"",
+        "enum": null
+      },
+      {
+        "path": "market",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Market or APMC to which the price observation applies.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "{\n  \"marketName\": \"Akola\"\n}",
+        "enum": null
+      },
+      {
+        "path": "market.marketCode",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Governed market code when available.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"MH-LASALGAON\"",
+        "enum": null
+      },
+      {
+        "path": "market.marketName",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Market or APMC name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"Akola\"",
+        "enum": null
+      },
+      {
+        "path": "market.district",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "District name or governed code.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"Nashik\"",
+        "enum": null
+      },
+      {
+        "path": "market.state",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "State name or governed code.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"Maharashtra\"",
+        "enum": null
+      },
+      {
+        "path": "market.location",
+        "type": "choice",
+        "requirement": "Optional",
+        "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "arrivalDate",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Date for which the market arrival and prices apply.",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"2026-08-25\"",
+        "enum": null
+      },
+      {
+        "path": "prices",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Normalized minimum, maximum, and modal prices.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "{\n  \"modal\": 7350,\n  \"currency\": \"INR\",\n  \"unit\": \"quintal\"\n}",
+        "enum": null
+      },
+      {
+        "path": "prices.minimum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Minimum reported price.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "1800",
+        "enum": null
+      },
+      {
+        "path": "prices.maximum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Maximum reported price.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "2450",
+        "enum": null
+      },
+      {
+        "path": "prices.modal",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Most frequently reported or representative price.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "7350",
+        "enum": null
+      },
+      {
+        "path": "prices.currency",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "ISO 4217 currency code.",
+        "constraints": "pattern: \"^[A-Z]{3}$\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"INR\"",
+        "enum": null
+      },
+      {
+        "path": "prices.unit",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Governed unit to which each price applies.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"quintal\"",
+        "enum": null
+      },
+      {
+        "path": "generatedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Time at which the normalized observation was produced.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": "\"2026-08-25T10:45:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null
       }
     ],
     "fields": [
@@ -2037,6 +3240,390 @@
         "name": "MarketIntelligence fields and rules",
         "reference": null,
         "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"openagrinet:MarketIntelligence\"",
+        "enum": null
+      },
+      {
+        "path": "supportedCommodities",
+        "type": "array<object>",
+        "requirement": "OnDemand",
+        "description": "Commodities for which the Provider can supply market intelligence on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "supportedInsightTypes",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Market-intelligence categories the Provider can supply on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "[\n  \"PriceTrend\",\n  \"DemandForecast\",\n  \"MarketOpportunity\"\n]",
+        "enum": [
+          "PriceTrend",
+          "DemandForecast",
+          "MarketOpportunity"
+        ]
+      },
+      {
+        "path": "historyPeriod",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Maximum historical period available for analysis, expressed as an ISO 8601 duration.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"P5Y\"",
+        "enum": null
+      },
+      {
+        "path": "forecastHorizon",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Maximum demand-forecast horizon, expressed as an ISO 8601 duration.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"P30D\"",
+        "enum": null
+      },
+      {
+        "path": "commodity",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "MarketIntelligence",
+        "example": "{\n  \"code\": \"COTTON\",\n  \"name\": \"Cotton\"\n}",
+        "enum": null
+      },
+      {
+        "path": "generatedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Time at which the Provider generated the intelligence.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"2026-08-26T09:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "MarketIntelligence",
+        "example": "{\n  \"startsAt\": \"2026-08-26T09:00:00Z\",\n  \"endsAt\": \"2026-09-09T09:00:00Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"2026-08-26T09:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"2026-09-09T09:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "insights",
+        "type": "array<object>",
+        "requirement": "Direct",
+        "description": "Price-trend, demand-forecast, or market-opportunity information.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "[\n  {\n    \"insightType\": \"PriceTrend\",\n    \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n    \"period\": {\n      \"startsAt\": \"2026-07-27T00:00:00Z\",\n      \"endsAt\": \"2026-08-26T00:00:00Z\"\n    },\n    \"indicator\": {\n      \"indicatorValue\": 4.8,\n      \"indicatorUnit\": \"percent\",\n      \"indicatorName\": \"modalPriceChange\"\n    },\n    \"supportingResourceIds\": [\n ...",
+        "enum": null
+      },
+      {
+        "path": "insights[].insightType",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Category of market intelligence represented by this item.",
+        "constraints": "enum: PriceTrend, DemandForecast, MarketOpportunity",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"PriceTrend\"",
+        "enum": [
+          "PriceTrend",
+          "DemandForecast",
+          "MarketOpportunity"
+        ]
+      },
+      {
+        "path": "insights[].summary",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Provider-supplied explanation of the insight.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\"",
+        "enum": null
+      },
+      {
+        "path": "insights[].market",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Market associated with the insight when applicable.",
+        "constraints": "additionalProperties: false",
+        "reference": "schema/MarketIntelligence/v0.1/attributes.yaml#/components/schemas/MarketReference",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].market.marketCode",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Governed identifier for the market or APMC, when one is available.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].market.marketName",
+        "type": "string",
+        "requirement": "When insights.[].market is supplied",
+        "description": "Human-readable name of the market or APMC.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].market.district",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "District in which the market is located.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].market.state",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "State or union territory in which the market is located.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].market.location",
+        "type": "choice",
+        "requirement": "Optional",
+        "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].period",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "MarketIntelligence",
+        "example": "{\n  \"startsAt\": \"2026-07-27T00:00:00Z\",\n  \"endsAt\": \"2026-08-26T00:00:00Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "insights[].period.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"2026-07-27T00:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "insights[].period.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"2026-08-26T00:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "insights[].indicator",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional quantitative or qualitative indicator supplied by the Provider.",
+        "constraints": "additionalProperties: false",
+        "reference": "schema/MarketIntelligence/v0.1/attributes.yaml#/components/schemas/Indicator",
+        "origin": "MarketIntelligence",
+        "example": "{\n  \"indicatorValue\": 4.8,\n  \"indicatorUnit\": \"percent\",\n  \"indicatorName\": \"modalPriceChange\"\n}",
+        "enum": null
+      },
+      {
+        "path": "insights[].indicator.indicatorName",
+        "type": "string",
+        "requirement": "When insights.[].indicator is supplied",
+        "description": "Provider-defined indicator name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"modalPriceChange\"",
+        "enum": null
+      },
+      {
+        "path": "insights[].indicator.indicatorValue",
+        "type": "choice",
+        "requirement": "When insights.[].indicator is supplied",
+        "description": "Indicator value.",
+        "constraints": "",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "4.8",
+        "enum": null
+      },
+      {
+        "path": "insights[].indicator.indicatorUnit",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Unit for a quantitative indicator when applicable.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"percent\"",
+        "enum": null
+      },
+      {
+        "path": "insights[].distance",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Distance to a market opportunity when applicable.",
+        "constraints": "additionalProperties: false",
+        "reference": "schema/MarketIntelligence/v0.1/attributes.yaml#/components/schemas/Measure",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].distance.value",
+        "type": "number",
+        "requirement": "When insights.[].distance is supplied",
+        "description": "Non-negative numeric magnitude of the measure.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].distance.unit",
+        "type": "string",
+        "requirement": "When insights.[].distance is supplied",
+        "description": "Unit in which the measure is expressed, such as kilometre.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
+      },
+      {
+        "path": "insights[].supportingResourceIds",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Beckn Resource identifiers of supporting MandiPrice or other market information.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "[\n  \"resource:mandi-price:telangana:cotton:2026-07-27\",\n  \"resource:mandi-price:telangana:cotton:2026-08-26\"\n]",
+        "enum": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "MarketIntelligence",
+        "example": "{\n  \"sourceId\": \"participant:market-intelligence-provider\",\n  \"sourceName\": \"Market Intelligence Provider\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"participant:market-intelligence-provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": "\"Market Intelligence Provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null
       }
     ],
     "fields": [
@@ -2605,6 +4192,301 @@
         "role": "Pack-specific constraints"
       }
     ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"openagrinet:WeatherAdvisory\"",
+        "enum": null
+      },
+      {
+        "path": "topics",
+        "type": "array<string>",
+        "requirement": "OnDemand or Direct",
+        "description": "Topics addressed by this advisory outcome.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"Irrigation\",\n  \"CropProtection\"\n]",
+        "enum": null
+      },
+      {
+        "path": "supportedWeatherParameters",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Weather parameters the Provider can use to produce advice on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "enum": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed",
+          "WindDirection",
+          "SoilMoisture",
+          "Evapotranspiration",
+          "Alert"
+        ]
+      },
+      {
+        "path": "forecastHorizon",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Maximum supported forecast horizon for on-demand advice.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"P7D\"",
+        "enum": null
+      },
+      {
+        "path": "updateFrequency",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected refresh interval for the underlying information.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"PT6H\"",
+        "enum": null
+      },
+      {
+        "path": "geographicGranularities",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Geographic granularities at which the Provider can produce advice.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "enum": [
+          "Point",
+          "Village",
+          "Block",
+          "District",
+          "State"
+        ]
+      },
+      {
+        "path": "location",
+        "type": "choice",
+        "requirement": "Direct",
+        "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        78.1,\n        19.1\n      ],\n      [\n        78.5,\n        19.1\n      ],\n      [\n        78.5,\n        19.5\n      ],\n      [\n        78.1,\n        19.5\n      ],\n      [\n        78.1,\n        19.1\n      ]\n    ]\n  ]\n}",
+        "enum": null
+      },
+      {
+        "path": "issuedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Time at which the Provider issued the advisory.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"2026-08-26T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/ClosedTimePeriod",
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"startsAt\": \"2026-08-26T06:00:00Z\",\n  \"endsAt\": \"2026-08-27T06:00:00Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"2026-08-26T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"2026-08-27T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations",
+        "type": "array<object>",
+        "requirement": "Direct",
+        "description": "Human-readable recommendations issued for this place and validity period.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  {\n    \"topic\": \"Irrigation\",\n    \"message\": \"Postpone irrigation for the next 24 hours because moderate rainfall is expected.\",\n    \"language\": \"en\",\n    \"actions\": [\n      \"Postpone irrigation\",\n      \"Check field drainage\"\n    ],\n    \"severity\": \"Watch\"\n  },\n  {\n    \"topic\": \"Irrigation\",\n    \"message\": \"मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।\",\n    \"language\": \"hi\",\n    \"severity...",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].topic",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Advisory topic addressed by this recommendation.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"Irrigation\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].message",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Recommendation expressed in the declared language.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"Postpone irrigation for the next 24 hours because moderate rainfall is expected.\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].language",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "BCP 47 language tag of the recommendation.",
+        "constraints": "minLength: 2",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"en\"",
+        "enum": null
+      },
+      {
+        "path": "recommendations[].severity",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Weather-related severity associated with the recommendation.",
+        "constraints": "enum: Information, Watch, Warning, Critical",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"Watch\"",
+        "enum": [
+          "Information",
+          "Watch",
+          "Warning",
+          "Critical"
+        ]
+      },
+      {
+        "path": "recommendations[].actions",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Concise actions the recipient may take.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"Postpone irrigation\",\n  \"Check field drainage\"\n]",
+        "enum": null
+      },
+      {
+        "path": "weatherBasis",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Weather information used to produce the advice.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"parameters\": [\n    \"Rainfall\",\n    \"Humidity\"\n  ],\n  \"supportingResourceIds\": [\n    \"weather-forecast:imd:2026-08-26:district-501\"\n  ]\n}",
+        "enum": null
+      },
+      {
+        "path": "weatherBasis.parameters",
+        "type": "array<string>",
+        "requirement": "Direct",
+        "description": "Weather parameters considered when the Provider produced the recommendation.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"Rainfall\",\n  \"Humidity\"\n]",
+        "enum": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed",
+          "WindDirection",
+          "SoilMoisture",
+          "Evapotranspiration",
+          "Alert"
+        ]
+      },
+      {
+        "path": "weatherBasis.supportingResourceIds",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Beckn Resource identifiers for observations or forecasts that support this advice.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "[\n  \"weather-forecast:imd:2026-08-26:district-501\"\n]",
+        "enum": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"sourceId\": \"participant:weather-advisory-provider\",\n  \"sourceName\": \"Agricultural Weather Advisory Service\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"participant:weather-advisory-provider\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": "\"Agricultural Weather Advisory Service\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "WeatherAdvisory",
+        "example": null,
+        "enum": null
+      }
+    ],
     "fields": [
       {
         "path": "informationMode",
@@ -3102,6 +4984,301 @@
         "name": "WeatherObservation fields and rules",
         "reference": null,
         "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"openagrinet:WeatherObservation\"",
+        "enum": null
+      },
+      {
+        "path": "supportedObservationTypes",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Observation forms the Provider can return on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "[\n  \"Observation\",\n  \"Forecast\"\n]",
+        "enum": [
+          "Observation",
+          "Forecast"
+        ]
+      },
+      {
+        "path": "supportedParameters",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Weather parameters the Provider can return on demand.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "enum": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed",
+          "WindDirection",
+          "SoilMoisture",
+          "Evapotranspiration",
+          "Alert"
+        ]
+      },
+      {
+        "path": "forecastHorizon",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Maximum forecast horizon available on demand, expressed as an ISO 8601 duration.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"P10D\"",
+        "enum": null
+      },
+      {
+        "path": "updateFrequency",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected refresh interval for the available information.",
+        "constraints": "format: \"duration\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"PT1H\"",
+        "enum": null
+      },
+      {
+        "path": "geographicGranularities",
+        "type": "array<string>",
+        "requirement": "OnDemand",
+        "description": "Geographic granularities at which the Provider can return information.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "enum": [
+          "Point",
+          "Village",
+          "Block",
+          "District",
+          "State"
+        ]
+      },
+      {
+        "path": "observationType",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Whether the Resource reports measured or forecast conditions.",
+        "constraints": "enum: Observation, Forecast",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"Observation\"",
+        "enum": [
+          "Observation",
+          "Forecast"
+        ]
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "WeatherObservation",
+        "example": "{\n  \"sourceId\": \"provider:automatic-weather-station-network\",\n  \"sourceName\": \"Automatic Weather Station Network\"\n}",
+        "enum": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"provider:automatic-weather-station-network\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"Automatic Weather Station Network\"",
+        "enum": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"https://weather.example.org\"",
+        "enum": null
+      },
+      {
+        "path": "location",
+        "type": "choice",
+        "requirement": "Direct",
+        "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "WeatherObservation",
+        "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        73.55,\n        19.65\n      ],\n      [\n        74.15,\n        19.65\n      ],\n      [\n        74.15,\n        20.15\n      ],\n      [\n        73.55,\n        20.15\n      ],\n      [\n        73.55,\n        19.65\n      ]\n    ]\n  ]\n}",
+        "enum": null
+      },
+      {
+        "path": "generatedAt",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Time at which the record was generated.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"2026-08-25T06:15:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "observedAt",
+        "type": "string",
+        "requirement": "Direct + Observation",
+        "description": "Time at which measured conditions were observed. Required when observationType is Observation.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"2026-08-25T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "modelRunAt",
+        "type": "string",
+        "requirement": "Direct + Forecast",
+        "description": "Model run time from which a forecast was produced.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"2026-08-24T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity",
+        "type": "object",
+        "requirement": "Direct + Forecast",
+        "description": "Inclusive validity or applicability period.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
+        "origin": "WeatherObservation",
+        "example": "{\n  \"startsAt\": \"2026-08-25T05:00:00Z\",\n  \"endsAt\": \"2026-08-25T06:00:00Z\"\n}",
+        "enum": null
+      },
+      {
+        "path": "validity.startsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Start of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"2026-08-25T05:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "validity.endsAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "End of the period.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"2026-08-25T06:00:00Z\"",
+        "enum": null
+      },
+      {
+        "path": "parameters",
+        "type": "array<object>",
+        "requirement": "Direct",
+        "description": "Measured or forecast weather values.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "[\n  {\n    \"parameter\": \"Rainfall\",\n    \"value\": 12.8,\n    \"unit\": \"mm\",\n    \"aggregationType\": \"Sum\"\n  },\n  {\n    \"parameter\": \"SoilMoisture\",\n    \"value\": 31.4,\n    \"unit\": \"%\",\n    \"aggregationType\": \"Mean\"\n  }\n]",
+        "enum": null
+      },
+      {
+        "path": "parameters[].parameter",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Weather parameter represented by this value.",
+        "constraints": "enum: Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"Rainfall\"",
+        "enum": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed",
+          "WindDirection",
+          "SoilMoisture",
+          "Evapotranspiration",
+          "Alert"
+        ]
+      },
+      {
+        "path": "parameters[].value",
+        "type": [
+          "number",
+          "string",
+          "boolean"
+        ],
+        "requirement": "Direct",
+        "description": "Observed or forecast numeric, coded, or Boolean value.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "12.8",
+        "enum": null
+      },
+      {
+        "path": "parameters[].unit",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Governed unit code, or `1` when the value is unitless.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"mm\"",
+        "enum": null
+      },
+      {
+        "path": "parameters[].aggregationType",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Statistical treatment represented by the value over its applicable reporting period, normally the Resource validity period. Omit it when the value is an unqualified point-in-time observation.",
+        "constraints": "enum: Instantaneous, Minimum, Maximum, Mean, Sum",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "\"Sum\"",
+        "enum": [
+          "Instantaneous",
+          "Minimum",
+          "Maximum",
+          "Mean",
+          "Sum"
+        ]
       }
     ],
     "fields": [
