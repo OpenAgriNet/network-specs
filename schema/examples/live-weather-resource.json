@@ -42,22 +42,32 @@
     "parameters": [
       {
         "parameter": "Temperature",
-        "value": 29.4,
+        "values": {
+          "minimum": 26.1,
+          "maximum": 31.4,
+          "mean": 28.7
+        },
         "unit": "Cel"
       },
       {
         "parameter": "Humidity",
-        "value": 82,
+        "values": {
+          "mean": 82
+        },
         "unit": "%"
       },
       {
         "parameter": "Rainfall",
-        "value": 5.2,
+        "values": {
+          "sum": 5.2
+        },
         "unit": "mm"
       },
       {
         "parameter": "WindSpeed",
-        "value": 18.5,
+        "values": {
+          "mean": 18.5
+        },
         "unit": "km/h"
       }
     ]

@@ -5210,18 +5210,18 @@
         "path": "parameters",
         "type": "array<object>",
         "requirement": "Direct",
-        "description": "Measured or forecast weather values.",
+        "description": "Measured or forecast weather parameters and their statistical values.",
         "constraints": "minItems: 1",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  {\n    \"parameter\": \"Rainfall\",\n    \"value\": 12.8,\n    \"unit\": \"mm\",\n    \"aggregationType\": \"Sum\"\n  },\n  {\n    \"parameter\": \"SoilMoisture\",\n    \"value\": 31.4,\n    \"unit\": \"%\",\n    \"aggregationType\": \"Mean\"\n  }\n]",
+        "example": "[\n  {\n    \"parameter\": \"Rainfall\",\n    \"values\": {\n      \"sum\": 12.8\n    },\n    \"unit\": \"mm\"\n  },\n  {\n    \"parameter\": \"SoilMoisture\",\n    \"values\": {\n      \"minimum\": 27.8,\n      \"maximum\": 35.2,\n      \"mean\": 31.4\n    },\n    \"unit\": \"%\"\n  }\n]",
         "enum": null
       },
       {
         "path": "parameters[].parameter",
         "type": "string",
         "requirement": "Direct",
-        "description": "Weather parameter represented by this value.",
+        "description": "Weather parameter represented by this entry.",
         "constraints": "enum: Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert",
         "reference": null,
         "origin": "WeatherObservation",
@@ -5238,14 +5238,69 @@
         ]
       },
       {
-        "path": "parameters[].value",
+        "path": "parameters[].values",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "One or more values for the parameter under the same unit, location, applicable period, and source context.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "{\n  \"sum\": 12.8\n}",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.instantaneous",
         "type": [
           "number",
           "string",
           "boolean"
         ],
-        "requirement": "Direct",
-        "description": "Observed or forecast numeric, coded, or Boolean value.",
+        "requirement": "Optional",
+        "description": "Numeric, coded, or Boolean value at an instant, or an otherwise unaggregated value.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "29.4",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.minimum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Lowest numeric value over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "26.1",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.maximum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Highest numeric value over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "31.4",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.mean",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Arithmetic mean over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "28.7",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.sum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Accumulated numeric total over the applicable period.",
         "constraints": "",
         "reference": null,
         "origin": "WeatherObservation",
@@ -5256,29 +5311,12 @@
         "path": "parameters[].unit",
         "type": "string",
         "requirement": "Direct",
-        "description": "Governed unit code, or `1` when the value is unitless.",
+        "description": "Governed unit code shared by the values, or `1` when they are unitless.",
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "WeatherObservation",
         "example": "\"mm\"",
         "enum": null
-      },
-      {
-        "path": "parameters[].aggregationType",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Statistical treatment represented by the value over its applicable reporting period, normally the Resource validity period. Omit it when the value is an unqualified point-in-time observation.",
-        "constraints": "enum: Instantaneous, Minimum, Maximum, Mean, Sum",
-        "reference": null,
-        "origin": "WeatherObservation",
-        "example": "\"Sum\"",
-        "enum": [
-          "Instantaneous",
-          "Minimum",
-          "Maximum",
-          "Mean",
-          "Sum"
-        ]
       }
     ],
     "fields": [
@@ -5612,18 +5650,18 @@
         "path": "parameters",
         "type": "array<object>",
         "requirement": "Direct",
-        "description": "Measured or forecast weather values.",
+        "description": "Measured or forecast weather parameters and their statistical values.",
         "constraints": "minItems: 1",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  {\n    \"parameter\": \"Rainfall\",\n    \"value\": 12.8,\n    \"unit\": \"mm\",\n    \"aggregationType\": \"Sum\"\n  },\n  {\n    \"parameter\": \"SoilMoisture\",\n    \"value\": 31.4,\n    \"unit\": \"%\",\n    \"aggregationType\": \"Mean\"\n  }\n]",
+        "example": "[\n  {\n    \"parameter\": \"Rainfall\",\n    \"values\": {\n      \"sum\": 12.8\n    },\n    \"unit\": \"mm\"\n  },\n  {\n    \"parameter\": \"SoilMoisture\",\n    \"values\": {\n      \"minimum\": 27.8,\n      \"maximum\": 35.2,\n      \"mean\": 31.4\n    },\n    \"unit\": \"%\"\n  }\n]",
         "enum": null
       },
       {
         "path": "parameters[].parameter",
         "type": "string",
         "requirement": "Direct",
-        "description": "Weather parameter represented by this value.",
+        "description": "Weather parameter represented by this entry.",
         "constraints": "enum: Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert",
         "reference": null,
         "origin": "WeatherObservation",
@@ -5640,14 +5678,69 @@
         ]
       },
       {
-        "path": "parameters[].value",
+        "path": "parameters[].values",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "One or more values for the parameter under the same unit, location, applicable period, and source context.",
+        "constraints": "minProperties: 1 · additionalProperties: false",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "{\n  \"sum\": 12.8\n}",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.instantaneous",
         "type": [
           "number",
           "string",
           "boolean"
         ],
-        "requirement": "Direct",
-        "description": "Observed or forecast numeric, coded, or Boolean value.",
+        "requirement": "Optional",
+        "description": "Numeric, coded, or Boolean value at an instant, or an otherwise unaggregated value.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "29.4",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.minimum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Lowest numeric value over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "26.1",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.maximum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Highest numeric value over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "31.4",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.mean",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Arithmetic mean over the applicable period.",
+        "constraints": "",
+        "reference": null,
+        "origin": "WeatherObservation",
+        "example": "28.7",
+        "enum": null
+      },
+      {
+        "path": "parameters[].values.sum",
+        "type": "number",
+        "requirement": "Optional",
+        "description": "Accumulated numeric total over the applicable period.",
         "constraints": "",
         "reference": null,
         "origin": "WeatherObservation",
@@ -5658,29 +5751,12 @@
         "path": "parameters[].unit",
         "type": "string",
         "requirement": "Direct",
-        "description": "Governed unit code, or `1` when the value is unitless.",
+        "description": "Governed unit code shared by the values, or `1` when they are unitless.",
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "WeatherObservation",
         "example": "\"mm\"",
         "enum": null
-      },
-      {
-        "path": "parameters[].aggregationType",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Statistical treatment represented by the value over its applicable reporting period, normally the Resource validity period. Omit it when the value is an unqualified point-in-time observation.",
-        "constraints": "enum: Instantaneous, Minimum, Maximum, Mean, Sum",
-        "reference": null,
-        "origin": "WeatherObservation",
-        "example": "\"Sum\"",
-        "enum": [
-          "Instantaneous",
-          "Minimum",
-          "Maximum",
-          "Mean",
-          "Sum"
-        ]
       }
     ],
     "conditions": [
@@ -5734,13 +5810,13 @@
         "name": "District Observation",
         "file": "examples/district-observation.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:automatic-weather-station-network\",\n    \"sourceName\": \"Automatic Weather Station Network\"\n  },\n  \"location\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          73.55,\n          19.65\n        ],\n        [\n          74.15,\n          19.65\n        ],\n        [\n          74.15,\n          20.15\n        ],\n        [\n          73.55,\n          20.15\n        ],\n        [\n          73.55,\n          19.65\n        ]\n      ]\n    ]\n  },\n  \"generatedAt\": \"2026-08-25T06:15:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-25T05:00:00Z\",\n    \"endsAt\": \"2026-08-25T06:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Rainfall\",\n      \"value\": 12.8,\n      \"unit\": \"mm\",\n      \"aggregationType\": \"Sum\"\n    },\n    {\n      \"parameter\": \"SoilMoisture\",\n      \"value\": 31.4,\n      \"unit\": \"%\",\n      \"aggregationType\": \"Mean\"\n    }\n  ],\n  \"observedAt\": \"2026-08-25T06:00:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:automatic-weather-station-network\",\n    \"sourceName\": \"Automatic Weather Station Network\"\n  },\n  \"location\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          73.55,\n          19.65\n        ],\n        [\n          74.15,\n          19.65\n        ],\n        [\n          74.15,\n          20.15\n        ],\n        [\n          73.55,\n          20.15\n        ],\n        [\n          73.55,\n          19.65\n        ]\n      ]\n    ]\n  },\n  \"generatedAt\": \"2026-08-25T06:15:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-25T05:00:00Z\",\n    \"endsAt\": \"2026-08-25T06:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 12.8\n      },\n      \"unit\": \"mm\"\n    },\n    {\n      \"parameter\": \"SoilMoisture\",\n      \"values\": {\n        \"minimum\": 27.8,\n        \"maximum\": 35.2,\n        \"mean\": 31.4\n      },\n      \"unit\": \"%\"\n    }\n  ],\n  \"observedAt\": \"2026-08-25T06:00:00Z\"\n}"
       },
       {
         "name": "Live Weather Observation",
         "file": "examples/live-weather-observation.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Forecast\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\",\n    \"sourceName\": \"Weather Services Provider\",\n    \"sourceUri\": \"https://weather.example.org\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"modelRunAt\": \"2026-08-24T06:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-24T06:00:00Z\",\n    \"endsAt\": \"2026-08-24T09:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"value\": 29.4,\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"value\": 82,\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"Rainfall\",\n      \"value\": 5.2,\n      \"unit\": \"mm\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\",\n    \"sourceName\": \"Weather Services Provider\",\n    \"sourceUri\": \"https://weather.example.org\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"observedAt\": \"2026-08-24T06:00:00Z\",\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"instantaneous\": 29.4\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"instantaneous\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"WindDirection\",\n      \"values\": {\n        \"instantaneous\": \"NE\"\n      },\n      \"unit\": \"1\"\n    },\n    {\n      \"parameter\": \"Alert\",\n      \"values\": {\n        \"instantaneous\": false\n      },\n      \"unit\": \"1\"\n    }\n  ]\n}"
       },
       {
         "name": "On Demand Weather Information",
@@ -5752,7 +5828,7 @@
         "name": "Point Forecast",
         "file": "examples/point-forecast.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Forecast\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-24T06:00:00Z\",\n    \"endsAt\": \"2026-08-24T09:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"value\": 26.1,\n      \"unit\": \"Cel\",\n      \"aggregationType\": \"Minimum\"\n    },\n    {\n      \"parameter\": \"Temperature\",\n      \"value\": 31.4,\n      \"unit\": \"Cel\",\n      \"aggregationType\": \"Maximum\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"value\": 82,\n      \"unit\": \"%\",\n      \"aggregationType\": \"Mean\"\n    },\n    {\n      \"parameter\": \"Rainfall\",\n      \"value\": 5.2,\n      \"unit\": \"mm\",\n      \"aggregationType\": \"Sum\"\n    }\n  ],\n  \"modelRunAt\": \"2026-08-24T06:00:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Forecast\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-24T06:00:00Z\",\n    \"endsAt\": \"2026-08-24T09:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"minimum\": 26.1,\n        \"maximum\": 31.4,\n        \"mean\": 28.7\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"mean\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 5.2\n      },\n      \"unit\": \"mm\"\n    }\n  ],\n  \"modelRunAt\": \"2026-08-24T06:00:00Z\"\n}"
       }
     ],
     "artifacts": [

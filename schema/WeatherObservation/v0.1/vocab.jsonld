@@ -76,20 +76,40 @@
       "rdfs:label": "parameter"
     },
     {
-      "@id": "openagrinet:value",
+      "@id": "openagrinet:values",
       "@type": "rdfs:Property",
-      "rdfs:label": "value"
+      "rdfs:label": "values",
+      "rdfs:comment": "Statistical or instantaneous values reported for one weather parameter under a shared context."
+    },
+    {
+      "@id": "openagrinet:instantaneous",
+      "@type": "rdfs:Property",
+      "rdfs:label": "instantaneous value"
+    },
+    {
+      "@id": "openagrinet:minimum",
+      "@type": "rdfs:Property",
+      "rdfs:label": "minimum value"
+    },
+    {
+      "@id": "openagrinet:maximum",
+      "@type": "rdfs:Property",
+      "rdfs:label": "maximum value"
+    },
+    {
+      "@id": "openagrinet:mean",
+      "@type": "rdfs:Property",
+      "rdfs:label": "mean value"
+    },
+    {
+      "@id": "openagrinet:sum",
+      "@type": "rdfs:Property",
+      "rdfs:label": "sum value"
     },
     {
       "@id": "openagrinet:unit",
       "@type": "rdfs:Property",
       "rdfs:label": "unit"
-    },
-    {
-      "@id": "openagrinet:aggregationType",
-      "@type": "rdfs:Property",
-      "rdfs:label": "aggregation type",
-      "rdfs:comment": "Statistical treatment represented by a weather value over its applicable period."
     },
     {
       "@id": "openagrinet:observedAt",

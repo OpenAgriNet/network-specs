@@ -45,15 +45,19 @@
   "parameters": [
     {
       "parameter": "Rainfall",
-      "value": 12.8,
-      "unit": "mm",
-      "aggregationType": "Sum"
+      "values": {
+        "sum": 12.8
+      },
+      "unit": "mm"
     },
     {
       "parameter": "SoilMoisture",
-      "value": 31.4,
-      "unit": "%",
-      "aggregationType": "Mean"
+      "values": {
+        "minimum": 27.8,
+        "maximum": 35.2,
+        "mean": 31.4
+      },
+      "unit": "%"
     }
   ],
   "observedAt": "2026-08-25T06:00:00Z"

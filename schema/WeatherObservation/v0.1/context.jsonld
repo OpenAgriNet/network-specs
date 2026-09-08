@@ -31,9 +31,13 @@
         "@container": "@set"
       },
       "parameter": "openagrinet:parameter",
-      "value": "openagrinet:value",
-      "unit": "openagrinet:unit",
-      "aggregationType": "openagrinet:aggregationType"
+      "values": "openagrinet:values",
+      "instantaneous": "openagrinet:instantaneous",
+      "minimum": "openagrinet:minimum",
+      "maximum": "openagrinet:maximum",
+      "mean": "openagrinet:mean",
+      "sum": "openagrinet:sum",
+      "unit": "openagrinet:unit"
     }
   ]
 }

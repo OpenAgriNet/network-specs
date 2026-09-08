@@ -46,19 +46,21 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `observedAt` | `Direct` observation | Measurement time |
 | `modelRunAt` | `Direct` forecast | Forecast model run time |
 | `validity` | `Direct` forecast | Bounded applicability period |
-| `parameters` | `Direct` | Weather values, units, and an optional aggregation type |
+| `parameters` | `Direct` | Weather parameters with a unit and one or more instantaneous or statistical values |
 
-### Aggregation types
+### Parameter values
 
-`aggregationType` qualifies how a parameter value was calculated over its applicable reporting period, normally the Resource's validity period. It is optional because a point-in-time observation may be unqualified. A Provider should supply `validity` when a non-instantaneous aggregation would otherwise have no clear period.
+Each `parameters[]` entry groups values for one parameter under one unit. The enclosing Resource establishes their location, applicable period, and source. The `values` object must contain at least one supported value form and may combine forms. For example, daily minimum, maximum, and mean temperature belong in one Temperature entry. Use separate parameter entries when units differ. Use separate Resources when the location, applicable period, or source differs.
 
-| Value | Meaning | Example |
+| Field | Meaning | Example |
 |---|---|---|
-| `Instantaneous` | Value at a particular instant | Temperature observed at 09:00 |
-| `Minimum` | Lowest value over the applicable period | Daily minimum temperature |
-| `Maximum` | Highest value over the applicable period | Daily maximum temperature |
-| `Mean` | Arithmetic mean over the applicable period | Mean relative humidity for three hours |
-| `Sum` | Accumulated total over the applicable period | Total rainfall during a forecast day |
+| `instantaneous` | Value at an instant, or an otherwise unaggregated numeric, coded, or Boolean value | Temperature observed at 09:00, wind direction `NE`, or an alert flag |
+| `minimum` | Lowest numeric value over the applicable period | Daily minimum temperature |
+| `maximum` | Highest numeric value over the applicable period | Daily maximum temperature |
+| `mean` | Arithmetic mean over the applicable period | Mean relative humidity for three hours |
+| `sum` | Accumulated numeric total over the applicable period | Total rainfall during a forecast day |
+
+The Resource's `validity` normally supplies the period for `minimum`, `maximum`, `mean`, and `sum`. A Provider should supply a clear applicability period whenever a statistical value would otherwise be ambiguous. The schema permits useful combinations without imposing exclusions. It cannot compare sibling values, so implementations must separately verify that `minimum` is not greater than `maximum`.
 
 ## Non-goals
 

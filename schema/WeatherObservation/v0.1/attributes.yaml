@@ -112,30 +112,48 @@ components:
             parameters:
               type: array
               minItems: 1
-              description: Measured or forecast weather values.
+              description: Measured or forecast weather parameters and their statistical values.
               items:
                 type: object
-                required: [parameter, value, unit]
+                required: [parameter, values, unit]
                 properties:
                   parameter:
                     type: string
                     enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
-                    description: Weather parameter represented by this value.
+                    description: Weather parameter represented by this entry.
                     x-jsonld-id: "openagrinet:parameter"
-                  value:
-                    type: [number, string, boolean]
-                    description: Observed or forecast numeric, coded, or Boolean value.
-                    x-jsonld-id: "openagrinet:value"
+                  values:
+                    type: object
+                    minProperties: 1
+                    description: One or more values for the parameter under the same unit, location, applicable period, and source context.
+                    properties:
+                      instantaneous:
+                        type: [number, string, boolean]
+                        description: Numeric, coded, or Boolean value at an instant, or an otherwise unaggregated value.
+                        x-jsonld-id: "openagrinet:instantaneous"
+                      minimum:
+                        type: number
+                        description: Lowest numeric value over the applicable period.
+                        x-jsonld-id: "openagrinet:minimum"
+                      maximum:
+                        type: number
+                        description: Highest numeric value over the applicable period.
+                        x-jsonld-id: "openagrinet:maximum"
+                      mean:
+                        type: number
+                        description: Arithmetic mean over the applicable period.
+                        x-jsonld-id: "openagrinet:mean"
+                      sum:
+                        type: number
+                        description: Accumulated numeric total over the applicable period.
+                        x-jsonld-id: "openagrinet:sum"
+                    additionalProperties: false
+                    x-jsonld-id: "openagrinet:values"
                   unit:
                     type: string
                     minLength: 1
-                    description: Governed unit code, or `1` when the value is unitless.
+                    description: Governed unit code shared by the values, or `1` when they are unitless.
                     x-jsonld-id: "openagrinet:unit"
-                  aggregationType:
-                    type: string
-                    enum: [Instantaneous, Minimum, Maximum, Mean, Sum]
-                    description: Statistical treatment represented by the value over its applicable reporting period, normally the Resource validity period. Omit it when the value is an unqualified point-in-time observation.
-                    x-jsonld-id: "openagrinet:aggregationType"
                 additionalProperties: false
               x-jsonld-id: "openagrinet:parameters"
         - if:

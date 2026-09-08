@@ -19,7 +19,11 @@
   "result_fields": [
     "observationType",
     "parameters[].parameter",
-    "parameters[].aggregationType",
+    "parameters[].values.instantaneous",
+    "parameters[].values.minimum",
+    "parameters[].values.maximum",
+    "parameters[].values.mean",
+    "parameters[].values.sum",
     "location",
     "generatedAt",
     "observedAt",
@@ -36,7 +40,11 @@
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
     "beckn:resourceAttributes.parameters[].parameter",
-    "beckn:resourceAttributes.parameters[].aggregationType",
+    "beckn:resourceAttributes.parameters[].values.instantaneous",
+    "beckn:resourceAttributes.parameters[].values.minimum",
+    "beckn:resourceAttributes.parameters[].values.maximum",
+    "beckn:resourceAttributes.parameters[].values.mean",
+    "beckn:resourceAttributes.parameters[].values.sum",
     "beckn:resourceAttributes.generatedAt",
     "beckn:resourceAttributes.observedAt",
     "beckn:resourceAttributes.modelRunAt",
@@ -52,7 +60,11 @@
     "beckn:resourceAttributes.source.sourceId",
     "beckn:resourceAttributes.location",
     "beckn:resourceAttributes.parameters[].parameter",
-    "beckn:resourceAttributes.parameters[].aggregationType"
+    "beckn:resourceAttributes.parameters[].values.instantaneous",
+    "beckn:resourceAttributes.parameters[].values.minimum",
+    "beckn:resourceAttributes.parameters[].values.maximum",
+    "beckn:resourceAttributes.parameters[].values.mean",
+    "beckn:resourceAttributes.parameters[].values.sum"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.observedAt",
