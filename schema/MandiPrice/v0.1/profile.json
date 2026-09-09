@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "subjectCategories",
     "supportedCommodities",
     "supportedPriceFields",
     "historicalDataAvailable",
@@ -30,6 +31,7 @@
   ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedPriceFields",
     "beckn:resourceAttributes.commodity.code",
@@ -42,6 +44,7 @@
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedPriceFields",
     "beckn:resourceAttributes.commodity.code",

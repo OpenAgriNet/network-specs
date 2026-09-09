@@ -2,6 +2,11 @@
   "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.1/context.jsonld",
   "@type": "openagrinet:AgricultureFacility",
   "informationMode": "Direct",
+  "subjectCategories": [
+    "Facility",
+    "Crop",
+    "Practice"
+  ],
   "languages": [
     "en",
     "mr"

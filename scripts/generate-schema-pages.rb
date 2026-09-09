@@ -179,6 +179,11 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   properties = expanded.fetch("properties", {})
   required = Array(expanded["required"])
   conditional = collect_conditionals(schema).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
+    fields = Array(member["required"])
+    result << fields unless fields.empty?
+  end
+  alternative_fields = alternatives.flatten.uniq
 
   properties.flat_map do |name, raw_property|
     origin = inherited_origin || root_origins[name] || expanded_path.dirname.parent.basename.to_s
@@ -188,6 +193,8 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
                     ancestor_condition || "Always"
                   elsif conditional[name]&.any?
                     conditional[name].join(" or ")
+                  elsif alternatives.length > 1 && alternative_fields.include?(name)
+                    "At least one of #{alternative_fields.join(' or ')}"
                   else
                     "Optional"
                   end
@@ -210,7 +217,8 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
       "reference" => display_reference(reference),
       "origin" => origin,
       "example" => concise_example(sample),
-      "enum" => property["enum"] || item_schema&.dig("enum")
+      "enum" => property["enum"] || item_schema&.dig("enum"),
+      "enum_details" => property["x-enum-details"] || item_schema&.dig("x-enum-details")
     }
 
     nested = if property["type"] == "array" && item_schema
@@ -296,6 +304,15 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   )
 
   key = "#{pack_name}-#{version_dir}"
+  effective_fields = collect_fields(resolver, root_schema, attributes_path, examples, root_origins)
+  effective_requirements = effective_fields.each_with_object({}) do |field, requirements|
+    requirements[field["path"]] = field["requirement"]
+  end
+  pack_fields = collect_fields(resolver, pack_schema, attributes_path, examples, {}, [], nil, 0, pack_name)
+  pack_fields.each do |field|
+    field["requirement"] = effective_requirements.fetch(field["path"], field["requirement"])
+  end
+
   packs[key] = {
     "key" => key,
     "name" => pack_name,
@@ -308,8 +325,8 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "canonical_type" => root_schema.dig("x-jsonld", "@type"),
     "schema_name" => schema_name,
     "composition" => composition,
-    "pack_fields" => collect_fields(resolver, pack_schema, attributes_path, examples, {}, [], nil, 0, pack_name),
-    "fields" => collect_fields(resolver, root_schema, attributes_path, examples, root_origins),
+    "pack_fields" => pack_fields,
+    "fields" => effective_fields,
     "conditions" => collect_conditionals(root_schema).map { |field, condition| { "field" => field, "condition" => condition } },
     "examples" => examples.map { |example| example.reject { |key_name, _| key_name == "data" } },
     "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]

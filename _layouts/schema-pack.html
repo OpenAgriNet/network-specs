@@ -120,6 +120,33 @@ layout: default
     </table>
   </div>
 
+  {% assign governed_fields = pack.fields | where_exp: "field", "field.enum_details" %}
+  {% if governed_fields.size > 0 %}
+    <h2 id="governed-values">Governed value examples</h2>
+    <p>These meanings and examples are declared by the schema alongside the allowed values.</p>
+    {% for field in governed_fields %}
+      <h3><code>{{ field.path }}</code></h3>
+      <table class="governed-value-table">
+        <thead>
+          <tr>
+            <th>Value</th>
+            <th>Meaning</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for detail in field.enum_details %}
+            <tr>
+              <td><code>{{ detail.value }}</code></td>
+              <td>{{ detail.meaning }}</td>
+              <td>{{ detail.example }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  {% endif %}
+
   <h2 id="examples">Complete examples</h2>
   <p>Each example is a complete <code>resourceAttributes</code> object for this schema pack, rather than a fragment of only the pack-specific fields.</p>
   <div class="example-grid">

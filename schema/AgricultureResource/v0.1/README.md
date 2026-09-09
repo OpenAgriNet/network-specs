@@ -28,8 +28,8 @@ This pack declares the shared agriculture field set. Other selected contracts re
 | Component | Fields added | Required fields |
 |---|---|---|
 | `AgricultureResource` | `@type` | `@type` |
-| `AgricultureResourceFields` | `informationMode`, `subjectCategories`, `agricultureSubjects`, `languages`, `coverageAreas` | `informationMode` |
-| Effective flat object | All six fields on the same `resourceAttributes` object | `@type`, `informationMode` |
+| `AgricultureResourceFields` | `informationMode`, `subjectCategories`, `agricultureSubjects`, `languages`, `coverageAreas` | `informationMode`, `subjectCategories` |
+| Effective flat object | All six fields on the same `resourceAttributes` object | `@type`, `informationMode`, `subjectCategories` |
 
 ## Fields
 
@@ -39,12 +39,12 @@ This pack declares the shared agriculture field set. Other selected contracts re
 |---|---|---|
 | `@type` | Always | Identifies the concrete OAN Resource type and retains it when Provider-defined JSON-LD types are added |
 | `informationMode` | Always | Uses `OnDemand` when a Provider invocation is required and `Direct` when the Resource contains or directly references specific information |
-| `subjectCategories` | Optional | Classifies what the Resource is about using broad categories such as crop, weather, or market; it never repeats the Resource type |
+| `subjectCategories` | Always | Classifies the Resource for discovery using one or more broad categories such as crop, weather, market, practice, or facility |
 | `agricultureSubjects` | Optional | Identifies governed subjects such as Cotton, Rice, or a commodity; absence means broad applicability within the declared categories |
 | `languages` | Optional here; refined by selected packs | Declares supported or available BCP 47 languages |
 | `coverageAreas` | Optional | Declares geographic applicability using an administrative area reference or a Beckn GeoJSON geometry |
 
-`subjectCategories` is not universally required. A selected schema type already identifies whether the Resource is a Weather Observation, Mandi Price, Agriculture Facility, or another contract. Carry a subject category only when it adds useful cross-pack classification.
+`subjectCategories` is required in the shared field set so downstream systems can apply a consistent discovery filter. A concrete pack may also require a particular value, such as `Weather`, `Market`, or `Facility`.
 
 `facilityType` serves a different purpose. A Direct `AgricultureFacility` must say which concrete kind of facility it describes. An OnDemand facility Resource instead uses `supportedFacilityTypes` to say which kinds the Provider can supply.
 
@@ -69,31 +69,20 @@ The mode does not describe freshness. Selected domain packs use timestamps and `
 | `Market` | Commodity prices, demand, trade, or market opportunities | Cotton modal price at an APMC |
 | `Scheme` | Government or institutional schemes, benefits, and eligibility information | PM-KISAN eligibility guidance |
 | `Practice` | A method used in farming or livestock management | Drip irrigation or integrated pest management |
+| `Facility` | An agricultural service location or physical facility | KVK, warehouse, Custom Hiring Centre, or Soil Testing Facility |
 
-**Facility is not a subject category.** Do not use `Practice` for a KVK, warehouse, Custom Hiring Centre, Soil Testing Facility, or another service location. Those Resources use `openagrinet:AgricultureFacility` and `facilityType`.
+An Agriculture Facility uses `Facility` for broad discovery and may add categories for the domains it serves. For example, a Custom Hiring Centre may use `Facility`, `Crop`, and `Practice`. The separate `facilityType` field identifies the concrete facility kind.
 
 ### Agriculture subject reference
 
-`agricultureSubjects` identifies a concrete governed subject when broad categories are insufficient. Absence means the Resource applies broadly within any declared category.
+`agricultureSubjects` identifies a concrete governed subject when broad categories are insufficient. Each item must supply `subjectId`, `descriptor`, or both. Classification belongs in `subjectCategories` and pack-specific fields.
 
 | Nested field | Type | Required | Meaning | Example |
 |---|---|---|---|---|
-| `subjectId` | URI | Required | Stable identifier from a governed taxonomy | `https://taxonomy.openagrinet.global/crops/cotton` |
-| `subjectType` | governed string | Required | Kind of subject identified by `subjectId` | `Crop` |
-| `descriptor` | Beckn Descriptor | Required | Machine-readable code or human-readable name | `{"code":"COTTON","name":"Cotton"}` |
+| `subjectId` | URI | At least one of `subjectId` or `descriptor` | Stable identifier from a governed taxonomy | `https://taxonomy.openagrinet.global/crops/cotton` |
+| `descriptor` | Beckn Descriptor | At least one of `subjectId` or `descriptor` | Machine-readable code or human-readable name | `{"code":"COTTON","name":"Cotton"}` |
 
-| `subjectType` | Meaning | Example |
-|---|---|---|
-| `Crop` | A cultivated crop or crop species | Cotton |
-| `Livestock` | A farm animal, poultry, fish, or managed species | Dairy cattle |
-| `Commodity` | A product traded or reported by a market | Cotton lint |
-| `Pest` | An organism that damages a crop or livestock system | Pink bollworm |
-| `Disease` | A governed crop or animal disease | Foot-and-mouth disease |
-| `Practice` | A named farming or husbandry method | Integrated pest management |
-| `Scheme` | A named government or institutional programme | PM-KISAN |
-| `Market` | A governed physical or electronic market | Azadpur APMC |
-
-`subjectCategories` supports broad filtering. `agricultureSubjects` identifies a specific entity. A Cotton guide may therefore use category `Crop` and subject type `Crop` with Cotton's taxonomy identifier.
+`subjectCategories` supports broad filtering. `agricultureSubjects` identifies a specific entity. A Cotton guide may therefore use category `Crop` with Cotton's taxonomy identifier, descriptor, or both.
 
 ### Languages
 

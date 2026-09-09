@@ -32,7 +32,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 |---|---|---|
 | `@type` | Always | Identifies the Resource as `openagrinet:AgricultureFacility` |
 | `informationMode` | Always | `OnDemand` requires Provider invocation; `Direct` describes a specific facility |
-| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Facility` |
 | `agricultureSubjects` | Optional | Governed crop, commodity, scheme, or other subject references when relevant |
 | `languages` | Optional | Languages supported by or present in the facility information |
 | `coverageAreas` | Optional | Geographic service or discovery coverage |

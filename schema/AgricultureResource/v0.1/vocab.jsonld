@@ -30,7 +30,6 @@
     },
     { "@id": "openagrinet:agricultureSubjects", "@type": "rdfs:Property", "rdfs:label": "agriculture subjects" },
     { "@id": "openagrinet:subjectId", "@type": "rdfs:Property", "rdfs:label": "subject identifier" },
-    { "@id": "openagrinet:subjectType", "@type": "rdfs:Property", "rdfs:label": "subject type" },
     {
       "@id": "openagrinet:languages",
       "@type": "rdfs:Property",

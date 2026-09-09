@@ -30,7 +30,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 |---|---|---|
 | `@type` | Always | Identifies the Resource as `openagrinet:KnowledgeResource` |
 | `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains or directly references specific knowledge |
-| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `subjectCategories` | Always | Broad discovery classification required by the composed Agriculture Resource field set |
 | `agricultureSubjects` | Optional | Governed subjects such as a crop, livestock species, pest, or scheme |
 | `languages` | Both modes | Supported or available BCP 47 languages |
 | `coverageAreas` | Optional | Geographic applicability or supported coverage |

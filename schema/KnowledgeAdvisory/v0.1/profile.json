@@ -22,7 +22,8 @@
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects[].subjectId",
-    "beckn:resourceAttributes.agricultureSubjects[].subjectType",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.name",
     "beckn:resourceAttributes.languages",
     "beckn:resourceAttributes.coverageAreas[].codeScheme",
     "beckn:resourceAttributes.coverageAreas[].areaCode",
@@ -36,6 +37,7 @@
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
     "beckn:resourceAttributes.languages",
     "beckn:resourceAttributes.coverageAreas[].areaCode"
   ],

@@ -38,7 +38,7 @@ components:
 
     AgricultureResourceFields:
       type: object
-      required: [informationMode]
+      required: [informationMode, subjectCategories]
       properties:
         informationMode:
           type: string
@@ -49,10 +49,32 @@ components:
           type: array
           minItems: 1
           uniqueItems: true
-          description: Optional broad agricultural subjects used for discovery. The Resource type is expressed by @type, not repeated here.
+          description: Required broad discovery categories for the Resource. Concrete schema packs may refine the applicable categories. The Resource type is expressed by @type, not repeated here.
           items:
             type: string
-            enum: [Crop, Livestock, Weather, Market, Scheme, Practice]
+            enum: [Crop, Livestock, Weather, Market, Scheme, Practice, Facility]
+            x-enum-details:
+              - value: Crop
+                meaning: Crop production, protection, harvest, or crop-specific information.
+                example: Cotton sowing guidance.
+              - value: Livestock
+                meaning: Farm animals, poultry, fisheries, animal health, or husbandry.
+                example: Dairy cattle vaccination guidance.
+              - value: Weather
+                meaning: Weather conditions, forecasts, alerts, or weather-dependent information.
+                example: District rainfall forecast.
+              - value: Market
+                meaning: Commodity prices, demand, trade, or market opportunities.
+                example: Cotton modal price at an APMC.
+              - value: Scheme
+                meaning: Government or institutional schemes, benefits, and eligibility information.
+                example: PM-KISAN eligibility guidance.
+              - value: Practice
+                meaning: A method used in farming or livestock management.
+                example: Drip irrigation or integrated pest management.
+              - value: Facility
+                meaning: An agricultural service location or physical facility.
+                example: KVK, warehouse, Custom Hiring Centre, or Soil Testing Facility.
           x-jsonld-id: "openagrinet:subjectCategories"
         agricultureSubjects:
           type: array
@@ -111,23 +133,20 @@ components:
 
     AgricultureSubjectReference:
       type: object
-      description: Stable reference to a governed agriculture subject and its human-readable Beckn descriptor.
-      required: [subjectId, subjectType, descriptor]
+      description: A specific agricultural subject identified by a governed taxonomy URI, a Beckn Descriptor, or both.
       properties:
         subjectId:
           type: string
           format: uri
           description: Stable identifier from a governed agriculture taxonomy.
           x-jsonld-id: "openagrinet:subjectId"
-        subjectType:
-          type: string
-          enum: [Crop, Livestock, Commodity, Pest, Disease, Practice, Scheme, Market]
-          description: Kind of agricultural subject referenced by subjectId.
-          x-jsonld-id: "openagrinet:subjectType"
         descriptor:
           $ref: "#/components/schemas/IdentifiedDescriptor"
           description: Beckn descriptor carrying the governed code and display name.
           x-jsonld-id: "https://schema.beckn.io/descriptor"
+      anyOf:
+        - required: [subjectId]
+        - required: [descriptor]
       additionalProperties: false
 
     SourceReference:

@@ -20,7 +20,6 @@
         "@id": "openagrinet:subjectId",
         "@type": "@id"
       },
-      "subjectType": "openagrinet:subjectType",
       "descriptor": {
         "@id": "https://schema.beckn.io/descriptor",
         "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"

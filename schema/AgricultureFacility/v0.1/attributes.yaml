@@ -20,6 +20,13 @@ components:
         - type: object
           required: ["@type"]
           properties:
+            subjectCategories:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields/properties/subjectCategories"
+                - type: array
+                  description: Required broad discovery categories for this pack. It must include Facility; additional values may identify the agricultural domains served. The facilityType field identifies the concrete facility kind.
+                  contains:
+                    const: Facility
             "@type":
               oneOf:
                 - type: string

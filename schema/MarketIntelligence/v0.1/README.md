@@ -30,7 +30,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 |---|---|---|
 | `@type` | Always | Identifies the Resource as `openagrinet:MarketIntelligence` |
 | `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific market intelligence |
-| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Market` |
 | `agricultureSubjects` | Optional | Governed commodity or market references when available |
 | `languages` | `OnDemand`; optional in `Direct` | Supported or available BCP 47 languages |
 | `coverageAreas` | Optional | Geographic applicability or supported market coverage |

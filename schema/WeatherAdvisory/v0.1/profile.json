@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "subjectCategories",
     "topics",
     "supportedWeatherParameters",
     "forecastHorizon",
@@ -35,6 +36,8 @@
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.name",
     "beckn:resourceAttributes.issuedAt",
     "beckn:resourceAttributes.validity.startsAt",
     "beckn:resourceAttributes.validity.endsAt"
@@ -46,6 +49,7 @@
     "beckn:resourceAttributes.topics",
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
     "beckn:resourceAttributes.recommendations[].language",
     "beckn:resourceAttributes.recommendations[].severity"
   ],

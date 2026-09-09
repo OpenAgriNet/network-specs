@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "subjectCategories",
     "supportedCommodities",
     "supportedInsightTypes",
     "historyPeriod",
@@ -25,6 +26,7 @@
   ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedInsightTypes",
     "beckn:resourceAttributes.commodity.code",
@@ -39,6 +41,7 @@
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedInsightTypes",
     "beckn:resourceAttributes.commodity.code",

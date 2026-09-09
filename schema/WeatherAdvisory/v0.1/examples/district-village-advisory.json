@@ -9,7 +9,6 @@
   "agricultureSubjects": [
     {
       "subjectId": "https://taxonomy.openagrinet.global/crops/rice",
-      "subjectType": "Crop",
       "descriptor": {
         "code": "RICE",
         "name": "Rice"

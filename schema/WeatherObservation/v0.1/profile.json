@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "subjectCategories",
     "supportedObservationTypes",
     "supportedParameters",
     "forecastHorizon",
@@ -33,6 +34,7 @@
   ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedObservationTypes",
     "beckn:resourceAttributes.supportedParameters",
     "beckn:resourceAttributes.geographicGranularities",
@@ -53,6 +55,7 @@
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedObservationTypes",
     "beckn:resourceAttributes.supportedParameters",
     "beckn:resourceAttributes.geographicGranularities",

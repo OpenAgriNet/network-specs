@@ -30,7 +30,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 |---|---|---|
 | `@type` | Always | Identifies the Resource as `openagrinet:WeatherObservation` |
 | `informationMode` | Always | `OnDemand` requires a Provider invocation; `Direct` contains specific weather information |
-| `subjectCategories` | Optional | Broad agriculture classification inherited from Agriculture Resource |
+| `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Weather` |
 | `agricultureSubjects` | Optional | Governed subjects when the weather information is explicitly subject-specific |
 | `languages` | Optional | Languages used by textual descriptors |
 | `coverageAreas` | Optional | Geographic applicability or supported coverage |

@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "subjectCategories",
     "supportedFacilityTypes",
     "coverageAreas",
     "languages"
@@ -26,6 +27,7 @@
   ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedFacilityTypes",
     "beckn:resourceAttributes.facilityType",
     "beckn:resourceAttributes.location.geo",
@@ -36,6 +38,7 @@
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedFacilityTypes",
     "beckn:resourceAttributes.facilityType",
     "beckn:resourceAttributes.address.addressLocality",
