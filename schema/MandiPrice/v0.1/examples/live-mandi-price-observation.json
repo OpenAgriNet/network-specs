@@ -10,10 +10,12 @@
     "sourceName": "AGMARKNET",
     "sourceUri": "https://agmarknet.gov.in"
   },
-  "commodity": {
-    "name": "Onion",
-    "code": "ONION"
-  },
+  "supportedCommodities": [
+    {
+      "name": "Onion",
+      "code": "ONION"
+    }
+  ],
   "commodityGroup": "Vegetables",
   "grade": "FAQ",
   "variety": "Red",

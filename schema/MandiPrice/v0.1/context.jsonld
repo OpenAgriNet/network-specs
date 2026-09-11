@@ -18,10 +18,6 @@
       "historyPeriod": "openagrinet:historyPeriod",
       "updateFrequency": "openagrinet:updateFrequency",
       "source": "openagrinet:source",
-      "commodity": {
-        "@id": "openagrinet:commodity",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
       "commodityGroup": "openagrinet:commodityGroup",
       "grade": "openagrinet:grade",
       "variety": "openagrinet:variety",

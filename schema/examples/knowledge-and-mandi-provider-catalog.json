@@ -136,6 +136,9 @@
             "name": "Onion"
           }
         ],
+        "market": {
+          "marketName": "Indian agricultural markets"
+        },
         "supportedPriceFields": [
           "Minimum",
           "Maximum",
