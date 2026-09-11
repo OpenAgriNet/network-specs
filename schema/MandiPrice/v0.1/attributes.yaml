@@ -127,8 +127,8 @@ components:
                   x-jsonld-id: "openagrinet:state"
                 location:
                   allOf:
-                    - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
-                  description: GeoJSON geometry of the market when available; Point coordinates use longitude, latitude order.
+                    - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation"
+                  description: Beckn Location of the market when available. Its geo member carries the required GeoJSON geometry; Point coordinates use longitude, latitude order.
                   x-jsonld-id: "openagrinet:location"
               additionalProperties: false
               x-jsonld-id: "openagrinet:market"

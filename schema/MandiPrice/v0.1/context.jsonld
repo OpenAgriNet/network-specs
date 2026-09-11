@@ -30,7 +30,19 @@
       "marketName": "openagrinet:marketName",
       "district": "openagrinet:district",
       "state": "openagrinet:state",
-      "location": "openagrinet:location",
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
       "arrivalDate": "openagrinet:arrivalDate",
       "prices": "openagrinet:prices",
       "minimum": "openagrinet:minimumPrice",

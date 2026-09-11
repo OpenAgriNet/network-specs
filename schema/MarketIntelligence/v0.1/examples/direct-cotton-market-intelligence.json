@@ -53,11 +53,13 @@
         "district": "Adilabad",
         "state": "Telangana",
         "location": {
-          "type": "Point",
-          "coordinates": [
-            78.532,
-            19.6641
-          ]
+          "geo": {
+            "type": "Point",
+            "coordinates": [
+              78.532,
+              19.6641
+            ]
+          }
         }
       },
       "distance": {

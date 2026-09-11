@@ -2945,11 +2945,35 @@
       },
       {
         "path": "market.location",
-        "type": "choice",
+        "type": "object",
         "requirement": "Optional",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "market.location.geo",
+        "type": "choice",
+        "requirement": "When market.location is supplied",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "market.location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
         "origin": "MandiPrice",
         "example": null,
         "enum": null,
@@ -3454,11 +3478,35 @@
       },
       {
         "path": "market.location",
-        "type": "choice",
+        "type": "object",
         "requirement": "Optional",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "market.location.geo",
+        "type": "choice",
+        "requirement": "When market.location is supplied",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MandiPrice",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "market.location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
         "origin": "MandiPrice",
         "example": null,
         "enum": null,
@@ -3971,11 +4019,35 @@
       },
       {
         "path": "insights[].market.location",
-        "type": "choice",
+        "type": "object",
         "requirement": "Optional",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "insights[].market.location.geo",
+        "type": "choice",
+        "requirement": "When insights.[].market.location is supplied",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "insights[].market.location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
         "origin": "MarketIntelligence",
         "example": null,
         "enum": null,
@@ -4520,11 +4592,35 @@
       },
       {
         "path": "insights[].market.location",
-        "type": "choice",
+        "type": "object",
         "requirement": "Optional",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "insights[].market.location.geo",
+        "type": "choice",
+        "requirement": "When insights.[].market.location is supplied",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "origin": "MarketIntelligence",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "insights[].market.location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
         "origin": "MarketIntelligence",
         "example": null,
         "enum": null,
@@ -4746,7 +4842,7 @@
         "name": "Direct Cotton Market Intelligence",
         "file": "examples/direct-cotton-market-intelligence.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"commodity\": {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  \"generatedAt\": \"2026-08-26T09:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T09:00:00Z\",\n    \"endsAt\": \"2026-09-09T09:00:00Z\"\n  },\n  \"insights\": [\n    {\n      \"insightType\": \"PriceTrend\",\n      \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-07-27T00:00:00Z\",\n        \"endsAt\": \"2026-08-26T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": 4.8,\n        \"indicatorUnit\": \"percent\",\n        \"indicatorName\": \"modalPriceChange\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:telangana:cotton:2026-07-27\",\n        \"resource:mandi-price:telangana:cotton:2026-08-26\"\n      ]\n    },\n    {\n      \"insightType\": \"DemandForecast\",\n      \"summary\": \"The Provider forecasts strong cotton demand over the next 14 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-08-26T00:00:00Z\",\n        \"endsAt\": \"2026-09-09T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": \"High\",\n        \"indicatorName\": \"demandClass\"\n      }\n    },\n    {\n      \"insightType\": \"MarketOpportunity\",\n      \"summary\": \"Adilabad Mandi is an active nearby market for cotton in the requested area.\",\n      \"market\": {\n        \"marketCode\": \"TS-ADILABAD\",\n        \"marketName\": \"Adilabad Mandi\",\n        \"district\": \"Adilabad\",\n        \"state\": \"Telangana\",\n        \"location\": {\n          \"type\": \"Point\",\n          \"coordinates\": [\n            78.532,\n            19.6641\n          ]\n        }\n      },\n      \"distance\": {\n        \"value\": 42,\n        \"unit\": \"km\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:adilabad:cotton:2026-08-26\"\n      ]\n    }\n  ],\n  \"source\": {\n    \"sourceId\": \"participant:market-intelligence-provider\",\n    \"sourceName\": \"Market Intelligence Provider\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"commodity\": {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  \"generatedAt\": \"2026-08-26T09:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T09:00:00Z\",\n    \"endsAt\": \"2026-09-09T09:00:00Z\"\n  },\n  \"insights\": [\n    {\n      \"insightType\": \"PriceTrend\",\n      \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-07-27T00:00:00Z\",\n        \"endsAt\": \"2026-08-26T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": 4.8,\n        \"indicatorUnit\": \"percent\",\n        \"indicatorName\": \"modalPriceChange\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:telangana:cotton:2026-07-27\",\n        \"resource:mandi-price:telangana:cotton:2026-08-26\"\n      ]\n    },\n    {\n      \"insightType\": \"DemandForecast\",\n      \"summary\": \"The Provider forecasts strong cotton demand over the next 14 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-08-26T00:00:00Z\",\n        \"endsAt\": \"2026-09-09T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": \"High\",\n        \"indicatorName\": \"demandClass\"\n      }\n    },\n    {\n      \"insightType\": \"MarketOpportunity\",\n      \"summary\": \"Adilabad Mandi is an active nearby market for cotton in the requested area.\",\n      \"market\": {\n        \"marketCode\": \"TS-ADILABAD\",\n        \"marketName\": \"Adilabad Mandi\",\n        \"district\": \"Adilabad\",\n        \"state\": \"Telangana\",\n        \"location\": {\n          \"geo\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n              78.532,\n              19.6641\n            ]\n          }\n        }\n      },\n      \"distance\": {\n        \"value\": 42,\n        \"unit\": \"km\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:adilabad:cotton:2026-08-26\"\n      ]\n    }\n  ],\n  \"source\": {\n    \"sourceId\": \"participant:market-intelligence-provider\",\n    \"sourceName\": \"Market Intelligence Provider\"\n  }\n}"
       },
       {
         "name": "On Demand Market Intelligence",
@@ -4932,13 +5028,37 @@
       },
       {
         "path": "location",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"geo\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          78.1,\n          19.1\n        ],\n        [\n          78.5,\n          19.1\n        ],\n        [\n          78.5,\n          19.5\n        ],\n        [\n          78.1,\n          19.5\n        ],\n        [\n          78.1,\n          19.1\n        ]\n      ]\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.geo",
         "type": "choice",
         "requirement": "Direct",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
         "origin": "WeatherAdvisory",
         "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        78.1,\n        19.1\n      ],\n      [\n        78.5,\n        19.1\n      ],\n      [\n        78.5,\n        19.5\n      ],\n      [\n        78.1,\n        19.5\n      ],\n      [\n        78.1,\n        19.1\n      ]\n    ]\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "WeatherAdvisory",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -5382,13 +5502,37 @@
       },
       {
         "path": "location",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "WeatherAdvisory",
+        "example": "{\n  \"geo\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          78.1,\n          19.1\n        ],\n        [\n          78.5,\n          19.1\n        ],\n        [\n          78.5,\n          19.5\n        ],\n        [\n          78.1,\n          19.5\n        ],\n        [\n          78.1,\n          19.1\n        ]\n      ]\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.geo",
         "type": "choice",
         "requirement": "Direct",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
         "origin": "WeatherAdvisory",
         "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        78.1,\n        19.1\n      ],\n      [\n        78.5,\n        19.1\n      ],\n      [\n        78.5,\n        19.5\n      ],\n      [\n        78.1,\n        19.5\n      ],\n      [\n        78.1,\n        19.1\n      ]\n    ]\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "WeatherAdvisory",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -5662,7 +5806,7 @@
         "name": "District Village Advisory",
         "file": "examples/district-village-advisory.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherAdvisory\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"agricultureSubjects\": [\n    {\n      \"subjectId\": \"https://taxonomy.openagrinet.global/crops/rice\",\n      \"descriptor\": {\n        \"code\": \"RICE\",\n        \"name\": \"Rice\"\n      }\n    }\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"topics\": [\n    \"Irrigation\",\n    \"CropProtection\"\n  ],\n  \"location\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          78.1,\n          19.1\n        ],\n        [\n          78.5,\n          19.1\n        ],\n        [\n          78.5,\n          19.5\n        ],\n        [\n          78.1,\n          19.5\n        ],\n        [\n          78.1,\n          19.1\n        ]\n      ]\n    ]\n  },\n  \"issuedAt\": \"2026-08-26T06:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T06:00:00Z\",\n    \"endsAt\": \"2026-08-27T06:00:00Z\"\n  },\n  \"recommendations\": [\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"Postpone irrigation for the next 24 hours because moderate rainfall is expected.\",\n      \"language\": \"en\",\n      \"actions\": [\n        \"Postpone irrigation\",\n        \"Check field drainage\"\n      ],\n      \"severity\": \"Watch\"\n    },\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।\",\n      \"language\": \"hi\",\n      \"severity\": \"Watch\"\n    }\n  ],\n  \"weatherBasis\": {\n    \"parameters\": [\n      \"Rainfall\",\n      \"Humidity\"\n    ],\n    \"supportingResourceIds\": [\n      \"weather-forecast:imd:2026-08-26:district-501\"\n    ]\n  },\n  \"source\": {\n    \"sourceId\": \"participant:weather-advisory-provider\",\n    \"sourceName\": \"Agricultural Weather Advisory Service\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherAdvisory\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"agricultureSubjects\": [\n    {\n      \"subjectId\": \"https://taxonomy.openagrinet.global/crops/rice\",\n      \"descriptor\": {\n        \"code\": \"RICE\",\n        \"name\": \"Rice\"\n      }\n    }\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"topics\": [\n    \"Irrigation\",\n    \"CropProtection\"\n  ],\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Polygon\",\n      \"coordinates\": [\n        [\n          [\n            78.1,\n            19.1\n          ],\n          [\n            78.5,\n            19.1\n          ],\n          [\n            78.5,\n            19.5\n          ],\n          [\n            78.1,\n            19.5\n          ],\n          [\n            78.1,\n            19.1\n          ]\n        ]\n      ]\n    }\n  },\n  \"issuedAt\": \"2026-08-26T06:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T06:00:00Z\",\n    \"endsAt\": \"2026-08-27T06:00:00Z\"\n  },\n  \"recommendations\": [\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"Postpone irrigation for the next 24 hours because moderate rainfall is expected.\",\n      \"language\": \"en\",\n      \"actions\": [\n        \"Postpone irrigation\",\n        \"Check field drainage\"\n      ],\n      \"severity\": \"Watch\"\n    },\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।\",\n      \"language\": \"hi\",\n      \"severity\": \"Watch\"\n    }\n  ],\n  \"weatherBasis\": {\n    \"parameters\": [\n      \"Rainfall\",\n      \"Humidity\"\n    ],\n    \"supportingResourceIds\": [\n      \"weather-forecast:imd:2026-08-26:district-501\"\n    ]\n  },\n  \"source\": {\n    \"sourceId\": \"participant:weather-advisory-provider\",\n    \"sourceName\": \"Agricultural Weather Advisory Service\"\n  }\n}"
       },
       {
         "name": "On Demand Weather Advisory",
@@ -5674,7 +5818,7 @@
         "name": "Point Short Horizon Advisory",
         "file": "examples/point-short-horizon-advisory.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherAdvisory\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"topics\": [\n    \"Spraying\"\n  ],\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      77.5946,\n      12.9716\n    ]\n  },\n  \"issuedAt\": \"2026-08-26T08:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T08:00:00Z\",\n    \"endsAt\": \"2026-08-26T14:00:00Z\"\n  },\n  \"recommendations\": [\n    {\n      \"topic\": \"Spraying\",\n      \"message\": \"Avoid spraying until wind speed falls below the recommended threshold.\",\n      \"language\": \"en\",\n      \"actions\": [\n        \"Delay spraying\",\n        \"Review conditions after 14:00 UTC\"\n      ],\n      \"severity\": \"Warning\"\n    }\n  ],\n  \"weatherBasis\": {\n    \"parameters\": [\n      \"WindSpeed\",\n      \"Rainfall\"\n    ],\n    \"supportingResourceIds\": [\n      \"weather-forecast:provider:2026-08-26:77.5946,12.9716\"\n    ]\n  },\n  \"source\": {\n    \"sourceId\": \"participant:weather-advisory-provider\",\n    \"sourceName\": \"Agricultural Weather Advisory Service\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherAdvisory\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"topics\": [\n    \"Spraying\"\n  ],\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Point\",\n      \"coordinates\": [\n        77.5946,\n        12.9716\n      ]\n    }\n  },\n  \"issuedAt\": \"2026-08-26T08:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T08:00:00Z\",\n    \"endsAt\": \"2026-08-26T14:00:00Z\"\n  },\n  \"recommendations\": [\n    {\n      \"topic\": \"Spraying\",\n      \"message\": \"Avoid spraying until wind speed falls below the recommended threshold.\",\n      \"language\": \"en\",\n      \"actions\": [\n        \"Delay spraying\",\n        \"Review conditions after 14:00 UTC\"\n      ],\n      \"severity\": \"Warning\"\n    }\n  ],\n  \"weatherBasis\": {\n    \"parameters\": [\n      \"WindSpeed\",\n      \"Rainfall\"\n    ],\n    \"supportingResourceIds\": [\n      \"weather-forecast:provider:2026-08-26:77.5946,12.9716\"\n    ]\n  },\n  \"source\": {\n    \"sourceId\": \"participant:weather-advisory-provider\",\n    \"sourceName\": \"Agricultural Weather Advisory Service\"\n  }\n}"
       }
     ],
     "artifacts": [
@@ -5920,13 +6064,37 @@
       },
       {
         "path": "location",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "WeatherObservation",
+        "example": "{\n  \"geo\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          73.55,\n          19.65\n        ],\n        [\n          74.15,\n          19.65\n        ],\n        [\n          74.15,\n          20.15\n        ],\n        [\n          73.55,\n          20.15\n        ],\n        [\n          73.55,\n          19.65\n        ]\n      ]\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.geo",
         "type": "choice",
         "requirement": "Direct",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
         "origin": "WeatherObservation",
         "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        73.55,\n        19.65\n      ],\n      [\n        74.15,\n        19.65\n      ],\n      [\n        74.15,\n        20.15\n      ],\n      [\n        73.55,\n        20.15\n      ],\n      [\n        73.55,\n        19.65\n      ]\n    ]\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "WeatherObservation",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -6411,13 +6579,37 @@
       },
       {
         "path": "location",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
+        "constraints": "",
+        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
+        "origin": "WeatherObservation",
+        "example": "{\n  \"geo\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          73.55,\n          19.65\n        ],\n        [\n          74.15,\n          19.65\n        ],\n        [\n          74.15,\n          20.15\n        ],\n        [\n          73.55,\n          20.15\n        ],\n        [\n          73.55,\n          19.65\n        ]\n      ]\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.geo",
         "type": "choice",
         "requirement": "Direct",
         "description": "A GeoJSON geometry that includes coordinates, or geometries for a GeometryCollection.",
         "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry",
         "origin": "WeatherObservation",
         "example": "{\n  \"type\": \"Polygon\",\n  \"coordinates\": [\n    [\n      [\n        73.55,\n        19.65\n      ],\n      [\n        74.15,\n        19.65\n      ],\n      [\n        74.15,\n        20.15\n      ],\n      [\n        73.55,\n        20.15\n      ],\n      [\n        73.55,\n        19.65\n      ]\n    ]\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "location.address",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn postal address containing at least one address field.",
+        "constraints": "minProperties: 1",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/NonEmptyAddress",
+        "origin": "WeatherObservation",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -6666,13 +6858,13 @@
         "name": "District Observation",
         "file": "examples/district-observation.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:automatic-weather-station-network\",\n    \"sourceName\": \"Automatic Weather Station Network\"\n  },\n  \"location\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          73.55,\n          19.65\n        ],\n        [\n          74.15,\n          19.65\n        ],\n        [\n          74.15,\n          20.15\n        ],\n        [\n          73.55,\n          20.15\n        ],\n        [\n          73.55,\n          19.65\n        ]\n      ]\n    ]\n  },\n  \"generatedAt\": \"2026-08-25T06:15:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-25T05:00:00Z\",\n    \"endsAt\": \"2026-08-25T06:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 12.8\n      },\n      \"unit\": \"mm\"\n    },\n    {\n      \"parameter\": \"SoilMoisture\",\n      \"values\": {\n        \"minimum\": 27.8,\n        \"maximum\": 35.2,\n        \"mean\": 31.4\n      },\n      \"unit\": \"%\"\n    }\n  ],\n  \"observedAt\": \"2026-08-25T06:00:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:automatic-weather-station-network\",\n    \"sourceName\": \"Automatic Weather Station Network\"\n  },\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Polygon\",\n      \"coordinates\": [\n        [\n          [\n            73.55,\n            19.65\n          ],\n          [\n            74.15,\n            19.65\n          ],\n          [\n            74.15,\n            20.15\n          ],\n          [\n            73.55,\n            20.15\n          ],\n          [\n            73.55,\n            19.65\n          ]\n        ]\n      ]\n    }\n  },\n  \"generatedAt\": \"2026-08-25T06:15:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-25T05:00:00Z\",\n    \"endsAt\": \"2026-08-25T06:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 12.8\n      },\n      \"unit\": \"mm\"\n    },\n    {\n      \"parameter\": \"SoilMoisture\",\n      \"values\": {\n        \"minimum\": 27.8,\n        \"maximum\": 35.2,\n        \"mean\": 31.4\n      },\n      \"unit\": \"%\"\n    }\n  ],\n  \"observedAt\": \"2026-08-25T06:00:00Z\"\n}"
       },
       {
         "name": "Live Weather Observation",
         "file": "examples/live-weather-observation.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\",\n    \"sourceName\": \"Weather Services Provider\",\n    \"sourceUri\": \"https://weather.example.org\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"observedAt\": \"2026-08-24T06:00:00Z\",\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"instantaneous\": 29.4\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"instantaneous\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"WindDirection\",\n      \"values\": {\n        \"instantaneous\": \"NE\"\n      },\n      \"unit\": \"1\"\n    },\n    {\n      \"parameter\": \"Alert\",\n      \"values\": {\n        \"instantaneous\": false\n      },\n      \"unit\": \"1\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Observation\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\",\n    \"sourceName\": \"Weather Services Provider\",\n    \"sourceUri\": \"https://weather.example.org\"\n  },\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Point\",\n      \"coordinates\": [\n        72.8777,\n        19.076\n      ]\n    }\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"observedAt\": \"2026-08-24T06:00:00Z\",\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"instantaneous\": 29.4\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"instantaneous\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"WindDirection\",\n      \"values\": {\n        \"instantaneous\": \"NE\"\n      },\n      \"unit\": \"1\"\n    },\n    {\n      \"parameter\": \"Alert\",\n      \"values\": {\n        \"instantaneous\": false\n      },\n      \"unit\": \"1\"\n    }\n  ]\n}"
       },
       {
         "name": "On Demand Weather Information",
@@ -6684,7 +6876,7 @@
         "name": "Point Forecast",
         "file": "examples/point-forecast.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Forecast\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\"\n  },\n  \"location\": {\n    \"type\": \"Point\",\n    \"coordinates\": [\n      72.8777,\n      19.076\n    ]\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-24T06:00:00Z\",\n    \"endsAt\": \"2026-08-24T09:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"minimum\": 26.1,\n        \"maximum\": 31.4,\n        \"mean\": 28.7\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"mean\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 5.2\n      },\n      \"unit\": \"mm\"\n    }\n  ],\n  \"modelRunAt\": \"2026-08-24T06:00:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"observationType\": \"Forecast\",\n  \"source\": {\n    \"sourceId\": \"provider:weather-service\"\n  },\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Point\",\n      \"coordinates\": [\n        72.8777,\n        19.076\n      ]\n    }\n  },\n  \"generatedAt\": \"2026-08-24T06:05:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-24T06:00:00Z\",\n    \"endsAt\": \"2026-08-24T09:00:00Z\"\n  },\n  \"parameters\": [\n    {\n      \"parameter\": \"Temperature\",\n      \"values\": {\n        \"minimum\": 26.1,\n        \"maximum\": 31.4,\n        \"mean\": 28.7\n      },\n      \"unit\": \"Cel\"\n    },\n    {\n      \"parameter\": \"Humidity\",\n      \"values\": {\n        \"mean\": 82\n      },\n      \"unit\": \"%\"\n    },\n    {\n      \"parameter\": \"Rainfall\",\n      \"values\": {\n        \"sum\": 5.2\n      },\n      \"unit\": \"mm\"\n    }\n  ],\n  \"modelRunAt\": \"2026-08-24T06:00:00Z\"\n}"
       }
     ],
     "artifacts": [

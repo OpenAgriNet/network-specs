@@ -41,7 +41,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `source` | `Direct` | Authoritative upstream source |
 | `commodity` | `Direct` | Beckn descriptor for the commodity |
 | `commodityGroup`, `grade`, `variety` | Optional in `Direct` | Source classifications |
-| `market` | `Direct` | Market identity and optional location |
+| `market` | `Direct` | Market identity and optional Beckn Location |
 | `arrivalDate` | `Direct` | Date to which arrivals and prices apply |
 | `prices` | `Direct` | Currency, unit, and at least one of minimum, maximum, or modal price |
 | `generatedAt` | `Direct` | Time at which the normalized Resource was produced |

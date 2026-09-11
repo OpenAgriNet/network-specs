@@ -10,11 +10,13 @@
     "sourceId": "provider:weather-service"
   },
   "location": {
-    "type": "Point",
-    "coordinates": [
-      72.8777,
-      19.076
-    ]
+    "geo": {
+      "type": "Point",
+      "coordinates": [
+        72.8777,
+        19.076
+      ]
+    }
   },
   "generatedAt": "2026-08-24T06:05:00Z",
   "validity": {

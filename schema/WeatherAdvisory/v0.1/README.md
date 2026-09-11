@@ -39,7 +39,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `forecastHorizon` | Optional | Maximum supported forecast horizon |
 | `updateFrequency` | Optional | Expected refresh interval |
 | `geographicGranularities` | `OnDemand` | Geographic levels at which advice is available |
-| `location` | `Direct` | Place to which the advice applies |
+| `location` | `Direct` | Beckn Location whose required `geo` member identifies where the advice applies |
 | `issuedAt` | `Direct` | Time at which the Provider issued the advice |
 | `validity` | `Direct` | Period during which the advice applies |
 | `recommendations` | `Direct` | Localized guidance, weather severity, and suggested actions |

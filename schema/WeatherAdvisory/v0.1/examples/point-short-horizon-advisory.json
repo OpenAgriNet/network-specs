@@ -13,11 +13,13 @@
     "Spraying"
   ],
   "location": {
-    "type": "Point",
-    "coordinates": [
-      77.5946,
-      12.9716
-    ]
+    "geo": {
+      "type": "Point",
+      "coordinates": [
+        77.5946,
+        12.9716
+      ]
+    }
   },
   "issuedAt": "2026-08-26T08:00:00Z",
   "validity": {
