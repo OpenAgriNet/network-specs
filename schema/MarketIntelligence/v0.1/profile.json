@@ -18,7 +18,7 @@
     "coverageAreas"
   ],
   "result_fields": [
-    "commodity",
+    "supportedCommodities",
     "generatedAt",
     "validity",
     "insights",
@@ -29,10 +29,13 @@
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedInsightTypes",
-    "beckn:resourceAttributes.commodity.code",
     "beckn:resourceAttributes.generatedAt",
     "beckn:resourceAttributes.insights[].insightType",
     "beckn:resourceAttributes.insights[].market.marketCode",
+    "beckn:resourceAttributes.insights[].market.marketName",
+    "beckn:resourceAttributes.insights[].market.district",
+    "beckn:resourceAttributes.insights[].market.state",
+    "beckn:resourceAttributes.insights[].market.location.geo",
     "beckn:resourceAttributes.coverageAreas[].areaCode",
     "beckn:resourceAttributes.validity.startsAt",
     "beckn:resourceAttributes.validity.endsAt",
@@ -44,8 +47,12 @@
     "beckn:resourceAttributes.subjectCategories",
     "beckn:resourceAttributes.supportedCommodities[].code",
     "beckn:resourceAttributes.supportedInsightTypes",
-    "beckn:resourceAttributes.commodity.code",
-    "beckn:resourceAttributes.insights[].insightType"
+    "beckn:resourceAttributes.insights[].insightType",
+    "beckn:resourceAttributes.insights[].market.marketCode",
+    "beckn:resourceAttributes.insights[].market.marketName",
+    "beckn:resourceAttributes.insights[].market.district",
+    "beckn:resourceAttributes.insights[].market.state",
+    "beckn:resourceAttributes.insights[].market.location.geo"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.generatedAt"

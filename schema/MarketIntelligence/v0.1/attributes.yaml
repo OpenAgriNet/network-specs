@@ -18,7 +18,7 @@ components:
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
-          required: ["@type"]
+          required: ["@type", supportedCommodities]
           properties:
             subjectCategories:
               allOf:
@@ -48,9 +48,12 @@ components:
               type: array
               minItems: 1
               uniqueItems: true
-              description: Commodities for which the Provider can supply market intelligence on demand.
+              description: Commodities covered by this Resource.
               items:
-                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                allOf:
+                  - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                  - type: object
+                    required: [code]
               x-jsonld-id: "openagrinet:supportedCommodities"
             supportedInsightTypes:
               type: array
@@ -71,11 +74,6 @@ components:
               format: duration
               description: Maximum demand-forecast horizon, expressed as an ISO 8601 duration.
               x-jsonld-id: "openagrinet:forecastHorizon"
-            commodity:
-              allOf:
-                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
-              description: Commodity to which the intelligence applies.
-              x-jsonld-id: "openagrinet:commodity"
             generatedAt:
               type: string
               format: date-time
@@ -104,14 +102,14 @@ components:
                 const: OnDemand
             required: [informationMode]
           then:
-            required: [supportedCommodities, supportedInsightTypes, languages]
+            required: [supportedInsightTypes, languages]
         - if:
             properties:
               informationMode:
                 const: Direct
             required: [informationMode]
           then:
-            required: [commodity, generatedAt, insights, source]
+            required: [generatedAt, insights, source]
 
     MarketInsight:
       type: object
@@ -162,11 +160,23 @@ components:
             required: [insightType]
           then:
             required: [period]
+        - if:
+            properties:
+              insightType:
+                const: MarketOpportunity
+            required: [insightType]
+          then:
+            required: [market]
 
     MarketReference:
       type: object
-      required: [marketName]
-      description: Governed market or APMC reference.
+      anyOf:
+        - required: [marketCode]
+        - required: [marketName]
+        - required: [district]
+        - required: [state]
+        - required: [location]
+      description: Governed market or APMC reference identified by at least one available market field.
       properties:
         marketCode:
           type: string

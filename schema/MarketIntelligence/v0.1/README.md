@@ -34,21 +34,20 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `agricultureSubjects` | Optional | Governed commodity or market references when available |
 | `languages` | `OnDemand`; optional in `Direct` | Supported or available BCP 47 languages |
 | `coverageAreas` | Optional | Geographic applicability or supported market coverage |
-| `supportedCommodities` | `OnDemand` | Commodities for which intelligence is available on demand |
+| `supportedCommodities` | Always | One or more coded commodity descriptors covered by the Resource |
 | `supportedInsightTypes` | `OnDemand` | Supported categories: price trend, demand forecast, and market opportunity |
 | `historyPeriod` | Optional | Maximum historical period available for analysis |
 | `forecastHorizon` | Optional | Maximum demand-forecast horizon |
-| `commodity` | `Direct` | Commodity to which the intelligence applies |
 | `generatedAt` | `Direct` | Time at which the intelligence Resource was produced |
 | `validity` | Optional in `Direct` | Applicability period |
-| `insights` | `Direct` | Provider-supplied summaries with optional market, Beckn Location, period, indicator, distance, and supporting Resources |
+| `insights` | `Direct` | Provider-supplied summaries with market required for `MarketOpportunity`, and optional Beckn Location, period, indicator, distance, and supporting Resources as applicable |
 | `source` | `Direct` | Provider or authoritative source that generated the intelligence |
 
 ## Boundaries
 
 `MandiPrice` carries individual market-price facts. `MarketIntelligence` carries trends, forecasts, and opportunities derived from market information. It does not prescribe a sell, hold, or market-selection action and does not define market transactions.
 
-The schema does not govern the calculation method, demand scale, or indicator vocabulary. Providers may publish those definitions separately while using `indicator.indicatorName`, `indicator.indicatorValue`, and `indicator.indicatorUnit` for portable results. Price trends and demand forecasts require an explicit `period`.
+The schema does not govern the calculation method, demand scale, or indicator vocabulary. Providers may publish those definitions separately while using `indicator.indicatorName`, `indicator.indicatorValue`, and `indicator.indicatorUnit` for portable results. Price trends and demand forecasts require an explicit `period`. A market opportunity requires a `market`, which may be identified by any one of `marketCode`, `marketName`, `district`, `state`, or `location`.
 
 ## Examples
 

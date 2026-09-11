@@ -31,11 +31,6 @@
       "rdfs:label": "forecast horizon"
     },
     {
-      "@id": "openagrinet:commodity",
-      "@type": "rdfs:Property",
-      "rdfs:label": "commodity"
-    },
-    {
       "@id": "openagrinet:generatedAt",
       "@type": "rdfs:Property",
       "rdfs:label": "generated at"
