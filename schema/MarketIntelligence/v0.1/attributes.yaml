@@ -190,8 +190,8 @@ components:
           x-jsonld-id: "openagrinet:state"
         location:
           allOf:
-            - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteGeoJSONGeometry"
-          description: GeoJSON location of the market when available.
+            - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation"
+          description: Beckn Location of the market when available. Its geo member carries the required GeoJSON geometry.
           x-jsonld-id: "openagrinet:location"
       additionalProperties: false
 

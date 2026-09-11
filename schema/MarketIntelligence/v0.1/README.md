@@ -41,7 +41,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `commodity` | `Direct` | Commodity to which the intelligence applies |
 | `generatedAt` | `Direct` | Time at which the intelligence Resource was produced |
 | `validity` | Optional in `Direct` | Applicability period |
-| `insights` | `Direct` | Provider-supplied summaries with optional market, period, indicator, distance, and supporting Resources |
+| `insights` | `Direct` | Provider-supplied summaries with optional market, Beckn Location, period, indicator, distance, and supporting Resources |
 | `source` | `Direct` | Provider or authoritative source that generated the intelligence |
 
 ## Boundaries

@@ -48,11 +48,13 @@
       "district": "Nashik",
       "state": "Maharashtra",
       "location": {
-        "type": "Point",
-        "coordinates": [
-          74.2373,
-          20.1424
-        ]
+        "geo": {
+          "type": "Point",
+          "coordinates": [
+            74.2373,
+            20.1424
+          ]
+        }
       }
     },
     "arrivalDate": "2026-08-25",
