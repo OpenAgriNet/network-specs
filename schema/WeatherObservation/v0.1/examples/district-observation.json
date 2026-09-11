@@ -11,31 +11,33 @@
     "sourceName": "Automatic Weather Station Network"
   },
   "location": {
-    "type": "Polygon",
-    "coordinates": [
-      [
+    "geo": {
+      "type": "Polygon",
+      "coordinates": [
         [
-          73.55,
-          19.65
-        ],
-        [
-          74.15,
-          19.65
-        ],
-        [
-          74.15,
-          20.15
-        ],
-        [
-          73.55,
-          20.15
-        ],
-        [
-          73.55,
-          19.65
+          [
+            73.55,
+            19.65
+          ],
+          [
+            74.15,
+            19.65
+          ],
+          [
+            74.15,
+            20.15
+          ],
+          [
+            73.55,
+            20.15
+          ],
+          [
+            73.55,
+            19.65
+          ]
         ]
       ]
-    ]
+    }
   },
   "generatedAt": "2026-08-25T06:15:00Z",
   "validity": {
