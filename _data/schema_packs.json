@@ -2726,12 +2726,12 @@
       {
         "path": "supportedCommodities",
         "type": "array<object>",
-        "requirement": "OnDemand",
-        "description": "Commodities for which the Provider can supply prices on demand.",
+        "requirement": "Always",
+        "description": "Commodities covered by this Resource. In a Direct Resource, the reported price set applies to every listed commodity.",
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MandiPrice",
-        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "example": "[\n  {\n    \"name\": \"Cotton\",\n    \"code\": \"COTTON\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -2836,18 +2836,6 @@
         "enum_details": null
       },
       {
-        "path": "commodity",
-        "type": "object",
-        "requirement": "Direct",
-        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
-        "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
-        "origin": "MandiPrice",
-        "example": "{\n  \"name\": \"Cotton\",\n  \"code\": \"COTTON\"\n}",
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "commodityGroup",
         "type": "string",
         "requirement": "Optional",
@@ -2886,8 +2874,8 @@
       {
         "path": "market",
         "type": "object",
-        "requirement": "Direct",
-        "description": "Market or APMC to which the price observation applies.",
+        "requirement": "Always",
+        "description": "Market or APMC scope for this Resource, identified by at least one available market field.",
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "MandiPrice",
@@ -2898,7 +2886,7 @@
       {
         "path": "market.marketCode",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Governed market code when available.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -2910,7 +2898,7 @@
       {
         "path": "market.marketName",
         "type": "string",
-        "requirement": "Direct",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Market or APMC name.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -2922,7 +2910,7 @@
       {
         "path": "market.district",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "District name or governed code.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -2934,7 +2922,7 @@
       {
         "path": "market.state",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "State name or governed code.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -2946,7 +2934,7 @@
       {
         "path": "market.location",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
         "constraints": "",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
@@ -3259,12 +3247,12 @@
       {
         "path": "supportedCommodities",
         "type": "array<object>",
-        "requirement": "OnDemand",
-        "description": "Commodities for which the Provider can supply prices on demand.",
+        "requirement": "Always",
+        "description": "Commodities covered by this Resource. In a Direct Resource, the reported price set applies to every listed commodity.",
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MandiPrice",
-        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "example": "[\n  {\n    \"name\": \"Cotton\",\n    \"code\": \"COTTON\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3369,18 +3357,6 @@
         "enum_details": null
       },
       {
-        "path": "commodity",
-        "type": "object",
-        "requirement": "Direct",
-        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
-        "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
-        "origin": "MandiPrice",
-        "example": "{\n  \"name\": \"Cotton\",\n  \"code\": \"COTTON\"\n}",
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "commodityGroup",
         "type": "string",
         "requirement": "Optional",
@@ -3419,8 +3395,8 @@
       {
         "path": "market",
         "type": "object",
-        "requirement": "Direct",
-        "description": "Market or APMC to which the price observation applies.",
+        "requirement": "Always",
+        "description": "Market or APMC scope for this Resource, identified by at least one available market field.",
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "MandiPrice",
@@ -3431,7 +3407,7 @@
       {
         "path": "market.marketCode",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Governed market code when available.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3443,7 +3419,7 @@
       {
         "path": "market.marketName",
         "type": "string",
-        "requirement": "Direct",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Market or APMC name.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3455,7 +3431,7 @@
       {
         "path": "market.district",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "District name or governed code.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3467,7 +3443,7 @@
       {
         "path": "market.state",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "State name or governed code.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3479,7 +3455,7 @@
       {
         "path": "market.location",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
         "constraints": "",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
@@ -3647,23 +3623,11 @@
     ],
     "conditions": [
       {
-        "field": "supportedCommodities",
-        "condition": "OnDemand"
-      },
-      {
         "field": "supportedPriceFields",
         "condition": "OnDemand"
       },
       {
         "field": "source",
-        "condition": "Direct"
-      },
-      {
-        "field": "commodity",
-        "condition": "Direct"
-      },
-      {
-        "field": "market",
         "condition": "Direct"
       },
       {
@@ -3684,25 +3648,25 @@
         "name": "Cotton Minimum",
         "file": "examples/cotton-minimum.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:state-market-board\",\n    \"sourceName\": \"State Market Board\"\n  },\n  \"commodity\": {\n    \"name\": \"Cotton\",\n    \"code\": \"COTTON\"\n  },\n  \"market\": {\n    \"marketName\": \"Akola\"\n  },\n  \"arrivalDate\": \"2026-08-25\",\n  \"prices\": {\n    \"modal\": 7350,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-25T10:45:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:state-market-board\",\n    \"sourceName\": \"State Market Board\"\n  },\n  \"supportedCommodities\": [\n    {\n      \"name\": \"Cotton\",\n      \"code\": \"COTTON\"\n    }\n  ],\n  \"market\": {\n    \"marketName\": \"Akola\"\n  },\n  \"arrivalDate\": \"2026-08-25\",\n  \"prices\": {\n    \"modal\": 7350,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-25T10:45:00Z\"\n}"
       },
       {
         "name": "Live Mandi Price Observation",
         "file": "examples/live-mandi-price-observation.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:agmarknet\",\n    \"sourceName\": \"AGMARKNET\",\n    \"sourceUri\": \"https://agmarknet.gov.in\"\n  },\n  \"commodity\": {\n    \"name\": \"Onion\",\n    \"code\": \"ONION\"\n  },\n  \"commodityGroup\": \"Vegetables\",\n  \"grade\": \"FAQ\",\n  \"variety\": \"Red\",\n  \"market\": {\n    \"marketCode\": \"MH-LASALGAON\",\n    \"marketName\": \"Lasalgaon\",\n    \"district\": \"Nashik\",\n    \"state\": \"Maharashtra\"\n  },\n  \"arrivalDate\": \"2026-08-24\",\n  \"prices\": {\n    \"minimum\": 1800,\n    \"maximum\": 2450,\n    \"modal\": 2200,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-24T10:30:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:agmarknet\",\n    \"sourceName\": \"AGMARKNET\",\n    \"sourceUri\": \"https://agmarknet.gov.in\"\n  },\n  \"supportedCommodities\": [\n    {\n      \"name\": \"Onion\",\n      \"code\": \"ONION\"\n    }\n  ],\n  \"commodityGroup\": \"Vegetables\",\n  \"grade\": \"FAQ\",\n  \"variety\": \"Red\",\n  \"market\": {\n    \"marketCode\": \"MH-LASALGAON\",\n    \"marketName\": \"Lasalgaon\",\n    \"district\": \"Nashik\",\n    \"state\": \"Maharashtra\"\n  },\n  \"arrivalDate\": \"2026-08-24\",\n  \"prices\": {\n    \"minimum\": 1800,\n    \"maximum\": 2450,\n    \"modal\": 2200,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-24T10:30:00Z\"\n}"
       },
       {
         "name": "On Demand Mandi Prices",
         "file": "examples/on-demand-mandi-prices.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-2\",\n      \"areaCode\": \"IN-TS\",\n      \"areaLevel\": \"State\",\n      \"areaName\": \"Telangana\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"market\": {\n    \"state\": \"Telangana\"\n  },\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-2\",\n      \"areaCode\": \"IN-TS\",\n      \"areaLevel\": \"State\",\n      \"areaName\": \"Telangana\"\n    }\n  ]\n}"
       },
       {
         "name": "Onion Lasalgaon",
         "file": "examples/onion-lasalgaon.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:agmarknet\",\n    \"sourceName\": \"AGMARKNET\"\n  },\n  \"commodity\": {\n    \"name\": \"Onion\",\n    \"code\": \"ONION\"\n  },\n  \"variety\": \"Red\",\n  \"market\": {\n    \"marketCode\": \"MH-LASALGAON\",\n    \"marketName\": \"Lasalgaon\",\n    \"district\": \"Nashik\",\n    \"state\": \"Maharashtra\"\n  },\n  \"arrivalDate\": \"2026-08-24\",\n  \"prices\": {\n    \"minimum\": 1800,\n    \"maximum\": 2450,\n    \"modal\": 2200,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-24T10:30:00Z\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"source\": {\n    \"sourceId\": \"source:agmarknet\",\n    \"sourceName\": \"AGMARKNET\"\n  },\n  \"supportedCommodities\": [\n    {\n      \"name\": \"Onion\",\n      \"code\": \"ONION\"\n    }\n  ],\n  \"variety\": \"Red\",\n  \"market\": {\n    \"marketCode\": \"MH-LASALGAON\",\n    \"marketName\": \"Lasalgaon\",\n    \"district\": \"Nashik\",\n    \"state\": \"Maharashtra\"\n  },\n  \"arrivalDate\": \"2026-08-24\",\n  \"prices\": {\n    \"minimum\": 1800,\n    \"maximum\": 2450,\n    \"modal\": 2200,\n    \"currency\": \"INR\",\n    \"unit\": \"quintal\"\n  },\n  \"generatedAt\": \"2026-08-24T10:30:00Z\"\n}"
       }
     ],
     "artifacts": [
@@ -3808,12 +3772,12 @@
       {
         "path": "supportedCommodities",
         "type": "array<object>",
-        "requirement": "OnDemand",
-        "description": "Commodities for which the Provider can supply market intelligence on demand.",
+        "requirement": "Always",
+        "description": "Commodities covered by this Resource.",
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3854,18 +3818,6 @@
         "reference": null,
         "origin": "MarketIntelligence",
         "example": "\"P30D\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "commodity",
-        "type": "object",
-        "requirement": "Direct",
-        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
-        "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
-        "origin": "MarketIntelligence",
-        "example": "{\n  \"code\": \"COTTON\",\n  \"name\": \"Cotton\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -3960,7 +3912,7 @@
       {
         "path": "insights[].market",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "insightType=MarketOpportunity",
         "description": "Market associated with the insight when applicable.",
         "constraints": "additionalProperties: false",
         "reference": "schema/MarketIntelligence/v0.1/attributes.yaml#/components/schemas/MarketReference",
@@ -3972,7 +3924,7 @@
       {
         "path": "insights[].market.marketCode",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Governed identifier for the market or APMC, when one is available.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3984,7 +3936,7 @@
       {
         "path": "insights[].market.marketName",
         "type": "string",
-        "requirement": "When insights.[].market is supplied",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Human-readable name of the market or APMC.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -3996,7 +3948,7 @@
       {
         "path": "insights[].market.district",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "District in which the market is located.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4008,7 +3960,7 @@
       {
         "path": "insights[].market.state",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "State or union territory in which the market is located.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4020,7 +3972,7 @@
       {
         "path": "insights[].market.location",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
         "constraints": "",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
@@ -4056,7 +4008,7 @@
       {
         "path": "insights[].period",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "insightType=PriceTrend or DemandForecast",
         "description": "Inclusive validity or applicability period.",
         "constraints": "minProperties: 1 · additionalProperties: false",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
@@ -4381,12 +4333,12 @@
       {
         "path": "supportedCommodities",
         "type": "array<object>",
-        "requirement": "OnDemand",
-        "description": "Commodities for which the Provider can supply market intelligence on demand.",
+        "requirement": "Always",
+        "description": "Commodities covered by this Resource.",
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  {\n    \"code\": \"PADDY\",\n    \"name\": \"Paddy\"\n  }\n]",
+        "example": "[\n  {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -4427,18 +4379,6 @@
         "reference": null,
         "origin": "MarketIntelligence",
         "example": "\"P30D\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "commodity",
-        "type": "object",
-        "requirement": "Direct",
-        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
-        "constraints": "",
-        "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
-        "origin": "MarketIntelligence",
-        "example": "{\n  \"code\": \"COTTON\",\n  \"name\": \"Cotton\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -4533,7 +4473,7 @@
       {
         "path": "insights[].market",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "insightType=MarketOpportunity",
         "description": "Market associated with the insight when applicable.",
         "constraints": "additionalProperties: false",
         "reference": "schema/MarketIntelligence/v0.1/attributes.yaml#/components/schemas/MarketReference",
@@ -4545,7 +4485,7 @@
       {
         "path": "insights[].market.marketCode",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Governed identifier for the market or APMC, when one is available.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4557,7 +4497,7 @@
       {
         "path": "insights[].market.marketName",
         "type": "string",
-        "requirement": "When insights.[].market is supplied",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "Human-readable name of the market or APMC.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4569,7 +4509,7 @@
       {
         "path": "insights[].market.district",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "District in which the market is located.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4581,7 +4521,7 @@
       {
         "path": "insights[].market.state",
         "type": "string",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "State or union territory in which the market is located.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -4593,7 +4533,7 @@
       {
         "path": "insights[].market.location",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "At least one of marketCode or marketName or district or state or location",
         "description": "A Beckn Location with a complete GeoJSON geometry and an optional non-empty address.",
         "constraints": "",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation",
@@ -4629,7 +4569,7 @@
       {
         "path": "insights[].period",
         "type": "object",
-        "requirement": "Optional",
+        "requirement": "insightType=PriceTrend or DemandForecast",
         "description": "Inclusive validity or applicability period.",
         "constraints": "minProperties: 1 · additionalProperties: false",
         "reference": "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/TimePeriod",
@@ -4809,20 +4749,12 @@
     ],
     "conditions": [
       {
-        "field": "supportedCommodities",
-        "condition": "OnDemand"
-      },
-      {
         "field": "supportedInsightTypes",
         "condition": "OnDemand"
       },
       {
         "field": "languages",
         "condition": "OnDemand"
-      },
-      {
-        "field": "commodity",
-        "condition": "Direct"
       },
       {
         "field": "generatedAt",
@@ -4842,7 +4774,7 @@
         "name": "Direct Cotton Market Intelligence",
         "file": "examples/direct-cotton-market-intelligence.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"commodity\": {\n    \"code\": \"COTTON\",\n    \"name\": \"Cotton\"\n  },\n  \"generatedAt\": \"2026-08-26T09:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T09:00:00Z\",\n    \"endsAt\": \"2026-09-09T09:00:00Z\"\n  },\n  \"insights\": [\n    {\n      \"insightType\": \"PriceTrend\",\n      \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-07-27T00:00:00Z\",\n        \"endsAt\": \"2026-08-26T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": 4.8,\n        \"indicatorUnit\": \"percent\",\n        \"indicatorName\": \"modalPriceChange\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:telangana:cotton:2026-07-27\",\n        \"resource:mandi-price:telangana:cotton:2026-08-26\"\n      ]\n    },\n    {\n      \"insightType\": \"DemandForecast\",\n      \"summary\": \"The Provider forecasts strong cotton demand over the next 14 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-08-26T00:00:00Z\",\n        \"endsAt\": \"2026-09-09T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": \"High\",\n        \"indicatorName\": \"demandClass\"\n      }\n    },\n    {\n      \"insightType\": \"MarketOpportunity\",\n      \"summary\": \"Adilabad Mandi is an active nearby market for cotton in the requested area.\",\n      \"market\": {\n        \"marketCode\": \"TS-ADILABAD\",\n        \"marketName\": \"Adilabad Mandi\",\n        \"district\": \"Adilabad\",\n        \"state\": \"Telangana\",\n        \"location\": {\n          \"geo\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n              78.532,\n              19.6641\n            ]\n          }\n        }\n      },\n      \"distance\": {\n        \"value\": 42,\n        \"unit\": \"km\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:adilabad:cotton:2026-08-26\"\n      ]\n    }\n  ],\n  \"source\": {\n    \"sourceId\": \"participant:market-intelligence-provider\",\n    \"sourceName\": \"Market Intelligence Provider\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    }\n  ],\n  \"generatedAt\": \"2026-08-26T09:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T09:00:00Z\",\n    \"endsAt\": \"2026-09-09T09:00:00Z\"\n  },\n  \"insights\": [\n    {\n      \"insightType\": \"PriceTrend\",\n      \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-07-27T00:00:00Z\",\n        \"endsAt\": \"2026-08-26T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": 4.8,\n        \"indicatorUnit\": \"percent\",\n        \"indicatorName\": \"modalPriceChange\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:telangana:cotton:2026-07-27\",\n        \"resource:mandi-price:telangana:cotton:2026-08-26\"\n      ]\n    },\n    {\n      \"insightType\": \"DemandForecast\",\n      \"summary\": \"The Provider forecasts strong cotton demand over the next 14 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-08-26T00:00:00Z\",\n        \"endsAt\": \"2026-09-09T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": \"High\",\n        \"indicatorName\": \"demandClass\"\n      }\n    },\n    {\n      \"insightType\": \"MarketOpportunity\",\n      \"summary\": \"Adilabad Mandi is an active nearby market for cotton in the requested area.\",\n      \"market\": {\n        \"marketCode\": \"TS-ADILABAD\",\n        \"marketName\": \"Adilabad Mandi\",\n        \"district\": \"Adilabad\",\n        \"state\": \"Telangana\",\n        \"location\": {\n          \"geo\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n              78.532,\n              19.6641\n            ]\n          }\n        }\n      },\n      \"distance\": {\n        \"value\": 42,\n        \"unit\": \"km\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:adilabad:cotton:2026-08-26\"\n      ]\n    }\n  ],\n  \"source\": {\n    \"sourceId\": \"participant:market-intelligence-provider\",\n    \"sourceName\": \"Market Intelligence Provider\"\n  }\n}"
       },
       {
         "name": "On Demand Market Intelligence",

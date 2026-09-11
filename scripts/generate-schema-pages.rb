@@ -121,12 +121,16 @@ end
 
 def condition_label(condition)
   values = condition.fetch("properties", {}).each_with_object([]) do |(field, rule), result|
-    next unless rule.is_a?(Hash) && rule.key?("const")
+    next unless rule.is_a?(Hash)
 
+    values = rule.key?("const") ? [rule["const"]] : Array(rule["enum"])
+    next if values.empty?
+
+    rendered = values.map(&:to_s).join(" or ")
     result << if %w[informationMode observationType].include?(field)
-                rule["const"].to_s
+                rendered
               else
-                "#{field}=#{rule['const']}"
+                "#{field}=#{rendered}"
               end
   end
   values.empty? ? "Conditional" : values.join(" + ")
@@ -175,10 +179,11 @@ end
 def collect_fields(resolver, schema, source_path, examples, root_origins = {}, path = [], ancestor_condition = nil, depth = 0, inherited_origin = nil)
   return [] if depth > 5
 
+  resolved, = resolver.resolve(schema, source_path)
   expanded, expanded_path, = resolver.expand(schema, source_path)
   properties = expanded.fetch("properties", {})
   required = Array(expanded["required"])
-  conditional = collect_conditionals(schema).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
     result << fields unless fields.empty?
