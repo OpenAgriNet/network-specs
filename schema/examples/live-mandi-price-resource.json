@@ -34,11 +34,13 @@
       "sourceName": "AGMARKNET",
       "sourceUri": "https://agmarknet.gov.in"
     },
-    "commodity": {
-      "name": "Onion",
-      "code": "ONION",
-      "shortDesc": "Red onion traded in agricultural produce markets."
-    },
+    "supportedCommodities": [
+      {
+        "name": "Onion",
+        "code": "ONION",
+        "shortDesc": "Red onion traded in agricultural produce markets."
+      }
+    ],
     "commodityGroup": "Vegetables",
     "grade": "FAQ",
     "variety": "Red",

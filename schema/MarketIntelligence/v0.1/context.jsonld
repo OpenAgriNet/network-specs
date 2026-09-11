@@ -13,10 +13,6 @@
       "supportedInsightTypes": { "@id": "openagrinet:supportedInsightTypes", "@container": "@set" },
       "historyPeriod": "openagrinet:historyPeriod",
       "forecastHorizon": "openagrinet:forecastHorizon",
-      "commodity": {
-        "@id": "openagrinet:commodity",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
       "generatedAt": "openagrinet:generatedAt",
       "validity": "openagrinet:validity",
       "insights": { "@id": "openagrinet:insights", "@container": "@set" },

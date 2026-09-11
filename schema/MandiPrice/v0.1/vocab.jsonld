@@ -16,7 +16,6 @@
     { "@id": "openagrinet:historyPeriod", "@type": "rdfs:Property", "rdfs:label": "history period" },
     { "@id": "openagrinet:updateFrequency", "@type": "rdfs:Property", "rdfs:label": "update frequency" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
-    { "@id": "openagrinet:commodity", "@type": "rdfs:Property", "rdfs:label": "commodity" },
     { "@id": "openagrinet:commodityGroup", "@type": "rdfs:Property", "rdfs:label": "commodity group" },
     { "@id": "openagrinet:grade", "@type": "rdfs:Property", "rdfs:label": "grade" },
     { "@id": "openagrinet:variety", "@type": "rdfs:Property", "rdfs:label": "variety" },

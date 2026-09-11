@@ -18,7 +18,7 @@ components:
       allOf:
         - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
-          required: ["@type"]
+          required: ["@type", supportedCommodities, market]
           properties:
             subjectCategories:
               allOf:
@@ -48,9 +48,12 @@ components:
               type: array
               minItems: 1
               uniqueItems: true
-              description: Commodities for which the Provider can supply prices on demand.
+              description: Commodities covered by this Resource. In a Direct Resource, the reported price set applies to every listed commodity.
               items:
-                $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                allOf:
+                  - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                  - type: object
+                    required: [code]
               x-jsonld-id: "openagrinet:supportedCommodities"
             supportedPriceFields:
               type: array
@@ -80,11 +83,6 @@ components:
                 - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
               description: Authoritative upstream source of the market information.
               x-jsonld-id: "openagrinet:source"
-            commodity:
-              allOf:
-                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
-              description: Commodity for which the price was observed.
-              x-jsonld-id: "openagrinet:commodity"
             commodityGroup:
               type: string
               minLength: 1
@@ -102,8 +100,13 @@ components:
               x-jsonld-id: "openagrinet:variety"
             market:
               type: object
-              required: [marketName]
-              description: Market or APMC to which the price observation applies.
+              anyOf:
+                - required: [marketCode]
+                - required: [marketName]
+                - required: [district]
+                - required: [state]
+                - required: [location]
+              description: Market or APMC scope for this Resource, identified by at least one available market field.
               properties:
                 marketCode:
                   type: string
@@ -189,11 +192,11 @@ components:
                 const: OnDemand
             required: [informationMode]
           then:
-            required: [supportedCommodities, supportedPriceFields]
+            required: [supportedPriceFields]
         - if:
             properties:
               informationMode:
                 const: Direct
             required: [informationMode]
           then:
-            required: [source, commodity, market, arrivalDate, prices, generatedAt]
+            required: [source, arrivalDate, prices, generatedAt]
