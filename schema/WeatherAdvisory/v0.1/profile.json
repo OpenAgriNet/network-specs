@@ -1,0 +1,72 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1",
+  "name": "Weather Advisory Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "generalised",
+  "included_schemas": [
+    "WeatherAdvisory"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "subjectCategories",
+    "topics",
+    "supportedWeatherParameters",
+    "forecastHorizon",
+    "updateFrequency",
+    "geographicGranularities",
+    "languages",
+    "coverageAreas"
+  ],
+  "result_fields": [
+    "topics",
+    "subjectCategories",
+    "agricultureSubjects",
+    "location",
+    "issuedAt",
+    "validity",
+    "recommendations",
+    "weatherBasis",
+    "source"
+  ],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedWeatherParameters",
+    "beckn:resourceAttributes.geographicGranularities",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.name",
+    "beckn:resourceAttributes.issuedAt",
+    "beckn:resourceAttributes.validity.startsAt",
+    "beckn:resourceAttributes.validity.endsAt"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.supportedWeatherParameters",
+    "beckn:resourceAttributes.geographicGranularities",
+    "beckn:resourceAttributes.topics",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.recommendations[].language",
+    "beckn:resourceAttributes.recommendations[].severity"
+  ],
+  "sortable_paths": [
+    "beckn:resourceAttributes.issuedAt"
+  ],
+  "privacy_notes": [],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1",
+    "Location": "2.0",
+    "GeoJSONGeometry": "2.0",
+    "Address": "2.0"
+  },
+  "interaction_type": "Advise",
+  "outcome_type": "openagrinet:WeatherAdvisory"
+}

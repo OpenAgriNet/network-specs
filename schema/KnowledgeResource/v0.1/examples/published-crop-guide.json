@@ -1,0 +1,40 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeResource",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Crop"
+  ],
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+      "descriptor": {
+        "code": "COTTON",
+        "name": "Cotton"
+      }
+    }
+  ],
+  "languages": [
+    "en",
+    "hi"
+  ],
+  "topics": [
+    "Kharif sowing"
+  ],
+  "knowledgeType": "Guide",
+  "version": "1.2.0",
+  "lifecycleStatus": "Published",
+  "content": [
+    {
+      "contentUri": "https://knowledge.example.org/guides/kharif-sowing/1.2.0/en.pdf",
+      "mediaType": "application/pdf",
+      "language": "en"
+    }
+  ],
+  "provenance": {
+    "source": {
+      "sourceId": "participant:agri-information-provider"
+    },
+    "publishedAt": "2026-06-01T09:00:00Z"
+  }
+}
