@@ -19,7 +19,19 @@
         "@id": "openagrinet:geographicGranularities",
         "@container": "@set"
       },
-      "location": "openagrinet:location",
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
       "issuedAt": "openagrinet:issuedAt",
       "validity": "openagrinet:validity",
       "recommendations": { "@id": "openagrinet:recommendations", "@container": "@set" },

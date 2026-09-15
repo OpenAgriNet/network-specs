@@ -15,6 +15,9 @@
       "name": "Paddy"
     }
   ],
+  "market": {
+    "state": "Telangana"
+  },
   "supportedPriceFields": [
     "Minimum",
     "Maximum",

@@ -41,7 +41,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `geographicGranularities` | `OnDemand` | Geographic levels supported by the Provider |
 | `observationType` | `Direct` | Measured observation or forecast |
 | `source` | `Direct` | Authoritative upstream source |
-| `location` | `Direct` | Beckn GeoJSON geometry to which the result applies |
+| `location` | `Direct` | Beckn Location whose required `geo` member identifies where the result applies |
 | `generatedAt` | `Direct` | Result-generation time |
 | `observedAt` | `Direct` observation | Measurement time |
 | `modelRunAt` | `Direct` forecast | Forecast model run time |

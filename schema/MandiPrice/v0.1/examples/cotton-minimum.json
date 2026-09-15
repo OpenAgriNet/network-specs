@@ -9,10 +9,12 @@
     "sourceId": "source:state-market-board",
     "sourceName": "State Market Board"
   },
-  "commodity": {
-    "name": "Cotton",
-    "code": "COTTON"
-  },
+  "supportedCommodities": [
+    {
+      "name": "Cotton",
+      "code": "COTTON"
+    }
+  ],
   "market": {
     "marketName": "Akola"
   },

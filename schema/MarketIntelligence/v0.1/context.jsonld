@@ -13,10 +13,6 @@
       "supportedInsightTypes": { "@id": "openagrinet:supportedInsightTypes", "@container": "@set" },
       "historyPeriod": "openagrinet:historyPeriod",
       "forecastHorizon": "openagrinet:forecastHorizon",
-      "commodity": {
-        "@id": "openagrinet:commodity",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
       "generatedAt": "openagrinet:generatedAt",
       "validity": "openagrinet:validity",
       "insights": { "@id": "openagrinet:insights", "@container": "@set" },
@@ -27,7 +23,19 @@
       "marketName": "openagrinet:marketName",
       "district": "openagrinet:district",
       "state": "openagrinet:state",
-      "location": "openagrinet:location",
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
       "period": "openagrinet:period",
       "indicator": "openagrinet:indicator",
       "indicatorName": "openagrinet:indicatorName",

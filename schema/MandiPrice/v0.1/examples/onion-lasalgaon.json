@@ -9,10 +9,12 @@
     "sourceId": "source:agmarknet",
     "sourceName": "AGMARKNET"
   },
-  "commodity": {
-    "name": "Onion",
-    "code": "ONION"
-  },
+  "supportedCommodities": [
+    {
+      "name": "Onion",
+      "code": "ONION"
+    }
+  ],
   "variety": "Red",
   "market": {
     "marketCode": "MH-LASALGAON",

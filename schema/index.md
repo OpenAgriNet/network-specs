@@ -86,8 +86,8 @@ The packs reuse Beckn-owned definitions rather than copying them:
 | Resource | [Beckn Resource](https://github.com/beckn/schemas/tree/draft/schema/Resource) | Resource identity, descriptor, and `resourceAttributes` container |
 | Attributes | [Beckn Attributes](https://github.com/beckn/schemas/tree/draft/schema/Attributes) | JSON-LD extension container |
 | Descriptor | [Beckn Descriptor](https://github.com/beckn/schemas/tree/draft/schema/Descriptor) | Human-readable and coded descriptions |
-| GeoJSONGeometry | [Beckn GeoJSONGeometry](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry) | Point and area geometry |
-| Location | [Beckn Location](https://github.com/beckn/schemas/tree/main/schema/Location) | Verified facility geometry with optional postal address |
+| GeoJSONGeometry | [Beckn GeoJSONGeometry](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry) | Geometry inside a Beckn Location and coordinate-defined `coverageAreas` |
+| Location | [Beckn Location](https://github.com/beckn/schemas/tree/main/schema/Location) | Resolved weather, facility, mandi, and market-intelligence locations |
 | Address | [Beckn Address](https://github.com/beckn/schemas/tree/main/schema/Address) | Human-readable facility address |
 | Contact | [Beckn Contact](https://github.com/beckn/schemas/tree/main/schema/Contact) | Provider-approved public organizational contact |
 | Participant | [Beckn Participant](https://github.com/beckn/schemas/tree/draft/schema/Participant) | Protocol participant boundary, not redefined by OAN |

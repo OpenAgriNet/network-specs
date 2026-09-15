@@ -27,11 +27,13 @@
       "sourceUri": "https://weather-services.example.org"
     },
     "location": {
-      "type": "Point",
-      "coordinates": [
-        72.8777,
-        19.076
-      ]
+      "geo": {
+        "type": "Point",
+        "coordinates": [
+          72.8777,
+          19.076
+        ]
+      }
     },
     "generatedAt": "2026-08-25T06:05:00Z",
     "modelRunAt": "2026-08-25T06:00:00Z",

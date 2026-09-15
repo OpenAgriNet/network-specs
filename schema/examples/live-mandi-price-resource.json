@@ -34,11 +34,13 @@
       "sourceName": "AGMARKNET",
       "sourceUri": "https://agmarknet.gov.in"
     },
-    "commodity": {
-      "name": "Onion",
-      "code": "ONION",
-      "shortDesc": "Red onion traded in agricultural produce markets."
-    },
+    "supportedCommodities": [
+      {
+        "name": "Onion",
+        "code": "ONION",
+        "shortDesc": "Red onion traded in agricultural produce markets."
+      }
+    ],
     "commodityGroup": "Vegetables",
     "grade": "FAQ",
     "variety": "Red",
@@ -48,11 +50,13 @@
       "district": "Nashik",
       "state": "Maharashtra",
       "location": {
-        "type": "Point",
-        "coordinates": [
-          74.2373,
-          20.1424
-        ]
+        "geo": {
+          "type": "Point",
+          "coordinates": [
+            74.2373,
+            20.1424
+          ]
+        }
       }
     },
     "arrivalDate": "2026-08-25",

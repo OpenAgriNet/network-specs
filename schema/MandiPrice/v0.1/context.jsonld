@@ -18,10 +18,6 @@
       "historyPeriod": "openagrinet:historyPeriod",
       "updateFrequency": "openagrinet:updateFrequency",
       "source": "openagrinet:source",
-      "commodity": {
-        "@id": "openagrinet:commodity",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
       "commodityGroup": "openagrinet:commodityGroup",
       "grade": "openagrinet:grade",
       "variety": "openagrinet:variety",
@@ -30,7 +26,19 @@
       "marketName": "openagrinet:marketName",
       "district": "openagrinet:district",
       "state": "openagrinet:state",
-      "location": "openagrinet:location",
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
       "arrivalDate": "openagrinet:arrivalDate",
       "prices": "openagrinet:prices",
       "minimum": "openagrinet:minimumPrice",

@@ -5,10 +5,12 @@
   "subjectCategories": [
     "Market"
   ],
-  "commodity": {
-    "code": "COTTON",
-    "name": "Cotton"
-  },
+  "supportedCommodities": [
+    {
+      "code": "COTTON",
+      "name": "Cotton"
+    }
+  ],
   "generatedAt": "2026-08-26T09:00:00Z",
   "validity": {
     "startsAt": "2026-08-26T09:00:00Z",
@@ -53,11 +55,13 @@
         "district": "Adilabad",
         "state": "Telangana",
         "location": {
-          "type": "Point",
-          "coordinates": [
-            78.532,
-            19.6641
-          ]
+          "geo": {
+            "type": "Point",
+            "coordinates": [
+              78.532,
+              19.6641
+            ]
+          }
         }
       },
       "distance": {
