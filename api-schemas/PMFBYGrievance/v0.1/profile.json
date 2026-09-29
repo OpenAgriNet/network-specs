@@ -27,8 +27,9 @@
     "caseStatus",
     "filedOn",
     "applicationNo",
+    "grievanceCategory",
+    "grievanceDescription",
     "officerReply",
-    "repliedOn",
     "source"
   ],
   "indexable_paths": [
@@ -49,14 +50,14 @@
     "beckn:resourceAttributes.filedOn"
   ],
   "sortable_paths": [
-    "beckn:resourceAttributes.filedOn",
-    "beckn:resourceAttributes.repliedOn"
+    "beckn:resourceAttributes.filedOn"
   ],
   "privacy_notes": [
     "applicantPhone is personal data. It travels inbound only and is never echoed in a response; on_init returns the masked otpChallenge.sentTo instead.",
     "otp is marked writeOnly. It must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call.",
     "applicationNo identifies a named farmer's insurance policy and should not be logged in payload dumps.",
-    "grievanceDescription is free text written by a farmer and may contain personal details the schema cannot constrain."
+    "grievanceDescription is free text written by a farmer and may contain personal details the schema cannot constrain.",
+    "The portal's case record carries far more about the farmer than this pack surfaces -- name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields named here; none of it may reach resourceAttributes, a log, or a trace."
   ],
   "beckn_dependencies": {
     "Catalog": "2.2",

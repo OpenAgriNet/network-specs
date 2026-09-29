@@ -27,7 +27,6 @@
       },
       "filedOn": "openagrinet:filedOn",
       "officerReply": "openagrinet:officerReply",
-      "repliedOn": "openagrinet:repliedOn",
       "otpChallenge": "openagrinet:otpChallenge",
       "sentTo": "openagrinet:otpChallengeSentTo",
       "expiresAt": "openagrinet:otpChallengeExpiresAt"

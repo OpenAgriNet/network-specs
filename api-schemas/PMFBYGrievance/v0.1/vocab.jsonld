@@ -27,7 +27,6 @@
     { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
     { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
     { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
-    { "@id": "openagrinet:repliedOn", "@type": "rdfs:Property", "rdfs:label": "replied on" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
     { "@id": "openagrinet:otpChallenge", "@type": "rdfs:Property", "rdfs:label": "OTP challenge" },
     { "@id": "openagrinet:otpChallengeSentTo", "@type": "rdfs:Property", "rdfs:label": "OTP sent to" },

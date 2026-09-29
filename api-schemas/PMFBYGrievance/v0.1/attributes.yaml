@@ -88,7 +88,11 @@ components:
             cropYear:
               type: string
               pattern: "^[0-9]{4}$"
-              description: Crop year of the application, as a four-digit year.
+              description: >
+                Crop year of the application, as a four-digit year. The portal
+                returns request_year as a number, so the adapter stringifies it
+                on the way back. It is the year of the application, not of the
+                grievance: a 2025 crop year can carry a 2026 complaint date.
               x-jsonld-id: "openagrinet:cropYear"
             season:
               type: string
@@ -111,7 +115,9 @@ components:
                 Category of the grievance. The code is the portal's category and
                 sub-category joined by a dot, and the adapter splits it on that dot
                 into two upstream fields, so the shape is load-bearing rather than
-                cosmetic. The portal publishes no list; see the pack README.
+                cosmetic. The portal returns a name for each half on a case read
+                and the adapter joins them with a slash, so name follows code.
+                The portal publishes no list of valid pairs; see the pack README.
               x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
             grievanceDescription:
               type: string
@@ -154,10 +160,12 @@ components:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
               description: >
-                Where the grievance stands. The portal publishes free text only, so
-                name carries it verbatim and code is derived from it by upper-casing
-                and replacing spaces. An unrecognised phrase yields an unfamiliar
-                code rather than a failure.
+                Where the grievance stands. The portal returns a status name and a
+                numeric status id; the id is an opaque internal key, so name carries
+                the name verbatim and code is derived from it by upper-casing and
+                replacing spaces. Open is the value a freshly filed case carries.
+                An unrecognised phrase yields an unfamiliar code rather than a
+                failure.
               x-jsonld-id: "openagrinet:caseStatus"
             filedOn:
               type: string
@@ -172,14 +180,13 @@ components:
                 handling: [no-log, no-trace]
                 note: Written by an officer about this farmer's case.
               description: >
-                The reviewing officer's response. Absent rather than null while no
-                reply exists, so an absent field reads as "not yet answered".
+                The reviewing officer's response, taken from the portal's latest
+                remark. The portal sends an empty string while no reply exists;
+                the adapter omits the field rather than passing the empty string
+                through, so an absent field reads as "not yet answered". There is
+                no companion reply date -- PMFBY publishes none -- so this pack
+                has no repliedOn.
               x-jsonld-id: "openagrinet:officerReply"
-            repliedOn:
-              type: string
-              format: date
-              description: Date the officer replied. Absent until there is a reply.
-              x-jsonld-id: "openagrinet:repliedOn"
             source:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"

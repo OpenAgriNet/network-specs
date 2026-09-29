@@ -24,7 +24,7 @@ Applied to `resourceAttributes` of a Beckn `Resource`, the same as every OAN dom
 
 Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init`, `confirm`, `select`, `status`, or any later action without change — nothing in this pack names an action.
 
-`Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_confirm` and `on_status` alike.
+`Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_confirm` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional here because `on_confirm` does not repeat them.
 
 There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the OTP; reading a case sends the phone and the ticket; an OTP acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
 
@@ -45,13 +45,13 @@ There is deliberately no matching `OnDemand` requirement. The ask side has no fi
 | `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the OTP goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
 | `applicationNo` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid` |
-| `grievanceCategory` | Ask, when filing | Category and sub-category joined by a dot; the adapter splits on that dot, so the shape is load-bearing |
-| `grievanceDescription` | Ask, when filing | The farmer's account of the problem, minimum ten characters |
+| `grievanceCategory` | Ask, when filing; also returned in `Direct` | Category and sub-category joined by a dot; the adapter splits on that dot, so the shape is load-bearing. Names come back on a case read and are joined with a slash |
+| `grievanceDescription` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
 | `otp` | Ask, when filing | Six-digit one-time password proving the phone number; `writeOnly` |
 | `ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
 | `caseStatus` | `Direct` | Where the grievance stands; `name` verbatim from the portal, `code` derived from it |
 | `filedOn` | `Direct` | Date the grievance was filed |
-| `officerReply`, `repliedOn` | Optional in `Direct` | Absent rather than null while no reply exists |
+| `officerReply` | Optional in `Direct` | The portal's latest remark. Absent rather than empty while no reply exists. PMFBY publishes no reply date, so there is no `repliedOn` |
 | `source` | `Direct` | Authoritative upstream source |
 | `otpChallenge` | Answer to an OTP request | Masked destination and expiry; carries no secret |
 
@@ -83,6 +83,8 @@ only by a person: a CI check can assert that no property marked `no-echo` appear
 
 `applicationNo` identifies a named farmer's policy, and `grievanceDescription` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
 
+The portal's case record carries far more about the farmer than this pack surfaces: name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields listed above. None of it may reach `resourceAttributes`, a log, or a trace. This is the same class of mistake as the v1 `identity-no` echo, and it is the reason the response mapping is an allow-list rather than a passthrough.
+
 ## Stricter than the portal
 
 Three constraints are tighter than what the portal itself would take, and are deliberate:
@@ -95,9 +97,11 @@ Each rejects at the network edge something the portal would have rejected later,
 
 ## Non-goals
 
-This pack does not define the grievance category list. The portal publishes none — only category `3` / sub-category `10` is in use today, and no names for them are published, which is why the examples carry a code and no `name`. The `code` pattern constrains only the dotted shape the adapter splits on.
+This pack does not define the grievance category list. The portal publishes no enumeration of valid pairs; it returns a name for whichever pair a case was filed under — `3` is `Enrollment`, `10` is `Portal Issues Login` — but there is no endpoint that lists them. The `code` pattern therefore constrains only the dotted shape the adapter splits on, and `name` is whatever came back.
 
-Two fields the portal requires are absent by design, because a caller never supplies them: `complaint_date` is generated by the adapter at lodge time, and `receipt_source_id` is a constant identifying the Vistaar channel. Two fields the portal returns are absent for the same reason: `ticket_id` is an internal portal key the farmer never quotes, and `message` is transport chatter.
+Category `3.10` is the only pair in use today, because v1 hardcoded it for every grievance regardless of subject. That is a v1 defect carried in the data, not a portal constraint, and v2 does not repeat it: the category is a caller-supplied field.
+
+Two fields the portal requires are absent by design, because a caller never supplies them: `complaint_date` is generated by the adapter at lodge time, and `receipt_source_id` is a constant identifying the Vistaar channel. Two fields the portal returns are absent for the same reason: `ticket_id` is an internal portal key the farmer never quotes, and the numeric status id is an opaque key whose name the pack already carries.
 
 It also does not define credentials or transport. Those live in the adapter configuration, where credentials are named by environment variable and never held.
 
