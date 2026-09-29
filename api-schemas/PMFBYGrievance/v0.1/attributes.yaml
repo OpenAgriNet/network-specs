@@ -1,0 +1,233 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - PMFBY Grievance API Attributes
+  version: 0.1.0
+  description: >
+    Attributes for grievances raised against the Pradhan Mantri Fasal Bima
+    Yojana crop insurance scheme. This is an API schema, not a domain schema:
+    it describes what the PMFBY grievance API accepts and returns, so an
+    experience layer can call it without reading adapter mapping files.
+    Combines with AgricultureResource through allOf and attaches through
+    resourceAttributes.
+
+    Direction is carried by informationMode, never by the Beckn action.
+    OnDemand is the ask, Direct is an answer carrying a real case. The same
+    attributes therefore serve init, confirm, select, status or any later
+    action without change.
+
+components:
+  schemas:
+    PMFBYGrievance:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
+        "@type": openagrinet:PMFBYGrievance
+      allOf:
+        - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
+        - type: object
+          required: ["@type", "scheme"]
+          properties:
+            subjectCategories:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields/properties/subjectCategories"
+                - type: array
+                  description: Required broad classification for this pack. It must include Scheme.
+                  contains:
+                    const: Scheme
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:PMFBYGrievance
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:PMFBYGrievance
+                  items:
+                    oneOf:
+                      - const: openagrinet:PMFBYGrievance
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+
+            scheme:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+              description: >
+                Scheme the grievance is raised against. Present on every payload in
+                both directions, which is what makes it the one unconditional field.
+              x-jsonld-id: "openagrinet:scheme"
+
+            applicantPhone:
+              type: string
+              pattern: "^[6-9][0-9]{9}$"
+              x-oan-pii:
+                class: contact
+                handling: [no-log, no-trace, no-echo, mask-on-echo]
+              description: >
+                Mobile number of the farmer raising the grievance, and the number the
+                portal sends the OTP to. Ten digits, Indian mobile series. Never
+                returned in a response; on_init carries the masked otpChallenge.sentTo
+                instead.
+              x-jsonld-id: "openagrinet:applicantPhone"
+            applicationNo:
+              type: string
+              minLength: 1
+              x-oan-pii:
+                class: identifier
+                handling: [no-log, no-trace]
+                note: >
+                  Identifies a named farmer's policy. Returned on a case read, so
+                  no-echo would be wrong; it is the caller's own application number
+                  coming back.
+              description: PMFBY crop insurance application number the grievance concerns.
+              x-jsonld-id: "openagrinet:applicationNo"
+            cropYear:
+              type: string
+              pattern: "^[0-9]{4}$"
+              description: Crop year of the application, as a four-digit year.
+              x-jsonld-id: "openagrinet:cropYear"
+            season:
+              type: string
+              enum: [Kharif, Rabi, Zaid]
+              description: >
+                Crop season of the application. PMFBY accepts three seasons and
+                nothing else. The network carries the name; the adapter maps it to
+                the numeric request_season the portal wants -- Kharif 1, Rabi 2,
+                Zaid 3. Summer is the same season as Zaid and is sent as Zaid.
+              x-jsonld-id: "openagrinet:season"
+            grievanceCategory:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                - type: object
+                  properties:
+                    code:
+                      type: string
+                      pattern: "^[0-9]+\\.[0-9]+$"
+              description: >
+                Category of the grievance. The code is the portal's category and
+                sub-category joined by a dot, and the adapter splits it on that dot
+                into two upstream fields, so the shape is load-bearing rather than
+                cosmetic. The portal publishes no list; see the pack README.
+              x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
+            grievanceDescription:
+              type: string
+              minLength: 10
+              x-oan-pii:
+                class: freetext
+                handling: [no-log, no-trace]
+                note: >
+                  Returned verbatim on a case read, so no-echo would be wrong. It is
+                  the farmer's own words and may hold anything the schema cannot see.
+              description: >
+                The farmer's account of the problem, in their own words. A minimum
+                length because a grievance that says nothing cannot be acted on.
+              x-jsonld-id: "openagrinet:grievanceDescription"
+            otp:
+              type: string
+              writeOnly: true
+              pattern: "^[0-9]{6}$"
+              x-oan-pii:
+                class: credential
+                handling: [no-log, no-trace, no-echo, no-forward]
+                note: Proven once by the verify call and never passed to the lodge call.
+              description: >
+                One-time password the portal sent to applicantPhone, presented to
+                prove the number. PMFBY issues exactly six digits and rejects any
+                other length. writeOnly is the contract: it travels inbound only.
+                It must never be returned in any response, written to a log, or
+                attached to a trace, and it is never forwarded to the lodge call.
+              x-jsonld-id: "openagrinet:otp"
+
+            ticketNo:
+              type: string
+              minLength: 1
+              description: >
+                Portal grievance ticket number. Returned when a grievance is filed
+                and presented again to read its replies, so it travels in both
+                directions.
+              x-jsonld-id: "openagrinet:ticketNo"
+            caseStatus:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+              description: >
+                Where the grievance stands. The portal publishes free text only, so
+                name carries it verbatim and code is derived from it by upper-casing
+                and replacing spaces. An unrecognised phrase yields an unfamiliar
+                code rather than a failure.
+              x-jsonld-id: "openagrinet:caseStatus"
+            filedOn:
+              type: string
+              format: date
+              description: Date the grievance was filed with the portal.
+              x-jsonld-id: "openagrinet:filedOn"
+            officerReply:
+              type: string
+              minLength: 1
+              x-oan-pii:
+                class: freetext
+                handling: [no-log, no-trace]
+                note: Written by an officer about this farmer's case.
+              description: >
+                The reviewing officer's response. Absent rather than null while no
+                reply exists, so an absent field reads as "not yet answered".
+              x-jsonld-id: "openagrinet:officerReply"
+            repliedOn:
+              type: string
+              format: date
+              description: Date the officer replied. Absent until there is a reply.
+              x-jsonld-id: "openagrinet:repliedOn"
+            source:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Authoritative upstream source of the grievance record.
+              x-jsonld-id: "openagrinet:source"
+
+            otpChallenge:
+              type: object
+              required: [sentTo]
+              description: >
+                Acknowledgement that the portal has sent an OTP. Carries no secret:
+                sentTo is the masked destination so the farmer can confirm which
+                number was used, and the OTP itself is never returned.
+              properties:
+                sentTo:
+                  type: string
+                  pattern: "^[0-9]{2}X{6}[0-9]{2}$"
+                  x-oan-pii:
+                    class: contact
+                    handling: [no-log, no-trace]
+                    note: Already the masked form of applicantPhone, never the full number.
+                  description: >
+                    The destination number, masked. First two and last two digits
+                    only; the six between them are always X.
+                  x-jsonld-id: "openagrinet:otpChallengeSentTo"
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: When the OTP stops being accepted.
+                  x-jsonld-id: "openagrinet:otpChallengeExpiresAt"
+              additionalProperties: false
+              x-jsonld-id: "openagrinet:otpChallenge"
+
+        # Direction, not action. A response carrying a real case is Direct and
+        # always names the case, its status, when it was filed and where it came
+        # from -- true of on_confirm and on_status alike.
+        #
+        # There is deliberately no matching OnDemand branch. The ask side has no
+        # field common to every payload: filing sends the phone, the application,
+        # the season and the OTP; reading a case sends the phone and the ticket;
+        # an OTP acknowledgement sends neither, because it must not echo the phone.
+        # Requiring any of them here would reject a legitimate payload of some
+        # other action, which is exactly the coupling this pack avoids. What each
+        # action must carry is enforced by that action's mapping guard.
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [ticketNo, caseStatus, filedOn, source]

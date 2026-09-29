@@ -1,0 +1,63 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1",
+  "name": "PM-KISAN Grievance API Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "provider-api",
+  "included_schemas": [
+    "PMKISANGrievance"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "subjectCategories",
+    "scheme",
+    "applicantId",
+    "grievanceCategory",
+    "grievanceDescription"
+  ],
+  "result_fields": [
+    "scheme",
+    "caseStatus",
+    "filedOn",
+    "grievanceCategory",
+    "grievanceDescription",
+    "officerReply",
+    "repliedOn",
+    "source"
+  ],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.caseStatus.code",
+    "beckn:resourceAttributes.grievanceCategory.code",
+    "beckn:resourceAttributes.filedOn"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.caseStatus.code",
+    "beckn:resourceAttributes.grievanceCategory.code",
+    "beckn:resourceAttributes.filedOn"
+  ],
+  "sortable_paths": [
+    "beckn:resourceAttributes.filedOn",
+    "beckn:resourceAttributes.repliedOn"
+  ],
+  "privacy_notes": [
+    "applicantId is marked writeOnly. It carries the farmer's PM-KISAN registration number, travels inbound only, and is never echoed in a response, written to a log, attached to a trace, or included in an error body.",
+    "The upstream status record also returns the farmer's name, father's name, gender, mobile number and full address. None of it is modelled or emitted; an adapter must drop these fields rather than pass them through resourceAttributes.",
+    "grievanceDescription is free text written by a farmer and may contain personal details the schema cannot constrain. It is returned verbatim on a case read.",
+    "The portal payload is carried inside an encrypted envelope. A decryption failure must not log the ciphertext."
+  ],
+  "beckn_dependencies": {
+    "Catalog": "2.2",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Attributes": "2.0",
+    "Descriptor": "2.1"
+  },
+  "interaction_type": "Transact",
+  "outcome_type": "openagrinet:PMKISANGrievance"
+}

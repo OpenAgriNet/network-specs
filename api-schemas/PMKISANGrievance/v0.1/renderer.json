@@ -1,0 +1,8 @@
+{
+  "schema": "PMKISANGrievance",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{scheme.name}} | {{caseStatus.name}} | {{filedOn}}",
+  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nStatus: {{caseStatus.name}}\nFiled on: {{filedOn}}\nCategory: {{grievanceCategory.name}}\nGrievance: {{grievanceDescription}}\nOfficer reply: {{officerReply}}\nReplied on: {{repliedOn}}",
+  "html": "<div class=\"oan-pmkisan-grievance\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{caseStatus.name}} · {{filedOn}}</span></div>",
+  "html_detail": "<div class=\"oan-pmkisan-grievance-detail\"><p><strong>Status:</strong> {{caseStatus.name}}</p><p><strong>Filed on:</strong> {{filedOn}}</p><p><strong>Category:</strong> {{grievanceCategory.name}}</p><p><strong>Grievance:</strong> {{grievanceDescription}}</p><p><strong>Officer reply:</strong> {{officerReply}}</p></div>"
+}

@@ -1,0 +1,28 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMKISANGrievance",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PM-KISAN Grievance",
+      "rdfs:comment": "A grievance raised against the Pradhan Mantri Kisan Samman Nidhi income-support scheme, filed on demand and answered directly. The scheme issues no ticket number; a grievance is retrieved by the identity it was filed under."
+    },
+    { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
+    { "@id": "openagrinet:applicantId", "@type": "rdfs:Property", "rdfs:label": "applicant identity" },
+    {
+      "@id": "openagrinet:pmkisanGrievanceCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PM-KISAN grievance category",
+      "rdfs:comment": "One of the ten published PM-KISAN codes, G001 to G010. Deliberately a separate property from the PMFBY category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+    },
+    { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
+    { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
+    { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
+    { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
+    { "@id": "openagrinet:repliedOn", "@type": "rdfs:Property", "rdfs:label": "replied on" },
+    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" }
+  ]
+}

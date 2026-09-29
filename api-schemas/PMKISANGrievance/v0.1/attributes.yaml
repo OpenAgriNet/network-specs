@@ -1,0 +1,203 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - PM-KISAN Grievance API Attributes
+  version: 0.1.0
+  description: >
+    Attributes for grievances raised against Pradhan Mantri Kisan Samman Nidhi.
+    This is an API schema, not a domain schema: it describes what the PM-KISAN
+    grievance API accepts and returns, so an experience layer can call it
+    without reading adapter mapping files. Combines with AgricultureResource
+    through allOf and attaches through resourceAttributes.
+
+    Direction is carried by informationMode, never by the Beckn action.
+    OnDemand is the ask, Direct is an answer carrying a real case. The same
+    attributes therefore serve confirm, select, status or any later action
+    without change.
+
+    Nothing here identifies a single case the way PMFBY's ticketNo does: neither
+    the lodge reply nor a status record carries a case identifier. A grievance is
+    retrieved by the identity it was filed under, and every grievance on that
+    identity comes back together.
+
+components:
+  schemas:
+    PMKISANGrievance:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
+        "@type": openagrinet:PMKISANGrievance
+      allOf:
+        - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
+        - type: object
+          required: ["@type", "scheme"]
+          properties:
+            subjectCategories:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields/properties/subjectCategories"
+                - type: array
+                  description: Required broad classification for this pack. It must include Scheme.
+                  contains:
+                    const: Scheme
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:PMKISANGrievance
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:PMKISANGrievance
+                  items:
+                    oneOf:
+                      - const: openagrinet:PMKISANGrievance
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+
+            scheme:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+              description: >
+                Scheme the grievance is raised against. Present on every payload in
+                both directions, which is what makes it the one unconditional field.
+              x-jsonld-id: "openagrinet:scheme"
+
+            applicantId:
+              type: string
+              writeOnly: true
+              pattern: "^[A-Za-z0-9]+$"
+              x-oan-pii:
+                class: identifier
+                handling: [no-log, no-trace, no-echo]
+                note: The farmer's PM-KISAN registration number.
+              description: >
+                The PM-KISAN registration number the grievance is filed under, and
+                the only identity this pack accepts. Aadhaar is deliberately not
+                offered: nothing in the grievance flow requires one, so asking for
+                one would collect an identifier the network has no use for.
+
+                writeOnly is the contract: it travels inbound only. It is never
+                returned, logged, or attached to a trace -- the farmer supplied it
+                and does not need it read back.
+
+                The rule is only non-empty and alphanumeric. Eleven alphanumeric
+                characters is the documented shape, but nothing upstream enforces
+                it, and a length rule taken from a tool docstring would reject a
+                valid grievance before the farmer's complaint reached the portal.
+                ASCII-only is on purpose: the upstream accepts Devanagari and other
+                native-script digits and forwards them unconverted.
+              x-jsonld-id: "openagrinet:applicantId"
+
+            grievanceCategory:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                - type: object
+                  properties:
+                    code:
+                      type: string
+                      enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+                      x-enum-details:
+                        - value: G001
+                          meaning: Account number not correct.
+                        - value: G002
+                          meaning: Online application pending for approval.
+                        - value: G003
+                          meaning: Installment not received.
+                        - value: G004
+                          meaning: Transaction failed.
+                        - value: G005
+                          meaning: Problem in Aadhaar correction.
+                        - value: G006
+                          meaning: Gender not correct.
+                        - value: G007
+                          meaning: Payment related.
+                        - value: G008
+                          meaning: Problem in OTP-based eKYC.
+                        - value: G009
+                          meaning: Problem in biometric-based eKYC.
+                        - value: G010
+                          meaning: Problem in facial-based eKYC.
+              description: >
+                Category of the grievance. Unlike PMFBY, the portal publishes a
+                closed list of ten codes, so the pack enumerates them and an
+                unknown code is refused at the network edge rather than upstream.
+                The code goes to the portal verbatim.
+              x-jsonld-id: "openagrinet:pmkisanGrievanceCategory"
+            grievanceDescription:
+              type: string
+              minLength: 10
+              x-oan-pii:
+                class: freetext
+                handling: [no-log, no-trace]
+                note: >
+                  Returned verbatim on a case read, so no-echo would be wrong. It is
+                  the farmer's own words and may hold anything the schema cannot see.
+              description: >
+                The farmer's account of the problem, in their own words. A minimum
+                length because a grievance that says nothing cannot be acted on.
+                Travels in both directions: the portal returns it with each case.
+                The length is measured on the raw string; the upstream client measures
+                it after trimming, so ten characters of whitespace pass here and fail
+                there. The adapter trims before sending and re-checks.
+              x-jsonld-id: "openagrinet:grievanceDescription"
+
+            caseStatus:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+              description: >
+                Where the grievance stands. A status record carries the portal's own
+                GrievanceStatus; where it is present, name holds it verbatim and code
+                is derived from it by upper-casing and replacing spaces, as in the
+                PMFBY pack. Where it is absent the adapter falls back to REPLIED or
+                UNDER_REVIEW according to whether an officer reply is present. A lodge
+                reply carries no status of any kind, so REGISTERED is asserted there.
+              x-jsonld-id: "openagrinet:caseStatus"
+            filedOn:
+              type: string
+              format: date
+              description: >
+                Date the grievance was filed. Read from the portal on a case read;
+                generated by the adapter on a lodge, because the lodge reply carries
+                no date.
+              x-jsonld-id: "openagrinet:filedOn"
+            officerReply:
+              type: string
+              minLength: 1
+              x-oan-pii:
+                class: freetext
+                handling: [no-log, no-trace]
+                note: Written by an officer about this farmer's case.
+              description: >
+                The reviewing officer's response. Absent rather than null while no
+                reply exists, so an absent field reads as "not yet answered".
+              x-jsonld-id: "openagrinet:officerReply"
+            repliedOn:
+              type: string
+              format: date
+              description: Date the officer replied. Absent until there is a reply.
+              x-jsonld-id: "openagrinet:repliedOn"
+            source:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Authoritative upstream source of the grievance record.
+              x-jsonld-id: "openagrinet:source"
+
+        # Direction, not action. A response carrying a real case always says where
+        # the case stands, when it was filed and where it came from -- true of a
+        # lodge reply and a case read alike. There is no ticket number to require:
+        # the portal issues none.
+        #
+        # There is deliberately no matching OnDemand branch. Lodging sends the
+        # identity, the category and the complaint; reading sends the identity
+        # alone. Requiring the lodge fields here would reject a legitimate read.
+        # What each action must carry is enforced by that action's mapping guard.
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [caseStatus, filedOn, source]

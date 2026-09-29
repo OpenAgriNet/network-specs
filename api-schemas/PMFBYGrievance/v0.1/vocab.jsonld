@@ -1,0 +1,36 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMFBYGrievance",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PMFBY Grievance",
+      "rdfs:comment": "A grievance raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme, filed on demand and answered directly."
+    },
+    { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
+    { "@id": "openagrinet:applicantPhone", "@type": "rdfs:Property", "rdfs:label": "applicant phone" },
+    { "@id": "openagrinet:applicationNo", "@type": "rdfs:Property", "rdfs:label": "application number" },
+    { "@id": "openagrinet:cropYear", "@type": "rdfs:Property", "rdfs:label": "crop year" },
+    { "@id": "openagrinet:season", "@type": "rdfs:Property", "rdfs:label": "season" },
+    {
+      "@id": "openagrinet:pmfbyGrievanceCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PMFBY grievance category",
+      "rdfs:comment": "Portal category and sub-category joined by a dot, such as 3.10. Deliberately a separate property from the PM-KISAN category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+    },
+    { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
+    { "@id": "openagrinet:otp", "@type": "rdfs:Property", "rdfs:label": "one-time password" },
+    { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
+    { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
+    { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
+    { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
+    { "@id": "openagrinet:repliedOn", "@type": "rdfs:Property", "rdfs:label": "replied on" },
+    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
+    { "@id": "openagrinet:otpChallenge", "@type": "rdfs:Property", "rdfs:label": "OTP challenge" },
+    { "@id": "openagrinet:otpChallengeSentTo", "@type": "rdfs:Property", "rdfs:label": "OTP sent to" },
+    { "@id": "openagrinet:otpChallengeExpiresAt", "@type": "rdfs:Property", "rdfs:label": "OTP expires at" }
+  ]
+}

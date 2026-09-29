@@ -1,0 +1,14 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMFBYGrievance",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Scheme"
+  ],
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "applicantPhone": "9876543210",
+  "ticketNo": "PMFBY/2026/0093214"
+}

@@ -1,0 +1,28 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMFBYGrievance",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Scheme"
+  ],
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "ticketNo": "PMFBY/2026/0093214",
+  "caseStatus": {
+    "code": "UNDER_REVIEW",
+    "name": "Under Review"
+  },
+  "grievanceCategory": {
+    "code": "3.10"
+  },
+  "filedOn": "2026-09-28",
+  "officerReply": "Claim file reopened, awaiting surveyor report.",
+  "repliedOn": "2026-10-05",
+  "source": {
+    "sourceId": "pmfby",
+    "sourceName": "PMFBY Grievance Portal"
+  },
+  "applicationNo": "KA2026KH00123456"
+}
