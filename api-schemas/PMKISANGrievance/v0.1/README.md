@@ -56,11 +56,13 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `status` without change; there is no `init` leg, because PM-KISAN sends no OTP.
 
-One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and two fields leave the attributes object for the `Support` object's own slots: `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those two fields records where it goes. A field with no `x-beckn-path` never moves.
+One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicantId` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
 
-`Support.orderId` stays empty in both directions. There is no application number here — the identity *is* the registration number, and `applicantId` is `writeOnly` and marked `no-echo`. `orderId` is a slot the provider fills on the way back, so putting a `no-echo` value in it would break the marking at the one point the adapter cannot enforce it. `Support` has no required fields, so leaving it out is legal.
+`Support.orderId` carries the registration number, which is PMFBY's `applicationNo` slot doing the same job. The spec defines `orderId` as the thing "against which support is required", and on PM-KISAN that thing is the farmer's enrolment: the upstream takes exactly one reference, `IdentityNo`, and nothing in the API names a case, a policy or an application. The registration number is therefore both the identity the portal authenticates on and the subject of the complaint. One value, one slot.
 
-The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
+This is why `applicantId` is not `writeOnly` and is not marked `no-echo`, where an earlier draft made it both. `orderId` is the provider's to fill on the way back, and returning the caller's own registration number over the same signed exchange it arrived on discloses nothing to anyone who did not already hold it. `no-log` and `no-trace` are the markings that protect it, and those are unconditional. The echo is confined to `on_support`: a `Contract` has no `orderId`, so nothing carries it back on a case read.
+
+The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: `no-log` and `no-trace` on `applicantId` hold just as firmly in `Support.orderId` as in the attributes object.
 
 `Direct` payloads must carry `caseStatus`, `filedOn` and `source`. That is the whole of it, because it is the whole of what a lodge reply and a case read have in common: the lodge reply echoes the category, the case read carries the officer's reply instead, and neither has a case identifier at all.
 
@@ -92,7 +94,7 @@ plainly: the reply confirms receipt and nothing more.
 | `GrievanceStatus` | `caseStatus` | the portal returns it; the legacy direct client's model drops it, so it is missing from any sample taken there. See "Case status" |
 | `OfficerReply` | `officerReply` | |
 | `OfficeReplyDate` | `repliedOn` | |
-| `Reg_No` | *dropped* | the registration number the farmer sent. `applicantId` is `writeOnly` and `no-echo`, so it is not returned even though the portal returns it. |
+| `Reg_No` | *dropped* | the registration number the farmer sent. A `Contract` has no `orderId` to return it in, and it is not surfaced as an attribute either: it is matched against the number the caller sent, then discarded. |
 | `Farmer_Name` | *dropped* | personal data |
 | `Father_Name` | *dropped* | personal data |
 | `Gender` | *dropped* | personal data |
@@ -150,7 +152,7 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 | `@type` | Always | Identifies the commitment as `openagrinet:PMKISANGrievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
-| `applicantId` | Every ask | The farmer's PM-KISAN registration number, the only identity this pack accepts. `writeOnly`; never echoed |
+| `applicantId` | Every ask | The farmer's PM-KISAN registration number — both the identity the portal authenticates on and the enrolment the complaint is against. On `support` it is `orderId` |
 | `grievanceCategory` | Ask, when lodging | One of ten published codes, `G001`–`G010`. Echoed on a lodge response; absent from a case read, whose per-record payload carries no category field |
 | `grievanceDescription` | Ask, when lodging | The farmer's account of the problem, minimum ten characters. Returned verbatim on a case read |
 | `caseStatus` | `Direct` | Where the grievance stands. The portal's own status where it publishes one, the adapter's summary otherwise — see below |
@@ -209,11 +211,11 @@ ignores the `if`/`then` branches. It exists so the rule can be read by a tool ra
 only by a person: a CI check can assert that no property marked `no-echo` appears in any
 `Direct` example, which is the class of mistake the v1 `identity-no` echo was.
 
-`applicantId` is `writeOnly`: it travels inbound only and is never echoed in a response, written to a log, attached to a trace, or included in an error body. The farmer supplied it and does not need it read back.
+`applicantId` is `no-log` and `no-trace` without exception: it is never written to a log, attached to a trace, or included in an error body. It is a bearer key as much as an identifier — anyone holding a registration number can read every officer reply filed under it — so those two markings are the ones doing the work.
 
-The v1 adapter does the opposite: it returns `identity-no` and `lookup-type` tags, echoing the farmer's registration number straight back to the caller. A v2 adapter must not carry that behaviour over — `applicantId` is `writeOnly` precisely to forbid it.
+It is **not** `no-echo`, and the distinction is deliberate. Returning it in `Support.orderId` on `on_support` gives it back to the caller who sent it, over the same signed exchange, and tells them nothing new. That is the only place it comes back.
 
-The portal returns the registration number with every record on a case read. It is consumed rather than surfaced: it is matched against the number the caller sent and then discarded. It appears in no attribute and in no identifier — an earlier draft keyed the resource id on it, which would have published the registration number in a field `writeOnly` cannot reach.
+The v1 adapter's behaviour is still forbidden. It returns `identity-no` and `lookup-type` tags **on a case read**, where the caller asked about an identity and the response re-publishes it as loose tags outside any slot the spec defines. A v2 adapter must not carry that over: on `status` the registration number is consumed, not surfaced. The portal returns it with every record; it is matched against the number the caller sent and then discarded. It appears in no attribute and in no identifier — an earlier draft keyed the resource id on it, which would have put the registration number in a public, cacheable identifier rather than in a field the caller supplied.
 
 `grievanceDescription` is free text that may contain personal details the schema cannot constrain.
 

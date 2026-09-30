@@ -13,7 +13,7 @@ info:
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
     attributes serve status without change. On support the payload attaches
-    through channels instead, and two fields move into the Support object
+    through channels instead, and three fields move into the Support object
     itself. The grievance is lodged with support, not confirm, so no confirm
     entry appears below; there is no init leg either, because PM-KISAN sends
     no OTP. x-beckn-container-by-action says which container each action
@@ -78,21 +78,35 @@ components:
 
             applicantId:
               type: string
-              writeOnly: true
               pattern: "^[A-Za-z0-9]+$"
               x-oan-pii:
                 class: identifier
-                handling: [no-log, no-trace, no-echo]
-                note: The farmer's PM-KISAN registration number.
+                handling: [no-log, no-trace]
+                note: >
+                  The farmer's PM-KISAN registration number. Returned on a case
+                  read, so no-echo would be wrong; it is the caller's own
+                  registration number coming back.
               description: >
-                The PM-KISAN registration number the grievance is filed under, and
-                the only identity this pack accepts. Aadhaar is deliberately not
-                offered: nothing in the grievance flow requires one, so asking for
-                one would collect an identifier the network has no use for.
+                The PM-KISAN registration number the grievance is filed under. It
+                is both the identity the portal authenticates on and the enrolment
+                the complaint is against, because PM-KISAN has no separate
+                reference for either -- the upstream takes one field, IdentityNo,
+                and nothing else names a case. That is why it carries the same
+                x-beckn-path as PMFBY's applicationNo: on support it is the
+                orderId, the thing support is required against.
 
-                writeOnly is the contract: it travels inbound only. It is never
-                returned, logged, or attached to a trace -- the farmer supplied it
-                and does not need it read back.
+                Aadhaar is deliberately not accepted. The portal takes a token
+                derived from one through /GrievanceAadhaarToken and carries it in
+                the same IdentityNo field, which would make this value sometimes a
+                stable reference and sometimes an ephemeral secret. Registration
+                numbers only keeps it one thing, and keeps the upstream Type field
+                a constant.
+
+                Not writeOnly, and no-echo is deliberately absent: the value is
+                returned in orderId, which is the provider's slot to fill. Sending
+                back the caller's own registration number over the same signed
+                exchange it arrived on discloses nothing. no-log and no-trace are
+                the markings that matter here and they are unconditional.
 
                 The rule is only non-empty and alphanumeric. Eleven alphanumeric
                 characters is the documented shape, but nothing upstream enforces
@@ -100,6 +114,8 @@ components:
                 valid grievance before the farmer's complaint reached the portal.
                 ASCII-only is on purpose: the upstream accepts Devanagari and other
                 native-script digits and forwards them unconverted.
+              x-beckn-path:
+                support: message.support.orderId
               x-jsonld-id: "openagrinet:applicantId"
 
             grievanceCategory:
