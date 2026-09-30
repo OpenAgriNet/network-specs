@@ -58,6 +58,16 @@ Direction is carried by `informationMode`, never by the Beckn action. `OnDemand`
 
 One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicationNo` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
 
+A fourth field exists only on that leg, and it is there so the request can be routed at
+all. The adapter picks the upstream call from a binding key, `participantId|capabilityCode`,
+and reads both halves out of the payload. On every other action the payload composes a
+`Contract`, so the participant is read from `commitments[].offer.provider.id`. A
+`SupportAction` composes no contract, and `Support` is sealed at three fields, none of
+which names a participant — so the channel carries `providerId` instead. It is the same
+value the contract legs supply and it resolves to the same registry record; only its
+location differs. `scheme.code` is not a substitute: it names a scheme rather than a
+participant, and it reads `PMFBY` where the registry holds `pmfby`.
+
 `Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the application number back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `ticketNo` on the channel, with `ticketId` beside it. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs because that scheme issues no ticket at all. One field, one meaning, both schemes.
 
 The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
@@ -157,6 +167,7 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 | `@type` | Always | Identifies the commitment as `openagrinet:PMFBYGrievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
+| `providerId` | `support` ask | Network participant id, so the adapter can route a payload that composes no `Contract`. Not returned |
 | `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the OTP goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
 | `applicationNo` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid` |

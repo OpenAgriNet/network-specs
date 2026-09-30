@@ -9,6 +9,7 @@
   ],
   "discovery_fields": [
     "informationMode",
+    "providerId",
     "scheme",
     "applicantId",
     "grievanceCategory",

@@ -12,6 +12,7 @@
     },
     { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
     { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
+    { "@id": "openagrinet:providerId", "@type": "rdfs:Property", "rdfs:label": "provider id", "rdfs:comment": "Network participant id of the provider, carried on support because a SupportAction composes no Contract to read it from." },
     { "@id": "openagrinet:applicantId", "@type": "rdfs:Property", "rdfs:label": "applicant identity" },
     {
       "@id": "openagrinet:pmkisanGrievanceCategory",

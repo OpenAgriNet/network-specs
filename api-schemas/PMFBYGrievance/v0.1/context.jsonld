@@ -4,6 +4,7 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "PMFBYGrievance": "openagrinet:PMFBYGrievance",
     "informationMode": "openagrinet:informationMode",
+    "providerId": "openagrinet:providerId",
     "scheme": {
       "@id": "openagrinet:scheme",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"

@@ -14,7 +14,9 @@ info:
     OnDemand is the ask, Direct is an answer carrying a real case. The same
     attributes serve init and status without change. On support the payload
     attaches through channels instead, and three fields move into the Support
-    object itself. The grievance is lodged with support, not confirm, so no
+    object itself. The channel also carries providerId, which exists for that
+    action alone: a SupportAction composes no Contract, so the adapter has
+    nowhere else to read the provider from. The grievance is lodged with support, not confirm, so no
     confirm entry appears below. x-beckn-container-by-action says which
     container each action uses, and the per-field x-beckn-path says where a
     field that moves ends up.
@@ -70,6 +72,21 @@ components:
                 Scheme the grievance is raised against. Present on every payload in
                 both directions, which is what makes it the one unconditional field.
               x-jsonld-id: "openagrinet:scheme"
+
+            providerId:
+              type: string
+              pattern: "^[a-z0-9][a-z0-9.-]*$"
+              description: >
+                Network participant id of the provider this grievance is for, as
+                the registry holds it. Carried on support and nowhere else, and
+                only because a SupportAction has nowhere else to put it: every
+                other action composes a Contract, and there the adapter reads the
+                provider from commitments[].offer.provider.id. Same value, same
+                purpose, different place. Lower-case, matching the registry
+                exactly -- scheme.code reads PMFBY and names a scheme rather than
+                a participant, so it cannot stand in. Not returned on on_support:
+                the caller already knows who it asked.
+              x-jsonld-id: "openagrinet:providerId"
 
             applicantPhone:
               type: string

@@ -58,6 +58,16 @@ Direction is carried by `informationMode`, never by the Beckn action. `OnDemand`
 
 One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicantId` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
 
+A fourth field exists only on that leg, and it is there so the request can be routed at
+all. The adapter picks the upstream call from a binding key, `participantId|capabilityCode`,
+and reads both halves out of the payload. On every other action the payload composes a
+`Contract`, so the participant is read from `commitments[].offer.provider.id`. A
+`SupportAction` composes no contract, and `Support` is sealed at three fields, none of
+which names a participant — so the channel carries `providerId` instead. It is the same
+value the contract legs supply and it resolves to the same registry record; only its
+location differs. `scheme.code` is not a substitute: it names a scheme rather than a
+participant, and it reads `PM-KISAN` where the registry holds `pmkisan`.
+
 `Support.orderId` carries the registration number, which is PMFBY's `applicationNo` slot doing the same job. The spec defines `orderId` as the thing "against which support is required", and on PM-KISAN that thing is the farmer's enrolment: the upstream takes exactly one reference, `IdentityNo`, and nothing in the API names a case, a policy or an application. The registration number is therefore both the identity the portal authenticates on and the subject of the complaint. One value, one slot.
 
 This is why `applicantId` is not `writeOnly` and is not marked `no-echo`, where an earlier draft made it both. `orderId` is the provider's to fill on the way back, and returning the caller's own registration number over the same signed exchange it arrived on discloses nothing to anyone who did not already hold it. `no-log` and `no-trace` are the markings that protect it, and those are unconditional. The echo is confined to `on_support`: a `Contract` has no `orderId`, so nothing carries it back on a case read.
@@ -152,6 +162,7 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 | `@type` | Always | Identifies the commitment as `openagrinet:PMKISANGrievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
+| `providerId` | `support` ask | Network participant id, so the adapter can route a payload that composes no `Contract`. Not returned |
 | `applicantId` | Every ask | The farmer's PM-KISAN registration number — both the identity the portal authenticates on and the enrolment the complaint is against. On `support` it is `orderId` |
 | `grievanceCategory` | Ask, when lodging | One of ten published codes, `G001`–`G010`. Echoed on a lodge response; absent from a case read, whose per-record payload carries no category field |
 | `grievanceDescription` | Ask, when lodging | The farmer's account of the problem, minimum ten characters. Returned verbatim on a case read |

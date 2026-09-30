@@ -2,6 +2,7 @@
   "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld",
   "@type": "openagrinet:PMKISANGrievance",
   "informationMode": "OnDemand",
+  "providerId": "pmkisan",
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
   "applicantId": "UP12345678A",
   "grievanceCategory": { "code": "G003", "name": "Installment not received" },

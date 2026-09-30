@@ -2,6 +2,7 @@
   "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
   "@type": "openagrinet:PMFBYGrievance",
   "informationMode": "OnDemand",
+  "providerId": "pmfby",
   "scheme": {
     "code": "PMFBY",
     "name": "Pradhan Mantri Fasal Bima Yojana"
