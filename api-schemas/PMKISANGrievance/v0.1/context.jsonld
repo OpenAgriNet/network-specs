@@ -1,28 +1,26 @@
 {
-  "@context": [
-    "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1/context.jsonld",
-    {
-      "@version": 1.1,
-      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
-      "PMKISANGrievance": "openagrinet:PMKISANGrievance",
-      "scheme": {
-        "@id": "openagrinet:scheme",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "applicantId": "openagrinet:applicantId",
-      "grievanceCategory": {
-        "@id": "openagrinet:pmkisanGrievanceCategory",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "grievanceDescription": "openagrinet:grievanceDescription",
-      "source": "openagrinet:source",
-      "caseStatus": {
-        "@id": "openagrinet:caseStatus",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "filedOn": "openagrinet:filedOn",
-      "officerReply": "openagrinet:officerReply",
-      "repliedOn": "openagrinet:repliedOn"
-    }
-  ]
+  "@context": {
+    "@version": 1.1,
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "PMKISANGrievance": "openagrinet:PMKISANGrievance",
+    "informationMode": "openagrinet:informationMode",
+    "scheme": {
+      "@id": "openagrinet:scheme",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "applicantId": "openagrinet:applicantId",
+    "grievanceCategory": {
+      "@id": "openagrinet:pmkisanGrievanceCategory",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "grievanceDescription": "openagrinet:grievanceDescription",
+    "source": "openagrinet:source",
+    "caseStatus": {
+      "@id": "openagrinet:caseStatus",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "filedOn": "openagrinet:filedOn",
+    "officerReply": "openagrinet:officerReply",
+    "repliedOn": "openagrinet:repliedOn"
+  }
 }

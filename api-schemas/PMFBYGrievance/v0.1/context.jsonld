@@ -1,35 +1,33 @@
 {
-  "@context": [
-    "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1/context.jsonld",
-    {
-      "@version": 1.1,
-      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
-      "PMFBYGrievance": "openagrinet:PMFBYGrievance",
-      "scheme": {
-        "@id": "openagrinet:scheme",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "applicantPhone": "openagrinet:applicantPhone",
-      "applicationNo": "openagrinet:applicationNo",
-      "cropYear": "openagrinet:cropYear",
-      "season": "openagrinet:season",
-      "grievanceCategory": {
-        "@id": "openagrinet:pmfbyGrievanceCategory",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "grievanceDescription": "openagrinet:grievanceDescription",
-      "otp": "openagrinet:otp",
-      "source": "openagrinet:source",
-      "ticketNo": "openagrinet:ticketNo",
-      "caseStatus": {
-        "@id": "openagrinet:caseStatus",
-        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-      },
-      "filedOn": "openagrinet:filedOn",
-      "officerReply": "openagrinet:officerReply",
-      "otpChallenge": "openagrinet:otpChallenge",
-      "sentTo": "openagrinet:otpChallengeSentTo",
-      "expiresAt": "openagrinet:otpChallengeExpiresAt"
-    }
-  ]
+  "@context": {
+    "@version": 1.1,
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "PMFBYGrievance": "openagrinet:PMFBYGrievance",
+    "informationMode": "openagrinet:informationMode",
+    "scheme": {
+      "@id": "openagrinet:scheme",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "applicantPhone": "openagrinet:applicantPhone",
+    "applicationNo": "openagrinet:applicationNo",
+    "cropYear": "openagrinet:cropYear",
+    "season": "openagrinet:season",
+    "grievanceCategory": {
+      "@id": "openagrinet:pmfbyGrievanceCategory",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "grievanceDescription": "openagrinet:grievanceDescription",
+    "otp": "openagrinet:otp",
+    "source": "openagrinet:source",
+    "ticketNo": "openagrinet:ticketNo",
+    "caseStatus": {
+      "@id": "openagrinet:caseStatus",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "filedOn": "openagrinet:filedOn",
+    "officerReply": "openagrinet:officerReply",
+    "otpChallenge": "openagrinet:otpChallenge",
+    "sentTo": "openagrinet:otpChallengeSentTo",
+    "expiresAt": "openagrinet:otpChallengeExpiresAt"
+  }
 }

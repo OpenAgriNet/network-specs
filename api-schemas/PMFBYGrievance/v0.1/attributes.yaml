@@ -7,8 +7,8 @@ info:
     Yojana crop insurance scheme. This is an API schema, not a domain schema:
     it describes what the PMFBY grievance API accepts and returns, so an
     experience layer can call it without reading adapter mapping files.
-    Combines with AgricultureResource through allOf and attaches through
-    resourceAttributes.
+    Attaches through commitmentAttributes: a grievance is a promise with a
+    lifecycle of its own, not a catalogable resource.
 
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
@@ -19,22 +19,24 @@ components:
   schemas:
     PMFBYGrievance:
       type: object
-      x-beckn-container: resourceAttributes
+      x-beckn-container: commitmentAttributes
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMFBYGrievance
       allOf:
-        - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
         - type: object
-          required: ["@type", "scheme"]
+          required: ["@type", "informationMode", "scheme"]
           properties:
-            subjectCategories:
-              allOf:
-                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields/properties/subjectCategories"
-                - type: array
-                  description: Required broad classification for this pack. It must include Scheme.
-                  contains:
-                    const: Scheme
+            informationMode:
+              type: string
+              enum: [OnDemand, Direct]
+              description: >
+                Direction of this payload. OnDemand is the ask; Direct is an
+                answer carrying a real case. Held locally rather than inherited
+                from AgricultureResource, whose definition is framed around a
+                Resource that holds information; here it says which way a
+                commitment payload is travelling.
+              x-jsonld-id: "openagrinet:informationMode"
             "@type":
               oneOf:
                 - type: string

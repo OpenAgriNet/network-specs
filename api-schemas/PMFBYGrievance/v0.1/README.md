@@ -18,7 +18,25 @@ This is an API schema, not a domain schema. A domain schema says what a thing *i
 
 ## Attachment point
 
-Applied to `resourceAttributes` of a Beckn `Resource`, the same as every OAN domain pack.
+Applied to `commitmentAttributes` of a Beckn `Commitment`, not to
+`resourceAttributes`.
+
+A grievance is a promise with a lifecycle, not a catalogable thing of value.
+`resourceAttributes` is defined as "all the properties of a resource that
+describe its value, its terms of usage, fulfillment, and consideration", and a
+`Resource` is what a Provider publishes in a catalog. One farmer's phone number,
+ticket number and case status are none of those, and would be nonsense in a
+catalog entry. `Commitment` is "a specific promise... and the current lifecycle
+status of that promise", and its `DRAFT | ACTIVE | CLOSED` states are the
+grievance's own.
+
+The `Resource` does not disappear — `Commitment.resources` requires at least one,
+each with an `id` and a `quantity`. It stays thin: a pointer to the catalogable
+"grievance handling" entry the offer references. The case itself sits beside it
+on the commitment.
+
+This is deliberately unlike the OAN domain packs. A forecast or a mandi price
+genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
@@ -30,7 +48,11 @@ There is deliberately no matching `OnDemand` requirement. The ask side has no fi
 
 ## Composition
 
-`PMFBYGrievance` combines the Agriculture Resource field set with the PMFBY grievance fields using `allOf`, and reuses Beckn `Descriptor` objects for `scheme`, `grievanceCategory` and `caseStatus`.
+`PMFBYGrievance` is self-contained. It does not compose the Agriculture Resource
+field set: that set is framed around a Resource holding information, which this
+pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
+`grievanceCategory` and `caseStatus`, and the shared `SourceReference` for
+`source`.
 
 ## Fields
 
@@ -38,9 +60,8 @@ There is deliberately no matching `OnDemand` requirement. The ask side has no fi
 
 | Field | Required when | Meaning |
 |---|---|---|
-| `@type` | Always | Identifies the Resource as `openagrinet:PMFBYGrievance` |
-| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
-| `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Scheme` |
+| `@type` | Always | Identifies the commitment as `openagrinet:PMFBYGrievance` |
+| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the OTP goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
 | `applicationNo` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns |
@@ -83,7 +104,7 @@ only by a person: a CI check can assert that no property marked `no-echo` appear
 
 `applicationNo` identifies a named farmer's policy, and `grievanceDescription` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
 
-The portal's case record carries far more about the farmer than this pack surfaces: name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields listed above. None of it may reach `resourceAttributes`, a log, or a trace. This is the same class of mistake as the v1 `identity-no` echo, and it is the reason the response mapping is an allow-list rather than a passthrough.
+The portal's case record carries far more about the farmer than this pack surfaces: name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields listed above. None of it may reach `commitmentAttributes`, a log, or a trace. This is the same class of mistake as the v1 `identity-no` echo, and it is the reason the response mapping is an allow-list rather than a passthrough.
 
 ## Stricter than the portal
 

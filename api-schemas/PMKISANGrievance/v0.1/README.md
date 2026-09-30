@@ -18,7 +18,25 @@ This is an API schema, not a domain schema. A domain schema says what a thing *i
 
 ## Attachment point
 
-Applied to `resourceAttributes` of a Beckn `Resource`, the same as every OAN domain pack.
+Applied to `commitmentAttributes` of a Beckn `Commitment`, not to
+`resourceAttributes`.
+
+A grievance is a promise with a lifecycle, not a catalogable thing of value.
+`resourceAttributes` is defined as "all the properties of a resource that
+describe its value, its terms of usage, fulfillment, and consideration", and a
+`Resource` is what a Provider publishes in a catalog. One farmer's phone number,
+ticket number and case status are none of those, and would be nonsense in a
+catalog entry. `Commitment` is "a specific promise... and the current lifecycle
+status of that promise", and its `DRAFT | ACTIVE | CLOSED` states are the
+grievance's own.
+
+The `Resource` does not disappear — `Commitment.resources` requires at least one,
+each with an `id` and a `quantity`. It stays thin: a pointer to the catalogable
+"grievance handling" entry the offer references. The case itself sits beside it
+on the commitment.
+
+This is deliberately unlike the OAN domain packs. A forecast or a mandi price
+genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
@@ -38,7 +56,11 @@ A grievance is retrieved by the identity it was filed under, and the portal retu
 
 ## Composition
 
-`PMKISANGrievance` combines the Agriculture Resource field set with the PM-KISAN grievance fields using `allOf`, and reuses Beckn `Descriptor` objects for `scheme`, `grievanceCategory` and `caseStatus`.
+`PMKISANGrievance` is self-contained. It does not compose the Agriculture Resource
+field set: that set is framed around a Resource holding information, which this
+pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
+`grievanceCategory` and `caseStatus`, and the shared `SourceReference` for
+`source`.
 
 ## Fields
 
@@ -46,9 +68,8 @@ A grievance is retrieved by the identity it was filed under, and the portal retu
 
 | Field | Required when | Meaning |
 |---|---|---|
-| `@type` | Always | Identifies the Resource as `openagrinet:PMKISANGrievance` |
-| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
-| `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Scheme` |
+| `@type` | Always | Identifies the commitment as `openagrinet:PMKISANGrievance` |
+| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `applicantId` | Every ask | The farmer's PM-KISAN registration number, the only identity this pack accepts. `writeOnly`; never echoed |
 | `grievanceCategory` | Ask, when lodging | One of ten published codes, `G001`–`G010`. Echoed on a lodge response; absent from a case read, whose per-record payload carries no category field |
@@ -117,7 +138,7 @@ The portal returns the registration number with every record on a case read. It 
 
 `grievanceDescription` is free text that may contain personal details the schema cannot constrain.
 
-**The status record carries far more about the farmer than this pack surfaces.** Alongside the grievance itself it returns the farmer's name, father's name, gender, mobile number, and state, district, block and village. None of it is modelled here and none of it is emitted, which is deliberate: it is not part of a grievance, the caller already knows who they asked about, and publishing it would disclose more than the identity the pack goes to some trouble to withhold. An adapter must drop these fields rather than pass them through — the pack cannot stop it, because `resourceAttributes` is open.
+**The status record carries far more about the farmer than this pack surfaces.** Alongside the grievance itself it returns the farmer's name, father's name, gender, mobile number, and state, district, block and village. None of it is modelled here and none of it is emitted, which is deliberate: it is not part of a grievance, the caller already knows who they asked about, and publishing it would disclose more than the identity the pack goes to some trouble to withhold. An adapter must drop these fields rather than pass them through — the pack cannot stop it, because `commitmentAttributes` is open.
 
 ## Stricter than the upstream client
 

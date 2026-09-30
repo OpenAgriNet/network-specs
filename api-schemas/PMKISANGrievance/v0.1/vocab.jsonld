@@ -10,6 +10,7 @@
       "rdfs:label": "PM-KISAN Grievance",
       "rdfs:comment": "A grievance raised against the Pradhan Mantri Kisan Samman Nidhi income-support scheme, filed on demand and answered directly. The scheme issues no ticket number; a grievance is retrieved by the identity it was filed under."
     },
+    { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
     { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
     { "@id": "openagrinet:applicantId", "@type": "rdfs:Property", "rdfs:label": "applicant identity" },
     {

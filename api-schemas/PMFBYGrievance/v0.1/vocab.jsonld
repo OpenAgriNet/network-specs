@@ -10,6 +10,7 @@
       "rdfs:label": "PMFBY Grievance",
       "rdfs:comment": "A grievance raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme, filed on demand and answered directly."
     },
+    { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
     { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
     { "@id": "openagrinet:applicantPhone", "@type": "rdfs:Property", "rdfs:label": "applicant phone" },
     { "@id": "openagrinet:applicationNo", "@type": "rdfs:Property", "rdfs:label": "application number" },
