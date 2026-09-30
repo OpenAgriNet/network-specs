@@ -18,7 +18,14 @@
     },
     "grievanceDescription": "openagrinet:grievanceDescription",
     "otp": "openagrinet:otp",
-    "source": "openagrinet:source",
+    "source": {
+      "@id": "openagrinet:source",
+      "@context": {
+        "sourceId": "openagrinet:sourceId",
+        "sourceName": "openagrinet:sourceName",
+        "sourceUri": "openagrinet:sourceUri"
+      }
+    },
     "ticketNo": "openagrinet:ticketNo",
     "caseStatus": {
       "@id": "openagrinet:caseStatus",

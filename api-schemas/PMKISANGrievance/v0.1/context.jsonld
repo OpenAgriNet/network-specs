@@ -14,7 +14,14 @@
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
     "grievanceDescription": "openagrinet:grievanceDescription",
-    "source": "openagrinet:source",
+    "source": {
+      "@id": "openagrinet:source",
+      "@context": {
+        "sourceId": "openagrinet:sourceId",
+        "sourceName": "openagrinet:sourceName",
+        "sourceUri": "openagrinet:sourceUri"
+      }
+    },
     "caseStatus": {
       "@id": "openagrinet:caseStatus",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
