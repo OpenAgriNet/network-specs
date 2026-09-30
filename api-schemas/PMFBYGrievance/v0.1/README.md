@@ -54,13 +54,13 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init`, `confirm`, `select` and `status` without change.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init` and `status` without change.
 
 One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicationNo` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
 
-Whether the network lodges through `confirm` or through `support` is not settled — see `docs/grievance-usecase.md` and `docs/grievance-support-variant.md`. The pack describes both so that neither choice requires reopening it. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
+The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
-`Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_confirm` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional here because `on_confirm` does not repeat them.
+`Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_support` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional here because `on_support` does not repeat them.
 
 There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the OTP; reading a case sends the phone and the ticket; an OTP acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
 

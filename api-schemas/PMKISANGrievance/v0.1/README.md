@@ -54,13 +54,13 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `confirm`, `select` and `status` without change.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `status` without change; there is no `init` leg, because PM-KISAN sends no OTP.
 
 One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and two fields leave the attributes object for the `Support` object's own slots: `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those two fields records where it goes. A field with no `x-beckn-path` never moves.
 
 `Support.orderId` stays empty in both directions. There is no application number here — the identity *is* the registration number, and `applicantId` is `writeOnly` and marked `no-echo`. `orderId` is a slot the provider fills on the way back, so putting a `no-echo` value in it would break the marking at the one point the adapter cannot enforce it. `Support` has no required fields, so leaving it out is legal.
 
-Whether the network lodges through `confirm` or through `support` is not settled — see `docs/grievance-usecase.md` and `docs/grievance-support-variant.md`. The pack describes both so that neither choice requires reopening it. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
+The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
 `Direct` payloads must carry `caseStatus`, `filedOn` and `source`. That is the whole of it, because it is the whole of what a lodge reply and a case read have in common: the lodge reply echoes the category, the case read carries the officer's reply instead, and neither has a case identifier at all.
 

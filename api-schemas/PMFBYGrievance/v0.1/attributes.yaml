@@ -12,11 +12,12 @@ info:
 
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
-    attributes serve init, confirm, select and status without change. On
-    support the payload attaches through channels instead, and three fields
-    move into the Support object itself. x-beckn-container-by-action says
-    which container each action uses, and the per-field x-beckn-path says
-    where a field that moves ends up.
+    attributes serve init and status without change. On support the payload
+    attaches through channels instead, and three fields move into the Support
+    object itself. The grievance is lodged with support, not confirm, so no
+    confirm entry appears below. x-beckn-container-by-action says which
+    container each action uses, and the per-field x-beckn-path says where a
+    field that moves ends up.
 
 components:
   schemas:
@@ -25,7 +26,6 @@ components:
       x-beckn-container: commitmentAttributes
       x-beckn-container-by-action:
         init: commitmentAttributes
-        confirm: commitmentAttributes
         status: commitmentAttributes
         support: channels
       x-jsonld:
@@ -132,8 +132,7 @@ components:
                 The portal publishes no list of valid pairs; see the pack README.
               x-beckn-path:
                 support: message.support.descriptor.code and .name
-                status: message.contract.descriptor.code and .name, but only
-                  on the support flow; on the contract flow it stays here
+                status: message.contract.descriptor.code and .name
               x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
             grievanceDescription:
               type: string
@@ -149,8 +148,7 @@ components:
                 length because a grievance that says nothing cannot be acted on.
               x-beckn-path:
                 support: message.support.descriptor.longDesc
-                status: message.contract.descriptor.longDesc, but only on the
-                  support flow; on the contract flow it stays here
+                status: message.contract.descriptor.longDesc
               x-jsonld-id: "openagrinet:grievanceDescription"
             otp:
               type: string
@@ -263,7 +261,7 @@ components:
 
         # Direction, not action. A response carrying a real case is Direct and
         # always names the case, its status, when it was filed and where it came
-        # from -- true of on_confirm and on_status alike.
+        # from -- true of on_support and on_status alike.
         #
         # There is deliberately no matching OnDemand branch. The ask side has no
         # field common to every payload: filing sends the phone, the application,
