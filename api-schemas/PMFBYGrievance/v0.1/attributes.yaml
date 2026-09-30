@@ -93,7 +93,13 @@ components:
                   Identifies a named farmer's policy. Returned on a case read, so
                   no-echo would be wrong; it is the caller's own application number
                   coming back.
-              description: PMFBY crop insurance application number the grievance concerns.
+              description: >
+                PMFBY crop insurance application number the grievance concerns.
+                On support it is the orderId, the thing support is required
+                against, and it holds that meaning in both directions: the ask
+                sends it and on_support echoes it unchanged. The ticket the portal
+                issues does not go there -- it comes back in ticketNo on the
+                channel, because a ticket is not what the complaint is against.
               x-beckn-path:
                 support: message.support.orderId
               x-jsonld-id: "openagrinet:applicationNo"
@@ -172,7 +178,9 @@ components:
               description: >
                 Portal grievance ticket number. Returned when a grievance is filed
                 and presented again to read its replies, so it travels in both
-                directions. Digits only, and long enough not to be mistaken for a
+                directions. It stays in the attributes on every leg -- no
+                x-beckn-path moves it -- so on_support returns it here and leaves
+                orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a
                 phone number: the live system routes a ten-digit answer to the phone
                 and anything longer to the ticket, and observed tickets run twelve
                 to fifteen digits. The length is not pinned because that range is
