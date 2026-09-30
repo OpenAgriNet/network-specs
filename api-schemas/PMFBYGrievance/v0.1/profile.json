@@ -17,15 +17,17 @@
     "grievanceCategory",
     "grievanceDescription",
     "otp",
-    "ticketNo",
-    "otpChallenge"
+    "ticketNo"
   ],
   "result_fields": [
     "scheme",
     "ticketNo",
+    "ticketId",
     "caseStatus",
     "filedOn",
     "applicationNo",
+    "cropYear",
+    "season",
     "grievanceCategory",
     "grievanceDescription",
     "officerReply",
@@ -33,21 +35,33 @@
   ],
   "indexable_paths": [
     "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
     "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
     "beckn:commitmentAttributes.ticketNo",
+    "beckn:support.channels[0].ticketNo",
     "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
     "beckn:commitmentAttributes.grievanceCategory.code",
-    "beckn:commitmentAttributes.filedOn"
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
   ],
   "filterable_paths": [
     "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
     "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
     "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
     "beckn:commitmentAttributes.grievanceCategory.code",
-    "beckn:commitmentAttributes.filedOn"
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
   ],
   "sortable_paths": [
-    "beckn:commitmentAttributes.filedOn"
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
   ],
   "privacy_notes": [
     "applicantPhone is personal data. It travels inbound only and is never echoed in a response; on_init returns the masked otpChallenge.sentTo instead.",
@@ -57,12 +71,14 @@
     "The portal's case record carries far more about the farmer than this pack surfaces -- name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields named here; none of it may reach commitmentAttributes, a log, or a trace."
   ],
   "beckn_dependencies": {
+    "Attributes": "2.0",
     "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
     "Provider": "2.1",
     "Resource": "2.0",
-    "Commitment": "2.0",
-    "Attributes": "2.0",
-    "Descriptor": "2.1"
+    "Support": "2.0"
   },
   "interaction_type": "Transact",
   "outcome_type": "openagrinet:PMFBYGrievance"

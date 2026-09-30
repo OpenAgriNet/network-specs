@@ -26,21 +26,33 @@
   ],
   "indexable_paths": [
     "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
     "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
     "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
     "beckn:commitmentAttributes.grievanceCategory.code",
-    "beckn:commitmentAttributes.filedOn"
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
   ],
   "filterable_paths": [
     "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
     "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
     "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
     "beckn:commitmentAttributes.grievanceCategory.code",
-    "beckn:commitmentAttributes.filedOn"
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
   ],
   "sortable_paths": [
     "beckn:commitmentAttributes.filedOn",
-    "beckn:commitmentAttributes.repliedOn"
+    "beckn:support.channels[0].filedOn",
+    "beckn:commitmentAttributes.repliedOn",
+    "beckn:support.channels[0].repliedOn"
   ],
   "privacy_notes": [
     "applicantId is marked writeOnly. It carries the farmer's PM-KISAN registration number, travels inbound only, and is never echoed in a response, written to a log, attached to a trace, or included in an error body.",
@@ -49,12 +61,14 @@
     "The portal payload is carried inside an encrypted envelope. A decryption failure must not log the ciphertext."
   ],
   "beckn_dependencies": {
+    "Attributes": "2.0",
     "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
     "Provider": "2.1",
     "Resource": "2.0",
-    "Commitment": "2.0",
-    "Attributes": "2.0",
-    "Descriptor": "2.1"
+    "Support": "2.0"
   },
   "interaction_type": "Transact",
   "outcome_type": "openagrinet:PMKISANGrievance"

@@ -5,10 +5,12 @@
     "display_name": "Agriculture Facility",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Observe",
     "description": "Agricultural facilities that may be discovered through a Provider or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:AgricultureFacility",
+    "beckn_container": "resourceAttributes",
     "schema_name": "AgricultureFacility",
     "composition": [
       {
@@ -739,10 +741,12 @@
     "display_name": "Agriculture Resource",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": null,
     "description": "Shared agriculture attributes for information published on OpenAgriNet. Attaches to beckn:Resource through resourceAttributes.",
     "canonical_type": "openagrinet:AgricultureResource",
+    "beckn_container": "resourceAttributes",
     "schema_name": "AgricultureResource",
     "composition": [
       {
@@ -1077,10 +1081,12 @@
     "display_name": "Knowledge Advisory",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Advise",
     "description": "Actionable agricultural guidance based on knowledge that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:KnowledgeAdvisory",
+    "beckn_container": "resourceAttributes",
     "schema_name": "KnowledgeAdvisory",
     "composition": [
       {
@@ -1701,10 +1707,12 @@
     "display_name": "Knowledge Resource",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Observe",
     "description": "Attributes for agricultural knowledge that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:KnowledgeResource",
+    "beckn_container": "resourceAttributes",
     "schema_name": "KnowledgeResource",
     "composition": [
       {
@@ -2637,10 +2645,12 @@
     "display_name": "Mandi Price",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Observe",
     "description": "Attributes for mandi prices that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:MandiPrice",
+    "beckn_container": "resourceAttributes",
     "schema_name": "MandiPrice",
     "composition": [
       {
@@ -3683,10 +3693,12 @@
     "display_name": "Market Intelligence",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Observe",
     "description": "Price trends, demand forecasts, and nearby market opportunities that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:MarketIntelligence",
+    "beckn_container": "resourceAttributes",
     "schema_name": "MarketIntelligence",
     "composition": [
       {
@@ -4797,10 +4809,12 @@
     "display_name": "Weather Advisory",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Advise",
     "description": "Weather-informed agricultural guidance that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches to a Beckn Resource through resourceAttributes.",
     "canonical_type": "openagrinet:WeatherAdvisory",
+    "beckn_container": "resourceAttributes",
     "schema_name": "WeatherAdvisory",
     "composition": [
       {
@@ -5767,10 +5781,12 @@
     "display_name": "Weather Observation",
     "version": "0.1.0",
     "version_dir": "v0.1",
+    "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": "Observe",
     "description": "Attributes for weather information that may be obtained on demand or supplied directly. Combines with AgricultureResource through allOf and attaches through resourceAttributes.",
     "canonical_type": "openagrinet:WeatherObservation",
+    "beckn_container": "resourceAttributes",
     "schema_name": "WeatherObservation",
     "composition": [
       {
@@ -6818,5 +6834,1244 @@
       "profile.json",
       "renderer.json"
     ]
+  },
+  "PMFBYGrievance-v0.1": {
+    "key": "PMFBYGrievance-v0.1",
+    "name": "PMFBYGrievance",
+    "display_name": "PMFBY Grievance API",
+    "version": "0.1.0",
+    "version_dir": "v0.1",
+    "source_dir": "api-schemas",
+    "protocol_version": "2.0",
+    "interaction_type": "Transact",
+    "description": "Attributes for grievances raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme. This is an API schema, not a domain schema: it describes what the PMFBY grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve init, confirm, select and status without change. On support the payload attaches through channels instead, and three fields move into the Support object itself. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up.",
+    "canonical_type": "openagrinet:PMFBYGrievance",
+    "beckn_container": "commitmentAttributes",
+    "schema_name": "PMFBYGrievance",
+    "composition": [
+      {
+        "name": "PMFBYGrievance fields and rules",
+        "reference": null,
+        "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Direction of this payload. OnDemand is the ask; Direct is an answer carrying a real case. Held locally rather than inherited from AgricultureResource, whose definition is framed around a Resource that holds information; here it says which way a commitment payload is travelling.\n",
+        "constraints": "enum: OnDemand, Direct",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Direct\"",
+        "enum": [
+          "OnDemand",
+          "Direct"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"openagrinet:PMFBYGrievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"PMFBY\",\n  \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicantPhone",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked otpChallenge.sentTo instead.\n",
+        "constraints": "pattern: \"^[6-9][0-9]{9}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"9876543210\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicationNo",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "PMFBY crop insurance application number the grievance concerns.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"KA2026KH00123456\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.orderId"
+        }
+      },
+      {
+        "path": "cropYear",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Crop year of the application, as a four-digit year. The portal returns request_year as a number, so the adapter stringifies it on the way back. It is the year of the application, not of the grievance: a 2025 crop year can carry a 2026 complaint date.\n",
+        "constraints": "pattern: \"^[0-9]{4}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "season",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Crop season of the application. PMFBY accepts three seasons and nothing else. The network carries the name; the adapter maps it to the numeric request_season the portal wants -- Kharif 1, Rabi 2, Zaid 3. Summer is the same season as Zaid and is sent as Zaid.\n",
+        "constraints": "enum: Kharif, Rabi, Zaid",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Kharif\"",
+        "enum": [
+          "Kharif",
+          "Rabi",
+          "Zaid"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "grievanceCategory",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"3.10\",\n  \"name\": \"Enrollment / Portal Issues Login\"\n}",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.code and .name",
+          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "grievanceCategory.code",
+        "type": "string",
+        "requirement": "At least one of code or name",
+        "description": "No description supplied.",
+        "constraints": "pattern: \"^[0-9]+\\\\.[0-9]+$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"3.10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceDescription",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on.\n",
+        "constraints": "minLength: 10",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Claim approved in July but no amount has been credited to my account.\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.longDesc",
+          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "otp",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "One-time password the portal sent to applicantPhone, presented to prove the number. PMFBY issues exactly six digits and rejects any other length. writeOnly is the contract: it travels inbound only. It must never be returned in any response, written to a log, or attached to a trace, and it is never forwarded to the lodge call.\n",
+        "constraints": "pattern: \"^[0-9]{6}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"482913\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "ticketNo",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
+        "constraints": "pattern: \"^[0-9]+$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"100626000099001\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "ticketId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The portal's internal key for the same ticket. PMFBY's lodge reply carries both ticket-no and ticket-id; ticketNo is the number a farmer is told and quotes back, this is the portal's own row id. Returned only; nothing sends it, and no later call is known to need it. Modelled so the lodge reply is fully accounted for.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"8842317\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "caseStatus",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "filedOn",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Date the grievance was filed with the portal.",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026-09-28\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "officerReply",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The reviewing officer's response, taken from the portal's latest remark. The portal sends an empty string while no reply exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"not yet answered\". There is no companion reply date -- PMFBY publishes none -- so this pack has no repliedOn.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Claim file reopened, awaiting surveyor report.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"sourceId\": \"pmfby\",\n  \"sourceName\": \"PMFBY Grievance Portal\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"pmfby\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"PMFBY Grievance Portal\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Acknowledgement that the portal has sent an OTP. Carries no secret: sentTo is the masked destination so the farmer can confirm which number was used, and the OTP itself is never returned.\n",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge.sentTo",
+        "type": "string",
+        "requirement": "When otpChallenge is supplied",
+        "description": "The destination number, masked. First two and last two digits only; the six between them are always X.\n",
+        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"98XXXXXX10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge.expiresAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When the OTP stops being accepted.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026-09-28T10:25:02Z\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "fields": [
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Direction of this payload. OnDemand is the ask; Direct is an answer carrying a real case. Held locally rather than inherited from AgricultureResource, whose definition is framed around a Resource that holds information; here it says which way a commitment payload is travelling.\n",
+        "constraints": "enum: OnDemand, Direct",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Direct\"",
+        "enum": [
+          "OnDemand",
+          "Direct"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"openagrinet:PMFBYGrievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"PMFBY\",\n  \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicantPhone",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked otpChallenge.sentTo instead.\n",
+        "constraints": "pattern: \"^[6-9][0-9]{9}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"9876543210\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicationNo",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "PMFBY crop insurance application number the grievance concerns.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"KA2026KH00123456\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.orderId"
+        }
+      },
+      {
+        "path": "cropYear",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Crop year of the application, as a four-digit year. The portal returns request_year as a number, so the adapter stringifies it on the way back. It is the year of the application, not of the grievance: a 2025 crop year can carry a 2026 complaint date.\n",
+        "constraints": "pattern: \"^[0-9]{4}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "season",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Crop season of the application. PMFBY accepts three seasons and nothing else. The network carries the name; the adapter maps it to the numeric request_season the portal wants -- Kharif 1, Rabi 2, Zaid 3. Summer is the same season as Zaid and is sent as Zaid.\n",
+        "constraints": "enum: Kharif, Rabi, Zaid",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Kharif\"",
+        "enum": [
+          "Kharif",
+          "Rabi",
+          "Zaid"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "grievanceCategory",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"3.10\",\n  \"name\": \"Enrollment / Portal Issues Login\"\n}",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.code and .name",
+          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "grievanceCategory.code",
+        "type": "string",
+        "requirement": "At least one of code or name",
+        "description": "No description supplied.",
+        "constraints": "pattern: \"^[0-9]+\\\\.[0-9]+$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"3.10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceDescription",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on.\n",
+        "constraints": "minLength: 10",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Claim approved in July but no amount has been credited to my account.\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.longDesc",
+          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "otp",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "One-time password the portal sent to applicantPhone, presented to prove the number. PMFBY issues exactly six digits and rejects any other length. writeOnly is the contract: it travels inbound only. It must never be returned in any response, written to a log, or attached to a trace, and it is never forwarded to the lodge call.\n",
+        "constraints": "pattern: \"^[0-9]{6}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"482913\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "ticketNo",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
+        "constraints": "pattern: \"^[0-9]+$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"100626000099001\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "ticketId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The portal's internal key for the same ticket. PMFBY's lodge reply carries both ticket-no and ticket-id; ticketNo is the number a farmer is told and quotes back, this is the portal's own row id. Returned only; nothing sends it, and no later call is known to need it. Modelled so the lodge reply is fully accounted for.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"8842317\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "caseStatus",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "filedOn",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Date the grievance was filed with the portal.",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026-09-28\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "officerReply",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The reviewing officer's response, taken from the portal's latest remark. The portal sends an empty string while no reply exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"not yet answered\". There is no companion reply date -- PMFBY publishes none -- so this pack has no repliedOn.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"Claim file reopened, awaiting surveyor report.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"sourceId\": \"pmfby\",\n  \"sourceName\": \"PMFBY Grievance Portal\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"pmfby\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"PMFBY Grievance Portal\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Acknowledgement that the portal has sent an OTP. Carries no secret: sentTo is the masked destination so the farmer can confirm which number was used, and the OTP itself is never returned.\n",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge.sentTo",
+        "type": "string",
+        "requirement": "When otpChallenge is supplied",
+        "description": "The destination number, masked. First two and last two digits only; the six between them are always X.\n",
+        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"98XXXXXX10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "otpChallenge.expiresAt",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When the OTP stops being accepted.",
+        "constraints": "format: \"date-time\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"2026-09-28T10:25:02Z\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "conditions": [
+      {
+        "field": "ticketNo",
+        "condition": "Direct"
+      },
+      {
+        "field": "caseStatus",
+        "condition": "Direct"
+      },
+      {
+        "field": "filedOn",
+        "condition": "Direct"
+      },
+      {
+        "field": "source",
+        "condition": "Direct"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Direct Grievance Registered",
+        "file": "examples/direct-grievance-registered.json",
+        "mode": "Direct",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"ticketId\": \"8842317\",\n  \"caseStatus\": {\n    \"code\": \"REGISTERED\",\n    \"name\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
+      },
+      {
+        "name": "Direct Grievance Replied",
+        "file": "examples/direct-grievance-replied.json",
+        "mode": "Direct",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"caseStatus\": {\n    \"code\": \"UNDER_REVIEW\",\n    \"name\": \"Under Review\"\n  },\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\",\n    \"name\": \"Enrollment / Portal Issues Login\"\n  },\n  \"grievanceDescription\": \"Claim approved in July but no amount has been credited to my account.\",\n  \"filedOn\": \"2026-09-28\",\n  \"officerReply\": \"Claim file reopened, awaiting surveyor report.\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
+      },
+      {
+        "name": "On Demand File Grievance",
+        "file": "examples/on-demand-file-grievance.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"applicantPhone\": \"9876543210\",\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\"\n  },\n  \"grievanceDescription\": \"Kharif 2026 claim has not been credited to my account.\",\n  \"otp\": \"482913\"\n}"
+      },
+      {
+        "name": "On Demand Otp Challenge",
+        "file": "examples/on-demand-otp-challenge.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"otpChallenge\": {\n    \"sentTo\": \"98XXXXXX10\",\n    \"expiresAt\": \"2026-09-28T10:25:02Z\"\n  }\n}"
+      },
+      {
+        "name": "On Demand Read Case",
+        "file": "examples/on-demand-read-case.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"applicantPhone\": \"9876543210\",\n  \"ticketNo\": \"100626000099001\"\n}"
+      }
+    ],
+    "artifacts": [
+      "vocab.jsonld",
+      "context.jsonld",
+      "attributes.yaml",
+      "profile.json",
+      "renderer.json"
+    ],
+    "beckn_container_by_action": {
+      "init": "commitmentAttributes",
+      "confirm": "commitmentAttributes",
+      "status": "commitmentAttributes",
+      "support": "channels"
+    }
+  },
+  "PMKISANGrievance-v0.1": {
+    "key": "PMKISANGrievance-v0.1",
+    "name": "PMKISANGrievance",
+    "display_name": "PM-KISAN Grievance API",
+    "version": "0.1.0",
+    "version_dir": "v0.1",
+    "source_dir": "api-schemas",
+    "protocol_version": "2.0",
+    "interaction_type": "Transact",
+    "description": "Attributes for grievances raised against Pradhan Mantri Kisan Samman Nidhi. This is an API schema, not a domain schema: it describes what the PM-KISAN grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve confirm, select and status without change. On support the payload attaches through channels instead, and two fields move into the Support object itself. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up. Nothing here identifies a single case the way PMFBY's ticketNo does: neither the lodge reply nor a status record carries a case identifier. A grievance is retrieved by the identity it was filed under, and every grievance on that identity comes back together.",
+    "canonical_type": "openagrinet:PMKISANGrievance",
+    "beckn_container": "commitmentAttributes",
+    "schema_name": "PMKISANGrievance",
+    "composition": [
+      {
+        "name": "PMKISANGrievance fields and rules",
+        "reference": null,
+        "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Direction of this payload. OnDemand is the ask; Direct is an answer carrying a real case. Held locally rather than inherited from AgricultureResource, whose definition is framed around a Resource that holds information; here it says which way a commitment payload is travelling.\n",
+        "constraints": "enum: OnDemand, Direct",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Direct\"",
+        "enum": [
+          "OnDemand",
+          "Direct"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"openagrinet:PMKISANGrievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"PM-KISAN\",\n  \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicantId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The PM-KISAN registration number the grievance is filed under, and the only identity this pack accepts. Aadhaar is deliberately not offered: nothing in the grievance flow requires one, so asking for one would collect an identifier the network has no use for.\nwriteOnly is the contract: it travels inbound only. It is never returned, logged, or attached to a trace -- the farmer supplied it and does not need it read back.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"UP12345678A\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceCategory",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"G003\",\n  \"name\": \"Installment not received\"\n}",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.code and .name",
+          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "grievanceCategory.code",
+        "type": "string",
+        "requirement": "At least one of code or name",
+        "description": "No description supplied.",
+        "constraints": "enum: G001, G002, G003, G004, G005, G006, G007, G008, G009, G010",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"G003\"",
+        "enum": [
+          "G001",
+          "G002",
+          "G003",
+          "G004",
+          "G005",
+          "G006",
+          "G007",
+          "G008",
+          "G009",
+          "G010"
+        ],
+        "enum_details": [
+          {
+            "value": "G001",
+            "meaning": "Account number not correct."
+          },
+          {
+            "value": "G002",
+            "meaning": "Online application pending for approval."
+          },
+          {
+            "value": "G003",
+            "meaning": "Installment not received."
+          },
+          {
+            "value": "G004",
+            "meaning": "Transaction failed."
+          },
+          {
+            "value": "G005",
+            "meaning": "Problem in Aadhaar correction."
+          },
+          {
+            "value": "G006",
+            "meaning": "Gender not correct."
+          },
+          {
+            "value": "G007",
+            "meaning": "Payment related."
+          },
+          {
+            "value": "G008",
+            "meaning": "Problem in OTP-based eKYC."
+          },
+          {
+            "value": "G009",
+            "meaning": "Problem in biometric-based eKYC."
+          },
+          {
+            "value": "G010",
+            "meaning": "Problem in facial-based eKYC."
+          }
+        ]
+      },
+      {
+        "path": "grievanceDescription",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
+        "constraints": "minLength: 10",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Third instalment for 2026 has not been credited.\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.longDesc",
+          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "caseStatus",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "filedOn",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date.\n",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"2026-09-28\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "officerReply",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The reviewing officer's response. Absent rather than null while no reply exists, so an absent field reads as \"not yet answered\".\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Bank account seeded with Aadhaar; payment in next cycle.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "repliedOn",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Date the officer replied. Absent until there is a reply.",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"2026-10-06\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"sourceId\": \"pmkisan\",\n  \"sourceName\": \"PM-KISAN Grievance Portal\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"pmkisan\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"PM-KISAN Grievance Portal\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "fields": [
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Direction of this payload. OnDemand is the ask; Direct is an answer carrying a real case. Held locally rather than inherited from AgricultureResource, whose definition is framed around a Resource that holds information; here it says which way a commitment payload is travelling.\n",
+        "constraints": "enum: OnDemand, Direct",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Direct\"",
+        "enum": [
+          "OnDemand",
+          "Direct"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"openagrinet:PMKISANGrievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"PM-KISAN\",\n  \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicantId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The PM-KISAN registration number the grievance is filed under, and the only identity this pack accepts. Aadhaar is deliberately not offered: nothing in the grievance flow requires one, so asking for one would collect an identifier the network has no use for.\nwriteOnly is the contract: it travels inbound only. It is never returned, logged, or attached to a trace -- the farmer supplied it and does not need it read back.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"UP12345678A\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceCategory",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"G003\",\n  \"name\": \"Installment not received\"\n}",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.code and .name",
+          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "grievanceCategory.code",
+        "type": "string",
+        "requirement": "At least one of code or name",
+        "description": "No description supplied.",
+        "constraints": "enum: G001, G002, G003, G004, G005, G006, G007, G008, G009, G010",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"G003\"",
+        "enum": [
+          "G001",
+          "G002",
+          "G003",
+          "G004",
+          "G005",
+          "G006",
+          "G007",
+          "G008",
+          "G009",
+          "G010"
+        ],
+        "enum_details": [
+          {
+            "value": "G001",
+            "meaning": "Account number not correct."
+          },
+          {
+            "value": "G002",
+            "meaning": "Online application pending for approval."
+          },
+          {
+            "value": "G003",
+            "meaning": "Installment not received."
+          },
+          {
+            "value": "G004",
+            "meaning": "Transaction failed."
+          },
+          {
+            "value": "G005",
+            "meaning": "Problem in Aadhaar correction."
+          },
+          {
+            "value": "G006",
+            "meaning": "Gender not correct."
+          },
+          {
+            "value": "G007",
+            "meaning": "Payment related."
+          },
+          {
+            "value": "G008",
+            "meaning": "Problem in OTP-based eKYC."
+          },
+          {
+            "value": "G009",
+            "meaning": "Problem in biometric-based eKYC."
+          },
+          {
+            "value": "G010",
+            "meaning": "Problem in facial-based eKYC."
+          }
+        ]
+      },
+      {
+        "path": "grievanceDescription",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
+        "constraints": "minLength: 10",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Third instalment for 2026 has not been credited.\"",
+        "enum": null,
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.descriptor.longDesc",
+          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+        }
+      },
+      {
+        "path": "caseStatus",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "A Beckn Descriptor with at least a machine-readable code or human-readable name.",
+        "constraints": "",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "filedOn",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date.\n",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"2026-09-28\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "officerReply",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "The reviewing officer's response. Absent rather than null while no reply exists, so an absent field reads as \"not yet answered\".\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"Bank account seeded with Aadhaar; payment in next cycle.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "repliedOn",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Date the officer replied. Absent until there is a reply.",
+        "constraints": "format: \"date\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"2026-10-06\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source",
+        "type": "object",
+        "requirement": "Direct",
+        "description": "Reference to the authoritative upstream source of information.",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference",
+        "origin": "PMKISANGrievance",
+        "example": "{\n  \"sourceId\": \"pmkisan\",\n  \"sourceName\": \"PM-KISAN Grievance Portal\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceId",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Stable identifier of the upstream source.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"pmkisan\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceName",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable source name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"PM-KISAN Grievance Portal\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "source.sourceUri",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Authoritative public or Provider-supplied source URI.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "conditions": [
+      {
+        "field": "caseStatus",
+        "condition": "Direct"
+      },
+      {
+        "field": "filedOn",
+        "condition": "Direct"
+      },
+      {
+        "field": "source",
+        "condition": "Direct"
+      }
+    ],
+    "examples": [
+      {
+        "name": "Direct Grievance Registered",
+        "file": "examples/direct-grievance-registered.json",
+        "mode": "Direct",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"caseStatus\": {\n    \"code\": \"REGISTERED\",\n    \"name\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
+      },
+      {
+        "name": "Direct Grievance Replied",
+        "file": "examples/direct-grievance-replied.json",
+        "mode": "Direct",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"caseStatus\": {\n    \"code\": \"REPLIED\",\n    \"name\": \"Replied\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"officerReply\": \"Bank account seeded with Aadhaar; payment in next cycle.\",\n  \"repliedOn\": \"2026-10-06\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
+      },
+      {
+        "name": "On Demand Lodge Grievance",
+        "file": "examples/on-demand-lodge-grievance.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345678A\",\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\"\n}"
+      },
+      {
+        "name": "On Demand Read Cases",
+        "file": "examples/on-demand-read-cases.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345ABCD\",\n  \"filedOn\": \"2026-09-28\"\n}"
+      }
+    ],
+    "artifacts": [
+      "vocab.jsonld",
+      "context.jsonld",
+      "attributes.yaml",
+      "profile.json",
+      "renderer.json"
+    ],
+    "beckn_container_by_action": {
+      "confirm": "commitmentAttributes",
+      "status": "commitmentAttributes",
+      "support": "channels"
+    }
   }
 }

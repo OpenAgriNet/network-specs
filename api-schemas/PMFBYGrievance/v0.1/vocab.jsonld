@@ -25,6 +25,7 @@
     { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
     { "@id": "openagrinet:otp", "@type": "rdfs:Property", "rdfs:label": "one-time password" },
     { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
+    { "@id": "openagrinet:ticketId", "@type": "rdfs:Property", "rdfs:label": "ticket id" },
     { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
     { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
     { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },

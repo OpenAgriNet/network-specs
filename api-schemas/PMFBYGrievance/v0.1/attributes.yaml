@@ -12,14 +12,22 @@ info:
 
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
-    attributes therefore serve init, confirm, select, status or any later
-    action without change.
+    attributes serve init, confirm, select and status without change. On
+    support the payload attaches through channels instead, and three fields
+    move into the Support object itself. x-beckn-container-by-action says
+    which container each action uses, and the per-field x-beckn-path says
+    where a field that moves ends up.
 
 components:
   schemas:
     PMFBYGrievance:
       type: object
       x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        init: commitmentAttributes
+        confirm: commitmentAttributes
+        status: commitmentAttributes
+        support: channels
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMFBYGrievance
@@ -86,6 +94,8 @@ components:
                   no-echo would be wrong; it is the caller's own application number
                   coming back.
               description: PMFBY crop insurance application number the grievance concerns.
+              x-beckn-path:
+                support: message.support.orderId
               x-jsonld-id: "openagrinet:applicationNo"
             cropYear:
               type: string
@@ -120,6 +130,10 @@ components:
                 cosmetic. The portal returns a name for each half on a case read
                 and the adapter joins them with a slash, so name follows code.
                 The portal publishes no list of valid pairs; see the pack README.
+              x-beckn-path:
+                support: message.support.descriptor.code and .name
+                status: message.contract.descriptor.code and .name, but only
+                  on the support flow; on the contract flow it stays here
               x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
             grievanceDescription:
               type: string
@@ -133,6 +147,10 @@ components:
               description: >
                 The farmer's account of the problem, in their own words. A minimum
                 length because a grievance that says nothing cannot be acted on.
+              x-beckn-path:
+                support: message.support.descriptor.longDesc
+                status: message.contract.descriptor.longDesc, but only on the
+                  support flow; on the contract flow it stays here
               x-jsonld-id: "openagrinet:grievanceDescription"
             otp:
               type: string
@@ -152,12 +170,33 @@ components:
 
             ticketNo:
               type: string
-              minLength: 1
+              pattern: '^[0-9]+$'
               description: >
                 Portal grievance ticket number. Returned when a grievance is filed
                 and presented again to read its replies, so it travels in both
-                directions.
+                directions. Digits only, and long enough not to be mistaken for a
+                phone number: the live system routes a ten-digit answer to the phone
+                and anything longer to the ticket, and observed tickets run twelve
+                to fifteen digits. The length is not pinned because that range is
+                described as typical, not as a rule.
               x-jsonld-id: "openagrinet:ticketNo"
+            ticketId:
+              type: string
+              minLength: 1
+              readOnly: true
+              description: >
+                The portal's internal key for the same ticket. PMFBY's lodge reply
+                carries both ticket-no and ticket-id; ticketNo is the number a
+                farmer is told and quotes back, this is the portal's own row id.
+                Returned only; nothing sends it, and no later call is known to
+                need it. Modelled so the lodge reply is fully accounted for.
+              x-oan-pii:
+                class: identifier
+                handling: [no-log, no-trace]
+                note: >
+                  Identifies one farmer's case. Returned on a lodge, so no-echo
+                  would be wrong.
+              x-jsonld-id: "openagrinet:ticketId"
             caseStatus:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"

@@ -12,8 +12,11 @@ info:
 
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
-    attributes therefore serve confirm, select, status or any later action
-    without change.
+    attributes serve confirm, select and status without change. On support the
+    payload attaches through channels instead, and two fields move into the
+    Support object itself. x-beckn-container-by-action says which container
+    each action uses, and the per-field x-beckn-path says where a field that
+    moves ends up.
 
     Nothing here identifies a single case the way PMFBY's ticketNo does: neither
     the lodge reply nor a status record carries a case identifier. A grievance is
@@ -25,6 +28,10 @@ components:
     PMKISANGrievance:
       type: object
       x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        confirm: commitmentAttributes
+        status: commitmentAttributes
+        support: channels
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMKISANGrievance
@@ -128,6 +135,10 @@ components:
                 closed list of ten codes, so the pack enumerates them and an
                 unknown code is refused at the network edge rather than upstream.
                 The code goes to the portal verbatim.
+              x-beckn-path:
+                support: message.support.descriptor.code and .name
+                status: message.contract.descriptor.code and .name, but only
+                  on the support flow; on the contract flow it stays here
               x-jsonld-id: "openagrinet:pmkisanGrievanceCategory"
             grievanceDescription:
               type: string
@@ -145,6 +156,10 @@ components:
                 The length is measured on the raw string; the upstream client measures
                 it after trimming, so ten characters of whitespace pass here and fail
                 there. The adapter trims before sending and re-checks.
+              x-beckn-path:
+                support: message.support.descriptor.longDesc
+                status: message.contract.descriptor.longDesc, but only on the
+                  support flow; on the contract flow it stays here
               x-jsonld-id: "openagrinet:grievanceDescription"
 
             caseStatus:

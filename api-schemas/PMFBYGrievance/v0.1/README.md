@@ -38,6 +38,10 @@ lifecycle, so it names the catalog entry and never the case. The case itself sit
 beside it on the commitment, and `commitmentAttributes` is the only thing that
 differs from one response to the next.
 
+This holds wherever a `Commitment` carries the payload. On `support` there is no
+commitment — the payload attaches through `Support.channels` instead. See
+"Direction, not action" below.
+
 The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal.
 This pack never sends one — see "Nothing on file" below.
 
@@ -46,11 +50,67 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init`, `confirm`, `select`, `status`, or any later action without change — nothing in this pack names an action.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init`, `confirm`, `select` and `status` without change.
+
+One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicationNo` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
+
+Whether the network lodges through `confirm` or through `support` is not settled — see `docs/grievance-usecase.md` and `docs/grievance-support-variant.md`. The pack describes both so that neither choice requires reopening it. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
 `Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_confirm` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional here because `on_confirm` does not repeat them.
 
 There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the OTP; reading a case sends the phone and the ticket; an OTP acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
+
+## Upstream response coverage
+
+Every field the portal sends back, and where it goes. Nothing is left unaccounted for.
+
+**Lodge reply** — the `grievance-response` group, four fields:
+
+| upstream | here | note |
+|---|---|---|
+| `status` | `caseStatus` | `name` verbatim, `code` derived by upper-casing |
+| `ticket-no` | `ticketNo` | the number the farmer is told |
+| `ticket-id` | `ticketId` | the portal's own row id, returned only |
+| `message` | *dropped* | the portal's own text. It may carry a stack trace, an internal hostname, or a quoted-back credential, so it is never returned. Log it redacted and return our own message. |
+
+`filedOn` and `source` are not in the reply. The adapter asserts them — `filedOn` from the
+request's own filing date, `source` from provider configuration. They are network-asserted,
+not portal-reported, and a caller cannot tell the difference from the payload. That is a
+known weakness, the same one `caseStatus` has on PM-KISAN.
+
+**Case read** — the record is much richer than the lodge reply. Every field it carries:
+
+| upstream | here | note |
+|---|---|---|
+| `GrievenceSupportTicketNo` | `ticketNo` | the response carries its own, so nothing needs echoing |
+| `ApplicationNo` | `applicationNo` | |
+| `GrievenceDescription` | `grievanceDescription` | |
+| `TicketCategoryID` + `TicketSubCategoryID` | `grievanceCategory.code` | joined with a dot |
+| `TicketCategoryName` + `TicketSubCategoryName` | `grievanceCategory.name` | joined with ` / `, mirroring the dot |
+| `RequestYear` | `cropYear` | arrives as a number, stringified |
+| `RequestSeason` | `season` | the portal's code mapped back to the name |
+| `TicketStatus` | `caseStatus` | `name` verbatim, `code` derived by upper-casing and replacing spaces |
+| `ComplaintDate` | `filedOn` | already ISO, no conversion |
+| `latestRemark` | `officerReply` | the portal sends `""` rather than omitting it; the adapter omits the field instead, so an absent `officerReply` reads as "not yet answered" |
+| `TicketStatusID` | *dropped* | an opaque internal key; the derived `caseStatus.code` carries the same meaning in a form a consumer can read |
+| `responseDynamic` | *consumed* | the success flag the guard tests; not a field |
+| `RequestorMobileNo` | *dropped* | personal data, and `applicantPhone` is never echoed |
+| `FarmerName` | *dropped* | personal data |
+| `Email` | *dropped* | personal data |
+| `StateMasterName` | *dropped* | personal data |
+| `DistrictMasterName` | *dropped* | personal data |
+| `SubDistrictName` | *dropped* | personal data |
+| `GramPanchayat` | *dropped* | personal data |
+| `NyayPanchayat` | *dropped* | personal data |
+| `VillageName` | *dropped* | personal data |
+| `InsurancePolicyNo` | *dropped* | personal data |
+| `InsuranceCompany` | *dropped* | personal data |
+
+Eleven of the record's fields are dropped and none of them may reach a payload, a log or a
+trace; see "Privacy" below. The response mapping is an allow-list, not a passthrough.
+
+The record carries no reply date anywhere, which is why this pack has no `repliedOn` —
+unlike PM-KISAN's, which has one.
 
 ## Nothing on file
 
@@ -151,4 +211,5 @@ It also does not define credentials or transport. Those live in the adapter conf
 - [On-demand: file a grievance](examples/on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
 - [On-demand: OTP challenge acknowledgement](examples/on-demand-otp-challenge.json)
+- [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
 - [Direct: grievance with officer reply](examples/direct-grievance-replied.json)

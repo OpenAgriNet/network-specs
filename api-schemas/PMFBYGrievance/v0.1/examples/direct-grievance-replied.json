@@ -12,6 +12,8 @@
     "name": "Under Review"
   },
   "applicationNo": "KA2026KH00123456",
+  "cropYear": "2026",
+  "season": "Kharif",
   "grievanceCategory": {
     "code": "3.10",
     "name": "Enrollment / Portal Issues Login"

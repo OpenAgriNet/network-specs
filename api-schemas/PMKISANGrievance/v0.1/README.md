@@ -38,6 +38,10 @@ lifecycle, so it names the catalog entry and never the case. The case itself sit
 beside it on the commitment, and `commitmentAttributes` is the only thing that
 differs from one response to the next.
 
+This holds wherever a `Commitment` carries the payload. On `support` there is no
+commitment — the payload attaches through `Support.channels` instead. See
+"Direction, not action" below.
+
 The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal.
 This pack never sends one — see "Nothing on file" below.
 
@@ -46,17 +50,68 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `confirm`, `select`, `status`, or any later action without change — nothing in this pack names an action.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `confirm`, `select` and `status` without change.
+
+One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and two fields leave the attributes object for the `Support` object's own slots: `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those two fields records where it goes. A field with no `x-beckn-path` never moves.
+
+`Support.orderId` stays empty in both directions. There is no application number here — the identity *is* the registration number, and `applicantId` is `writeOnly` and marked `no-echo`. `orderId` is a slot the provider fills on the way back, so putting a `no-echo` value in it would break the marking at the one point the adapter cannot enforce it. `Support` has no required fields, so leaving it out is legal.
+
+Whether the network lodges through `confirm` or through `support` is not settled — see `docs/grievance-usecase.md` and `docs/grievance-support-variant.md`. The pack describes both so that neither choice requires reopening it. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
 `Direct` payloads must carry `caseStatus`, `filedOn` and `source`. That is the whole of it, because it is the whole of what a lodge reply and a case read have in common: the lodge reply echoes the category, the case read carries the officer's reply instead, and neither has a case identifier at all.
 
 There is deliberately no matching `OnDemand` requirement. Lodging a grievance sends the identity, the category and the complaint; reading sends the identity and `filedOn`. Requiring the lodge fields here would reject a legitimate read. What each action must carry is enforced by that action's mapping guard, not by this pack.
 
+## Upstream response coverage
+
+Every field the portal sends back, and where it goes. Nothing is left unaccounted for.
+
+**Lodge reply** — `{ Responce, message }`, and nothing else. No identifier, no date, no
+status, no category.
+
+| upstream | here | note |
+|---|---|---|
+| `Responce` | — | `"True"` / `"False"`; becomes the ACK or a NACK, not a field |
+| `message` | *dropped* | the portal's own text, never returned; logged redacted |
+
+So a lodge response carries **no portal data at all**. `caseStatus` is asserted
+`REGISTERED`, `filedOn` is the request's own date, `source` is configuration, and the
+category and description are the caller's own words echoed back. This is worth stating
+plainly: the reply confirms receipt and nothing more.
+
+**Case read** — the record the portal returns, all fourteen fields:
+
+| upstream | here | note |
+|---|---|---|
+| `GrievanceDate` | `filedOn` | |
+| `GrievanceDescription` | `grievanceDescription` | verbatim |
+| `GrievanceStatus` | `caseStatus` | present only sometimes; see "Case status" |
+| `OfficerReply` | `officerReply` | |
+| `OfficeReplyDate` | `repliedOn` | |
+| `Reg_No` | *dropped* | the registration number the farmer sent. `applicantId` is `writeOnly` and `no-echo`, so it is not returned even though the portal returns it. |
+| `Farmer_Name` | *dropped* | personal data |
+| `Father_Name` | *dropped* | personal data |
+| `Gender` | *dropped* | personal data |
+| `MobileNo` | *dropped* | personal data |
+| `StateName` | *dropped* | personal data |
+| `DistrictName` | *dropped* | personal data |
+| `BlockName` | *dropped* | personal data |
+| `RevenueVillageName` | *dropped* | personal data |
+
+Nine of fourteen are dropped. That is the point of the allow-list.
+
+The category is not in the record either — a read cannot tell you what the grievance was
+about. Where a response carries `grievanceCategory`, it is the value the caller sent,
+echoed.
+
+The v1 gateway also emits a `grievance-id` tag that this pack does not model. See
+"No case identifier" below — it is unresolved, and it matters.
+
 ## No case identifier
 
 The lodge reply carries a success flag and a human-readable message, and nothing else — no case id, no reference, not even a date. A status record carries no identifier either: it names the registration number the grievance was filed under, which is shared by every grievance on that farmer. This pack therefore has no field corresponding to PMFBY's `ticketNo`, and that absence shapes everything downstream.
 
-A grievance is retrieved by the identity it was filed under, and the portal returns **every** grievance on that identity rather than one named case. There is no way to ask the portal for a single one. `filedOn` is what closes the gap: it is returned when the grievance is lodged, sent back on the read, and matched against each record's date to pick the one the caller means. Two grievances filed on the same identity on the same day are therefore indistinguishable.
+A grievance is retrieved by the identity it was filed under, and the portal returns **every** grievance on that identity rather than one named case. There is no way to ask the portal for a single one. `filedOn` is what closes the gap — but note where it comes from: the lodge reply carries no date, so it is the filing date the network itself recorded, not a value the portal confirmed. It is sent back on the read and matched against each record's `GrievanceDate` to pick the one the caller means. Two grievances filed on the same identity on the same day are therefore indistinguishable.
 
 **One piece of evidence points the other way and is unresolved.** The existing v1 BAP client reads a `grievance-id` value out of the BPP's response tags and prints it as "Grievance ID". Nothing in the portal client produces such a value, and no sample payload in the legacy tree shows one, so it is not established whether `grievance-id` comes from the portal, is assigned by the v1 BPP, or is a field the portal client silently drops. If it turns out to be portal-issued, this pack needs a case-identifier field and the retrieval story above changes. Resolve against a live response before v1.0.
 
