@@ -12,6 +12,10 @@
 
 ## Purpose
 
+> Upstream ground truth for this pack — what the portal actually accepts and returns,
+> with a source citation per field — is `docs/grievance-upstream-contracts.md` in the
+> OpenAgriNet docs. Where this README and that page disagree, that page wins.
+
 Describes what the PMFBY grievance API accepts and what it returns, so an experience layer can call it from the schema alone without reading adapter mapping files.
 
 This is an API schema, not a domain schema. A domain schema says what a thing *is* in the agriculture domain; this one says what one named Provider's API will take and give back.
@@ -78,7 +82,15 @@ request's own filing date, `source` from provider configuration. They are networ
 not portal-reported, and a caller cannot tell the difference from the payload. That is a
 known weakness, the same one `caseStatus` has on PM-KISAN.
 
-**Case read** — the record is much richer than the lodge reply. Every field it carries:
+**Case read** — the record is much richer than the lodge reply. Every field it carries.
+
+**Read this table as a proposal, not as verified fact.** Of the names below only
+`GrievenceSupportTicketNo` occurs anywhere we can check, and it occurs there as a *request*
+tag rather than a response field. The legacy client renders the reply generically without
+naming a single field, so the reply's shape is not observable from any source on disk.
+Confirm these names against PMFBY's own API document before anything is built on them. See
+`docs/grievance-upstream-contracts.md`, which is the master reference for what each portal
+actually sends.
 
 | upstream | here | note |
 |---|---|---|

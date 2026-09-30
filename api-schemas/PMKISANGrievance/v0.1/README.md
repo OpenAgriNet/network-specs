@@ -12,6 +12,10 @@
 
 ## Purpose
 
+> Upstream ground truth for this pack — what the portal actually accepts and returns,
+> with a source citation per field — is `docs/grievance-upstream-contracts.md` in the
+> OpenAgriNet docs. Where this README and that page disagree, that page wins.
+
 Describes what the PM-KISAN grievance API accepts and what it returns, so an experience layer can call it from the schema alone without reading adapter mapping files.
 
 This is an API schema, not a domain schema. A domain schema says what a thing *is* in the agriculture domain; this one says what one named Provider's API will take and give back.
@@ -85,7 +89,7 @@ plainly: the reply confirms receipt and nothing more.
 |---|---|---|
 | `GrievanceDate` | `filedOn` | |
 | `GrievanceDescription` | `grievanceDescription` | verbatim |
-| `GrievanceStatus` | `caseStatus` | present only sometimes; see "Case status" |
+| `GrievanceStatus` | `caseStatus` | the portal returns it; the legacy direct client's model drops it, so it is missing from any sample taken there. See "Case status" |
 | `OfficerReply` | `officerReply` | |
 | `OfficeReplyDate` | `repliedOn` | |
 | `Reg_No` | *dropped* | the registration number the farmer sent. `applicantId` is `writeOnly` and `no-echo`, so it is not returned even though the portal returns it. |
