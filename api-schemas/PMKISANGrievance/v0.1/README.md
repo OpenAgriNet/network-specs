@@ -39,7 +39,7 @@ beside it on the commitment, and `commitmentAttributes` is the only thing that
 differs from one response to the next.
 
 The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal.
-This pack does not use one to mean anything — see "Nothing on file" below.
+This pack never sends one — see "Nothing on file" below.
 
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
@@ -62,15 +62,17 @@ A grievance is retrieved by the identity it was filed under, and the portal retu
 
 ## Nothing on file
 
-A read that matches no case is an answer, not an error. The commitment comes back with its
-`status` unchanged and **no `commitmentAttributes` at all** — the carrier of the case is
-simply absent. `commitmentAttributes` is optional on a Beckn `Commitment`, so this needs no
-field in this pack and no `informationMode` value to describe it.
+A read that matches no case is an answer, not a failure — but it is stated rather than
+implied. It comes back as a `202` with Beckn's `AckNoCallback` body and the error code
+`BIZ_NO_RESULTS_FOUND`, with `status: "ACK"` because the request was accepted and processed.
+No attribute of this pack appears, and no `informationMode` value describes it.
 
-It is deliberately not signalled by an empty `resources` array. The resource is a fixed
-catalog pointer that says nothing about whether a case exists, so emptying it would mean
-nothing; and `Contract.commitments` has `minItems: 1`, so dropping the commitment is not
-available either.
+An earlier draft returned a commitment with `commitmentAttributes` omitted instead. That is
+spec-legal, since the property is optional, but a missing field is not a message: a consumer
+cannot tell an absent case from a provider that dropped the field. Nor would an empty
+`resources` array help — the resource is a fixed catalog pointer that says nothing about
+whether a case exists — and `Contract.commitments` has `minItems: 1`, so returning no
+commitment at all was never available.
 
 ## Composition
 
