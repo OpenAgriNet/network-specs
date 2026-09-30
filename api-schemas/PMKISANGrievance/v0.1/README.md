@@ -30,10 +30,16 @@ catalog entry. `Commitment` is "a specific promise... and the current lifecycle
 status of that promise", and its `DRAFT | ACTIVE | CLOSED` states are the
 grievance's own.
 
-The `Resource` does not disappear — `Commitment.resources` requires at least one,
-each with an `id` and a `quantity`. It stays thin: a pointer to the catalogable
-"grievance handling" entry the offer references. The case itself sits beside it
-on the commitment.
+The `Resource` does not disappear — `Commitment.resources` carries one, and each
+entry needs an `id` and a `quantity`. It stays thin: a pointer to the catalogable
+"grievance handling" entry the offer references. Its id is fixed for the provider
+(`res:pmkisan:grievance`) rather than minted per case, and it does not change across the
+lifecycle, so it names the catalog entry and never the case. The case itself sits
+beside it on the commitment, and `commitmentAttributes` is the only thing that
+differs from one response to the next.
+
+The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal.
+This pack does not use one to mean anything — see "Nothing on file" below.
 
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
@@ -53,6 +59,18 @@ The lodge reply carries a success flag and a human-readable message, and nothing
 A grievance is retrieved by the identity it was filed under, and the portal returns **every** grievance on that identity rather than one named case. There is no way to ask the portal for a single one. `filedOn` is what closes the gap: it is returned when the grievance is lodged, sent back on the read, and matched against each record's date to pick the one the caller means. Two grievances filed on the same identity on the same day are therefore indistinguishable.
 
 **One piece of evidence points the other way and is unresolved.** The existing v1 BAP client reads a `grievance-id` value out of the BPP's response tags and prints it as "Grievance ID". Nothing in the portal client produces such a value, and no sample payload in the legacy tree shows one, so it is not established whether `grievance-id` comes from the portal, is assigned by the v1 BPP, or is a field the portal client silently drops. If it turns out to be portal-issued, this pack needs a case-identifier field and the retrieval story above changes. Resolve against a live response before v1.0.
+
+## Nothing on file
+
+A read that matches no case is an answer, not an error. The commitment comes back with its
+`status` unchanged and **no `commitmentAttributes` at all** — the carrier of the case is
+simply absent. `commitmentAttributes` is optional on a Beckn `Commitment`, so this needs no
+field in this pack and no `informationMode` value to describe it.
+
+It is deliberately not signalled by an empty `resources` array. The resource is a fixed
+catalog pointer that says nothing about whether a case exists, so emptying it would mean
+nothing; and `Contract.commitments` has `minItems: 1`, so dropping the commitment is not
+available either.
 
 ## Composition
 
@@ -134,7 +152,7 @@ only by a person: a CI check can assert that no property marked `no-echo` appear
 
 The v1 adapter does the opposite: it returns `identity-no` and `lookup-type` tags, echoing the farmer's registration number straight back to the caller. A v2 adapter must not carry that behaviour over — `applicantId` is `writeOnly` precisely to forbid it.
 
-The portal returns the registration number with every record on a case read. It is consumed rather than surfaced: it names the resource and appears in no attribute.
+The portal returns the registration number with every record on a case read. It is consumed rather than surfaced: it is matched against the number the caller sent and then discarded. It appears in no attribute and in no identifier — an earlier draft keyed the resource id on it, which would have published the registration number in a field `writeOnly` cannot reach.
 
 `grievanceDescription` is free text that may contain personal details the schema cannot constrain.
 
@@ -170,4 +188,5 @@ The two `Direct` examples show the derived form of `caseStatus`. No sample of th
 - [On-demand: lodge a grievance](examples/on-demand-lodge-grievance.json)
 - [On-demand: read a case](examples/on-demand-read-cases.json)
 - [Direct: grievance registered](examples/direct-grievance-registered.json)
+- [Direct: grievance with officer reply](examples/direct-grievance-replied.json)
 - [Direct: grievance with officer reply](examples/direct-grievance-replied.json)

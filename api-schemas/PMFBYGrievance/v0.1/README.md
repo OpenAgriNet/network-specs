@@ -30,10 +30,16 @@ catalog entry. `Commitment` is "a specific promise... and the current lifecycle
 status of that promise", and its `DRAFT | ACTIVE | CLOSED` states are the
 grievance's own.
 
-The `Resource` does not disappear — `Commitment.resources` requires at least one,
-each with an `id` and a `quantity`. It stays thin: a pointer to the catalogable
-"grievance handling" entry the offer references. The case itself sits beside it
-on the commitment.
+The `Resource` does not disappear — `Commitment.resources` carries one, and each
+entry needs an `id` and a `quantity`. It stays thin: a pointer to the catalogable
+"grievance handling" entry the offer references. Its id is fixed for the provider
+(`res:pmfby:grievance`) rather than minted per case, and it does not change across the
+lifecycle, so it names the catalog entry and never the case. The case itself sits
+beside it on the commitment, and `commitmentAttributes` is the only thing that
+differs from one response to the next.
+
+The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal.
+This pack does not use one to mean anything — see "Nothing on file" below.
 
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
@@ -45,6 +51,18 @@ Direction is carried by `informationMode`, never by the Beckn action. `OnDemand`
 `Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_confirm` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional here because `on_confirm` does not repeat them.
 
 There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the OTP; reading a case sends the phone and the ticket; an OTP acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
+
+## Nothing on file
+
+A read that matches no case is an answer, not an error. The commitment comes back with its
+`status` unchanged and **no `commitmentAttributes` at all** — the carrier of the case is
+simply absent. `commitmentAttributes` is optional on a Beckn `Commitment`, so this needs no
+field in this pack and no `informationMode` value to describe it.
+
+It is deliberately not signalled by an empty `resources` array. The resource is a fixed
+catalog pointer that says nothing about whether a case exists, so emptying it would mean
+nothing; and `Contract.commitments` has `minItems: 1`, so dropping the commitment is not
+available either.
 
 ## Composition
 
