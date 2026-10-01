@@ -1,0 +1,34 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "PMKISANGrievance": "openagrinet:PMKISANGrievance",
+    "informationMode": "openagrinet:informationMode",
+    "providerId": "openagrinet:providerId",
+    "scheme": {
+      "@id": "openagrinet:scheme",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "registrationNo": "openagrinet:registrationNo",
+    "grievanceCategory": {
+      "@id": "openagrinet:pmkisanGrievanceCategory",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "grievanceDescription": "openagrinet:grievanceDescription",
+    "source": {
+      "@id": "openagrinet:source",
+      "@context": {
+        "sourceId": "openagrinet:sourceId",
+        "sourceName": "openagrinet:sourceName",
+        "sourceUri": "openagrinet:sourceUri"
+      }
+    },
+    "caseStatus": {
+      "@id": "openagrinet:caseStatus",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "filedOn": "openagrinet:filedOn",
+    "caseRemark": "openagrinet:caseRemark",
+    "remarkedOn": "openagrinet:remarkedOn"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMFBYGrievance",
+  "informationMode": "OnDemand",
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "challengeIssued": {
+    "method": "SMS_OTP",
+    "sentTo": "98XXXXXX10",
+    "expiresAt": "2026-09-28T10:25:02Z"
+  }
+}

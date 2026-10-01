@@ -1,0 +1,35 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMFBYGrievance",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PMFBY Grievance",
+      "rdfs:comment": "A grievance raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme, filed on demand and answered directly."
+    },
+    { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
+    { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
+    { "@id": "openagrinet:providerId", "@type": "rdfs:Property", "rdfs:label": "provider id", "rdfs:comment": "Network participant id of the provider, carried on support because a SupportAction composes no Contract to read it from." },
+    { "@id": "openagrinet:applicantPhone", "@type": "rdfs:Property", "rdfs:label": "applicant phone" },
+    { "@id": "openagrinet:applicationNo", "@type": "rdfs:Property", "rdfs:label": "application number" },
+    { "@id": "openagrinet:cropYear", "@type": "rdfs:Property", "rdfs:label": "crop year" },
+    { "@id": "openagrinet:season", "@type": "rdfs:Property", "rdfs:label": "season" },
+    {
+      "@id": "openagrinet:pmfbyGrievanceCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PMFBY grievance category",
+      "rdfs:comment": "Portal category and sub-category joined by a dot, such as 3.10. Deliberately a separate property from the PM-KISAN category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+    },
+    { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
+    { "@id": "openagrinet:challenge", "@type": "rdfs:Property", "rdfs:label": "challenge", "rdfs:comment": "Proof presented to satisfy an authentication challenge. The shape is network-wide; this pack narrows the method to SMS_OTP and the value to six digits." },
+    { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
+    { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
+    { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
+    { "@id": "openagrinet:caseRemark", "@type": "rdfs:Property", "rdfs:label": "case remark" },
+    { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
+    { "@id": "openagrinet:challengeIssued", "@type": "rdfs:Property", "rdfs:label": "challenge issued", "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret." }
+  ]
+}

@@ -112,6 +112,7 @@ layout: default
                 <p><strong>Allowed:</strong> {% for value in field.enum %}<code>{{ value }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}</p>
               {% endif %}
               {% if field.constraints != "" %}<p class="field-constraints">{{ field.constraints }}</p>{% endif %}
+              {% if field.beckn_path %}<p class="field-beckn-path">Carried outside the attributes object:{% for slot in field.beckn_path %} on <code>{{ slot[0] }}</code> at <code>{{ slot[1] }}</code>;{% endfor %}</p>{% endif %}
             </td>
             <td>{% if field.example %}<pre class="field-example"><code>{{ field.example | escape }}</code></pre>{% else %}<span aria-label="No example">—</span>{% endif %}</td>
           </tr>
@@ -165,5 +166,5 @@ layout: default
   </div>
 
   <h2>Repository documentation</h2>
-  <p>The <a href="https://github.com/OpenAgriNet/network-specs/blob/{{ site.github.build_revision }}/schema/{{ pack.name }}/{{ pack.version_dir }}/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the pack's purpose, boundaries, field semantics, and examples for contributors reviewing the source.</p>
+  <p>The <a href="https://github.com/OpenAgriNet/network-specs/blob/{{ site.github.build_revision }}/{{ pack.source_dir }}/{{ pack.name }}/{{ pack.version_dir }}/README.md" target="_blank" rel="noopener noreferrer">README</a> explains the pack's purpose, boundaries, field semantics, and examples for contributors reviewing the source.</p>
 </article>

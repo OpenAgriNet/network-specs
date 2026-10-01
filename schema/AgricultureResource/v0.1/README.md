@@ -59,6 +59,26 @@ This pack declares the shared agriculture field set. Other selected contracts re
 
 The mode does not describe freshness. Selected domain packs use timestamps and `validity` to state when Direct information applies.
 
+### Case status
+
+`CaseStatusCode` is the one place the network names the state of a case. A pack references it rather than deriving a code from whatever phrase its Portal happened to use.
+
+| Value | Meaning | Terminal |
+|---|---|---|
+| `Registered` | Lodged and acknowledged by the Portal, not yet picked up | no |
+| `UnderReview` | Being worked by the Portal | no |
+| `AwaitingApplicant` | Blocked on the applicant — a document or clarification is needed | no |
+| `Replied` | A response has been recorded; the case remains open | no |
+| `Resolved` | Closed with action taken | yes |
+| `Rejected` | Closed without action; the case was refused | yes |
+| `Closed` | Closed with no further action — lapsed, withdrawn, or closed automatically | yes |
+
+`code` is the network's word and is what a client branches on. The descriptor's `name` is the Portal's own phrase, kept verbatim, and is what a farmer is shown. The two are independent facts, which is why `code` is governed and `name` is not.
+
+An unrecognised Portal phrase maps to `UnderReview` and keeps the phrase in `name`. Nothing fails and nothing is lost. The adapter may infer a state; it must never infer that a case is finished, so anything unmapped stays non-terminal.
+
+`name` is present exactly when the Portal supplied a phrase. Where a status is the adapter's own inference — a lodge reply that carries no status at all — `code` stands alone, and its absence of a `name` is itself the signal that no Portal said so.
+
 ### Subject categories
 
 | Value | Meaning | Example |
@@ -124,6 +144,24 @@ A GeoJSON geometry carries a Point, Polygon, MultiPolygon, or another geometry s
 GeoJSON coordinates follow longitude, latitude order. H3 and other spatial indexes are implementation projections, not portable Resource fields.
 
 `TimePeriod` requires at least one boundary. Packs that need a bounded window use `ClosedTimePeriod`, which requires both `startsAt` and `endsAt`. Conformance checks verify that the start is not after the end.
+
+`CalendarDate` is the network's calendar date: `YYYY-MM-DD`, in IST. It carries a `pattern` as well as `format: date`, because the validator in use registers no string formats — `format` alone is annotation and would accept any string. The zone is part of the definition: a bare date has no day boundary of its own, so an adapter deriving one from a UTC clock records the previous day for anything happening before 05:30 IST.
+
+## Challenge
+
+`Challenge` and `ChallengeIssued` are defined here, not in the packs that use them, so the network has one shape for "prove who you are" instead of one per capability.
+
+| Definition | Direction | Fields |
+|---|---|---|
+| `ChallengeMethod` | — | The enum naming every mechanism the network recognises: `SMS_OTP`, `AADHAAR_OTP`, `DEVICE_TOKEN` |
+| `Challenge` | Inbound (`writeOnly` value) | `method`, `value`, optional `txnId` |
+| `ChallengeIssued` | Outbound (`readOnly`) | `method`, optional `sentTo`, `expiresAt`, `txnId` |
+
+A pack narrows both through `allOf` — `method` to the mechanisms its upstream actually offers, and `value` or `sentTo` to that mechanism's format. PMFBY narrows `method` to `SMS_OTP` and `value` to `^[0-9]{6}$`.
+
+Narrowing, not conditionals. A single `Challenge` with an `if`/`then` branch per method would validate nothing: the extended-schema validator parses `if`/`then` and never evaluates it. `allOf` it does evaluate, so a pinned format in a pack is genuinely enforced.
+
+Listing a mechanism here does not make any Provider accept it. Adding one to the network is a single entry in the `ChallengeMethod` enum; a pack starts accepting it only when it widens its own narrowing to include it, at which point that pack pins the new format. The cost of the second mechanism is paid by the pack that wants it, not by every pack.
 
 ## Non-goals
 
