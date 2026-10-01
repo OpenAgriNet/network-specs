@@ -73,14 +73,30 @@ components:
             scheme:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                - type: object
+                  required: [code]
+                  properties:
+                    code:
+                      enum: [PM-KISAN]
               description: >
                 Scheme the grievance is raised against. Present on every payload in
                 both directions, which is what makes it the one unconditional field.
+
+                code is pinned because this pack describes PM-KISAN and nothing
+                else, so there is exactly one legal value. Left open, a payload
+                could name another scheme and still validate here -- the one field
+                present on every payload would be the one field checking nothing.
+                allOf narrowing is evaluated, so this is enforced rather than
+                advisory. name is not pinned: the scheme has an official title but
+                it is written differently in different places, and the network has
+                no reason to arbitrate spelling. The title in the examples is
+                "Pradhan Mantri Kisan Samman Nidhi".
               x-jsonld-id: "openagrinet:scheme"
 
             providerId:
               type: string
               pattern: "^[a-z0-9][a-z0-9.-]*$"
+              maxLength: 100
               description: >
                 Network participant id of the provider this grievance is for, as
                 the registry holds it. Carried on support and nowhere else, and
@@ -93,9 +109,10 @@ components:
                 the caller already knows who it asked.
               x-jsonld-id: "openagrinet:providerId"
 
-            applicantId:
+            registrationNo:
               type: string
               pattern: "^[A-Za-z0-9]+$"
+              maxLength: 64
               x-oan-pii:
                 class: identifier
                 handling: [no-log, no-trace]
@@ -111,6 +128,14 @@ components:
                 and nothing else names a case. That is why it carries the same
                 x-beckn-path as PMFBY's applicationNo: on support it is the
                 orderId, the thing support is required against.
+
+                Named for the enrolment rather than for the applicant. An earlier
+                draft called it applicantId, which claimed the field names a person
+                and sat one letter from PMFBY's applicantPhone -- inviting a caller
+                to read the two as the same role and put a phone number in orderId.
+                It names neither a person nor a contact: it names the enrolment a
+                complaint is filed against, which is what applicationNo names on
+                PMFBY. The two ends match so the pair reads as one slot.
 
                 Aadhaar is deliberately not accepted. The portal takes a token
                 derived from one through /GrievanceAadhaarToken and carries it in
@@ -133,7 +158,7 @@ components:
                 native-script digits and forwards them unconverted.
               x-beckn-path:
                 support: message.support.orderId
-              x-jsonld-id: "openagrinet:applicantId"
+              x-jsonld-id: "openagrinet:registrationNo"
 
             grievanceCategory:
               allOf:
@@ -176,6 +201,7 @@ components:
             grievanceDescription:
               type: string
               minLength: 10
+              maxLength: 2000
               x-oan-pii:
                 class: freetext
                 handling: [no-log, no-trace]
@@ -184,7 +210,11 @@ components:
                   the farmer's own words and may hold anything the schema cannot see.
               description: >
                 The farmer's account of the problem, in their own words. A minimum
-                length because a grievance that says nothing cannot be acted on.
+                length because a grievance that says nothing cannot be acted on, and
+                a maximum because this is unvalidated free text arriving from a
+                caller and going on to the portal. Neither portal publishes an upper
+                limit, so the bound is the network's own and matches caseRemark:
+                2000 characters, long enough for any real account of a problem.
                 Travels in both directions: the portal returns it with each case.
                 The length is measured on the raw string; the upstream client measures
                 it after trimming, so ten characters of whitespace pass here and fail
@@ -197,38 +227,66 @@ components:
             caseStatus:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+                - type: object
+                  required: [code]
+                  properties:
+                    code:
+                      $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CaseStatusCode"
               description: >
-                Where the grievance stands. A status record carries the portal's own
-                GrievanceStatus; where it is present, name holds it verbatim and code
-                is derived from it by upper-casing and replacing spaces, as in the
-                PMFBY pack. Where it is absent the adapter falls back to REPLIED or
-                UNDER_REVIEW according to whether an officer reply is present. A lodge
-                reply carries no status of any kind, so REGISTERED is asserted there.
+                Where the grievance stands. code is the network's CaseStatusCode,
+                which is what a client branches on; name is the portal's own
+                GrievanceStatus phrase, kept verbatim, which is what the farmer is
+                shown.
+
+                name is present exactly when the portal supplied a phrase, and its
+                absence is informative. Where GrievanceStatus is missing the adapter
+                infers Replied or UnderReview according to whether a remark is
+                present; a lodge reply carries no status of any kind, so Registered
+                is asserted. In all three cases code stands alone, and a client can
+                tell an inferred state from one the portal stated.
+
+                A phrase the adapter does not recognise maps to UnderReview, keeping
+                the phrase in name -- never to a terminal state, which must come from
+                the portal.
+
+                The enum is not narrowed here. PM-KISAN's full GrievanceStatus
+                vocabulary is not published, so narrowing would be a guess that
+                rejects a legitimate state.
               x-jsonld-id: "openagrinet:caseStatus"
             filedOn:
-              type: string
-              format: date
+              $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate"
               description: >
                 Date the grievance was filed. Read from the portal on a case read;
                 generated by the adapter on a lodge, because the lodge reply carries
-                no date.
+                no date. An IST calendar date: the adapter must take today's date in
+                IST and not from a UTC clock, which would record the previous day for
+                any grievance filed before 05:30 IST. See CalendarDate.
               x-jsonld-id: "openagrinet:filedOn"
-            officerReply:
+            caseRemark:
               type: string
               minLength: 1
+              maxLength: 2000
               x-oan-pii:
                 class: freetext
                 handling: [no-log, no-trace]
-                note: Written by an officer about this farmer's case.
+                note: Written about this farmer's case.
               description: >
-                The reviewing officer's response. Absent rather than null while no
-                reply exists, so an absent field reads as "not yet answered".
-              x-jsonld-id: "openagrinet:officerReply"
-            repliedOn:
-              type: string
-              format: date
-              description: Date the officer replied. Absent until there is a reply.
-              x-jsonld-id: "openagrinet:repliedOn"
+                The most recent remark recorded against the case, read from the
+                portal's OfficerReply. Named for the case rather than for an author:
+                the network does not adopt one portal's field name, and the portal
+                itself is not consistent about the author -- its companion date is
+                OfficeReplyDate, an office rather than an officer. Absent rather than
+                null while nothing has been recorded, so an absent field reads as
+                "nothing recorded yet". Bounded at 2000 characters because it is
+                unvalidated upstream free text being placed in a response.
+              x-jsonld-id: "openagrinet:caseRemark"
+            remarkedOn:
+              $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate"
+              description: >
+                Date the remark was recorded, read from OfficeReplyDate. Absent until
+                there is a remark. An IST calendar date; see CalendarDate. PMFBY
+                publishes no equivalent, so this field is PM-KISAN only.
+              x-jsonld-id: "openagrinet:remarkedOn"
             source:
               allOf:
                 - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
@@ -244,6 +302,14 @@ components:
         # identity, the category and the complaint; reading sends the identity
         # alone. Requiring the lodge fields here would reject a legitimate read.
         # What each action must carry is enforced by that action's mapping guard.
+        #
+        # No case reference is required, because none exists. PM-KISAN issues no
+        # ticket, so a case is identified only by the registration number it was
+        # filed under and the date it was filed on -- which means two grievances
+        # filed on one day under one registration number cannot be told apart in
+        # a payload. The adapter selects on filedOn and PMFBY has ticketNo for
+        # exactly this job. The network cannot mint an identifier the portal does
+        # not issue, so this is recorded as a limitation rather than papered over.
         - if:
             properties:
               informationMode:

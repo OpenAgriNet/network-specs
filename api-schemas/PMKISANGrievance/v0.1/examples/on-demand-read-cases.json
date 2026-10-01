@@ -3,6 +3,6 @@
   "@type": "openagrinet:PMKISANGrievance",
   "informationMode": "OnDemand",
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
-  "applicantId": "UP12345ABCD",
+  "registrationNo": "UP12345ABCD",
   "filedOn": "2026-09-28"
 }

@@ -13,7 +13,7 @@
     { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
     { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
     { "@id": "openagrinet:providerId", "@type": "rdfs:Property", "rdfs:label": "provider id", "rdfs:comment": "Network participant id of the provider, carried on support because a SupportAction composes no Contract to read it from." },
-    { "@id": "openagrinet:applicantId", "@type": "rdfs:Property", "rdfs:label": "applicant identity" },
+    { "@id": "openagrinet:registrationNo", "@type": "rdfs:Property", "rdfs:label": "registration number" },
     {
       "@id": "openagrinet:pmkisanGrievanceCategory",
       "@type": "rdfs:Property",
@@ -23,8 +23,8 @@
     { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
     { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
     { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
-    { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
-    { "@id": "openagrinet:repliedOn", "@type": "rdfs:Property", "rdfs:label": "replied on" },
+    { "@id": "openagrinet:caseRemark", "@type": "rdfs:Property", "rdfs:label": "case remark" },
+    { "@id": "openagrinet:remarkedOn", "@type": "rdfs:Property", "rdfs:label": "remarked on" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" }
   ]
 }

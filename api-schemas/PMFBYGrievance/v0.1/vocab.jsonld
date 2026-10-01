@@ -26,10 +26,9 @@
     { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
     { "@id": "openagrinet:challenge", "@type": "rdfs:Property", "rdfs:label": "challenge", "rdfs:comment": "Proof presented to satisfy an authentication challenge. The shape is network-wide; this pack narrows the method to SMS_OTP and the value to six digits." },
     { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
-    { "@id": "openagrinet:ticketId", "@type": "rdfs:Property", "rdfs:label": "ticket id" },
     { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
     { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
-    { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
+    { "@id": "openagrinet:caseRemark", "@type": "rdfs:Property", "rdfs:label": "case remark" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
     { "@id": "openagrinet:challengeIssued", "@type": "rdfs:Property", "rdfs:label": "challenge issued", "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret." }
   ]

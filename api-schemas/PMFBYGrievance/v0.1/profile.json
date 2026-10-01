@@ -23,7 +23,6 @@
   "result_fields": [
     "scheme",
     "ticketNo",
-    "ticketId",
     "caseStatus",
     "filedOn",
     "applicationNo",
@@ -31,7 +30,7 @@
     "season",
     "grievanceCategory",
     "grievanceDescription",
-    "officerReply",
+    "caseRemark",
     "source"
   ],
   "indexable_paths": [

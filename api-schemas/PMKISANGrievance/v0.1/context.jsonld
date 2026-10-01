@@ -9,7 +9,7 @@
       "@id": "openagrinet:scheme",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
-    "applicantId": "openagrinet:applicantId",
+    "registrationNo": "openagrinet:registrationNo",
     "grievanceCategory": {
       "@id": "openagrinet:pmkisanGrievanceCategory",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
@@ -28,7 +28,7 @@
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
     "filedOn": "openagrinet:filedOn",
-    "officerReply": "openagrinet:officerReply",
-    "repliedOn": "openagrinet:repliedOn"
+    "caseRemark": "openagrinet:caseRemark",
+    "remarkedOn": "openagrinet:remarkedOn"
   }
 }

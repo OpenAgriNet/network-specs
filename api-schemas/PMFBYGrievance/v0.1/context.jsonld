@@ -34,13 +34,12 @@
       }
     },
     "ticketNo": "openagrinet:ticketNo",
-    "ticketId": "openagrinet:ticketId",
     "caseStatus": {
       "@id": "openagrinet:caseStatus",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
     "filedOn": "openagrinet:filedOn",
-    "officerReply": "openagrinet:officerReply",
+    "caseRemark": "openagrinet:caseRemark",
     "challengeIssued": {
       "@id": "openagrinet:challengeIssued",
       "@context": {

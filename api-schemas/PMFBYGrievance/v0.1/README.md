@@ -68,7 +68,7 @@ value the contract legs supply and it resolves to the same registry record; only
 location differs. `scheme.code` is not a substitute: it names a scheme rather than a
 participant, and it reads `PMFBY` where the registry holds `pmfby`.
 
-`Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the application number back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `ticketNo` on the channel, with `ticketId` beside it. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs because that scheme issues no ticket at all. One field, one meaning, both schemes.
+`Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the application number back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `ticketNo` on the channel. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs because that scheme issues no ticket at all. One field, one meaning, both schemes.
 
 The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
@@ -84,15 +84,16 @@ Every field the portal sends back, and where it goes. Nothing is left unaccounte
 
 | upstream | here | note |
 |---|---|---|
-| `status` | `caseStatus` | `name` verbatim, `code` derived by upper-casing |
+| `status` | `caseStatus` | the lodge reply states no status, so `code` is asserted `Registered` and no `name` accompanies it |
 | `ticket-no` | `ticketNo` | the number the farmer is told |
-| `ticket-id` | `ticketId` | the portal's own row id, returned only |
+| `ticket-id` | *dropped* | the portal's own row id. An internal key with no consumer: nothing sends it and no later call needs it. The same reason `TicketStatusID` is not mapped. |
 | `message` | *dropped* | the portal's own text. It may carry a stack trace, an internal hostname, or a quoted-back credential, so it is never returned. Log it redacted and return our own message. |
 
 `filedOn` and `source` are not in the reply. The adapter asserts them — `filedOn` from the
 request's own filing date, `source` from provider configuration. They are network-asserted,
 not portal-reported, and a caller cannot tell the difference from the payload. That is a
-known weakness, the same one `caseStatus` has on PM-KISAN.
+known weakness. `caseStatus` no longer has it: an inferred status carries `code` alone,
+so the absent `name` tells a caller the portal did not say so.
 
 **Case read** — the record is much richer than the lodge reply. Every field it carries.
 
@@ -113,10 +114,10 @@ actually sends.
 | `TicketCategoryName` + `TicketSubCategoryName` | `grievanceCategory.name` | joined with ` / `, mirroring the dot |
 | `RequestYear` | `cropYear` | arrives as a number, stringified |
 | `RequestSeason` | `season` | the portal's code mapped back to the name |
-| `TicketStatus` | `caseStatus` | `name` verbatim, `code` derived by upper-casing and replacing spaces |
-| `ComplaintDate` | `filedOn` | already ISO, no conversion |
-| `latestRemark` | `officerReply` | the portal sends `""` rather than omitting it; the adapter omits the field instead, so an absent `officerReply` reads as "not yet answered" |
-| `TicketStatusID` | *dropped* | an opaque internal key; the derived `caseStatus.code` carries the same meaning in a form a consumer can read |
+| `TicketStatus` | `caseStatus` | the phrase verbatim into `name`; mapped to a `CaseStatusCode` for `code` |
+| `ComplaintDate` | `filedOn` | already ISO, no conversion; an IST calendar date |
+| `latestRemark` | `caseRemark` | the portal sends `""` rather than omitting it; the adapter omits the field instead, so an absent `caseRemark` reads as "nothing recorded yet" |
+| `TicketStatusID` | *dropped* | an opaque internal key; `caseStatus.code` carries the state in the network's own vocabulary instead |
 | `responseDynamic` | *consumed* | the success flag the guard tests; not a field |
 | `RequestorMobileNo` | *dropped* | personal data, and `applicantPhone` is never echoed |
 | `FarmerName` | *dropped* | personal data |
@@ -133,7 +134,7 @@ actually sends.
 Eleven of the record's fields are dropped and none of them may reach a payload, a log or a
 trace; see "Privacy" below. The response mapping is an allow-list, not a passthrough.
 
-The record carries no reply date anywhere, which is why this pack has no `repliedOn` —
+The record carries no remark date anywhere, which is why this pack has no `remarkedOn` —
 unlike PM-KISAN's, which has one.
 
 ## Nothing on file
@@ -158,6 +159,18 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 `grievanceCategory` and `caseStatus`, and the shared `SourceReference` for
 `source`.
 
+## How fields are named
+
+Three prefixes, and which one a field takes says what kind of thing it is.
+
+- **`grievance…`** — the complaint as the farmer filed it: `grievanceCategory`, `grievanceDescription`. These do not change once lodged.
+- **`case…`** — the record as it now stands at the portal: `caseStatus`, `caseRemark`. These change between one read and the next.
+- **verb + `On`** — a date: `filedOn`. Never `…Date`, and never a portal field name.
+
+Everything else names itself: `scheme`, `source`, `providerId`, `informationMode`.
+
+Two rules sit behind this. A field is named for the role it plays on the network, never for the portal field it happens to read — the two portals call the same remark `latestRemark` and `OfficerReply`, and neither word belongs in a network vocabulary. And a field claims only what we can show: `caseRemark` is named for the case rather than an author because no portal publishes a reliable one.
+
 ## Fields
 
 "Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
@@ -175,9 +188,9 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 | `grievanceDescription` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
 | `challenge` | Ask, when filing | Proof of the phone number. The network-wide `Challenge` shape narrowed to what PMFBY offers: `method` is `SMS_OTP`, `value` is six digits. `writeOnly` as a whole object |
 | `ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
-| `caseStatus` | `Direct` | Where the grievance stands; `name` verbatim from the portal, `code` derived from it |
-| `filedOn` | `Direct` | Date the grievance was filed |
-| `officerReply` | Optional in `Direct` | The portal's latest remark. Absent rather than empty while no reply exists. PMFBY publishes no reply date, so there is no `repliedOn` |
+| `caseStatus` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one |
+| `filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
+| `caseRemark` | Optional in `Direct` | The latest remark recorded against the case, bounded at 2000 characters. Absent rather than empty while nothing is recorded. PMFBY publishes no remark date, so there is no `remarkedOn` |
 | `source` | `Direct` | Authoritative upstream source |
 | `challengeIssued` | Answer to a challenge request | Which mechanism was used, the masked destination and the expiry — all three required; carries no secret. `readOnly` |
 
@@ -257,4 +270,4 @@ It also does not define credentials or transport. Those live in the adapter conf
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
 - [On-demand: challenge acknowledgement](examples/on-demand-challenge-issued.json)
 - [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
-- [Direct: grievance with officer reply](examples/direct-grievance-replied.json)
+- [Direct: grievance with a remark recorded](examples/direct-grievance-replied.json)

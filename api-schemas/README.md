@@ -21,7 +21,7 @@ Both are new with `api-schemas/`; the eight domain packs use neither.
 
 ## Shared and unshared terms
 
-Packs reuse a term's IRI when the term means the same thing everywhere — `scheme`, `caseStatus`, `filedOn`, `officerReply`, `repliedOn` and `source` are shared across the grievance packs.
+Packs reuse a term's IRI when the term means the same thing everywhere — `scheme`, `caseStatus`, `filedOn`, `caseRemark`, `remarkedOn` and `source` are shared across the grievance packs.
 
 A term is split when the value spaces are incompatible. `grievanceCategory` keeps its JSON key in both grievance packs but resolves to `openagrinet:pmfbyGrievanceCategory` in one and `openagrinet:pmkisanGrievanceCategory` in the other, because a dotted `3.10` and a closed `G001`–`G010` list cannot share one property and still be reasoned over. Payloads are identical either way; only the context mapping differs.
 

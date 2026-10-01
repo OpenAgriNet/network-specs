@@ -3,10 +3,10 @@
   "@type": "openagrinet:PMKISANGrievance",
   "informationMode": "Direct",
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
-  "caseStatus": { "code": "REPLIED", "name": "Replied" },
+  "caseStatus": { "code": "Replied" },
   "filedOn": "2026-09-28",
   "grievanceDescription": "Third instalment for 2026 has not been credited.",
-  "officerReply": "Bank account seeded with Aadhaar; payment in next cycle.",
-  "repliedOn": "2026-10-06",
+  "caseRemark": "Bank account seeded with Aadhaar; payment in next cycle.",
+  "remarkedOn": "2026-10-06",
   "source": { "sourceId": "pmkisan", "sourceName": "PM-KISAN Grievance Portal" }
 }

@@ -744,7 +744,7 @@
     "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": null,
-    "description": "Shared agriculture attributes for information published on OpenAgriNet. Attaches to beckn:Resource through resourceAttributes. It also holds the cross-cutting definitions every pack reuses rather than restates -- descriptors, addresses, locations, time periods, source references, and the authentication Challenge. A pack references one of these and narrows it; the definition stays in one place.",
+    "description": "Shared agriculture attributes for information published on OpenAgriNet. Attaches to beckn:Resource through resourceAttributes. It also holds the cross-cutting definitions every pack reuses rather than restates -- descriptors, addresses, locations, time periods, source references, calendar dates, case status, and the authentication Challenge. A pack references one of these and narrows it; the definition stays in one place.",
     "canonical_type": "openagrinet:AgricultureResource",
     "beckn_container": "resourceAttributes",
     "schema_name": "AgricultureResource",
@@ -6896,11 +6896,25 @@
         "enum_details": null
       },
       {
+        "path": "scheme.code",
+        "type": "object",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: PMFBY",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"PMFBY\"",
+        "enum": [
+          "PMFBY"
+        ],
+        "enum_details": null
+      },
+      {
         "path": "providerId",
         "type": "string",
         "requirement": "Optional",
         "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: every other action composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PMFBY and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
-        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\" · maxLength: 100",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"pmfby\"",
@@ -6924,7 +6938,7 @@
         "type": "string",
         "requirement": "Optional",
         "description": "PMFBY crop insurance application number the grievance concerns. On support it is the orderId, the thing support is required against, and it holds that meaning in both directions: the ask sends it and on_support echoes it unchanged. The ticket the portal issues does not go there -- it comes back in ticketNo on the channel, because a ticket is not what the complaint is against.\n",
-        "constraints": "minLength: 1",
+        "constraints": "minLength: 1 · maxLength: 64",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"KA2026KH00123456\"",
@@ -6994,8 +7008,8 @@
         "path": "grievanceDescription",
         "type": "string",
         "requirement": "Optional",
-        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on.\n",
-        "constraints": "minLength: 10",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on, and a maximum because this is unvalidated free text arriving from a caller and going on to the portal. Neither portal publishes an upper limit, so the bound is the network's own and matches caseRemark: 2000 characters, long enough for any real account of a problem.\n",
+        "constraints": "minLength: 10 · maxLength: 2000",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"Claim approved in July but no amount has been credited to my account.\"",
@@ -7076,23 +7090,11 @@
         "path": "ticketNo",
         "type": "string",
         "requirement": "Direct",
-        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
-        "constraints": "pattern: \"^[0-9]+$\"",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The exact length is not pinned because that range is described as typical, not as a rule; the maxLength is a sanity bound well clear of it, not a statement about the format.\n",
+        "constraints": "pattern: \"^[0-9]+$\" · maxLength: 32",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"100626000099001\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "ticketId",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "The portal's internal key for the same ticket. PMFBY's lodge reply carries both ticket-no and ticket-id; ticketNo is the number a farmer is told and quotes back, this is the portal's own row id. Returned only; nothing sends it, and no later call is known to need it. Modelled so the lodge reply is fully accounted for.\n",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "PMFBYGrievance",
-        "example": "\"8842317\"",
         "enum": null,
         "enum_details": null
       },
@@ -7104,28 +7106,84 @@
         "constraints": "",
         "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
         "origin": "PMFBYGrievance",
-        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "example": "{\n  \"code\": \"Registered\"\n}",
         "enum": null,
         "enum_details": null
+      },
+      {
+        "path": "caseStatus.code",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Where a case stands, in the network's own vocabulary. This enum is the one place the network names a case state; a pack references it rather than inventing a vocabulary from its Portal's wording.\nThe split is deliberate. code is the network's word and is what a client branches on; the accompanying descriptor name is the Portal's own phrase, kept verbatim, and is what a farmer is shown. A Portal phrase the adapter does not recognise maps to UnderReview -- non-terminal, and honest -- with the phrase preserved in name. The adapter may infer a state; it must never infer that a case is finished, so anything unmapped stays non-terminal.\nA pack narrows this to the states its Portal can actually produce, but only once that Portal's status vocabulary is published. Narrowing on a guess would reject a legitimate state, which is worse than accepting one the Portal never sends.\n",
+        "constraints": "enum: Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CaseStatusCode",
+        "origin": "PMFBYGrievance",
+        "example": "\"Registered\"",
+        "enum": [
+          "Registered",
+          "UnderReview",
+          "AwaitingApplicant",
+          "Replied",
+          "Resolved",
+          "Rejected",
+          "Closed"
+        ],
+        "enum_details": [
+          {
+            "value": "Registered",
+            "meaning": "Lodged and acknowledged by the Portal, not yet picked up.",
+            "terminal": false
+          },
+          {
+            "value": "UnderReview",
+            "meaning": "Being worked by the Portal. Also the fallback for a Portal phrase the adapter does not recognise.",
+            "terminal": false
+          },
+          {
+            "value": "AwaitingApplicant",
+            "meaning": "Blocked on the applicant -- a document or a clarification is needed before work can continue.",
+            "terminal": false
+          },
+          {
+            "value": "Replied",
+            "meaning": "A response has been recorded against the case, which remains open.",
+            "terminal": false
+          },
+          {
+            "value": "Resolved",
+            "meaning": "Closed with action taken.",
+            "terminal": true
+          },
+          {
+            "value": "Rejected",
+            "meaning": "Closed without action; the case was refused.",
+            "terminal": true
+          },
+          {
+            "value": "Closed",
+            "meaning": "Closed with no further action -- lapsed, withdrawn, or closed automatically.",
+            "terminal": true
+          }
+        ]
       },
       {
         "path": "filedOn",
         "type": "string",
         "requirement": "Direct",
-        "description": "Date the grievance was filed with the portal.",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the grievance was filed with the portal, read from ComplaintDate. An IST calendar date; see CalendarDate.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMFBYGrievance",
         "example": "\"2026-09-28\"",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "officerReply",
+        "path": "caseRemark",
         "type": "string",
         "requirement": "Optional",
-        "description": "The reviewing officer's response, taken from the portal's latest remark. The portal sends an empty string while no reply exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"not yet answered\". There is no companion reply date -- PMFBY publishes none -- so this pack has no repliedOn.\n",
-        "constraints": "minLength: 1",
+        "description": "The most recent remark recorded against the case, read from latestRemark. Named for the case rather than for an author: the portal publishes no author, and a PMFBY remark may come from a reviewing officer, from an insurance company handling the claim, or from the system closing a ticket. It is an annotation on a record, not necessarily a reply addressed to the farmer.\nThe portal sends an empty string while no remark exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"nothing recorded yet\". Bounded at 2000 characters because it is unvalidated upstream free text being placed in a response.\nThere is no companion date -- PMFBY publishes none -- so this pack has no remarkedOn.\n",
+        "constraints": "minLength: 1 · maxLength: 2000",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"Claim file reopened, awaiting surveyor report.\"",
@@ -7300,11 +7358,25 @@
         "enum_details": null
       },
       {
+        "path": "scheme.code",
+        "type": "object",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: PMFBY",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"PMFBY\"",
+        "enum": [
+          "PMFBY"
+        ],
+        "enum_details": null
+      },
+      {
         "path": "providerId",
         "type": "string",
         "requirement": "Optional",
         "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: every other action composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PMFBY and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
-        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\" · maxLength: 100",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"pmfby\"",
@@ -7328,7 +7400,7 @@
         "type": "string",
         "requirement": "Optional",
         "description": "PMFBY crop insurance application number the grievance concerns. On support it is the orderId, the thing support is required against, and it holds that meaning in both directions: the ask sends it and on_support echoes it unchanged. The ticket the portal issues does not go there -- it comes back in ticketNo on the channel, because a ticket is not what the complaint is against.\n",
-        "constraints": "minLength: 1",
+        "constraints": "minLength: 1 · maxLength: 64",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"KA2026KH00123456\"",
@@ -7398,8 +7470,8 @@
         "path": "grievanceDescription",
         "type": "string",
         "requirement": "Optional",
-        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on.\n",
-        "constraints": "minLength: 10",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on, and a maximum because this is unvalidated free text arriving from a caller and going on to the portal. Neither portal publishes an upper limit, so the bound is the network's own and matches caseRemark: 2000 characters, long enough for any real account of a problem.\n",
+        "constraints": "minLength: 10 · maxLength: 2000",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"Claim approved in July but no amount has been credited to my account.\"",
@@ -7480,23 +7552,11 @@
         "path": "ticketNo",
         "type": "string",
         "requirement": "Direct",
-        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
-        "constraints": "pattern: \"^[0-9]+$\"",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The exact length is not pinned because that range is described as typical, not as a rule; the maxLength is a sanity bound well clear of it, not a statement about the format.\n",
+        "constraints": "pattern: \"^[0-9]+$\" · maxLength: 32",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"100626000099001\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "ticketId",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "The portal's internal key for the same ticket. PMFBY's lodge reply carries both ticket-no and ticket-id; ticketNo is the number a farmer is told and quotes back, this is the portal's own row id. Returned only; nothing sends it, and no later call is known to need it. Modelled so the lodge reply is fully accounted for.\n",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "PMFBYGrievance",
-        "example": "\"8842317\"",
         "enum": null,
         "enum_details": null
       },
@@ -7508,28 +7568,84 @@
         "constraints": "",
         "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
         "origin": "PMFBYGrievance",
-        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "example": "{\n  \"code\": \"Registered\"\n}",
         "enum": null,
         "enum_details": null
+      },
+      {
+        "path": "caseStatus.code",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Where a case stands, in the network's own vocabulary. This enum is the one place the network names a case state; a pack references it rather than inventing a vocabulary from its Portal's wording.\nThe split is deliberate. code is the network's word and is what a client branches on; the accompanying descriptor name is the Portal's own phrase, kept verbatim, and is what a farmer is shown. A Portal phrase the adapter does not recognise maps to UnderReview -- non-terminal, and honest -- with the phrase preserved in name. The adapter may infer a state; it must never infer that a case is finished, so anything unmapped stays non-terminal.\nA pack narrows this to the states its Portal can actually produce, but only once that Portal's status vocabulary is published. Narrowing on a guess would reject a legitimate state, which is worse than accepting one the Portal never sends.\n",
+        "constraints": "enum: Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CaseStatusCode",
+        "origin": "PMFBYGrievance",
+        "example": "\"Registered\"",
+        "enum": [
+          "Registered",
+          "UnderReview",
+          "AwaitingApplicant",
+          "Replied",
+          "Resolved",
+          "Rejected",
+          "Closed"
+        ],
+        "enum_details": [
+          {
+            "value": "Registered",
+            "meaning": "Lodged and acknowledged by the Portal, not yet picked up.",
+            "terminal": false
+          },
+          {
+            "value": "UnderReview",
+            "meaning": "Being worked by the Portal. Also the fallback for a Portal phrase the adapter does not recognise.",
+            "terminal": false
+          },
+          {
+            "value": "AwaitingApplicant",
+            "meaning": "Blocked on the applicant -- a document or a clarification is needed before work can continue.",
+            "terminal": false
+          },
+          {
+            "value": "Replied",
+            "meaning": "A response has been recorded against the case, which remains open.",
+            "terminal": false
+          },
+          {
+            "value": "Resolved",
+            "meaning": "Closed with action taken.",
+            "terminal": true
+          },
+          {
+            "value": "Rejected",
+            "meaning": "Closed without action; the case was refused.",
+            "terminal": true
+          },
+          {
+            "value": "Closed",
+            "meaning": "Closed with no further action -- lapsed, withdrawn, or closed automatically.",
+            "terminal": true
+          }
+        ]
       },
       {
         "path": "filedOn",
         "type": "string",
         "requirement": "Direct",
-        "description": "Date the grievance was filed with the portal.",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the grievance was filed with the portal, read from ComplaintDate. An IST calendar date; see CalendarDate.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMFBYGrievance",
         "example": "\"2026-09-28\"",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "officerReply",
+        "path": "caseRemark",
         "type": "string",
         "requirement": "Optional",
-        "description": "The reviewing officer's response, taken from the portal's latest remark. The portal sends an empty string while no reply exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"not yet answered\". There is no companion reply date -- PMFBY publishes none -- so this pack has no repliedOn.\n",
-        "constraints": "minLength: 1",
+        "description": "The most recent remark recorded against the case, read from latestRemark. Named for the case rather than for an author: the portal publishes no author, and a PMFBY remark may come from a reviewing officer, from an insurance company handling the claim, or from the system closing a ticket. It is an annotation on a record, not necessarily a reply addressed to the farmer.\nThe portal sends an empty string while no remark exists; the adapter omits the field rather than passing the empty string through, so an absent field reads as \"nothing recorded yet\". Bounded at 2000 characters because it is unvalidated upstream free text being placed in a response.\nThere is no companion date -- PMFBY publishes none -- so this pack has no remarkedOn.\n",
+        "constraints": "minLength: 1 · maxLength: 2000",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"Claim file reopened, awaiting surveyor report.\"",
@@ -7686,13 +7802,13 @@
         "name": "Direct Grievance Registered",
         "file": "examples/direct-grievance-registered.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"ticketId\": \"8842317\",\n  \"caseStatus\": {\n    \"code\": \"REGISTERED\",\n    \"name\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"caseStatus\": {\n    \"code\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
       },
       {
         "name": "Direct Grievance Replied",
         "file": "examples/direct-grievance-replied.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"caseStatus\": {\n    \"code\": \"UNDER_REVIEW\",\n    \"name\": \"Under Review\"\n  },\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\",\n    \"name\": \"Enrollment / Portal Issues Login\"\n  },\n  \"grievanceDescription\": \"Claim approved in July but no amount has been credited to my account.\",\n  \"filedOn\": \"2026-09-28\",\n  \"officerReply\": \"Claim file reopened, awaiting surveyor report.\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"caseStatus\": {\n    \"code\": \"UnderReview\",\n    \"name\": \"Under Review\"\n  },\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\",\n    \"name\": \"Enrollment / Portal Issues Login\"\n  },\n  \"grievanceDescription\": \"Claim approved in July but no amount has been credited to my account.\",\n  \"filedOn\": \"2026-09-28\",\n  \"caseRemark\": \"Claim file reopened, awaiting surveyor report.\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
       },
       {
         "name": "On Demand Challenge Issued",
@@ -7787,11 +7903,25 @@
         "enum_details": null
       },
       {
+        "path": "scheme.code",
+        "type": "object",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: PM-KISAN",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"PM-KISAN\"",
+        "enum": [
+          "PM-KISAN"
+        ],
+        "enum_details": null
+      },
+      {
         "path": "providerId",
         "type": "string",
         "requirement": "Optional",
         "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: status composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PM-KISAN and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
-        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\" · maxLength: 100",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"pmkisan\"",
@@ -7799,11 +7929,11 @@
         "enum_details": null
       },
       {
-        "path": "applicantId",
+        "path": "registrationNo",
         "type": "string",
         "requirement": "Optional",
-        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
-        "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
+        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nNamed for the enrolment rather than for the applicant. An earlier draft called it applicantId, which claimed the field names a person and sat one letter from PMFBY's applicantPhone -- inviting a caller to read the two as the same role and put a phone number in orderId. It names neither a person nor a contact: it names the enrolment a complaint is filed against, which is what applicationNo names on PMFBY. The two ends match so the pair reads as one slot.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "constraints": "pattern: \"^[A-Za-z0-9]+$\" · maxLength: 64",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"UP12345678A\"",
@@ -7897,8 +8027,8 @@
         "path": "grievanceDescription",
         "type": "string",
         "requirement": "Optional",
-        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
-        "constraints": "minLength: 10",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on, and a maximum because this is unvalidated free text arriving from a caller and going on to the portal. Neither portal publishes an upper limit, so the bound is the network's own and matches caseRemark: 2000 characters, long enough for any real account of a problem. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
+        "constraints": "minLength: 10 · maxLength: 2000",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"Third instalment for 2026 has not been credited.\"",
@@ -7917,28 +8047,84 @@
         "constraints": "",
         "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
         "origin": "PMKISANGrievance",
-        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "example": "{\n  \"code\": \"Registered\"\n}",
         "enum": null,
         "enum_details": null
+      },
+      {
+        "path": "caseStatus.code",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Where a case stands, in the network's own vocabulary. This enum is the one place the network names a case state; a pack references it rather than inventing a vocabulary from its Portal's wording.\nThe split is deliberate. code is the network's word and is what a client branches on; the accompanying descriptor name is the Portal's own phrase, kept verbatim, and is what a farmer is shown. A Portal phrase the adapter does not recognise maps to UnderReview -- non-terminal, and honest -- with the phrase preserved in name. The adapter may infer a state; it must never infer that a case is finished, so anything unmapped stays non-terminal.\nA pack narrows this to the states its Portal can actually produce, but only once that Portal's status vocabulary is published. Narrowing on a guess would reject a legitimate state, which is worse than accepting one the Portal never sends.\n",
+        "constraints": "enum: Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CaseStatusCode",
+        "origin": "PMKISANGrievance",
+        "example": "\"Registered\"",
+        "enum": [
+          "Registered",
+          "UnderReview",
+          "AwaitingApplicant",
+          "Replied",
+          "Resolved",
+          "Rejected",
+          "Closed"
+        ],
+        "enum_details": [
+          {
+            "value": "Registered",
+            "meaning": "Lodged and acknowledged by the Portal, not yet picked up.",
+            "terminal": false
+          },
+          {
+            "value": "UnderReview",
+            "meaning": "Being worked by the Portal. Also the fallback for a Portal phrase the adapter does not recognise.",
+            "terminal": false
+          },
+          {
+            "value": "AwaitingApplicant",
+            "meaning": "Blocked on the applicant -- a document or a clarification is needed before work can continue.",
+            "terminal": false
+          },
+          {
+            "value": "Replied",
+            "meaning": "A response has been recorded against the case, which remains open.",
+            "terminal": false
+          },
+          {
+            "value": "Resolved",
+            "meaning": "Closed with action taken.",
+            "terminal": true
+          },
+          {
+            "value": "Rejected",
+            "meaning": "Closed without action; the case was refused.",
+            "terminal": true
+          },
+          {
+            "value": "Closed",
+            "meaning": "Closed with no further action -- lapsed, withdrawn, or closed automatically.",
+            "terminal": true
+          }
+        ]
       },
       {
         "path": "filedOn",
         "type": "string",
         "requirement": "Direct",
-        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date.\n",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date. An IST calendar date: the adapter must take today's date in IST and not from a UTC clock, which would record the previous day for any grievance filed before 05:30 IST. See CalendarDate.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMKISANGrievance",
         "example": "\"2026-09-28\"",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "officerReply",
+        "path": "caseRemark",
         "type": "string",
         "requirement": "Optional",
-        "description": "The reviewing officer's response. Absent rather than null while no reply exists, so an absent field reads as \"not yet answered\".\n",
-        "constraints": "minLength: 1",
+        "description": "The most recent remark recorded against the case, read from the portal's OfficerReply. Named for the case rather than for an author: the network does not adopt one portal's field name, and the portal itself is not consistent about the author -- its companion date is OfficeReplyDate, an office rather than an officer. Absent rather than null while nothing has been recorded, so an absent field reads as \"nothing recorded yet\". Bounded at 2000 characters because it is unvalidated upstream free text being placed in a response.\n",
+        "constraints": "minLength: 1 · maxLength: 2000",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"Bank account seeded with Aadhaar; payment in next cycle.\"",
@@ -7946,12 +8132,12 @@
         "enum_details": null
       },
       {
-        "path": "repliedOn",
+        "path": "remarkedOn",
         "type": "string",
         "requirement": "Optional",
-        "description": "Date the officer replied. Absent until there is a reply.",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the remark was recorded, read from OfficeReplyDate. Absent until there is a remark. An IST calendar date; see CalendarDate. PMFBY publishes no equivalent, so this field is PM-KISAN only.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMKISANGrievance",
         "example": "\"2026-10-06\"",
         "enum": null,
@@ -8047,11 +8233,25 @@
         "enum_details": null
       },
       {
+        "path": "scheme.code",
+        "type": "object",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: PM-KISAN",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"PM-KISAN\"",
+        "enum": [
+          "PM-KISAN"
+        ],
+        "enum_details": null
+      },
+      {
         "path": "providerId",
         "type": "string",
         "requirement": "Optional",
         "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: status composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PM-KISAN and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
-        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\" · maxLength: 100",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"pmkisan\"",
@@ -8059,11 +8259,11 @@
         "enum_details": null
       },
       {
-        "path": "applicantId",
+        "path": "registrationNo",
         "type": "string",
         "requirement": "Optional",
-        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
-        "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
+        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nNamed for the enrolment rather than for the applicant. An earlier draft called it applicantId, which claimed the field names a person and sat one letter from PMFBY's applicantPhone -- inviting a caller to read the two as the same role and put a phone number in orderId. It names neither a person nor a contact: it names the enrolment a complaint is filed against, which is what applicationNo names on PMFBY. The two ends match so the pair reads as one slot.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "constraints": "pattern: \"^[A-Za-z0-9]+$\" · maxLength: 64",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"UP12345678A\"",
@@ -8157,8 +8357,8 @@
         "path": "grievanceDescription",
         "type": "string",
         "requirement": "Optional",
-        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
-        "constraints": "minLength: 10",
+        "description": "The farmer's account of the problem, in their own words. A minimum length because a grievance that says nothing cannot be acted on, and a maximum because this is unvalidated free text arriving from a caller and going on to the portal. Neither portal publishes an upper limit, so the bound is the network's own and matches caseRemark: 2000 characters, long enough for any real account of a problem. Travels in both directions: the portal returns it with each case. The length is measured on the raw string; the upstream client measures it after trimming, so ten characters of whitespace pass here and fail there. The adapter trims before sending and re-checks.\n",
+        "constraints": "minLength: 10 · maxLength: 2000",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"Third instalment for 2026 has not been credited.\"",
@@ -8177,28 +8377,84 @@
         "constraints": "",
         "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor",
         "origin": "PMKISANGrievance",
-        "example": "{\n  \"code\": \"REGISTERED\",\n  \"name\": \"Registered\"\n}",
+        "example": "{\n  \"code\": \"Registered\"\n}",
         "enum": null,
         "enum_details": null
+      },
+      {
+        "path": "caseStatus.code",
+        "type": "string",
+        "requirement": "Direct",
+        "description": "Where a case stands, in the network's own vocabulary. This enum is the one place the network names a case state; a pack references it rather than inventing a vocabulary from its Portal's wording.\nThe split is deliberate. code is the network's word and is what a client branches on; the accompanying descriptor name is the Portal's own phrase, kept verbatim, and is what a farmer is shown. A Portal phrase the adapter does not recognise maps to UnderReview -- non-terminal, and honest -- with the phrase preserved in name. The adapter may infer a state; it must never infer that a case is finished, so anything unmapped stays non-terminal.\nA pack narrows this to the states its Portal can actually produce, but only once that Portal's status vocabulary is published. Narrowing on a guess would reject a legitimate state, which is worse than accepting one the Portal never sends.\n",
+        "constraints": "enum: Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CaseStatusCode",
+        "origin": "PMKISANGrievance",
+        "example": "\"Registered\"",
+        "enum": [
+          "Registered",
+          "UnderReview",
+          "AwaitingApplicant",
+          "Replied",
+          "Resolved",
+          "Rejected",
+          "Closed"
+        ],
+        "enum_details": [
+          {
+            "value": "Registered",
+            "meaning": "Lodged and acknowledged by the Portal, not yet picked up.",
+            "terminal": false
+          },
+          {
+            "value": "UnderReview",
+            "meaning": "Being worked by the Portal. Also the fallback for a Portal phrase the adapter does not recognise.",
+            "terminal": false
+          },
+          {
+            "value": "AwaitingApplicant",
+            "meaning": "Blocked on the applicant -- a document or a clarification is needed before work can continue.",
+            "terminal": false
+          },
+          {
+            "value": "Replied",
+            "meaning": "A response has been recorded against the case, which remains open.",
+            "terminal": false
+          },
+          {
+            "value": "Resolved",
+            "meaning": "Closed with action taken.",
+            "terminal": true
+          },
+          {
+            "value": "Rejected",
+            "meaning": "Closed without action; the case was refused.",
+            "terminal": true
+          },
+          {
+            "value": "Closed",
+            "meaning": "Closed with no further action -- lapsed, withdrawn, or closed automatically.",
+            "terminal": true
+          }
+        ]
       },
       {
         "path": "filedOn",
         "type": "string",
         "requirement": "Direct",
-        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date.\n",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the grievance was filed. Read from the portal on a case read; generated by the adapter on a lodge, because the lodge reply carries no date. An IST calendar date: the adapter must take today's date in IST and not from a UTC clock, which would record the previous day for any grievance filed before 05:30 IST. See CalendarDate.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMKISANGrievance",
         "example": "\"2026-09-28\"",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "officerReply",
+        "path": "caseRemark",
         "type": "string",
         "requirement": "Optional",
-        "description": "The reviewing officer's response. Absent rather than null while no reply exists, so an absent field reads as \"not yet answered\".\n",
-        "constraints": "minLength: 1",
+        "description": "The most recent remark recorded against the case, read from the portal's OfficerReply. Named for the case rather than for an author: the network does not adopt one portal's field name, and the portal itself is not consistent about the author -- its companion date is OfficeReplyDate, an office rather than an officer. Absent rather than null while nothing has been recorded, so an absent field reads as \"nothing recorded yet\". Bounded at 2000 characters because it is unvalidated upstream free text being placed in a response.\n",
+        "constraints": "minLength: 1 · maxLength: 2000",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"Bank account seeded with Aadhaar; payment in next cycle.\"",
@@ -8206,12 +8462,12 @@
         "enum_details": null
       },
       {
-        "path": "repliedOn",
+        "path": "remarkedOn",
         "type": "string",
         "requirement": "Optional",
-        "description": "Date the officer replied. Absent until there is a reply.",
-        "constraints": "format: \"date\"",
-        "reference": null,
+        "description": "Date the remark was recorded, read from OfficeReplyDate. Absent until there is a remark. An IST calendar date; see CalendarDate. PMFBY publishes no equivalent, so this field is PM-KISAN only.\n",
+        "constraints": "format: \"date\" · pattern: \"^[0-9]{4}-[0-9]{2}-[0-9]{2}$\"",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/CalendarDate",
         "origin": "PMKISANGrievance",
         "example": "\"2026-10-06\"",
         "enum": null,
@@ -8285,25 +8541,25 @@
         "name": "Direct Grievance Registered",
         "file": "examples/direct-grievance-registered.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"caseStatus\": {\n    \"code\": \"REGISTERED\",\n    \"name\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"caseStatus\": {\n    \"code\": \"Registered\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
       },
       {
         "name": "Direct Grievance Replied",
         "file": "examples/direct-grievance-replied.json",
         "mode": "Direct",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"caseStatus\": {\n    \"code\": \"REPLIED\",\n    \"name\": \"Replied\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"officerReply\": \"Bank account seeded with Aadhaar; payment in next cycle.\",\n  \"repliedOn\": \"2026-10-06\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"caseStatus\": {\n    \"code\": \"Replied\"\n  },\n  \"filedOn\": \"2026-09-28\",\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\",\n  \"caseRemark\": \"Bank account seeded with Aadhaar; payment in next cycle.\",\n  \"remarkedOn\": \"2026-10-06\",\n  \"source\": {\n    \"sourceId\": \"pmkisan\",\n    \"sourceName\": \"PM-KISAN Grievance Portal\"\n  }\n}"
       },
       {
         "name": "On Demand Lodge Grievance",
         "file": "examples/on-demand-lodge-grievance.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"providerId\": \"pmkisan\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345678A\",\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"providerId\": \"pmkisan\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"registrationNo\": \"UP12345678A\",\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\"\n}"
       },
       {
         "name": "On Demand Read Cases",
         "file": "examples/on-demand-read-cases.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345ABCD\",\n  \"filedOn\": \"2026-09-28\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"registrationNo\": \"UP12345ABCD\",\n  \"filedOn\": \"2026-09-28\"\n}"
       }
     ],
     "artifacts": [
