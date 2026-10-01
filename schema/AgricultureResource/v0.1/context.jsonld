@@ -40,6 +40,11 @@
       "sourceId": "openagrinet:sourceId",
       "sourceName": "openagrinet:sourceName",
       "sourceUri": "openagrinet:sourceUri",
+      "challengeMethod": "openagrinet:challengeMethod",
+      "challengeValue": "openagrinet:challengeValue",
+      "challengeTxnId": "openagrinet:challengeTxnId",
+      "challengeSentTo": "openagrinet:challengeSentTo",
+      "challengeExpiresAt": "openagrinet:challengeExpiresAt",
       "startsAt": "openagrinet:startsAt",
       "endsAt": "openagrinet:endsAt"
     }

@@ -97,7 +97,7 @@ components:
               description: >
                 Mobile number of the farmer raising the grievance, and the number the
                 portal sends the OTP to. Ten digits, Indian mobile series. Never
-                returned in a response; on_init carries the masked otpChallenge.sentTo
+                returned in a response; on_init carries the masked challengeIssued.sentTo
                 instead.
               x-jsonld-id: "openagrinet:applicantPhone"
             applicationNo:
@@ -173,21 +173,41 @@ components:
                 support: message.support.descriptor.longDesc
                 status: message.contract.descriptor.longDesc
               x-jsonld-id: "openagrinet:grievanceDescription"
-            otp:
-              type: string
+            challenge:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/Challenge"
+                - type: object
+                  not:
+                    required: [txnId]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                    value:
+                      pattern: "^[0-9]{6}$"
               writeOnly: true
-              pattern: "^[0-9]{6}$"
               x-oan-pii:
                 class: credential
                 handling: [no-log, no-trace, no-echo, no-forward]
                 note: Proven once by the verify call and never passed to the lodge call.
               description: >
-                One-time password the portal sent to applicantPhone, presented to
-                prove the number. PMFBY issues exactly six digits and rejects any
-                other length. writeOnly is the contract: it travels inbound only.
-                It must never be returned in any response, written to a log, or
-                attached to a trace, and it is never forwarded to the lodge call.
-              x-jsonld-id: "openagrinet:otp"
+                Proof of the phone number, presented when filing. The shape is
+                the network-wide Challenge; this pack narrows it to what PMFBY
+                actually offers -- method to SMS_OTP, and value to the six
+                digits the portal issues, since it rejects any other length.
+                Narrowing rather than redefining is what keeps a second
+                mechanism cheap: supporting one more here is widening this enum
+                and pinning its format, and nothing about the carrier changes.
+                allOf narrowing is evaluated, so the six-digit rule is enforced
+                by the pack and not left to a mapping guard. txnId is refused
+                outright: PMFBY binds the challenge to the phone number alone
+                and issues no correlator, so a caller sending one is confused
+                about the mechanism rather than being quietly ignored.
+
+                writeOnly is the contract: the whole object travels inbound
+                only. It must never be returned in any response, written to a
+                log, or attached to a trace, and the value is never forwarded
+                to the lodge call.
+              x-jsonld-id: "openagrinet:challenge"
 
             ticketNo:
               type: string
@@ -257,32 +277,29 @@ components:
               description: Authoritative upstream source of the grievance record.
               x-jsonld-id: "openagrinet:source"
 
-            otpChallenge:
-              type: object
-              required: [sentTo]
+            challengeIssued:
+              allOf:
+                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeIssued"
+                - type: object
+                  required: [method, sentTo, expiresAt]
+                  not:
+                    required: [txnId]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                    sentTo:
+                      pattern: "^[0-9]{2}X{6}[0-9]{2}$"
+              readOnly: true
               description: >
-                Acknowledgement that the portal has sent an OTP. Carries no secret:
-                sentTo is the masked destination so the farmer can confirm which
-                number was used, and the OTP itself is never returned.
-              properties:
-                sentTo:
-                  type: string
-                  pattern: "^[0-9]{2}X{6}[0-9]{2}$"
-                  x-oan-pii:
-                    class: contact
-                    handling: [no-log, no-trace]
-                    note: Already the masked form of applicantPhone, never the full number.
-                  description: >
-                    The destination number, masked. First two and last two digits
-                    only; the six between them are always X.
-                  x-jsonld-id: "openagrinet:otpChallengeSentTo"
-                expiresAt:
-                  type: string
-                  format: date-time
-                  description: When the OTP stops being accepted.
-                  x-jsonld-id: "openagrinet:otpChallengeExpiresAt"
-              additionalProperties: false
-              x-jsonld-id: "openagrinet:otpChallenge"
+                Acknowledgement that the portal has sent a challenge. Carries no
+                secret: sentTo is the masked destination so the farmer can confirm
+                which number was used, and the OTP itself is never returned.
+                PMFBY sends to a phone, so the mask is a phone mask -- first two
+                and last two digits only, the six between them always X. expiresAt
+                is required because the adapter always derives one, so a caller
+                may rely on it; txnId is refused, since PMFBY issues none.
+                readOnly is the contract: this is returned and never sent.
+              x-jsonld-id: "openagrinet:challengeIssued"
 
         # Direction, not action. A response carrying a real case is Direct and
         # always names the case, its status, when it was filed and where it came

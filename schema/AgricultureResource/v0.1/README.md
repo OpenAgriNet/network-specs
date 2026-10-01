@@ -125,6 +125,22 @@ GeoJSON coordinates follow longitude, latitude order. H3 and other spatial index
 
 `TimePeriod` requires at least one boundary. Packs that need a bounded window use `ClosedTimePeriod`, which requires both `startsAt` and `endsAt`. Conformance checks verify that the start is not after the end.
 
+## Challenge
+
+`Challenge` and `ChallengeIssued` are defined here, not in the packs that use them, so the network has one shape for "prove who you are" instead of one per capability.
+
+| Definition | Direction | Fields |
+|---|---|---|
+| `ChallengeMethod` | — | The enum naming every mechanism the network recognises: `SMS_OTP`, `AADHAAR_OTP`, `DEVICE_TOKEN` |
+| `Challenge` | Inbound (`writeOnly` value) | `method`, `value`, optional `txnId` |
+| `ChallengeIssued` | Outbound (`readOnly`) | `method`, optional `sentTo`, `expiresAt`, `txnId` |
+
+A pack narrows both through `allOf` — `method` to the mechanisms its upstream actually offers, and `value` or `sentTo` to that mechanism's format. PMFBY narrows `method` to `SMS_OTP` and `value` to `^[0-9]{6}$`.
+
+Narrowing, not conditionals. A single `Challenge` with an `if`/`then` branch per method would validate nothing: the extended-schema validator parses `if`/`then` and never evaluates it. `allOf` it does evaluate, so a pinned format in a pack is genuinely enforced.
+
+Listing a mechanism here does not make any Provider accept it. Adding one to the network is a single entry in the `ChallengeMethod` enum; a pack starts accepting it only when it widens its own narrowing to include it, at which point that pack pins the new format. The cost of the second mechanism is paid by the pack that wants it, not by every pack.
+
 ## Non-goals
 
 This pack does not identify a Provider, define a Catalog, carry a protocol envelope, or define how fresh the information is. Freshness is expressed by the selected domain pack through timestamps and validity.

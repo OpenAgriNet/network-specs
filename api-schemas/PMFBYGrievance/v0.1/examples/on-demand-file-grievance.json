@@ -15,5 +15,8 @@
     "code": "3.10"
   },
   "grievanceDescription": "Kharif 2026 claim has not been credited to my account.",
-  "otp": "482913"
+  "challenge": {
+    "method": "SMS_OTP",
+    "value": "482913"
+  }
 }

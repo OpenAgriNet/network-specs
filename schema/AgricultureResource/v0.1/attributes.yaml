@@ -6,6 +6,11 @@ info:
     Shared agriculture attributes for information published on OpenAgriNet.
     Attaches to beckn:Resource through resourceAttributes.
 
+    It also holds the cross-cutting definitions every pack reuses rather than
+    restates -- descriptors, addresses, locations, time periods, source
+    references, and the authentication Challenge. A pack references one of
+    these and narrows it; the definition stays in one place.
+
 components:
   schemas:
     AgricultureResource:
@@ -169,6 +174,108 @@ components:
           format: uri
           description: Authoritative public or Provider-supplied source URI.
           x-jsonld-id: "openagrinet:sourceUri"
+      additionalProperties: false
+
+    ChallengeMethod:
+      type: string
+      enum: [SMS_OTP, AADHAAR_OTP, DEVICE_TOKEN]
+      description: >
+        Authentication mechanism a challenge belongs to. This enum is the one
+        place the network names a mechanism; adding a new one is a single entry
+        here. Listing a mechanism does not make any Provider accept it: a pack
+        narrows this to the mechanisms its upstream actually offers, and only a
+        narrowed value is accepted on that pack's payloads.
+      x-enum-details:
+        - value: SMS_OTP
+          meaning: A one-time password texted to a mobile number.
+          example: Six digits sent to the farmer's registered phone.
+        - value: AADHAAR_OTP
+          meaning: A one-time password issued against an Aadhaar number through the UIDAI eKYC flow.
+          example: Six digits sent to the number the Aadhaar is seeded with.
+        - value: DEVICE_TOKEN
+          meaning: A token proving the request comes from a registered device rather than from a person.
+          example: A push-notification token the issuing service can verify.
+
+    Challenge:
+      type: object
+      writeOnly: true
+      description: >
+        Proof a caller presents to satisfy an authentication challenge. Defined
+        once for the whole network so that a pack needing one does not invent
+        its own shape. method names the mechanism, value carries the proof.
+
+        A pack narrows this through allOf -- method to the mechanisms its
+        upstream offers, value to that mechanism's format. allOf narrowing is
+        evaluated, so pinning a format in a pack keeps the format enforced;
+        if/then on method would not be, which is why the discrimination lives
+        in the pack rather than in a conditional here.
+      required: [method, value]
+      properties:
+        method:
+          $ref: "#/components/schemas/ChallengeMethod"
+          x-jsonld-id: "openagrinet:challengeMethod"
+        value:
+          type: string
+          minLength: 1
+          writeOnly: true
+          x-oan-pii:
+            class: credential
+            handling: [no-log, no-trace, no-echo, no-forward]
+            note: Proven once against the upstream and never carried further.
+          description: >
+            The proof itself. writeOnly is the contract: it travels inbound
+            only and must never be returned in a response, written to a log, or
+            attached to a trace. Format depends on the mechanism, so the pack
+            that narrows method pins the pattern too.
+          x-jsonld-id: "openagrinet:challengeValue"
+        txnId:
+          type: string
+          minLength: 1
+          description: >
+            Correlator for mechanisms whose upstream issues one when the
+            challenge is sent and expects it back when the proof is presented.
+            Absent for mechanisms that bind the challenge to the destination
+            alone, which is how SMS_OTP works on both grievance portals.
+          x-jsonld-id: "openagrinet:challengeTxnId"
+      additionalProperties: false
+
+    ChallengeIssued:
+      type: object
+      readOnly: true
+      description: >
+        Acknowledgement that a challenge has been issued. Carries no secret:
+        it says which mechanism was used, where it went in masked form, and
+        when it stops being accepted. Returned only; nothing sends it.
+      required: [method]
+      properties:
+        method:
+          $ref: "#/components/schemas/ChallengeMethod"
+          x-jsonld-id: "openagrinet:challengeMethod"
+        sentTo:
+          type: string
+          minLength: 1
+          x-oan-pii:
+            class: contact
+            handling: [no-log, no-trace]
+            note: Always the masked form of the destination, never the full identifier.
+          description: >
+            Where the challenge was sent, masked, so the caller can confirm the
+            destination without the destination being disclosed. The masking
+            rule depends on what kind of destination the mechanism uses, so the
+            pack that narrows method pins the pattern.
+          x-jsonld-id: "openagrinet:challengeSentTo"
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the challenge stops being accepted.
+          x-jsonld-id: "openagrinet:challengeExpiresAt"
+        txnId:
+          type: string
+          minLength: 1
+          description: >
+            Correlator to present back with the proof, for mechanisms that
+            issue one. Not a secret and not a substitute for the proof.
+          x-jsonld-id: "openagrinet:challengeTxnId"
       additionalProperties: false
 
     TimePeriod:

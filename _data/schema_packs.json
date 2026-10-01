@@ -744,7 +744,7 @@
     "source_dir": "schema",
     "protocol_version": "2.0",
     "interaction_type": null,
-    "description": "Shared agriculture attributes for information published on OpenAgriNet. Attaches to beckn:Resource through resourceAttributes.",
+    "description": "Shared agriculture attributes for information published on OpenAgriNet. Attaches to beckn:Resource through resourceAttributes. It also holds the cross-cutting definitions every pack reuses rather than restates -- descriptors, addresses, locations, time periods, source references, and the authentication Challenge. A pack references one of these and narrows it; the definition stays in one place.",
     "canonical_type": "openagrinet:AgricultureResource",
     "beckn_container": "resourceAttributes",
     "schema_name": "AgricultureResource",
@@ -6844,7 +6844,7 @@
     "source_dir": "api-schemas",
     "protocol_version": "2.0",
     "interaction_type": "Transact",
-    "description": "Attributes for grievances raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme. This is an API schema, not a domain schema: it describes what the PMFBY grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve init, confirm, select and status without change. On support the payload attaches through channels instead, and three fields move into the Support object itself. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up.",
+    "description": "Attributes for grievances raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme. This is an API schema, not a domain schema: it describes what the PMFBY grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve init and status without change. On support the payload attaches through channels instead, and three fields move into the Support object itself. The channel also carries providerId, which exists for that action alone: a SupportAction composes no Contract, so the adapter has nowhere else to read the provider from. The grievance is lodged with support, not confirm, so no confirm entry appears below. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up.",
     "canonical_type": "openagrinet:PMFBYGrievance",
     "beckn_container": "commitmentAttributes",
     "schema_name": "PMFBYGrievance",
@@ -6896,10 +6896,22 @@
         "enum_details": null
       },
       {
+        "path": "providerId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: every other action composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PMFBY and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"pmfby\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "applicantPhone",
         "type": "string",
         "requirement": "Optional",
-        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked otpChallenge.sentTo instead.\n",
+        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked challengeIssued.sentTo instead.\n",
         "constraints": "pattern: \"^[6-9][0-9]{9}$\"",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -6911,7 +6923,7 @@
         "path": "applicationNo",
         "type": "string",
         "requirement": "Optional",
-        "description": "PMFBY crop insurance application number the grievance concerns.",
+        "description": "PMFBY crop insurance application number the grievance concerns. On support it is the orderId, the thing support is required against, and it holds that meaning in both directions: the ask sends it and on_support echoes it unchanged. The ticket the portal issues does not go there -- it comes back in ticketNo on the channel, because a ticket is not what the complaint is against.\n",
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -6963,7 +6975,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.code and .name",
-          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.code and .name"
         }
       },
       {
@@ -6991,15 +7003,57 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.longDesc",
-          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.longDesc"
         }
       },
       {
-        "path": "otp",
-        "type": "string",
+        "path": "challenge",
+        "type": "object",
         "requirement": "Optional",
-        "description": "One-time password the portal sent to applicantPhone, presented to prove the number. PMFBY issues exactly six digits and rejects any other length. writeOnly is the contract: it travels inbound only. It must never be returned in any response, written to a log, or attached to a trace, and it is never forwarded to the lodge call.\n",
-        "constraints": "pattern: \"^[0-9]{6}$\"",
+        "description": "Proof a caller presents to satisfy an authentication challenge. Defined once for the whole network so that a pack needing one does not invent its own shape. method names the mechanism, value carries the proof.\nA pack narrows this through allOf -- method to the mechanisms its upstream offers, value to that mechanism's format. allOf narrowing is evaluated, so pinning a format in a pack keeps the format enforced; if/then on method would not be, which is why the discrimination lives in the pack rather than in a conditional here.\n",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/Challenge",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"482913\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Authentication mechanism a challenge belongs to. This enum is the one place the network names a mechanism; adding a new one is a single entry here. Listing a mechanism does not make any Provider accept it: a pack narrows this to the mechanisms its upstream actually offers, and only a narrowed value is accepted on that pack's payloads.\n",
+        "constraints": "enum: SMS_OTP",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeMethod",
+        "origin": "PMFBYGrievance",
+        "example": "\"SMS_OTP\"",
+        "enum": [
+          "SMS_OTP"
+        ],
+        "enum_details": [
+          {
+            "value": "SMS_OTP",
+            "meaning": "A one-time password texted to a mobile number.",
+            "example": "Six digits sent to the farmer's registered phone."
+          },
+          {
+            "value": "AADHAAR_OTP",
+            "meaning": "A one-time password issued against an Aadhaar number through the UIDAI eKYC flow.",
+            "example": "Six digits sent to the number the Aadhaar is seeded with."
+          },
+          {
+            "value": "DEVICE_TOKEN",
+            "meaning": "A token proving the request comes from a registered device rather than from a person.",
+            "example": "A push-notification token the issuing service can verify."
+          }
+        ]
+      },
+      {
+        "path": "challenge.value",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "The proof itself. writeOnly is the contract: it travels inbound only and must never be returned in a response, written to a log, or attached to a trace. Format depends on the mechanism, so the pack that narrows method pins the pattern too.\n",
+        "constraints": "pattern: \"^[0-9]{6}$\" · minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"482913\"",
@@ -7007,10 +7061,22 @@
         "enum_details": null
       },
       {
+        "path": "challenge.txnId",
+        "type": "string",
+        "requirement": "Not accepted",
+        "description": "Correlator for mechanisms whose upstream issues one when the challenge is sent and expects it back when the proof is presented. Absent for mechanisms that bind the challenge to the destination alone, which is how SMS_OTP works on both grievance portals.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "ticketNo",
         "type": "string",
         "requirement": "Direct",
-        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
         "constraints": "pattern: \"^[0-9]+$\"",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -7115,23 +7181,53 @@
         "enum_details": null
       },
       {
-        "path": "otpChallenge",
+        "path": "challengeIssued",
         "type": "object",
         "requirement": "Optional",
-        "description": "Acknowledgement that the portal has sent an OTP. Carries no secret: sentTo is the masked destination so the farmer can confirm which number was used, and the OTP itself is never returned.\n",
+        "description": "Acknowledgement that a challenge has been issued. Carries no secret: it says which mechanism was used, where it went in masked form, and when it stops being accepted. Returned only; nothing sends it.\n",
         "constraints": "additionalProperties: false",
-        "reference": null,
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeIssued",
         "origin": "PMFBYGrievance",
-        "example": "{\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
+        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "otpChallenge.sentTo",
+        "path": "challengeIssued.method",
         "type": "string",
-        "requirement": "When otpChallenge is supplied",
-        "description": "The destination number, masked. First two and last two digits only; the six between them are always X.\n",
-        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\"",
+        "requirement": "When challengeIssued is supplied",
+        "description": "Authentication mechanism a challenge belongs to. This enum is the one place the network names a mechanism; adding a new one is a single entry here. Listing a mechanism does not make any Provider accept it: a pack narrows this to the mechanisms its upstream actually offers, and only a narrowed value is accepted on that pack's payloads.\n",
+        "constraints": "enum: SMS_OTP",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeMethod",
+        "origin": "PMFBYGrievance",
+        "example": "\"SMS_OTP\"",
+        "enum": [
+          "SMS_OTP"
+        ],
+        "enum_details": [
+          {
+            "value": "SMS_OTP",
+            "meaning": "A one-time password texted to a mobile number.",
+            "example": "Six digits sent to the farmer's registered phone."
+          },
+          {
+            "value": "AADHAAR_OTP",
+            "meaning": "A one-time password issued against an Aadhaar number through the UIDAI eKYC flow.",
+            "example": "Six digits sent to the number the Aadhaar is seeded with."
+          },
+          {
+            "value": "DEVICE_TOKEN",
+            "meaning": "A token proving the request comes from a registered device rather than from a person.",
+            "example": "A push-notification token the issuing service can verify."
+          }
+        ]
+      },
+      {
+        "path": "challengeIssued.sentTo",
+        "type": "string",
+        "requirement": "When challengeIssued is supplied",
+        "description": "Where the challenge was sent, masked, so the caller can confirm the destination without the destination being disclosed. The masking rule depends on what kind of destination the mechanism uses, so the pack that narrows method pins the pattern.\n",
+        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\" · minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"98XXXXXX10\"",
@@ -7139,14 +7235,26 @@
         "enum_details": null
       },
       {
-        "path": "otpChallenge.expiresAt",
+        "path": "challengeIssued.expiresAt",
         "type": "string",
-        "requirement": "Optional",
-        "description": "When the OTP stops being accepted.",
+        "requirement": "When challengeIssued is supplied",
+        "description": "When the challenge stops being accepted.",
         "constraints": "format: \"date-time\"",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"2026-09-28T10:25:02Z\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challengeIssued.txnId",
+        "type": "string",
+        "requirement": "Not accepted",
+        "description": "Correlator to present back with the proof, for mechanisms that issue one. Not a secret and not a substitute for the proof.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
         "enum": null,
         "enum_details": null
       }
@@ -7192,10 +7300,22 @@
         "enum_details": null
       },
       {
+        "path": "providerId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: every other action composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PMFBY and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": "\"pmfby\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "applicantPhone",
         "type": "string",
         "requirement": "Optional",
-        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked otpChallenge.sentTo instead.\n",
+        "description": "Mobile number of the farmer raising the grievance, and the number the portal sends the OTP to. Ten digits, Indian mobile series. Never returned in a response; on_init carries the masked challengeIssued.sentTo instead.\n",
         "constraints": "pattern: \"^[6-9][0-9]{9}$\"",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -7207,7 +7327,7 @@
         "path": "applicationNo",
         "type": "string",
         "requirement": "Optional",
-        "description": "PMFBY crop insurance application number the grievance concerns.",
+        "description": "PMFBY crop insurance application number the grievance concerns. On support it is the orderId, the thing support is required against, and it holds that meaning in both directions: the ask sends it and on_support echoes it unchanged. The ticket the portal issues does not go there -- it comes back in ticketNo on the channel, because a ticket is not what the complaint is against.\n",
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -7259,7 +7379,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.code and .name",
-          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.code and .name"
         }
       },
       {
@@ -7287,15 +7407,57 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.longDesc",
-          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.longDesc"
         }
       },
       {
-        "path": "otp",
-        "type": "string",
+        "path": "challenge",
+        "type": "object",
         "requirement": "Optional",
-        "description": "One-time password the portal sent to applicantPhone, presented to prove the number. PMFBY issues exactly six digits and rejects any other length. writeOnly is the contract: it travels inbound only. It must never be returned in any response, written to a log, or attached to a trace, and it is never forwarded to the lodge call.\n",
-        "constraints": "pattern: \"^[0-9]{6}$\"",
+        "description": "Proof a caller presents to satisfy an authentication challenge. Defined once for the whole network so that a pack needing one does not invent its own shape. method names the mechanism, value carries the proof.\nA pack narrows this through allOf -- method to the mechanisms its upstream offers, value to that mechanism's format. allOf narrowing is evaluated, so pinning a format in a pack keeps the format enforced; if/then on method would not be, which is why the discrimination lives in the pack rather than in a conditional here.\n",
+        "constraints": "additionalProperties: false",
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/Challenge",
+        "origin": "PMFBYGrievance",
+        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"482913\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Authentication mechanism a challenge belongs to. This enum is the one place the network names a mechanism; adding a new one is a single entry here. Listing a mechanism does not make any Provider accept it: a pack narrows this to the mechanisms its upstream actually offers, and only a narrowed value is accepted on that pack's payloads.\n",
+        "constraints": "enum: SMS_OTP",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeMethod",
+        "origin": "PMFBYGrievance",
+        "example": "\"SMS_OTP\"",
+        "enum": [
+          "SMS_OTP"
+        ],
+        "enum_details": [
+          {
+            "value": "SMS_OTP",
+            "meaning": "A one-time password texted to a mobile number.",
+            "example": "Six digits sent to the farmer's registered phone."
+          },
+          {
+            "value": "AADHAAR_OTP",
+            "meaning": "A one-time password issued against an Aadhaar number through the UIDAI eKYC flow.",
+            "example": "Six digits sent to the number the Aadhaar is seeded with."
+          },
+          {
+            "value": "DEVICE_TOKEN",
+            "meaning": "A token proving the request comes from a registered device rather than from a person.",
+            "example": "A push-notification token the issuing service can verify."
+          }
+        ]
+      },
+      {
+        "path": "challenge.value",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "The proof itself. writeOnly is the contract: it travels inbound only and must never be returned in a response, written to a log, or attached to a trace. Format depends on the mechanism, so the pack that narrows method pins the pattern too.\n",
+        "constraints": "pattern: \"^[0-9]{6}$\" · minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"482913\"",
@@ -7303,10 +7465,22 @@
         "enum_details": null
       },
       {
+        "path": "challenge.txnId",
+        "type": "string",
+        "requirement": "Not accepted",
+        "description": "Correlator for mechanisms whose upstream issues one when the challenge is sent and expects it back when the proof is presented. Absent for mechanisms that bind the challenge to the destination alone, which is how SMS_OTP works on both grievance portals.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "ticketNo",
         "type": "string",
         "requirement": "Direct",
-        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
+        "description": "Portal grievance ticket number. Returned when a grievance is filed and presented again to read its replies, so it travels in both directions. It stays in the attributes on every leg -- no x-beckn-path moves it -- so on_support returns it here and leaves orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a phone number: the live system routes a ten-digit answer to the phone and anything longer to the ticket, and observed tickets run twelve to fifteen digits. The length is not pinned because that range is described as typical, not as a rule.\n",
         "constraints": "pattern: \"^[0-9]+$\"",
         "reference": null,
         "origin": "PMFBYGrievance",
@@ -7411,23 +7585,53 @@
         "enum_details": null
       },
       {
-        "path": "otpChallenge",
+        "path": "challengeIssued",
         "type": "object",
         "requirement": "Optional",
-        "description": "Acknowledgement that the portal has sent an OTP. Carries no secret: sentTo is the masked destination so the farmer can confirm which number was used, and the OTP itself is never returned.\n",
+        "description": "Acknowledgement that a challenge has been issued. Carries no secret: it says which mechanism was used, where it went in masked form, and when it stops being accepted. Returned only; nothing sends it.\n",
         "constraints": "additionalProperties: false",
-        "reference": null,
+        "reference": "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeIssued",
         "origin": "PMFBYGrievance",
-        "example": "{\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
+        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"sentTo\": \"98XXXXXX10\",\n  \"expiresAt\": \"2026-09-28T10:25:02Z\"\n}",
         "enum": null,
         "enum_details": null
       },
       {
-        "path": "otpChallenge.sentTo",
+        "path": "challengeIssued.method",
         "type": "string",
-        "requirement": "When otpChallenge is supplied",
-        "description": "The destination number, masked. First two and last two digits only; the six between them are always X.\n",
-        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\"",
+        "requirement": "When challengeIssued is supplied",
+        "description": "Authentication mechanism a challenge belongs to. This enum is the one place the network names a mechanism; adding a new one is a single entry here. Listing a mechanism does not make any Provider accept it: a pack narrows this to the mechanisms its upstream actually offers, and only a narrowed value is accepted on that pack's payloads.\n",
+        "constraints": "enum: SMS_OTP",
+        "reference": "schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/ChallengeMethod",
+        "origin": "PMFBYGrievance",
+        "example": "\"SMS_OTP\"",
+        "enum": [
+          "SMS_OTP"
+        ],
+        "enum_details": [
+          {
+            "value": "SMS_OTP",
+            "meaning": "A one-time password texted to a mobile number.",
+            "example": "Six digits sent to the farmer's registered phone."
+          },
+          {
+            "value": "AADHAAR_OTP",
+            "meaning": "A one-time password issued against an Aadhaar number through the UIDAI eKYC flow.",
+            "example": "Six digits sent to the number the Aadhaar is seeded with."
+          },
+          {
+            "value": "DEVICE_TOKEN",
+            "meaning": "A token proving the request comes from a registered device rather than from a person.",
+            "example": "A push-notification token the issuing service can verify."
+          }
+        ]
+      },
+      {
+        "path": "challengeIssued.sentTo",
+        "type": "string",
+        "requirement": "When challengeIssued is supplied",
+        "description": "Where the challenge was sent, masked, so the caller can confirm the destination without the destination being disclosed. The masking rule depends on what kind of destination the mechanism uses, so the pack that narrows method pins the pattern.\n",
+        "constraints": "pattern: \"^[0-9]{2}X{6}[0-9]{2}$\" · minLength: 1",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"98XXXXXX10\"",
@@ -7435,14 +7639,26 @@
         "enum_details": null
       },
       {
-        "path": "otpChallenge.expiresAt",
+        "path": "challengeIssued.expiresAt",
         "type": "string",
-        "requirement": "Optional",
-        "description": "When the OTP stops being accepted.",
+        "requirement": "When challengeIssued is supplied",
+        "description": "When the challenge stops being accepted.",
         "constraints": "format: \"date-time\"",
         "reference": null,
         "origin": "PMFBYGrievance",
         "example": "\"2026-09-28T10:25:02Z\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challengeIssued.txnId",
+        "type": "string",
+        "requirement": "Not accepted",
+        "description": "Correlator to present back with the proof, for mechanisms that issue one. Not a secret and not a substitute for the proof.\n",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "PMFBYGrievance",
+        "example": null,
         "enum": null,
         "enum_details": null
       }
@@ -7479,16 +7695,16 @@
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"Direct\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"ticketNo\": \"100626000099001\",\n  \"caseStatus\": {\n    \"code\": \"UNDER_REVIEW\",\n    \"name\": \"Under Review\"\n  },\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\",\n    \"name\": \"Enrollment / Portal Issues Login\"\n  },\n  \"grievanceDescription\": \"Claim approved in July but no amount has been credited to my account.\",\n  \"filedOn\": \"2026-09-28\",\n  \"officerReply\": \"Claim file reopened, awaiting surveyor report.\",\n  \"source\": {\n    \"sourceId\": \"pmfby\",\n    \"sourceName\": \"PMFBY Grievance Portal\"\n  }\n}"
       },
       {
+        "name": "On Demand Challenge Issued",
+        "file": "examples/on-demand-challenge-issued.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"challengeIssued\": {\n    \"method\": \"SMS_OTP\",\n    \"sentTo\": \"98XXXXXX10\",\n    \"expiresAt\": \"2026-09-28T10:25:02Z\"\n  }\n}"
+      },
+      {
         "name": "On Demand File Grievance",
         "file": "examples/on-demand-file-grievance.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"applicantPhone\": \"9876543210\",\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\"\n  },\n  \"grievanceDescription\": \"Kharif 2026 claim has not been credited to my account.\",\n  \"otp\": \"482913\"\n}"
-      },
-      {
-        "name": "On Demand Otp Challenge",
-        "file": "examples/on-demand-otp-challenge.json",
-        "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"otpChallenge\": {\n    \"sentTo\": \"98XXXXXX10\",\n    \"expiresAt\": \"2026-09-28T10:25:02Z\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMFBYGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"providerId\": \"pmfby\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"applicantPhone\": \"9876543210\",\n  \"applicationNo\": \"KA2026KH00123456\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"grievanceCategory\": {\n    \"code\": \"3.10\"\n  },\n  \"grievanceDescription\": \"Kharif 2026 claim has not been credited to my account.\",\n  \"challenge\": {\n    \"method\": \"SMS_OTP\",\n    \"value\": \"482913\"\n  }\n}"
       },
       {
         "name": "On Demand Read Case",
@@ -7506,7 +7722,6 @@
     ],
     "beckn_container_by_action": {
       "init": "commitmentAttributes",
-      "confirm": "commitmentAttributes",
       "status": "commitmentAttributes",
       "support": "channels"
     }
@@ -7520,7 +7735,7 @@
     "source_dir": "api-schemas",
     "protocol_version": "2.0",
     "interaction_type": "Transact",
-    "description": "Attributes for grievances raised against Pradhan Mantri Kisan Samman Nidhi. This is an API schema, not a domain schema: it describes what the PM-KISAN grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve confirm, select and status without change. On support the payload attaches through channels instead, and two fields move into the Support object itself. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up. Nothing here identifies a single case the way PMFBY's ticketNo does: neither the lodge reply nor a status record carries a case identifier. A grievance is retrieved by the identity it was filed under, and every grievance on that identity comes back together.",
+    "description": "Attributes for grievances raised against Pradhan Mantri Kisan Samman Nidhi. This is an API schema, not a domain schema: it describes what the PM-KISAN grievance API accepts and returns, so an experience layer can call it without reading adapter mapping files. Attaches through commitmentAttributes: a grievance is a promise with a lifecycle of its own, not a catalogable resource. Direction is carried by informationMode, never by the Beckn action. OnDemand is the ask, Direct is an answer carrying a real case. The same attributes serve status without change. On support the payload attaches through channels instead, and three fields move into the Support object itself. The channel also carries providerId, which exists for that action alone: a SupportAction composes no Contract, so the adapter has nowhere else to read the provider from. The grievance is lodged with support, not confirm, so no confirm entry appears below; there is no init leg either, because PM-KISAN sends no OTP. x-beckn-container-by-action says which container each action uses, and the per-field x-beckn-path says where a field that moves ends up. Nothing here identifies a single case the way PMFBY's ticketNo does: neither the lodge reply nor a status record carries a case identifier. A grievance is retrieved by the identity it was filed under, and every grievance on that identity comes back together.",
     "canonical_type": "openagrinet:PMKISANGrievance",
     "beckn_container": "commitmentAttributes",
     "schema_name": "PMKISANGrievance",
@@ -7572,16 +7787,31 @@
         "enum_details": null
       },
       {
+        "path": "providerId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: status composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PM-KISAN and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"pmkisan\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "applicantId",
         "type": "string",
         "requirement": "Optional",
-        "description": "The PM-KISAN registration number the grievance is filed under, and the only identity this pack accepts. Aadhaar is deliberately not offered: nothing in the grievance flow requires one, so asking for one would collect an identifier the network has no use for.\nwriteOnly is the contract: it travels inbound only. It is never returned, logged, or attached to a trace -- the farmer supplied it and does not need it read back.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
         "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"UP12345678A\"",
         "enum": null,
-        "enum_details": null
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.orderId"
+        }
       },
       {
         "path": "grievanceCategory",
@@ -7596,7 +7826,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.code and .name",
-          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.code and .name"
         }
       },
       {
@@ -7676,7 +7906,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.longDesc",
-          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.longDesc"
         }
       },
       {
@@ -7817,16 +8047,31 @@
         "enum_details": null
       },
       {
+        "path": "providerId",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Network participant id of the provider this grievance is for, as the registry holds it. Carried on support and nowhere else, and only because a SupportAction has nowhere else to put it: status composes a Contract, and there the adapter reads the provider from commitments[].offer.provider.id. Same value, same purpose, different place. Lower-case, matching the registry exactly -- scheme.code reads PM-KISAN and names a scheme rather than a participant, so it cannot stand in. Not returned on on_support: the caller already knows who it asked.\n",
+        "constraints": "pattern: \"^[a-z0-9][a-z0-9.-]*$\"",
+        "reference": null,
+        "origin": "PMKISANGrievance",
+        "example": "\"pmkisan\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "applicantId",
         "type": "string",
         "requirement": "Optional",
-        "description": "The PM-KISAN registration number the grievance is filed under, and the only identity this pack accepts. Aadhaar is deliberately not offered: nothing in the grievance flow requires one, so asking for one would collect an identifier the network has no use for.\nwriteOnly is the contract: it travels inbound only. It is never returned, logged, or attached to a trace -- the farmer supplied it and does not need it read back.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
+        "description": "The PM-KISAN registration number the grievance is filed under. It is both the identity the portal authenticates on and the enrolment the complaint is against, because PM-KISAN has no separate reference for either -- the upstream takes one field, IdentityNo, and nothing else names a case. That is why it carries the same x-beckn-path as PMFBY's applicationNo: on support it is the orderId, the thing support is required against.\nAadhaar is deliberately not accepted. The portal takes a token derived from one through /GrievanceAadhaarToken and carries it in the same IdentityNo field, which would make this value sometimes a stable reference and sometimes an ephemeral secret. Registration numbers only keeps it one thing, and keeps the upstream Type field a constant.\nNot writeOnly, and no-echo is deliberately absent: the value is returned in orderId, which is the provider's slot to fill. Sending back the caller's own registration number over the same signed exchange it arrived on discloses nothing. no-log and no-trace are the markings that matter here and they are unconditional.\nThe rule is only non-empty and alphanumeric. Eleven alphanumeric characters is the documented shape, but nothing upstream enforces it, and a length rule taken from a tool docstring would reject a valid grievance before the farmer's complaint reached the portal. ASCII-only is on purpose: the upstream accepts Devanagari and other native-script digits and forwards them unconverted.\n",
         "constraints": "pattern: \"^[A-Za-z0-9]+$\"",
         "reference": null,
         "origin": "PMKISANGrievance",
         "example": "\"UP12345678A\"",
         "enum": null,
-        "enum_details": null
+        "enum_details": null,
+        "beckn_path": {
+          "support": "message.support.orderId"
+        }
       },
       {
         "path": "grievanceCategory",
@@ -7841,7 +8086,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.code and .name",
-          "status": "message.contract.descriptor.code and .name, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.code and .name"
         }
       },
       {
@@ -7921,7 +8166,7 @@
         "enum_details": null,
         "beckn_path": {
           "support": "message.support.descriptor.longDesc",
-          "status": "message.contract.descriptor.longDesc, but only on the support flow; on the contract flow it stays here"
+          "status": "message.contract.descriptor.longDesc"
         }
       },
       {
@@ -8052,7 +8297,7 @@
         "name": "On Demand Lodge Grievance",
         "file": "examples/on-demand-lodge-grievance.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345678A\",\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\"\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:PMKISANGrievance\",\n  \"informationMode\": \"OnDemand\",\n  \"providerId\": \"pmkisan\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicantId\": \"UP12345678A\",\n  \"grievanceCategory\": {\n    \"code\": \"G003\",\n    \"name\": \"Installment not received\"\n  },\n  \"grievanceDescription\": \"Third instalment for 2026 has not been credited.\"\n}"
       },
       {
         "name": "On Demand Read Cases",
@@ -8069,7 +8314,6 @@
       "renderer.json"
     ],
     "beckn_container_by_action": {
-      "confirm": "commitmentAttributes",
       "status": "commitmentAttributes",
       "support": "channels"
     }

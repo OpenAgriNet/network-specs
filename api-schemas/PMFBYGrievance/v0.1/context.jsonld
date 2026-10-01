@@ -18,7 +18,13 @@
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
     "grievanceDescription": "openagrinet:grievanceDescription",
-    "otp": "openagrinet:otp",
+    "challenge": {
+      "@id": "openagrinet:challenge",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "value": "openagrinet:challengeValue"
+      }
+    },
     "source": {
       "@id": "openagrinet:source",
       "@context": {
@@ -35,8 +41,13 @@
     },
     "filedOn": "openagrinet:filedOn",
     "officerReply": "openagrinet:officerReply",
-    "otpChallenge": "openagrinet:otpChallenge",
-    "sentTo": "openagrinet:otpChallengeSentTo",
-    "expiresAt": "openagrinet:otpChallengeExpiresAt"
+    "challengeIssued": {
+      "@id": "openagrinet:challengeIssued",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "sentTo": "openagrinet:challengeSentTo",
+        "expiresAt": "openagrinet:challengeExpiresAt"
+      }
+    }
   }
 }

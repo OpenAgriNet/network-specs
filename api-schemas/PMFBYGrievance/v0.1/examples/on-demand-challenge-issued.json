@@ -6,7 +6,8 @@
     "code": "PMFBY",
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
-  "otpChallenge": {
+  "challengeIssued": {
+    "method": "SMS_OTP",
     "sentTo": "98XXXXXX10",
     "expiresAt": "2026-09-28T10:25:02Z"
   }

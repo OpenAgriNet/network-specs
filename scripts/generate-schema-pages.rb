@@ -185,6 +185,10 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   expanded, expanded_path, = resolver.expand(schema, source_path)
   properties = expanded.fetch("properties", {})
   required = Array(expanded["required"])
+  # A narrowing may refuse a property the shared definition offers, via
+  # `not: { required: [name] }`. The page must say so, or it advertises a
+  # field the validator rejects.
+  refused = Array(expanded.dig("not", "required"))
   conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
@@ -196,7 +200,9 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
     origin = inherited_origin || root_origins[name] || expanded_path.dirname.parent.basename.to_s
     property, property_path, property_external_ref = resolver.expand(raw_property, expanded_path)
     field_path = path + [name]
-    requirement = if required.include?(name)
+    requirement = if refused.include?(name)
+                    "Not accepted"
+                  elsif required.include?(name)
                     ancestor_condition || "Always"
                   elsif conditional[name]&.any?
                     conditional[name].join(" or ")

@@ -74,7 +74,7 @@ The grievance is lodged through `support`, not `confirm` — the rationale is in
 
 `Direct` payloads must carry `ticketNo`, `caseStatus`, `filedOn` and `source`, which is true of `on_support` and `on_status` alike. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional in the attributes because on `on_support` they come back in the `Support` object's own slots instead, not in the channel.
 
-There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the OTP; reading a case sends the phone and the ticket; an OTP acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
+There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the challenge; reading a case sends the phone and the ticket; a challenge acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
 
 ## Upstream response coverage
 
@@ -168,18 +168,38 @@ pack is not. It reuses Beckn `Descriptor` objects for `scheme`,
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `providerId` | `support` ask | Network participant id, so the adapter can route a payload that composes no `Contract`. Not returned |
-| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the OTP goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
+| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the challenge goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
 | `applicationNo` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid` |
 | `grievanceCategory` | Ask, when filing; also returned in `Direct` | Category and sub-category joined by a dot; the adapter splits on that dot, so the shape is load-bearing. Names come back on a case read and are joined with a slash |
 | `grievanceDescription` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
-| `otp` | Ask, when filing | Six-digit one-time password proving the phone number; `writeOnly` |
+| `challenge` | Ask, when filing | Proof of the phone number. The network-wide `Challenge` shape narrowed to what PMFBY offers: `method` is `SMS_OTP`, `value` is six digits. `writeOnly` as a whole object |
 | `ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
 | `caseStatus` | `Direct` | Where the grievance stands; `name` verbatim from the portal, `code` derived from it |
 | `filedOn` | `Direct` | Date the grievance was filed |
 | `officerReply` | Optional in `Direct` | The portal's latest remark. Absent rather than empty while no reply exists. PMFBY publishes no reply date, so there is no `repliedOn` |
 | `source` | `Direct` | Authoritative upstream source |
-| `otpChallenge` | Answer to an OTP request | Masked destination and expiry; carries no secret |
+| `challengeIssued` | Answer to a challenge request | Which mechanism was used, the masked destination and the expiry — all three required; carries no secret. `readOnly` |
+
+## Challenge
+
+`challenge` and `challengeIssued` are the network-wide [`Challenge` and `ChallengeIssued`](../../../schema/AgricultureResource/v0.1/README.md#challenge), narrowed here to what PMFBY offers:
+
+```yaml
+challenge:
+  allOf:
+    - $ref: ".../AgricultureResource/v0.1/attributes.yaml#/components/schemas/Challenge"
+    - not: { required: [txnId] }
+      properties:
+        method: { enum: [SMS_OTP] }
+        value:  { pattern: "^[0-9]{6}$" }
+```
+
+The portal issues a six-digit SMS OTP and nothing else, so that is all this pack accepts. The narrowing is `allOf`, which the validator evaluates, so the six-digit rule is enforced by the pack rather than deferred to a mapping guard.
+
+The narrowing also refuses what PMFBY does not use: the shared `Challenge` offers a `txnId` for mechanisms whose upstream issues a correlator, and this pack rejects it outright rather than accept a field the adapter would ignore.
+
+If PMFBY later offers a second mechanism, this pack widens the `enum` and pins the new format alongside it. Nothing else moves: the carrier is unchanged, the mapping reads `challenge.method` to pick a prerequisite, and the experience layer reads `challengeIssued.method` to know what to collect.
 
 ## Category term
 
@@ -203,9 +223,9 @@ ignores the `if`/`then` branches. It exists so the rule can be read by a tool ra
 only by a person: a CI check can assert that no property marked `no-echo` appears in any
 `Direct` example, which is the class of mistake the v1 `identity-no` echo was.
 
-`otp` is `writeOnly`: it travels inbound only and must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call.
+`challenge` is `writeOnly` as a whole object: it travels inbound only, and `challenge.value` must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call. `challengeIssued` is `readOnly` — it is returned and never sent.
 
-`applicantPhone` is never echoed. An OTP acknowledgement returns `otpChallenge.sentTo`, masked to first two and last two digits, so the farmer can confirm which number was used.
+`applicantPhone` is never echoed. A challenge acknowledgement returns `challengeIssued.sentTo`, masked to first two and last two digits, so the farmer can confirm which number was used.
 
 `applicationNo` identifies a named farmer's policy, and `grievanceDescription` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
 
@@ -235,6 +255,6 @@ It also does not define credentials or transport. Those live in the adapter conf
 
 - [On-demand: file a grievance](examples/on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
-- [On-demand: OTP challenge acknowledgement](examples/on-demand-otp-challenge.json)
+- [On-demand: challenge acknowledgement](examples/on-demand-challenge-issued.json)
 - [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
 - [Direct: grievance with officer reply](examples/direct-grievance-replied.json)

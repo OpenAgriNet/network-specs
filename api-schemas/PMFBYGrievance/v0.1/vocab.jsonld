@@ -24,15 +24,13 @@
       "rdfs:comment": "Portal category and sub-category joined by a dot, such as 3.10. Deliberately a separate property from the PM-KISAN category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
     },
     { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
-    { "@id": "openagrinet:otp", "@type": "rdfs:Property", "rdfs:label": "one-time password" },
+    { "@id": "openagrinet:challenge", "@type": "rdfs:Property", "rdfs:label": "challenge", "rdfs:comment": "Proof presented to satisfy an authentication challenge. The shape is network-wide; this pack narrows the method to SMS_OTP and the value to six digits." },
     { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
     { "@id": "openagrinet:ticketId", "@type": "rdfs:Property", "rdfs:label": "ticket id" },
     { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
     { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
     { "@id": "openagrinet:officerReply", "@type": "rdfs:Property", "rdfs:label": "officer reply" },
     { "@id": "openagrinet:source", "@type": "rdfs:Property", "rdfs:label": "source" },
-    { "@id": "openagrinet:otpChallenge", "@type": "rdfs:Property", "rdfs:label": "OTP challenge" },
-    { "@id": "openagrinet:otpChallengeSentTo", "@type": "rdfs:Property", "rdfs:label": "OTP sent to" },
-    { "@id": "openagrinet:otpChallengeExpiresAt", "@type": "rdfs:Property", "rdfs:label": "OTP expires at" }
+    { "@id": "openagrinet:challengeIssued", "@type": "rdfs:Property", "rdfs:label": "challenge issued", "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret." }
   ]
 }

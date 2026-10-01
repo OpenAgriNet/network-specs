@@ -63,6 +63,32 @@
       "rdfs:label": "source URI"
     },
     {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method",
+      "rdfs:comment": "Authentication mechanism a challenge belongs to. The network names mechanisms here once; a pack narrows to the ones its upstream offers."
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value"
+    },
+    {
+      "@id": "openagrinet:challengeTxnId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge transaction id"
+    },
+    {
+      "@id": "openagrinet:challengeSentTo",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge sent to"
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at"
+    },
+    {
       "@id": "openagrinet:startsAt",
       "@type": "rdfs:Property",
       "rdfs:label": "starts at"
