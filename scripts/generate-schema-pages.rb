@@ -54,7 +54,14 @@ class SchemaResolver
     merged = resolved.reject { |key, _| key == "allOf" }
     Array(resolved["allOf"]).each do |member|
       expanded, = expand(member, resolved_path, seen + [fingerprint])
-      merged = deep_merge(merged, expanded)
+      own_description = merged["description"]
+      merged = deep_merge(merged, join_restatements(merged, expanded))
+      # A description reached through a $ref describes a shape reused all over
+      # the network -- a Beckn location, a source reference -- so it must not
+      # displace what this field already says about itself. An inline member is
+      # the author narrowing this field right here, and its description does
+      # replace.
+      merged["description"] = own_description if own_description && member.is_a?(Hash) && member.key?("$ref")
     end
     [merged, resolved_path, nil]
   end
@@ -86,6 +93,30 @@ class SchemaResolver
     else
       value
     end
+  end
+
+  # A pack that extends a base restates an inherited field with a description
+  # and nothing else, to say how its own portal fills it. Both sentences belong
+  # on the page: the base says what the field means, the pack says where the
+  # value comes from. A restatement that also narrows the field -- an enum, a
+  # pattern, a nested allOf -- is an override rather than a note, so its
+  # description replaces the base's, as every description always has.
+  def join_restatements(base, member)
+    base_properties = base["properties"]
+    member_properties = member["properties"]
+    return member unless base_properties.is_a?(Hash) && member_properties.is_a?(Hash)
+
+    joined = member_properties.each_with_object({}) do |(name, schema), result|
+      inherited = base_properties[name]
+      note = schema.is_a?(Hash) && schema.keys == ["description"] ? schema["description"] : nil
+      meaning = inherited.is_a?(Hash) ? inherited["description"] : nil
+      result[name] = if note.is_a?(String) && meaning.is_a?(String) && meaning.strip != note.strip
+                       { "description" => "#{meaning.strip}\n\n#{note.strip}" }
+                     else
+                       schema
+                     end
+    end
+    member.merge("properties" => joined)
   end
 
   def deep_merge(left, right)
@@ -305,9 +336,13 @@ SCHEMA_ROOTS.flat_map { |root| Dir.glob(root.join("*", "v*", "profile.json")).so
       "role" => "Shared fields"
     }
   end
-  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name }
+  # ||=, not =. A pack that extends a base restates an inherited field to say
+  # how its own portal fills it. The field still belongs to the base, and the
+  # page must keep saying so -- otherwise adding a one-line note silently
+  # reattributes the field to the pack.
+  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name }
   Array(root_schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }.each do |member|
-    member.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name } if member.is_a?(Hash)
+    member.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name } if member.is_a?(Hash)
   end
   composition = referenced_components + [{
     "name" => "#{pack_name} fields and rules",
