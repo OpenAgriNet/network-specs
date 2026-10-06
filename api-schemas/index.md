@@ -1,6 +1,6 @@
 # OpenAgriNet API Schema Packs
 
-<p class="page-intro">Browse the provider API contracts. Each pack describes what one named Provider's API accepts and returns, applies to Beckn <code>Resource.resourceAttributes</code> like a domain pack, and keeps its versioned artifacts together.</p>
+<p class="page-intro">Browse the provider API contracts. Each pack describes what one named Provider's API accepts and returns, states where it attaches in <code>x-beckn-container</code>, and keeps its versioned artifacts together.</p>
 
 Read the [API schema overview](README.md) for how these differ from the [domain schemas](../schema/).
 
@@ -45,13 +45,15 @@ The index is generated from the versioned `profile.json` files under `api-schema
 
 Not every directory under `api-schemas/` is a pack. A directory with no `profile.json` is never indexed and appears on no card above; it holds definitions that packs compose into themselves.
 
-[`Grievance/v0.1`](Grievance/v0.1/attributes.yaml) is the one such directory today. It defines `GrievanceBase` — the fields any grievance has whatever the scheme — which [PMFBYGrievance](PMFBYGrievance/v0.1/README.md) and [PMKISANGrievance](PMKISANGrievance/v0.1/README.md) each `allOf`-reference. Nothing ever sends `"@type": openagrinet:GrievanceBase`.
+[`Grievance/v0.1`](Grievance/v0.1/attributes.yaml) is the one such directory today. It defines `GrievanceBase` — the shape any grievance has whatever the scheme — which [PMFBYGrievance](PMFBYGrievance/v0.1/README.md) and [PMKISANGrievance](PMKISANGrievance/v0.1/README.md) each `allOf`-reference. Nothing ever sends `"@type": openagrinet:GrievanceBase`.
+
+That shape is four bands, and the band a field sits in says who wrote it: the context at the top (`informationMode`, `provider`, `scheme`, `enrolmentId`), what the farmer submitted under `grievance`, what the portal has on file under `case`, and anything a pack adds of its own — an OTP challenge, a crop season — at the top with the rest of the context. The base also publishes `CaseStatusCode`, `CalendarDate` and `ProviderReference`, so the case-status vocabulary is defined once rather than restated in each pack.
 
 ## Why these are separate
 
 A domain pack is written once for the whole network and says what a thing *is*. An API pack is written for one provider and says what that provider's API will take and give back, so an experience layer can call it without reading adapter mapping files.
 
-The artifacts and the attachment point are identical. Only the scope differs, and `profile.json` records the difference in `semantic_model`.
+The artifacts are identical. The scope differs, and `profile.json` records that in `semantic_model`; the attachment point may differ too, which each pack states for itself in `x-beckn-container`.
 
 ## Information modes
 

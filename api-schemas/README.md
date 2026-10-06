@@ -2,7 +2,9 @@
 
 A domain schema says what a thing *is* in the agriculture domain. An API schema says what one named Provider's API will take and give back, so an experience layer can call it from the schema alone without reading adapter mapping files.
 
-Each pack carries the same seven artifacts as a domain pack and applies to Beckn `Resource.resourceAttributes` in the same way. The difference is scope, not shape: a domain pack is written once for the whole network, an API pack is written for one provider.
+Each pack carries the same seven artifacts as a domain pack. The difference is scope, not shape: a domain pack is written once for the whole network, an API pack is written for one provider.
+
+Where a pack attaches is its own to say. The domain packs sit on Beckn `Resource.resourceAttributes`, because a forecast or a mandi price genuinely is a catalogable resource. The two grievance packs sit on `Commitment.commitmentAttributes` instead: a grievance is a promise with a lifecycle, not a thing of value in a catalog. Each pack's root schema states its container in `x-beckn-container`, and `x-beckn-container-by-action` records any action that uses a different one.
 
 ## No pack names a Beckn action
 
@@ -25,17 +27,30 @@ A directory here with no `profile.json` is not a pack: it holds definitions for 
 
 A pack composes it with `allOf`, then pins its own `@type` and `scheme`, adds the fields its own portal has, and restates each inherited field with a `description` recording where its value comes from upstream. The published page shows the base's meaning and the pack's note together, and says which component each field came from.
 
+What `Grievance/v0.1` actually owns is a shape: **four bands, and the band a field sits in says who wrote it.**
+
+| band | holds | written by |
+|---|---|---|
+| top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
+| `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
+| `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `remark`, `remarkedOn` | the portal |
+| anything a pack adds | an OTP challenge, a crop season — sits at the top with the rest of the context | the caller |
+
+Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
+
 Nothing grievance-related is added to a domain schema under `schema/`. A grievance is a Provider's API surface, not a thing the network describes, so the shared shape belongs beside the packs that use it.
 
 ## Shared and unshared terms
 
-Packs reuse a term's IRI when the term means the same thing everywhere — `informationMode`, `provider`, `scheme`, `grievanceDescription`, `caseStatus`, `filedOn`, `caseRemark` and `remarkedOn` are shared across the grievance packs, and all of them are declared once in `Grievance/v0.1`.
+Packs reuse a term's IRI when the term means the same thing everywhere — `informationMode`, `provider`, `scheme`, `enrolmentId`, `grievance.description` and the whole of the `case` band are shared across the grievance packs, and all of them are declared once in `Grievance/v0.1`.
 
-A term is split when the value spaces are incompatible. `grievanceCategory` keeps its JSON key in both grievance packs but resolves to `openagrinet:pmfbyGrievanceCategory` in one and `openagrinet:pmkisanGrievanceCategory` in the other, because a dotted `3.10` and a closed `G001`–`G010` list cannot share one property and still be reasoned over. Payloads are identical either way; only the context mapping differs.
+A term is split when the value spaces are incompatible. `grievance.category` keeps its JSON key in both grievance packs but resolves to `openagrinet:pmfbyGrievanceCategory` in one and `openagrinet:pmkisanGrievanceCategory` in the other, because PMFBY's numeric ids and a closed `G001`–`G010` list cannot share one property and still be reasoned over. Payloads are identical either way; only the context mapping differs.
+
+A pack may also refuse an inherited term outright, with `not`/`required`, rather than leave it defined and never filled: PM-KISAN refuses `grievance.subCategory` because it classifies at one level, and `case.ticketNo` because it issues no handle for a case. PMFBY refuses `case.remarkedOn` because it publishes no date against a remark. Each is one member to delete if the portal changes.
 
 ## Packs
 
-- [Grievance](Grievance/v0.1/attributes.yaml) — **base definitions, not a pack.** The shared grievance field set, `CaseStatusCode`, `CalendarDate` and `ProviderReference`.
+- [Grievance](Grievance/v0.1/attributes.yaml) — **base definitions, not a pack.** The four bands, the `Grievance` and `Case` containers, and `CaseStatusCode`, `CalendarDate` and `ProviderReference` beside them.
 - [PMFBY Grievance](PMFBYGrievance/v0.1/README.md) — lodging and reading a PMFBY crop-insurance grievance.
 - [PM-KISAN Grievance](PMKISANGrievance/v0.1/README.md) — lodging and reading a PM-KISAN income-support grievance.
 

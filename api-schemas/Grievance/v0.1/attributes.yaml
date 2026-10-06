@@ -17,11 +17,25 @@ info:
     a Provider's API surface, not a thing the network describes, so the shape
     belongs beside the packs that use it and not in a domain schema.
 
-    Two fields are deliberately absent. @type is the pack's identity, so a base
-    could only accept any string and leave the pack to restate the whole thing.
-    grievanceCategory resolves to a different IRI per scheme and the value
-    spaces are incompatible -- a dotted PMFBY code against PM-KISAN's closed
-    ten-value list -- so one definition could not hold both.
+    A payload has four bands, and the band a field sits in says who wrote it.
+    At the top: who is asking and about what -- informationMode, provider,
+    scheme, enrolmentId. Under grievance: what the farmer submitted. Under case:
+    what the portal has on file, the stamps it applied included. Anything else a
+    pack adds -- an OTP challenge, a crop season -- sits at the top with the
+    rest of the context.
+
+    The two containers are the point of this file. Before them the same split
+    lived in a prefix -- grievanceCategory against caseStatus -- which read the
+    same but checked nothing: a field named either way validated either way.
+    As containers the split is enforced, and three rules come with it that were
+    conventions before. A grievance is all or nothing, because required inside
+    the block fires whenever the block is present. A response must say where the
+    case stands. And a request must be asking for something. Each pack states
+    the last two, because what counts as a complete answer and as a meaningful
+    ask is the portal's business, not the network's.
+
+    @type is deliberately absent: it is the pack's identity, so a base could
+    only accept any string and leave the pack to restate the whole thing.
 
     Descriptions here say what a field means network-wide. A pack restates the
     field with a description of its own to record how its portal fills it:
@@ -98,7 +112,120 @@ components:
             reason to arbitrate spelling.
           x-jsonld-id: "openagrinet:scheme"
 
-        grievanceDescription:
+        enrolmentId:
+          type: string
+          minLength: 1
+          maxLength: 64
+          x-oan-pii:
+            class: identifier
+            handling: [no-log, no-trace]
+            note: >
+              Ties a case to a named farmer's standing in a scheme. Returned on
+              a case read, so no-echo would be wrong; it is the caller's own
+              reference coming back.
+          description: >
+            The enrolment the grievance is about: the farmer's standing in the
+            scheme, not the farmer. Every scheme issues one under some name --
+            an insurance application number, a registration number -- and it is
+            what support is raised against.
+
+            One slot rather than a differently-named field per scheme, because
+            every pack had put its own name on the same thing and then given it
+            the same Beckn placement. A reader writes .enrolmentId once.
+
+            On support it is the orderId, the thing support is required
+            against, and it holds that meaning in both directions: the ask
+            sends it and on_support echoes it unchanged. Whatever handle the
+            portal issues in return does not go there -- it comes back in
+            case.ticketNo, because a ticket is not what the complaint is
+            against.
+
+            The IRI is the network's own and shared. The value spaces differ by
+            scheme and the packs pin them, but an opaque enrolment reference is
+            not a vocabulary anyone reasons over, so there is nothing to tell
+            apart at the IRI level -- unlike the category codes, which are.
+          x-beckn-path:
+            support: message.support.orderId
+          x-jsonld-id: "openagrinet:enrolmentId"
+
+        grievance:
+          allOf:
+            - $ref: "#/components/schemas/Grievance"
+          description: >
+            What the farmer submitted. Absent on a payload that is not about a
+            specific complaint -- reading every case on an enrolment, or
+            acknowledging a challenge.
+          x-jsonld-id: "openagrinet:grievance"
+
+        case:
+          allOf:
+            - $ref: "#/components/schemas/Case"
+          description: >
+            What the portal has on file. Absent on the way in, except where a
+            caller is naming a case to read.
+          x-jsonld-id: "openagrinet:case"
+
+    Grievance:
+      type: object
+      required: [description]
+      description: >
+        The complaint as the farmer submitted it. Nothing the portal authored
+        belongs in here, including the date it stamped on receipt -- that is
+        case.filedOn.
+
+        Present or absent as a whole. The required list fires only when the
+        block is there, which is the rule worth having: a partial grievance is
+        an error, an absent one is a payload that is not about a complaint.
+
+        category is not required, because it is not always returned. PM-KISAN's
+        status call does not send the grievance type back, so a response would
+        have to omit it. Whether a caller must choose one to file is an
+        action-level rule and is enforced by that action's mapping guard, which
+        is where the rest of the per-action requirements already live.
+      properties:
+        category:
+          allOf:
+            - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - anyOf:
+                - required: [code]
+                - required: [name]
+          description: >
+            What the complaint is about, in the portal's own classification.
+            code is the portal's value and name is its label.
+
+            One of the two must be present, rather than code outright. A
+            caller filing a grievance states code, because that is what the
+            portal accepts. PMFBY's case read answers with
+            TicketCategoryName and no id at all, so a response that carried
+            the classification the portal actually sent could not satisfy a
+            code requirement. Requiring either lets both legs say what they
+            have; requiring neither would let an empty object through.
+
+            Each pack pins its own value space and supplies its own IRI: the
+            codes are published lists that do not overlap, and one IRI holding
+            both could not be reasoned over.
+
+        subCategory:
+          allOf:
+            - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - anyOf:
+                - required: [code]
+                - required: [name]
+          description: >
+            A second level of classification, where the portal has one. Carries
+            the same code-or-name rule as category, and for the same reason:
+            PMFBY returns TicketSubCategoryName without an id. Defined
+            here rather than in a pack because a two-level taxonomy is ordinary
+            in grievance systems, and a pack whose portal has one level refuses
+            the field outright with not/required.
+
+            A level of its own rather than half of a joined string. An earlier
+            draft put both levels in one code separated by a dot, which the
+            adapter then split back apart to send and rejoined to return --
+            and the rejoin was ambiguous, because the portal's own category
+            names contain the separator.
+
+        description:
           type: string
           minLength: 10
           maxLength: 2000
@@ -113,19 +240,46 @@ components:
             length because a grievance that says nothing cannot be acted on, and
             a maximum because this is unvalidated free text arriving from a
             caller and going on to the portal. Neither portal publishes an upper
-            limit, so the bound is the network's own and matches caseRemark:
+            limit, so the bound is the network's own and matches case.remark:
             2000 characters, long enough for any real account of a problem.
 
-            Does not travel inside the attributes object. x-beckn-path moves it
-            to the Beckn descriptor, which is where a contract says what it is
-            about -- so a client that does not know the pack still sees what was
-            complained about.
-          x-beckn-path:
-            support: message.support.descriptor.longDesc
-            status: message.contract.descriptor.longDesc
+            The one required member, because it is the only thing a grievance
+            cannot be without.
           x-jsonld-id: "openagrinet:grievanceDescription"
 
-        caseStatus:
+    Case:
+      type: object
+      description: >
+        The record as the portal holds it, the stamps it applied included. Every
+        field here can differ between two reads of the same grievance.
+
+        filedOn sits here rather than with the complaint even though it never
+        changes: the portal stamps it, the farmer does not send it, and who
+        authored a value is the line these two blocks are drawn on. Drawn on
+        mutability instead, ticketNo would have had to move the other way, which
+        reads wrong.
+
+        No required list. A caller naming a case to read sends ticketNo alone; a
+        response carries a status. What a complete response looks like is the
+        pack's statement, since it depends on what the portal issues.
+      properties:
+        ticketNo:
+          type: string
+          description: >
+            The handle the portal issues when a grievance is filed, and the
+            thing a farmer quotes back to ask about it. Travels in both
+            directions.
+
+            Stays in the attributes on every leg -- no x-beckn-path moves it --
+            so on_support returns it here and leaves orderId holding the
+            enrolment reference it arrived with.
+
+            A pack whose portal issues no handle refuses the field outright
+            with not/required, rather than leaving it defined and permanently
+            absent.
+          x-jsonld-id: "openagrinet:ticketNo"
+
+        status:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
             - type: object
@@ -161,7 +315,7 @@ components:
             05:30 IST.
           x-jsonld-id: "openagrinet:filedOn"
 
-        caseRemark:
+        remark:
           type: string
           minLength: 1
           maxLength: 2000
@@ -173,9 +327,9 @@ components:
             The most recent remark recorded against the case. Named for the
             case rather than for an author: a remark may come from a reviewing
             officer, from a body handling the claim, or from the system closing
-            a record, and neither portal publishes a reliable author. It is an
-            annotation on a record, not necessarily a reply addressed to the
-            farmer.
+            a record, and the one portal that publishes remarks at all does not
+            name the author reliably. It is an annotation on a record, not
+            necessarily a reply addressed to the farmer.
 
             Absent rather than empty while nothing has been recorded, so an
             absent field reads as "nothing recorded yet". Bounded at 2000

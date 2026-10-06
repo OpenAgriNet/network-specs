@@ -11,23 +11,32 @@ info:
     lifecycle of its own, not a catalogable resource.
 
     Extends GrievanceBase, in api-schemas/Grievance/v0.1. The base owns the
-    field set every grievance pack shares and the vocabulary those fields are
-    written in; this file pins @type and scheme to PMFBY, adds what PMFBY alone
-    has -- the phone, the application, the season, the OTP challenge and the
-    ticket number -- and records against each inherited field how this portal
-    fills it. Nothing grievance-related is added to a domain schema: a
-    grievance is a Provider's API surface, not a thing the network describes.
+    four bands a grievance payload has -- the context at the top, the farmer's
+    complaint under grievance, the portal's record under case -- and the
+    vocabulary they are written in. This file pins @type and scheme to PMFBY,
+    adds what PMFBY alone has (the phone, the crop year, the season and the OTP
+    challenge), pins the value spaces inside the two containers, and states
+    what a PMFBY payload must carry to be an answer and to be an ask. Nothing
+    grievance-related is added to a domain schema: a grievance is a Provider's
+    API surface, not a thing the network describes.
 
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real case. The same
     attributes serve init and status without change. On support the payload
-    attaches through channels instead, and three fields move into the Support
+    attaches through channels instead, and enrolmentId moves into the Support
     object itself. The channel also carries provider, which exists for that
     action alone: a SupportAction composes no Contract, so the adapter has
     nowhere else to read the provider from. The grievance is lodged with
     support, not confirm, so no confirm entry appears below.
     x-beckn-container-by-action says which container each action uses, and the
     per-field x-beckn-path says where a field that moves ends up.
+
+    Nothing is hoisted into a Beckn descriptor. An earlier draft put the
+    category and the complaint text there, which placed them outside the object
+    the validator binds to -- so the pack's own rules did not reach them and
+    the mapping files re-implemented each one by hand. Both legs now send no
+    descriptor at all, which Beckn permits: Support requires only @context and
+    @type, and Contract only commitments.
 
 components:
   schemas:
@@ -43,11 +52,6 @@ components:
         "@type": openagrinet:PMFBYGrievance
       allOf:
         - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
-        # PMFBY publishes no date against a remark, so the inherited field is
-        # refused rather than left permanently absent. One member to delete if
-        # the portal ever starts publishing one.
-        - not:
-            required: [remarkedOn]
         - type: object
           required: ["@type"]
           properties:
@@ -81,72 +85,38 @@ components:
                 returned in a response; on_init carries the masked challengeIssued.sentTo
                 instead.
               x-jsonld-id: "openagrinet:applicantPhone"
-            applicationNo:
-              type: string
-              minLength: 1
-              maxLength: 64
-              x-oan-pii:
-                class: identifier
-                handling: [no-log, no-trace]
-                note: >
-                  Identifies a named farmer's policy. Returned on a case read, so
-                  no-echo would be wrong; it is the caller's own application number
-                  coming back.
-              description: >
-                PMFBY crop insurance application number the grievance concerns.
-                On support it is the orderId, the thing support is required
-                against, and it holds that meaning in both directions: the ask
-                sends it and on_support echoes it unchanged. The ticket the portal
-                issues does not go there -- it comes back in ticketNo on the
-                channel, because a ticket is not what the complaint is against.
-              x-beckn-path:
-                support: message.support.orderId
-              x-jsonld-id: "openagrinet:applicationNo"
+
             cropYear:
               type: string
               pattern: "^[0-9]{4}$"
               description: >
-                Crop year of the application, as a four-digit year. The portal
-                returns request_year as a number, so the adapter stringifies it
-                on the way back. It is the year of the application, not of the
-                grievance: a 2025 crop year can carry a 2026 complaint date.
+                Crop year of the application, as a four-digit year. Sent
+                upstream as requestYear when lodging. The portal does not
+                return it on a case read, so it is present on the way in and
+                absent on the way out. It is the year of the application, not
+                of the grievance: a 2025 crop year can carry a 2026 complaint
+                date.
+
+                Sits at the top rather than under grievance because it
+                qualifies the enrolment, not the complaint.
               x-jsonld-id: "openagrinet:cropYear"
+
             season:
               type: string
               enum: [Kharif, Rabi, Zaid]
               description: >
                 Crop season of the application. PMFBY accepts three seasons and
                 nothing else. The network carries the name; the adapter maps it to
-                the numeric request_season the portal wants -- Kharif 1, Rabi 2,
+                the numeric requestSeason the portal wants -- Kharif 1, Rabi 2,
                 Zaid 3. Summer is the same season as Zaid and is sent as Zaid.
-              x-jsonld-id: "openagrinet:season"
-            grievanceCategory:
-              allOf:
-                - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
-                - type: object
-                  properties:
-                    code:
-                      type: string
-                      pattern: "^[0-9]+\\.[0-9]+$"
-                      description: >
-                        Category and sub-category joined by a dot, exactly as the
-                        portal numbers them.
-              description: >
-                Category of the grievance. The code is the portal's category and
-                sub-category joined by a dot, and the adapter splits it on that dot
-                into two upstream fields, so the shape is load-bearing rather than
-                cosmetic. The portal returns a name for each half on a case read
-                and the adapter joins them with a slash, so name follows code.
-                The portal publishes no list of valid pairs; see the pack README.
-              x-beckn-path:
-                support: message.support.descriptor.code and .name
-                status: message.contract.descriptor.code and .name
-              x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
 
+                Sits at the top for the same reason as cropYear: it says which
+                enrolment, not what went wrong, and like cropYear it is never
+                returned.
+              x-jsonld-id: "openagrinet:season"
 
             challenge:
               type: object
-              writeOnly: true
               required: [method, value]
               additionalProperties: false
               x-oan-pii:
@@ -166,7 +136,6 @@ components:
                 value:
                   type: string
                   pattern: "^[0-9]{6}$"
-                  writeOnly: true
                   x-oan-pii:
                     class: credential
                     handling: [no-log, no-trace, no-echo, no-forward]
@@ -177,9 +146,12 @@ components:
                     narrowing is evaluated, so the rule is held by the pack and
                     not left to a mapping guard.
 
-                    writeOnly is the contract: it travels inbound only and must
-                    never be returned in a response, written to a log, or
-                    attached to a trace.
+                    Direction is carried by x-oan-pii, not by writeOnly. The
+                    network validates every payload as a request, on the way out
+                    as well as in, so writeOnly here would assert nothing while
+                    readOnly on the answering field would reject the very
+                    response it describes. no-echo is the rule the adapter
+                    reads, and it is unconditional.
                   x-jsonld-id: "openagrinet:challengeValue"
               description: >
                 Proof of the phone number, presented when filing. No correlator
@@ -188,32 +160,15 @@ components:
                 caller sending one is confused about the mechanism rather than
                 being quietly ignored.
 
-                writeOnly is the contract: the whole object travels inbound
-                only. It must never be returned in any response, written to a
-                log, or attached to a trace, and the value is never forwarded
-                to the lodge call.
+                The whole object travels inbound only: never returned in any
+                response, written to a log or attached to a trace, and the value
+                is never forwarded to the lodge call. That is x-oan-pii no-echo
+                and no-forward, which the adapter enforces. It is deliberately
+                not writeOnly -- see the note on value.
               x-jsonld-id: "openagrinet:challenge"
-
-            ticketNo:
-              type: string
-              pattern: '^[0-9]+$'
-              maxLength: 32
-              description: >
-                Portal grievance ticket number. Returned when a grievance is filed
-                and presented again to read its replies, so it travels in both
-                directions. It stays in the attributes on every leg -- no
-                x-beckn-path moves it -- so on_support returns it here and leaves
-                orderId holding the application number it arrived with. Digits only, and long enough not to be mistaken for a
-                phone number: the live system routes a ten-digit answer to the phone
-                and anything longer to the ticket, and observed tickets run twelve
-                to fifteen digits. The exact length is not pinned because that range
-                is described as typical, not as a rule; the maxLength is a sanity
-                bound well clear of it, not a statement about the format.
-              x-jsonld-id: "openagrinet:ticketNo"
 
             challengeIssued:
               type: object
-              readOnly: true
               required: [method, sentTo, expiresAt]
               additionalProperties: false
               properties:
@@ -246,13 +201,15 @@ components:
                 Acknowledgement that the portal has sent a challenge. Carries no
                 secret: the OTP itself is never returned. No correlator field
                 exists and additionalProperties refuses one, since PMFBY issues
-                none. readOnly is the contract: this is returned and never sent.
+                none. This is returned and never sent, but it is not marked
+                readOnly: the network validates responses as requests too, so
+                readOnly would reject this acknowledgement outright.
               x-jsonld-id: "openagrinet:challengeIssued"
 
-
-            # Inherited from GrievanceBase. Restated with a description only,
-            # to record how this portal fills each one. The shape, the bounds
-            # and the IRIs stay with the base.
+            # Inherited from GrievanceBase, narrowed to what this portal does.
+            # Where a field is restated with a description alone, the shape and
+            # the bounds stay with the base and the note records how PMFBY
+            # fills it.
 
             scheme:
               allOf:
@@ -266,46 +223,180 @@ components:
                 else, so there is exactly one legal value for code. The title
                 in the examples is "Pradhan Mantri Fasal Bima Yojana".
 
-            caseStatus:
+            enrolmentId:
+              allOf:
+                - type: string
+                  minLength: 10
+                  maxLength: 30
               description: >
-                PMFBY note: name carries the portal's TicketStatus phrase. The
-                portal also returns a numeric TicketStatusID, an opaque
-                internal key that is not mapped -- the derived code replaces
-                it. A lodge reply carries no status at all, so there is nothing
-                to quote and code stands alone.
+                The enrolment the grievance is about; on support it is the
+                orderId. For PMFBY that is the crop insurance application
+                number, which goes upstream as applicationNo and comes back
+                as ApplicationNo on a case read.
 
-            filedOn:
-              description: >
-                PMFBY note: read from ComplaintDate, which the portal already
-                sends as ISO. On a lodge the adapter generates it.
+                The bounds are a sanity range around the observed form -- a
+                state code, a crop year, a season marker and a serial -- not a
+                published rule. PMFBY documents no format.
 
-            caseRemark:
-              description: >
-                PMFBY note: read from latestRemark. The portal sends an empty
-                string while no remark exists; the adapter omits the field
-                rather than passing the empty string through. PMFBY publishes
-                no companion date, which is why this pack refuses remarkedOn.
+            grievance:
+              properties:
+                category:
+                  allOf:
+                    - type: object
+                      properties:
+                        code:
+                          type: string
+                          pattern: "^[0-9]+$"
+                          description: >
+                            The portal's ticket_category_id, digits only.
+                  description: >
+                    PMFBY note: ticketCategoryID on the way up,
+                    TicketCategoryName on the way back -- a name with no id
+                    beside it. The portal returns no TicketCategoryID, so on a
+                    case read code cannot be filled and name stands alone.
+                    That is why the base requires one of code or name here
+                    rather than code outright.
 
-        # Direction, not action. A response carrying a real case is Direct and
-        # always names the case, its status, when it was filed and where it came
-        # from -- true of on_support and on_status alike.
+                    The live integration pins this to 3 and the sub-category to
+                    10, so the farmer never chooses. It is still carried as a
+                    value rather than written into the mapping: when the portal
+                    exposes its category list the experience layer starts
+                    sending a real choice and nothing here changes. The portal
+                    publishes no list of valid pairs; see the pack README.
+                  x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
+
+                subCategory:
+                  allOf:
+                    - type: object
+                      properties:
+                        code:
+                          type: string
+                          pattern: "^[0-9]+$"
+                          description: >
+                            The portal's ticket_sub_category_id, digits only.
+                  description: >
+                    PMFBY note: ticketSubCategoryID on the way up,
+                    TicketSubCategoryName on the way back. Like the category,
+                    the read carries a name and no id. A level of its own,
+                    because the portal numbers the two levels separately on
+                    the way up and names them separately on the way back.
+                  x-jsonld-id: "openagrinet:pmfbyGrievanceSubCategory"
+
+                description:
+                  description: >
+                    PMFBY note: sent as grievenceDescription -- the portal's
+                    own spelling -- and returned verbatim as
+                    GrievenceDescription on a case read.
+
+            case:
+              # PMFBY publishes neither a remark nor a date against one. The
+              # ticket record the portal returns carries a status phrase and
+              # nothing resembling a reply, so both inherited fields are
+              # refused rather than left permanently absent. Two members to
+              # delete if the portal ever starts publishing them.
+              not:
+                anyOf:
+                  - required: [remark]
+                  - required: [remarkedOn]
+              properties:
+                ticketNo:
+                  allOf:
+                    - type: string
+                      pattern: '^[0-9]+$'
+                      maxLength: 32
+                  description: >
+                    Portal grievance ticket number, returned as
+                    GrievenceSupportTicketNo when a grievance is filed and
+                    presented again as GrievenceSupportTicketNo to read it.
+
+                    The case read does not return it. The portal answers that
+                    call with GrievenceSupportTicketID, an internal key that is
+                    not mapped, so on a read the adapter echoes the number the
+                    caller asked with -- it is the key the record was selected
+                    by, so echoing it asserts nothing the caller did not
+                    already state.
+
+                    Digits only, and long enough not to be mistaken for a phone
+                    number: the live system routes a ten-digit answer to the
+                    phone and anything longer to the ticket, and observed
+                    tickets run twelve to fifteen digits. The exact length is
+                    not pinned because that range is described as typical, not
+                    as a rule; the maxLength is a sanity bound well clear of
+                    it, not a statement about the format.
+
+                status:
+                  description: >
+                    PMFBY note: name carries the portal's TicketStatus phrase,
+                    verbatim. The portal publishes no status code beside it, so
+                    the network's code is always derived from that phrase. A
+                    lodge reply carries no status at all, so there is nothing
+                    to quote and code stands alone.
+
+                filedOn:
+                  description: >
+                    PMFBY note: read from ComplaintDate. The portal's format
+                    for it is not published, so the adapter normalises to the
+                    IST calendar date this field requires rather than passing
+                    the value through. On a lodge the adapter generates it and
+                    sends it up as complaintDate.
+
+                cropName:
+                  type: string
+                  minLength: 1
+                  maxLength: 120
+                  description: >
+                    The insured crop the ticket was raised against, as the
+                    portal names it. Read from CropName on a case read; never
+                    sent, because the application number already says which
+                    policy and the portal resolves the crop from it.
+
+                    Added by this pack rather than inherited: PMFBY tickets
+                    carry a crop because the scheme insures one, and a
+                    grievance system that is not crop insurance has nothing to
+                    put here. It sits in case rather than beside cropYear and
+                    season because the portal authors it -- the caller never
+                    states it -- and that is the line the bands are drawn on.
+
+                    Free text with no published vocabulary, so it is bounded
+                    and otherwise unconstrained. Shown to the farmer, never
+                    branched on.
+                  x-jsonld-id: "openagrinet:cropName"
+
+        # A Direct payload is a response, and a response with no case standing
+        # is not an answer. Stated with anyOf and not with if/then: if/then is
+        # parsed but never evaluated by the validator in use, so a guard
+        # written that way looks like it holds and does not.
         #
-        # There is deliberately no matching OnDemand branch. The ask side has no
-        # field common to every payload: filing sends the phone, the application,
-        # the season and the OTP; reading a case sends the phone and the ticket;
-        # an OTP acknowledgement sends neither, because it must not echo the phone.
-        # Requiring any of them here would reject a legitimate payload of some
-        # other action, which is exactly the coupling this pack avoids. What each
-        # action must carry is enforced by that action's mapping guard.
-        - if:
-            properties:
-              informationMode:
-                const: Direct
-            required: [informationMode]
-          # No provenance member here. provider says which portal the case came
-          # from, but on a contract leg it lives in commitments[].offer.provider
-          # rather than in these attributes, so a guard on the attributes object
-          # cannot reach it. What this guard still asserts is what a Direct
-          # response must say about the case itself.
-          then:
-            required: [ticketNo, caseStatus, filedOn]
+        # There is deliberately no matching OnDemand branch here. What each
+        # action must carry on the way in is enforced by that action's mapping
+        # guard; what every ask must carry at all is the gate below.
+        #
+        # No provenance member. provider says which portal the case came from,
+        # but on a contract leg it lives in commitments[].offer.provider rather
+        # than in these attributes, so a guard on the attributes object cannot
+        # reach it.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - allOf:
+                - required: [case]
+                - properties:
+                    case:
+                      required: [ticketNo, status, filedOn]
+
+        # Every payload must be about something. The same @type serves filing,
+        # reading and acknowledging, and informationMode cannot tell them apart
+        # -- all three asks are OnDemand -- so what separates them is what the
+        # payload brought. One that brought none of these is asking for
+        # nothing, and before the containers existed nothing caught it: a
+        # grievance could go missing field by field and still validate.
+        - anyOf:
+            - required: [grievance]         # filing, or a case read echoing one
+            - required: [case]              # reading one case by its ticket
+            - required: [enrolmentId]       # reading by the application
+            - required: [challengeIssued]   # acknowledging an OTP, which must
+                                            # echo nothing else
+            - required: [applicantPhone]    # asking for one: on init the phone
+                                            # is the whole subject, since the
+                                            # farmer has stated nothing yet

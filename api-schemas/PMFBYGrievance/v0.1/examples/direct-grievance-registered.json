@@ -4,7 +4,9 @@
   "informationMode": "Direct",
   "provider": { "id": "pmfby", "descriptor": { "name": "PMFBY Grievance Portal" } },
   "scheme": { "code": "PMFBY", "name": "Pradhan Mantri Fasal Bima Yojana" },
-  "ticketNo": "100626000099001",
-  "caseStatus": { "code": "Registered" },
-  "filedOn": "2026-09-28"
+  "case": {
+    "ticketNo": "100626000099001",
+    "status": { "code": "Registered" },
+    "filedOn": "2026-09-28"
+  }
 }

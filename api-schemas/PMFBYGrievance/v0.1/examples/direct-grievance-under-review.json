@@ -1,26 +1,21 @@
 {
   "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
   "@type": "openagrinet:PMFBYGrievance",
-  "informationMode": "OnDemand",
-  "provider": {
-    "id": "pmfby",
-    "descriptor": { "name": "PMFBY Grievance Portal" }
-  },
+  "informationMode": "Direct",
   "scheme": {
     "code": "PMFBY",
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
   "enrolmentId": "KA2026KH00123456",
-  "applicantPhone": "9876543210",
-  "cropYear": "2026",
-  "season": "Kharif",
   "grievance": {
-    "category": { "code": "3" },
-    "subCategory": { "code": "10" },
+    "category": { "name": "Enrollment / Portal Issues" },
+    "subCategory": { "name": "Login" },
     "description": "Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment."
   },
-  "challenge": {
-    "method": "SMS_OTP",
-    "value": "482137"
+  "case": {
+    "ticketNo": "100626000099001",
+    "status": { "code": "UnderReview", "name": "Open" },
+    "filedOn": "2026-09-28",
+    "cropName": "Paddy"
   }
 }

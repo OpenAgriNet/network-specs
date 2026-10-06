@@ -1,8 +1,8 @@
 {
   "schema": "PMKISANGrievance",
   "version": "0.1.0",
-  "card_template": "{{informationMode}} | {{scheme.name}} | {{caseStatus.name}} | {{filedOn}}",
-  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nStatus: {{caseStatus.name}}\nFiled on: {{filedOn}}\nCategory: {{grievanceCategory.name}}\nGrievance: {{grievanceDescription}}\nLatest remark: {{caseRemark}}\nRemarked on: {{remarkedOn}}",
-  "html": "<div class=\"oan-pmkisan-grievance\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{caseStatus.name}} · {{filedOn}}</span></div>",
-  "html_detail": "<div class=\"oan-pmkisan-grievance-detail\"><p><strong>Status:</strong> {{caseStatus.name}}</p><p><strong>Filed on:</strong> {{filedOn}}</p><p><strong>Category:</strong> {{grievanceCategory.name}}</p><p><strong>Grievance:</strong> {{grievanceDescription}}</p><p><strong>Latest remark:</strong> {{caseRemark}}</p></div>"
+  "card_template": "{{informationMode}} | {{scheme.name}} | {{case.status.name}} | {{case.filedOn}}",
+  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nStatus: {{case.status.name}}\nFiled on: {{case.filedOn}}\nCategory: {{grievance.category.name}}\nGrievance: {{grievance.description}}\nLatest remark: {{case.remark}}\nRemarked on: {{case.remarkedOn}}",
+  "html": "<div class=\"oan-pmkisan-grievance\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{case.status.name}} · {{case.filedOn}}</span></div>",
+  "html_detail": "<div class=\"oan-pmkisan-grievance-detail\"><p><strong>Status:</strong> {{case.status.name}}</p><p><strong>Filed on:</strong> {{case.filedOn}}</p><p><strong>Category:</strong> {{grievance.category.name}}</p><p><strong>Grievance:</strong> {{grievance.description}}</p><p><strong>Latest remark:</strong> {{case.remark}}</p></div>"
 }

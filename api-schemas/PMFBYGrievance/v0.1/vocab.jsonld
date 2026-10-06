@@ -10,29 +10,128 @@
       "rdfs:label": "PMFBY Grievance",
       "rdfs:comment": "A grievance raised against the Pradhan Mantri Fasal Bima Yojana crop insurance scheme, filed on demand and answered directly."
     },
-    { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
-    { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
-    { "@id": "openagrinet:provider", "@type": "rdfs:Property", "rdfs:label": "provider", "rdfs:comment": "The provider this grievance is for, as a Beckn Provider reference. Carried on support because a SupportAction composes no Contract to read it from; every other action reads commitments[].offer.provider." },
-    { "@id": "openagrinet:applicantPhone", "@type": "rdfs:Property", "rdfs:label": "applicant phone" },
-    { "@id": "openagrinet:applicationNo", "@type": "rdfs:Property", "rdfs:label": "application number" },
-    { "@id": "openagrinet:cropYear", "@type": "rdfs:Property", "rdfs:label": "crop year" },
-    { "@id": "openagrinet:season", "@type": "rdfs:Property", "rdfs:label": "season" },
+    {
+      "@id": "openagrinet:informationMode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "information mode",
+      "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case."
+    },
+    {
+      "@id": "openagrinet:scheme",
+      "@type": "rdfs:Property",
+      "rdfs:label": "scheme"
+    },
+    {
+      "@id": "openagrinet:grievance",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance",
+      "rdfs:comment": "What the farmer submitted: the classification they chose and the problem in their own words. Nothing the portal authored belongs here."
+    },
+    {
+      "@id": "openagrinet:case",
+      "@type": "rdfs:Property",
+      "rdfs:label": "case",
+      "rdfs:comment": "What the portal has on file about a grievance, the stamps it applied included. Every member can differ between two reads of the same grievance."
+    },
+    {
+      "@id": "openagrinet:enrolmentId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "enrolment id",
+      "rdfs:comment": "The enrolment a grievance is about -- the farmer's standing in a scheme, not the farmer. One property across schemes: the value spaces differ and the packs pin them, but an opaque enrolment reference is not a vocabulary anyone reasons over."
+    },
+    {
+      "@id": "openagrinet:provider",
+      "@type": "rdfs:Property",
+      "rdfs:label": "provider",
+      "rdfs:comment": "The provider this grievance is for, as a Beckn Provider reference. Carried on support because a SupportAction composes no Contract to read it from; every other action reads commitments[].offer.provider."
+    },
+    {
+      "@id": "openagrinet:applicantPhone",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant phone"
+    },
+    {
+      "@id": "openagrinet:cropYear",
+      "@type": "rdfs:Property",
+      "rdfs:label": "crop year"
+    },
+    {
+      "@id": "openagrinet:season",
+      "@type": "rdfs:Property",
+      "rdfs:label": "season"
+    },
     {
       "@id": "openagrinet:pmfbyGrievanceCategory",
       "@type": "rdfs:Property",
       "rdfs:label": "PMFBY grievance category",
-      "rdfs:comment": "Portal category and sub-category joined by a dot, such as 3.10. Deliberately a separate property from the PM-KISAN category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+      "rdfs:comment": "The portal's first-level ticket category, such as 3. Deliberately a separate property from the PM-KISAN category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
     },
-    { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
-    { "@id": "openagrinet:challenge", "@type": "rdfs:Property", "rdfs:label": "challenge", "rdfs:comment": "Proof presented to satisfy an authentication challenge. PMFBY offers one mechanism: a six-digit OTP texted to the registered mobile number." },
-    { "@id": "openagrinet:challengeMethod", "@type": "rdfs:Property", "rdfs:label": "challenge method", "rdfs:comment": "Authentication mechanism a challenge belongs to. PMFBY offers SMS_OTP only." },
-    { "@id": "openagrinet:challengeValue", "@type": "rdfs:Property", "rdfs:label": "challenge value", "rdfs:comment": "The proof itself. Inbound only: never returned, logged, or traced." },
-    { "@id": "openagrinet:ticketNo", "@type": "rdfs:Property", "rdfs:label": "ticket number" },
-    { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
-    { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
-    { "@id": "openagrinet:caseRemark", "@type": "rdfs:Property", "rdfs:label": "case remark" },
-    { "@id": "openagrinet:challengeIssued", "@type": "rdfs:Property", "rdfs:label": "challenge issued", "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret." },
-    { "@id": "openagrinet:challengeSentTo", "@type": "rdfs:Property", "rdfs:label": "challenge sent to", "rdfs:comment": "Masked destination the challenge was sent to, never the full number." },
-    { "@id": "openagrinet:challengeExpiresAt", "@type": "rdfs:Property", "rdfs:label": "challenge expires at" }
+    {
+      "@id": "openagrinet:pmfbyGrievanceSubCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PMFBY grievance sub-category",
+      "rdfs:comment": "The portal's second-level ticket category, such as 10. A property of its own rather than half of a joined code: the portal numbers and names the two levels separately at both ends, and its category names contain the separator an earlier joined form used."
+    },
+    {
+      "@id": "openagrinet:grievanceDescription",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance description"
+    },
+    {
+      "@id": "openagrinet:challenge",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge",
+      "rdfs:comment": "Proof presented to satisfy an authentication challenge. PMFBY offers one mechanism: a six-digit OTP texted to the registered mobile number."
+    },
+    {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method",
+      "rdfs:comment": "Authentication mechanism a challenge belongs to. PMFBY offers SMS_OTP only."
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value",
+      "rdfs:comment": "The proof itself. Inbound only: never returned, logged, or traced."
+    },
+    {
+      "@id": "openagrinet:ticketNo",
+      "@type": "rdfs:Property",
+      "rdfs:label": "ticket number"
+    },
+    {
+      "@id": "openagrinet:caseStatus",
+      "@type": "rdfs:Property",
+      "rdfs:label": "case status"
+    },
+    {
+      "@id": "openagrinet:filedOn",
+      "@type": "rdfs:Property",
+      "rdfs:label": "filed on"
+    },
+    {
+      "@id": "openagrinet:cropName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "crop name",
+      "rdfs:comment": "The insured crop the ticket was raised against, as the portal names it. Returned on a case read, never sent."
+    },
+    {
+      "@id": "openagrinet:challengeIssued",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge issued",
+      "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret."
+    },
+    {
+      "@id": "openagrinet:challengeSentTo",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge sent to",
+      "rdfs:comment": "Masked destination the challenge was sent to, never the full number."
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at"
+    }
   ]
 }

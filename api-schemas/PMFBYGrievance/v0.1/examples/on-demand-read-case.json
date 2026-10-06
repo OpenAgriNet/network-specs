@@ -7,5 +7,7 @@
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
   "applicantPhone": "9876543210",
-  "ticketNo": "100626000099001"
+  "case": {
+    "ticketNo": "100626000099001"
+  }
 }

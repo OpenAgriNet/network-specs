@@ -52,13 +52,41 @@ This pack never sends one — see "Nothing on file" below.
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
 
+## The four bands
+
+**The band a field sits in says who wrote it.**
+
+| band | holds | written by |
+|---|---|---|
+| top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantPhone`, `cropYear`, `season` | the caller |
+| `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
+| `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `cropName` | the portal |
+| `challenge` | proof of the phone number, on the way in only | the caller |
+
+Before the containers the same split lived in a prefix — `grievanceCategory` against
+`caseStatus` — which read the same and checked nothing: a field named either way
+validated either way. As containers the split is enforced, and `grievance` becomes all
+or nothing, because `required` inside a block fires whenever the block is present.
+
+Nothing rides in a Beckn `descriptor`. An earlier draft hoisted the category and the
+farmer's words there, which read well and checked nothing: a `Descriptor` is three
+free-text strings, so the category, the sub-category and the complaint all validated as
+any string at all. The join was lossy too — PMFBY's own category name contains the
+separator the names were joined on (`Enrollment / Portal Issues` + `Login`), so no split
+could recover the pair. As fields inside `grievance` each one has bounds the pack holds.
+
 ## Direction, not action
 
 Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init` and `status` without change.
 
-One action is an exception, and the pack names it. On `support` the payload has no `Commitment` to sit on, so it attaches through `Support.channels`, and three fields leave the attributes object for the `Support` object's own slots: `applicationNo` becomes `orderId`, and `grievanceCategory` and `grievanceDescription` become the `descriptor`'s `code`/`name` and `longDesc`. `x-beckn-container-by-action` on the root schema records which container each action uses; `x-beckn-path` on each of those three fields records where it goes. A field with no `x-beckn-path` never moves.
+One action is an exception, and the pack names it. On `support` the payload has no
+`Commitment` to sit on, so it attaches through `Support.channels`, and one field leaves
+the attributes object for a `Support` slot of its own: `enrolmentId` becomes `orderId`.
+`x-beckn-container-by-action` on the root schema records which container each action
+uses; `x-beckn-path` on that field records where it goes. A field with no `x-beckn-path`
+never moves.
 
-A fourth field exists only on that leg, and it is there so the request can be routed at
+A second field exists only on that leg, and it is there so the request can be routed at
 all. The adapter picks the upstream call from a binding key, `participantId|capabilityCode`,
 and reads both halves out of the payload. On every other action the payload composes a
 `Contract`, so the participant is read from `commitments[].offer.provider.id`. A
@@ -74,75 +102,104 @@ sends a stale one still reaches the right provider. `scheme.code` is not a subst
 names a scheme rather than a participant, and it reads `PMFBY` where the registry holds
 `pmfby`.
 
-`Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the application number back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `ticketNo` on the channel. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs because that scheme issues no ticket at all. One field, one meaning, both schemes.
+`Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the enrolment back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `case.ticketNo`. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs and the portal's own `GrievanceID` rides in `case.ticketNo`. One field, one meaning, both schemes.
 
-The grievance is lodged through `support`, not `confirm` — the rationale is in `docs/grievance-support-variant.md` and the live flow in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
+The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
 
-`Direct` payloads must carry `ticketNo`, `caseStatus` and `filedOn`, which is true of `on_support` and `on_status` alike. `provider` is not in that list: on `on_support` it is returned, but on a contract leg the same fact lives in `commitments[].offer.provider`, outside these attributes, so a guard on the attributes object cannot reach it. A case read returns more than that — the application number, the category, the farmer's own description — and those are optional in the attributes because on `on_support` they come back in the `Support` object's own slots instead, not in the channel.
+## The two gates
 
-There is deliberately no matching `OnDemand` requirement. The ask side has no field common to every payload: filing a grievance sends the phone, the application, the season and the challenge; reading a case sends the phone and the ticket; a challenge acknowledgement sends neither, because it must not echo the phone. Requiring any of them here would reject a legitimate payload of some other action. What each action must carry is enforced by that action's mapping guard, not by this pack.
+Both are top-level `anyOf` members, and both are tested against the real validator.
+`if`/`then` would read more naturally and does not work: the validator parses it and
+never evaluates it, so a guard written that way looks like it holds and does not.
+
+**A `Direct` payload must carry a case.** A response with no case standing is not an
+answer, so `Direct` requires a `case` band with `ticketNo`, `status` and `filedOn` in it.
+On a case read the ticket number is the one the caller asked with, echoed — the portal
+does not return it.
+That is true of `on_support` and `on_status` alike. `provider` is not in the list: on a
+contract leg the same fact lives in `commitments[].offer.provider`, outside these
+attributes, where a guard on the attributes object cannot reach it.
+
+**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, a
+`challengeIssued` or an `applicantPhone`. The same `@type` serves filing, reading and
+acknowledging, and `informationMode` cannot tell them apart because all three asks are
+`OnDemand`. What separates them is what the payload brought. Before the containers
+existed nothing caught a payload that brought none of them.
+
+`applicantPhone` is in that list for one leg only. `init` asks for a challenge before the
+farmer has stated a complaint, so it carries no `grievance`, no `case` and no enrolment —
+the phone is the whole subject. Leaving it out made the gate reject a payload the pack is
+built to accept.
+
+There is deliberately no narrower `OnDemand` branch. The ask side has no field common to
+every payload: filing sends the phone, the enrolment, the season and the challenge;
+reading a case sends the phone and the ticket; a challenge acknowledgement sends neither,
+because it must not echo the phone. What each action must carry is enforced by that
+action's mapping guard.
 
 ## Upstream response coverage
 
 Every field the portal sends back, and where it goes. Nothing is left unaccounted for.
 
-**Lodge reply** — the `grievance-response` group, four fields:
+**Lodge reply** — `POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket`. The FGMS
+envelope plus two values inside `responseDynamic`:
 
 | upstream | here | note |
 |---|---|---|
-| `status` | `caseStatus` | the lodge reply states no status, so `code` is asserted `Registered` and no `name` accompanies it |
-| `ticket-no` | `ticketNo` | the number the farmer is told |
-| `ticket-id` | *dropped* | the portal's own row id. An internal key with no consumer: nothing sends it and no later call needs it. The same reason `TicketStatusID` is not mapped. |
-| `message` | *dropped* | the portal's own text. It may carry a stack trace, an internal hostname, or a quoted-back credential, so it is never returned. Log it redacted and return our own message. |
+| `responseCode` | `case.status` | the lodge reply states no status, so `"1"` asserts `code: Registered` and no `name` accompanies it. Compare the stringified value: it has been seen as both a string and a number |
+| `responseDynamic.GrievenceSupportTicketNo` | `case.ticketNo` | the number the farmer is told |
+| `responseDynamic.GrievenceSupportTicketID` | *dropped* | the portal's own row id. An internal key with no consumer: nothing sends it and the read is keyed on the ticket *number* |
+| `recordCount` | *dropped* | a count of a single record |
+| `responseMessage` | *dropped* | the portal's own text. It may carry a stack trace, an internal hostname, or a quoted-back credential, so it is never returned. Log it redacted and return our own message. |
 
-`filedOn` and `provider` are not in the reply. The adapter asserts them — `filedOn` from the
-request's own filing date, `provider` from the registry entry it routed to. They are
-network-asserted, not portal-reported, and a caller cannot tell the difference from the
-payload. That is a
-known weakness. `caseStatus` no longer has it: an inferred status carries `code` alone,
-so the absent `name` tells a caller the portal did not say so.
+`case.filedOn` and `provider` are not in the reply. The adapter asserts them — `filedOn`
+from the request's own filing date, `provider` from the registry entry it routed to. They
+are network-asserted, not portal-reported, and a caller cannot tell the difference from
+the payload. That is a known weakness. `case.status` no longer has it: an inferred status
+carries `code` alone, so the absent `name` tells a caller the portal did not say so.
 
 **Case read** — the record is much richer than the lodge reply. Every field it carries.
 
-**Read this table as a proposal, not as verified fact.** Of the names below only
-`GrievenceSupportTicketNo` occurs anywhere we can check, and it occurs there as a *request*
-tag rather than a response field. The legacy client renders the reply generically without
-naming a single field, so the reply's shape is not observable from any source on disk.
-Confirm these names against PMFBY's own API document before anything is built on them. See
-`docs/grievance-upstream-contracts.md`, which is the master reference for what each portal
-actually sends.
+**Verified.** `POST /krphapi/FGMS/GetGrievenceTicketsStatus`. The twelve
+`responseDynamic` fields are read from the v1 adapter on `Beckn`'s `main` branch; see
+`docs/grievance-upstream-contracts.md` §0, which is the master reference for what each
+portal actually sends.
 
 | upstream | here | note |
 |---|---|---|
-| `GrievenceSupportTicketNo` | `ticketNo` | the response carries its own, so nothing needs echoing |
-| `ApplicationNo` | `applicationNo` | |
-| `GrievenceDescription` | `grievanceDescription` | |
-| `TicketCategoryID` + `TicketSubCategoryID` | `grievanceCategory.code` | joined with a dot |
-| `TicketCategoryName` + `TicketSubCategoryName` | `grievanceCategory.name` | joined with ` / `, mirroring the dot |
-| `RequestYear` | `cropYear` | arrives as a number, stringified |
-| `RequestSeason` | `season` | the portal's code mapped back to the name |
-| `TicketStatus` | `caseStatus` | the phrase verbatim into `name`; mapped to a `CaseStatusCode` for `code` |
-| `ComplaintDate` | `filedOn` | already ISO, no conversion; an IST calendar date |
-| `latestRemark` | `caseRemark` | the portal sends `""` rather than omitting it; the adapter omits the field instead, so an absent `caseRemark` reads as "nothing recorded yet" |
-| `TicketStatusID` | *dropped* | an opaque internal key; `caseStatus.code` carries the state in the network's own vocabulary instead |
-| `responseDynamic` | *consumed* | the success flag the guard tests; not a field |
-| `RequestorMobileNo` | *dropped* | personal data, and `applicantPhone` is never echoed |
+| `ApplicationNo` | `enrolmentId` | |
+| `GrievenceDescription` | `grievance.description` | |
+| `TicketCategoryName` | `grievance.category.name` | **no id accompanies it.** The id goes up on the lodge as `ticketCategoryID` and does not come back |
+| `TicketSubCategoryName` | `grievance.subCategory.name` | likewise. Two levels, kept apart: the portal's own category name contains a slash, so any joined form would be lossy |
+| `TicketStatus` | `case.status` | the phrase verbatim into `name`; mapped to a `CaseStatusCode` for `code` |
+| `ComplaintDate` | `case.filedOn` | format unpublished, so the adapter normalises to an IST calendar date |
+| `CropName` | `case.cropName` | the insured crop. A field this pack adds rather than inherits |
+| `GrievenceSupportTicketID` | *dropped* | the portal's row id, not the number the farmer quotes |
 | `FarmerName` | *dropped* | personal data |
-| `Email` | *dropped* | personal data |
+| `InsuranceCompany` | *dropped* | personal data |
 | `StateMasterName` | *dropped* | personal data |
 | `DistrictMasterName` | *dropped* | personal data |
-| `SubDistrictName` | *dropped* | personal data |
-| `GramPanchayat` | *dropped* | personal data |
-| `NyayPanchayat` | *dropped* | personal data |
-| `VillageName` | *dropped* | personal data |
-| `InsurancePolicyNo` | *dropped* | personal data |
-| `InsuranceCompany` | *dropped* | personal data |
+| `responseCode` | *consumed* | the success flag the guard tests; not a field |
+| `responseMessage`, `recordCount` | *dropped* | the portal's own text, and a count |
 
-Eleven of the record's fields are dropped and none of them may reach a payload, a log or a
-trace; see "Privacy" below. The response mapping is an allow-list, not a passthrough.
+Four of the record's fields are personal data and none of them may reach a payload, a log
+or a trace; see "Privacy" below. The response mapping is an allow-list, not a passthrough.
 
-The record carries no remark date anywhere, which is why this pack has no `remarkedOn` —
-unlike PM-KISAN's, which has one.
+Four absences shape this pack:
+
+- **The ticket number is not returned.** The read answers with `GrievenceSupportTicketID`
+  instead, which is not mapped, so on a case read the adapter echoes the number the caller
+  asked with.
+- **No category ids.** Which is why the base pack requires `code` **or** `name` on a
+  classification rather than `code` outright.
+- **No `requestYear` or `requestSeason` comes back.** `cropYear` and `season` go up on the
+  lodge and are absent from every response.
+- **No remark, and no remark date.** Nothing in the record resembles a reply from the
+  portal, which is why this pack refuses both `case.remark` and `case.remarkedOn` —
+  unlike PM-KISAN, which publishes a reply and a date against it.
+
+One thing is still open: `recordCount` sits beside a `responseDynamic` that v1 reads as a
+single object. Whether a multi-ticket read returns an array is unconfirmed.
 
 ## Nothing on file
 
@@ -161,54 +218,43 @@ commitment at all was never available.
 ## Composition
 
 `PMFBYGrievance` extends **`GrievanceBase`**, in
-[`api-schemas/Grievance/v0.1`](../../Grievance/v0.1/attributes.yaml). The base
-owns what every grievance pack shares -- `informationMode`, `provider`,
-`scheme`, `grievanceDescription`, `caseStatus`, `filedOn`, `caseRemark`,
-`remarkedOn` -- plus the `CaseStatusCode` vocabulary, `CalendarDate` and
-`ProviderReference`. One definition, both packs; a change to the case
-vocabulary is one edit, not two kept in step by review.
+[`api-schemas/Grievance/v0.1`](../../Grievance/v0.1/attributes.yaml). The base owns the
+four bands and the vocabulary they are written in: `informationMode`, `provider`,
+`scheme` and `enrolmentId` at the top, the `Grievance` and `Case` containers, and the
+`CaseStatusCode` list, `CalendarDate` and `ProviderReference` beside them. One
+definition, both packs; a change to the case vocabulary is one edit, not two kept in step
+by review.
 
-`Grievance/v0.1` is not itself a pack. There is no `profile.json` beside it, so
-it is never indexed, and nothing ever sends `@type: openagrinet:GrievanceBase`.
+`Grievance/v0.1` is not itself a pack. There is no `profile.json` beside it, so it is
+never indexed, and nothing ever sends `@type: openagrinet:GrievanceBase`.
 
-This pack adds what PMFBY alone has -- `applicantPhone`, `applicationNo`,
-`cropYear`, `season`, `challenge`, `challengeIssued`, `ticketNo` -- pins
-`@type` and `scheme.code` to PMFBY, and declares its own `grievanceCategory`.
+This pack adds what PMFBY alone has — `applicantPhone`, `cropYear`, `season`, `challenge`,
+`challengeIssued` — pins `@type` and `scheme.code` to PMFBY, pins the value spaces inside
+the two containers, and states the two gates above.
 
-Two fields stay out of the base. `@type` is the pack's identity, so a base
-could only accept any string. `grievanceCategory` resolves to
-`openagrinet:pmfbyGrievanceCategory` here and
-`openagrinet:pmkisanGrievanceCategory` in the PM-KISAN pack, against
-incompatible value spaces -- a dotted `3.10` against a closed ten-value list --
-so one definition could not hold both.
+`@type` stays out of the base: it is the pack's identity, so a base could only accept any
+string. `grievance.category` and `grievance.subCategory` are declared in the base but
+their IRIs are pinned here, to `openagrinet:pmfbyGrievanceCategory` and
+`openagrinet:pmfbyGrievanceSubCategory`, against a numeric value space the PM-KISAN pack
+does not share.
 
-Each inherited field is restated here with a `description` only, recording
-which upstream field PMFBY fills it from. The shape, the bounds and the IRI
-stay with the base; the published page shows both halves.
+Each inherited field is restated here with a `description` only, recording which upstream
+field PMFBY fills it from. The shape, the bounds and the IRI stay with the base; the
+published page shows both halves.
 
-A grievance is a Provider's API surface, not a thing the network describes, so
-the base lives beside the packs in `api-schemas/` and nothing grievance-related
-is added to a domain schema. The one thing both reach outside for is
-`IdentifiedDescriptor`, which the domain schemas already publish and which wraps
-Beckn's `Descriptor` for `scheme`, `grievanceCategory` and `caseStatus`.
+A grievance is a Provider's API surface, not a thing the network describes, so the base
+lives beside the packs in `api-schemas/` and nothing grievance-related is added to a
+domain schema. The one thing both reach outside for is `IdentifiedDescriptor`, which the
+domain schemas already publish and which wraps Beckn's `Descriptor` for `scheme`, the two
+category levels and `case.status`.
 
-It does not compose the Agriculture Resource field set: that set is framed
-around a Resource holding information, which this pack is not.
+It does not compose the Agriculture Resource field set: that set is framed around a
+Resource holding information, which this pack is not.
 
-`remarkedOn` is refused outright with `not`/`required`: PMFBY publishes no remark
-date. That is one line to delete if the portal ever starts publishing one.
-
-## How fields are named
-
-Three prefixes, and which one a field takes says what kind of thing it is.
-
-- **`grievance…`** — the complaint as the farmer filed it: `grievanceCategory`, `grievanceDescription`. These do not change once lodged.
-- **`case…`** — the record as it now stands at the portal: `caseStatus`, `caseRemark`. These change between one read and the next.
-- **verb + `On`** — a date: `filedOn`. Never `…Date`, and never a portal field name.
-
-Everything else names itself: `scheme`, `provider`, `informationMode`.
-
-Two rules sit behind this. A field is named for the role it plays on the network, never for the portal field it happens to read — the two portals call the same remark `latestRemark` and `OfficerReply`, and neither word belongs in a network vocabulary. And a field claims only what we can show: `caseRemark` is named for the case rather than an author because no portal publishes a reliable one.
+`case.remark` and `case.remarkedOn` are both refused outright, with a single
+`not`/`anyOf`/`required`: PMFBY publishes neither. Two members to delete if the portal
+ever starts publishing them. In their place the pack adds `case.cropName`, which the
+portal does publish and a generic grievance base has no reason to define.
 
 ## Where each field travels
 
@@ -219,46 +265,48 @@ Two things move between legs, and they are easy to confuse.
 contract to hang it from, so it becomes a support channel:
 `message.support.channels[0]`. `x-beckn-container-by-action` states this.
 
-**Three fields move out of it.** `x-beckn-path` relocates them into Beckn's own
-slots, so a client that has never read this pack still sees a support request
+**One field moves out of it.** `x-beckn-path` relocates `enrolmentId` into Beckn's own
+`orderId` slot, so a client that has never read this pack still sees a support request
 with a subject on it.
 
-`init` gets its own column because it carries none of them: that leg asks for an
-OTP and sends the phone number, nothing else.
+`init` gets its own column because it carries neither: that leg asks for an OTP and sends
+the phone number, nothing else.
 
 | Field | on `support` | on `init` | on `status` |
 |---|---|---|---|
-| `grievanceCategory` | `support.descriptor.code` + `.name` | not sent | `contract.descriptor.code` + `.name` |
-| `grievanceDescription` | `support.descriptor.longDesc` | not sent | `contract.descriptor.longDesc` |
-| `applicationNo` | `support.orderId` | not sent | in attributes -- `x-beckn-path` names no status slot |
-| `provider` | in attributes (`channels[0]`) | absent -- read `commitments[].offer.provider`, which is the same shape | same |
+| `enrolmentId` | `support.orderId` | not sent | in attributes — `x-beckn-path` names no status slot |
+| `provider` | in attributes (`channels[0]`) | absent — read `commitments[].offer.provider`, which is the same shape | same |
 
-Everything else stays inside the attributes object wherever that object happens
-to be. Published examples show the logical form, every field inline; they are
-not wire payloads.
+Everything else stays inside the attributes object wherever that object happens to be —
+both containers included. Published examples show the logical form, every field inline;
+they are not wire payloads.
 
 ## Fields
 
-"Required when" describes a complete OAN Resource. It does not make the field mandatory in a Beckn `Intent` or an identifier-only protocol reference.
+"Required when" describes a complete payload of that kind. It does not make the field
+mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 
 | Field | Required when | Meaning |
 |---|---|---|
 | `@type` | Always | Identifies the commitment as `openagrinet:PMFBYGrievance` |
-| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case. Defined by this pack rather than inherited |
+| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
-| `provider` | `support` ask | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from. Not returned |
-| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the challenge goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too |
-| `applicationNo` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns |
-| `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid` |
-| `grievanceCategory` | Ask, when filing; also returned in `Direct` | Category and sub-category joined by a dot; the adapter splits on that dot, so the shape is load-bearing. Names come back on a case read and are joined with a slash |
-| `grievanceDescription` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
-| `challenge` | Ask, when filing | Proof of the phone number: `method` is `SMS_OTP`, `value` is six digits, and nothing else is accepted. `writeOnly` as a whole object |
-| `ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
-| `caseStatus` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one |
-| `filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
-| `caseRemark` | Optional in `Direct` | The latest remark recorded against the case, bounded at 2000 characters. Absent rather than empty while nothing is recorded. PMFBY publishes no remark date, so there is no `remarkedOn` |
-| `provider` | The ask on `support`; returned on `on_support` | The portal this grievance is filed with, and the portal the case came from — one field for both, because on a grievance they are always the same party. Absent on a contract leg, where `commitments[].offer.provider` carries it |
-| `challengeIssued` | Answer to a challenge request | Which mechanism was used, the masked destination and the expiry — all three required; carries no secret. `readOnly` |
+| `provider` | `support` legs | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from |
+| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the challenge goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too. Never echoed |
+| `enrolmentId` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns. Carried as `orderId` on `support` |
+| `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid`. They qualify the enrolment, not the complaint, so they sit at the top |
+| `grievance.category`, `grievance.subCategory` | Ask, when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
+| `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
+| `challenge` | Ask, when filing | Proof of the phone number: `method` is `SMS_OTP`, `value` is six digits, and nothing else is accepted. Inbound only |
+| `case.ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
+| `case.status` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one |
+| `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
+| `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on. Added by this pack; `case.remark` and `case.remarkedOn` are refused, because PMFBY publishes neither |
+| `challengeIssued` | Answer to a challenge request | Which mechanism was used, the masked destination and the expiry — all three required; carries no secret |
+
+A payload that carries `grievance` carries all three of its fields: `required` inside the
+block fires whenever the block is present, so a partial complaint is rejected rather than
+half-filed.
 
 ## Challenge
 
@@ -267,9 +315,11 @@ not wire payloads.
 ```yaml
 challenge:
   type: object
-  writeOnly: true
   required: [method, value]
   additionalProperties: false
+  x-oan-pii:
+    class: credential
+    handling: [no-log, no-trace, no-echo, no-forward]
   properties:
     method: { enum: [SMS_OTP] }
     value:  { pattern: "^[0-9]{6}$" }
@@ -283,7 +333,13 @@ If PMFBY later offers a second mechanism, this pack widens the `enum` and pins t
 
 ## Category term
 
-The JSON key is `grievanceCategory` in both grievance packs, but it resolves to `openagrinet:pmfbyGrievanceCategory` here and to `openagrinet:pmkisanGrievanceCategory` in the PM-KISAN pack. The two schemes publish incompatible value spaces — a dotted `3.10` against a closed `G001`–`G010` list — so one IRI could not hold both. Payloads are unaffected; only the context mapping differs.
+The JSON keys are `grievance.category` and `grievance.subCategory` in both grievance
+packs, but here they resolve to `openagrinet:pmfbyGrievanceCategory` and
+`openagrinet:pmfbyGrievanceSubCategory`, and in the PM-KISAN pack to the `pmkisan…`
+pair. The two schemes publish incompatible value spaces — PMFBY's numeric ids against a
+closed `G001`–`G010` list — so one IRI could not hold both. Payloads are unaffected; only
+the context mapping differs. PM-KISAN has no second level and refuses `subCategory`
+outright.
 
 ## Privacy
 
@@ -303,11 +359,19 @@ ignores the `if`/`then` branches. It exists so the rule can be read by a tool ra
 only by a person: a CI check can assert that no property marked `no-echo` appears in any
 `Direct` example, which is the class of mistake the v1 `identity-no` echo was.
 
-`challenge` is `writeOnly` as a whole object: it travels inbound only, and `challenge.value` must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call. `challengeIssued` is `readOnly` — it is returned and never sent.
+`challenge` is marked `no-echo` and `no-forward` as a whole object: it travels inbound
+only, and `challenge.value` must never be returned in a response, written to a log,
+attached to a trace, or forwarded to the lodge call.
+
+**Neither `writeOnly` nor `readOnly` appears in this pack**, and that is deliberate. The
+validator visits every payload with `VisitAsRequest`, on the way out as well as in, so
+`writeOnly` on `challenge` would assert nothing while `readOnly` on `challengeIssued`
+would reject the very acknowledgement it describes. Direction is carried by `x-oan-pii`,
+which the adapter reads, and it is unconditional.
 
 `applicantPhone` is never echoed. A challenge acknowledgement returns `challengeIssued.sentTo`, masked to first two and last two digits, so the farmer can confirm which number was used.
 
-`applicationNo` identifies a named farmer's policy, and `grievanceDescription` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
+`enrolmentId` identifies a named farmer's policy, and `grievance.description` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
 
 The portal's case record carries far more about the farmer than this pack surfaces: name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields listed above. None of it may reach `commitmentAttributes`, a log, or a trace. This is the same class of mistake as the v1 `identity-no` echo, and it is the reason the response mapping is an allow-list rather than a passthrough.
 
@@ -323,11 +387,18 @@ Each rejects at the network edge something the portal would have rejected later,
 
 ## Non-goals
 
-This pack does not define the grievance category list. The portal publishes no enumeration of valid pairs; it returns a name for whichever pair a case was filed under — `3` is `Enrollment`, `10` is `Portal Issues Login` — but there is no endpoint that lists them. The `code` pattern therefore constrains only the dotted shape the adapter splits on, and `name` is whatever came back.
+This pack does not define the grievance category list. The portal publishes no enumeration
+of valid pairs; it returns a name for whichever pair a case was filed under — `3` is
+`Enrollment / Portal Issues`, `10` is `Login` — but there is no endpoint that lists them.
+The `code` patterns therefore constrain only "digits", and each `name` is whatever came back.
 
-Category `3.10` is the only pair in use today, because v1 hardcoded it for every grievance regardless of subject. That is a v1 defect carried in the data, not a portal constraint, and v2 does not repeat it: the category is a caller-supplied field.
+Category `3` / `10` is the only pair in use today, because v1 hardcoded it for every
+grievance regardless of subject. That is a v1 defect carried in the data, not a portal
+constraint, and v2 does not repeat it: the category is a caller-supplied field. When the
+portal exposes its list the experience layer starts sending a real choice and nothing in
+this pack changes.
 
-Two fields the portal requires are absent by design, because a caller never supplies them: `complaint_date` is generated by the adapter at lodge time, and `receipt_source_id` is a constant identifying the Vistaar channel. Two fields the portal returns are absent for the same reason: `ticket_id` is an internal portal key the farmer never quotes, and the numeric status id is an opaque key whose name the pack already carries.
+Two fields the portal requires are absent by design, because a caller never supplies them: `complaintDate` is generated by the adapter at lodge time, and `receiptSourceID` is a constant identifying the Vistaar channel. One field the portal returns is absent for the same reason: `GrievenceSupportTicketID` is the portal's own row id, which the farmer never quotes and no call takes.
 
 It also does not define credentials or transport. Those live in the adapter configuration, where credentials are named by environment variable and never held.
 
@@ -337,4 +408,4 @@ It also does not define credentials or transport. Those live in the adapter conf
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
 - [On-demand: challenge acknowledgement](examples/on-demand-challenge-issued.json)
 - [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
-- [Direct: grievance with a remark recorded](examples/direct-grievance-replied.json)
+- [Direct: grievance under review, read from the portal](examples/direct-grievance-under-review.json)

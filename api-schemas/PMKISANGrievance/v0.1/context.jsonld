@@ -12,18 +12,28 @@
       "@id": "openagrinet:scheme",
       "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
     },
-    "registrationNo": "openagrinet:registrationNo",
-    "grievanceCategory": {
-      "@id": "openagrinet:pmkisanGrievanceCategory",
-      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    "enrolmentId": "openagrinet:enrolmentId",
+    "grievance": {
+      "@id": "openagrinet:grievance",
+      "@context": {
+        "category": {
+          "@id": "openagrinet:pmkisanGrievanceCategory",
+          "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+        },
+        "description": "openagrinet:grievanceDescription"
+      }
     },
-    "grievanceDescription": "openagrinet:grievanceDescription",
-    "caseStatus": {
-      "@id": "openagrinet:caseStatus",
-      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
-    },
-    "filedOn": "openagrinet:filedOn",
-    "caseRemark": "openagrinet:caseRemark",
-    "remarkedOn": "openagrinet:remarkedOn"
+    "case": {
+      "@id": "openagrinet:case",
+      "@context": {
+        "status": {
+          "@id": "openagrinet:caseStatus",
+          "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+        },
+        "filedOn": "openagrinet:filedOn",
+        "remark": "openagrinet:caseRemark",
+        "remarkedOn": "openagrinet:remarkedOn"
+      }
+    }
   }
 }

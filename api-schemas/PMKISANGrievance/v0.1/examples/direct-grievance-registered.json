@@ -4,8 +4,13 @@
   "informationMode": "Direct",
   "provider": { "id": "pmkisan", "descriptor": { "name": "PM-KISAN Grievance Portal" } },
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
-  "grievanceCategory": { "code": "G003", "name": "Installment not received" },
-  "grievanceDescription": "Third instalment for 2026 has not been credited.",
-  "caseStatus": { "code": "Registered" },
-  "filedOn": "2026-09-28"
+  "enrolmentId": "UP12345678A",
+  "grievance": {
+    "category": { "code": "G003", "name": "Installment not received" },
+    "description": "Third instalment for 2026 has not been credited."
+  },
+  "case": {
+    "status": { "code": "Registered" },
+    "filedOn": "2026-09-28"
+  }
 }
