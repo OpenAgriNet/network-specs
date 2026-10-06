@@ -154,20 +154,40 @@ commitment at all was never available.
 
 ## Composition
 
-`PMKISANGrievance` is self-contained. Every definition it needs is in its own
-`attributes.yaml`: the fields, the `CaseStatusCode` vocabulary, `CalendarDate`,
-and `ProviderReference`. It reaches outside the pack for one thing only --
+`PMKISANGrievance` extends **`GrievanceBase`**, in
+[`api-schemas/Grievance/v0.1`](../../Grievance/v0.1/attributes.yaml). The base
+owns what every grievance pack shares -- `informationMode`, `provider`,
+`scheme`, `grievanceDescription`, `caseStatus`, `filedOn`, `caseRemark`,
+`remarkedOn` -- plus the `CaseStatusCode` vocabulary, `CalendarDate` and
+`ProviderReference`. One definition, both packs; a change to the case
+vocabulary is one edit, not two kept in step by review.
+
+`Grievance/v0.1` is not itself a pack. There is no `profile.json` beside it, so
+it is never indexed, and nothing ever sends `@type: openagrinet:GrievanceBase`.
+
+This pack adds the one field PM-KISAN alone has -- `registrationNo` -- pins
+`@type` and `scheme.code` to PM-KISAN, and declares its own
+`grievanceCategory`. There is no challenge: the portal proves nothing in either
+direction.
+
+Two fields stay out of the base. `@type` is the pack's identity, so a base
+could only accept any string. `grievanceCategory` resolves to
+`openagrinet:pmkisanGrievanceCategory` here and
+`openagrinet:pmfbyGrievanceCategory` in the PMFBY pack, against incompatible
+value spaces -- a closed ten-value list against a dotted `3.10` -- so one
+definition could not hold both.
+
+Each inherited field is restated here with a `description` only, recording
+which upstream field PM-KISAN fills it from. The shape, the bounds and the IRI
+stay with the base; the published page shows both halves.
+
+A grievance is a Provider's API surface, not a thing the network describes, so
+the base lives beside the packs in `api-schemas/` and nothing grievance-related
+is added to a domain schema. The one thing both reach outside for is
 `IdentifiedDescriptor`, which the domain schemas already publish and which wraps
 Beckn's `Descriptor` for `scheme`, `grievanceCategory` and `caseStatus`.
 
-Nothing is added to a domain schema for the two grievance packs to share. A
-grievance is one Provider's API surface, not a thing the network describes, so
-the case vocabulary belongs here rather than in `AgricultureResource`. The cost
-is that `CaseStatusCode` and `CalendarDate` are restated in the PMFBY pack:
-a change to one is a change to both, and the two are kept in step by review
-rather than by a `$ref`.
-
-It does not compose the Agriculture Resource field set either: that set is framed
+It does not compose the Agriculture Resource field set: that set is framed
 around a Resource holding information, which this pack is not.
 
 ## How fields are named
