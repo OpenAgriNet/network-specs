@@ -1,0 +1,29 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMKISANGrievance",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PM-KISAN Grievance",
+      "rdfs:comment": "A grievance raised against the Pradhan Mantri Kisan Samman Nidhi income-support scheme, filed on demand and answered directly. The scheme issues no ticket number; a grievance is retrieved by the identity it was filed under."
+    },
+    { "@id": "openagrinet:informationMode", "@type": "rdfs:Property", "rdfs:label": "information mode", "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case." },
+    { "@id": "openagrinet:scheme", "@type": "rdfs:Property", "rdfs:label": "scheme" },
+    { "@id": "openagrinet:provider", "@type": "rdfs:Property", "rdfs:label": "provider", "rdfs:comment": "The provider this grievance is for, as a Beckn Provider reference. Carried on support because a SupportAction composes no Contract to read it from; every other action reads commitments[].offer.provider." },
+    { "@id": "openagrinet:registrationNo", "@type": "rdfs:Property", "rdfs:label": "registration number" },
+    {
+      "@id": "openagrinet:pmkisanGrievanceCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PM-KISAN grievance category",
+      "rdfs:comment": "One of the ten published PM-KISAN codes, G001 to G010. Deliberately a separate property from the PMFBY category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+    },
+    { "@id": "openagrinet:grievanceDescription", "@type": "rdfs:Property", "rdfs:label": "grievance description" },
+    { "@id": "openagrinet:caseStatus", "@type": "rdfs:Property", "rdfs:label": "case status" },
+    { "@id": "openagrinet:filedOn", "@type": "rdfs:Property", "rdfs:label": "filed on" },
+    { "@id": "openagrinet:caseRemark", "@type": "rdfs:Property", "rdfs:label": "case remark" },
+    { "@id": "openagrinet:remarkedOn", "@type": "rdfs:Property", "rdfs:label": "remarked on" }
+  ]
+}
