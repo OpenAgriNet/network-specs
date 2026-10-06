@@ -1,0 +1,8 @@
+{
+  "schema": "PMFBYGrievance",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{scheme.name}} | {{ticketNo}} | {{caseStatus.name}}",
+  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nTicket: {{ticketNo}}\nStatus: {{caseStatus.name}}\nCategory: {{grievanceCategory.code}}\nFiled on: {{filedOn}}\nGrievance: {{grievanceDescription}}\nLatest remark: {{caseRemark}}",
+  "html": "<div class=\"oan-pmfby-grievance\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{ticketNo}} · {{caseStatus.name}}</span></div>",
+  "html_detail": "<div class=\"oan-pmfby-grievance-detail\"><p><strong>Ticket:</strong> {{ticketNo}}</p><p><strong>Status:</strong> {{caseStatus.name}}</p><p><strong>Category:</strong> {{grievanceCategory.code}}</p><p><strong>Filed on:</strong> {{filedOn}}</p><p><strong>Grievance:</strong> {{grievanceDescription}}</p><p><strong>Latest remark:</strong> {{caseRemark}}</p></div>"
+}

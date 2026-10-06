@@ -1,0 +1,85 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1",
+  "name": "PMFBY Grievance API Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "provider-api",
+  "included_schemas": [
+    "PMFBYGrievance"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "provider",
+    "scheme",
+    "applicantPhone",
+    "applicationNo",
+    "cropYear",
+    "season",
+    "grievanceCategory",
+    "grievanceDescription",
+    "challenge",
+    "ticketNo"
+  ],
+  "result_fields": [
+    "provider",
+    "scheme",
+    "ticketNo",
+    "caseStatus",
+    "filedOn",
+    "applicationNo",
+    "cropYear",
+    "season",
+    "grievanceCategory",
+    "grievanceDescription",
+    "caseRemark"
+  ],
+  "indexable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
+    "beckn:commitmentAttributes.ticketNo",
+    "beckn:support.channels[0].ticketNo",
+    "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
+    "beckn:commitmentAttributes.grievanceCategory.code",
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
+  ],
+  "filterable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
+    "beckn:commitmentAttributes.caseStatus.code",
+    "beckn:support.channels[0].caseStatus.code",
+    "beckn:commitmentAttributes.grievanceCategory.code",
+    "beckn:support.descriptor.code",
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
+  ],
+  "sortable_paths": [
+    "beckn:commitmentAttributes.filedOn",
+    "beckn:support.channels[0].filedOn"
+  ],
+  "privacy_notes": [
+    "applicantPhone is personal data. It travels inbound only and is never echoed in a response; on_init returns the masked challengeIssued.sentTo instead.",
+    "challenge is marked writeOnly as a whole object. Its value must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call. challengeIssued is readOnly and carries no secret.",
+    "applicationNo identifies a named farmer's insurance policy and should not be logged in payload dumps.",
+    "grievanceDescription is free text written by a farmer and may contain personal details the schema cannot constrain.",
+    "The portal's case record carries far more about the farmer than this pack surfaces -- name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields named here; none of it may reach commitmentAttributes, a log, or a trace."
+  ],
+  "beckn_dependencies": {
+    "Attributes": "2.0",
+    "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Support": "2.0"
+  },
+  "interaction_type": "Transact",
+  "outcome_type": "openagrinet:PMFBYGrievance"
+}

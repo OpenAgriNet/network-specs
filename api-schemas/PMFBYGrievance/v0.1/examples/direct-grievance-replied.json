@@ -1,0 +1,24 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMFBYGrievance",
+  "informationMode": "Direct",
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "ticketNo": "100626000099001",
+  "caseStatus": {
+    "code": "UnderReview",
+    "name": "Open"
+  },
+  "applicationNo": "KA2026KH00123456",
+  "cropYear": "2026",
+  "season": "Kharif",
+  "grievanceCategory": {
+    "code": "3.10",
+    "name": "Enrollment / Portal Issues Login"
+  },
+  "grievanceDescription": "Claim approved in July but no amount has been credited to my account.",
+  "filedOn": "2026-09-28",
+  "caseRemark": "Claim file reopened, awaiting surveyor report."
+}

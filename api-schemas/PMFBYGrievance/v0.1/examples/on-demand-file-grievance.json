@@ -1,0 +1,25 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMFBYGrievance",
+  "informationMode": "OnDemand",
+  "provider": {
+    "id": "pmfby",
+    "descriptor": { "name": "PMFBY Grievance Portal" }
+  },
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "applicantPhone": "9876543210",
+  "applicationNo": "KA2026KH00123456",
+  "cropYear": "2026",
+  "season": "Kharif",
+  "grievanceCategory": {
+    "code": "3.10"
+  },
+  "grievanceDescription": "Kharif 2026 claim has not been credited to my account.",
+  "challenge": {
+    "method": "SMS_OTP",
+    "value": "482913"
+  }
+}
