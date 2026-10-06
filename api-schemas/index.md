@@ -41,6 +41,12 @@ The index is generated from the versioned `profile.json` files under `api-schema
 {% endfor %}
 </div>
 
+## Shared definitions
+
+Not every directory under `api-schemas/` is a pack. A directory with no `profile.json` is never indexed and appears on no card above; it holds definitions that packs compose into themselves.
+
+[`Grievance/v0.1`](Grievance/v0.1/attributes.yaml) is the one such directory today. It defines `GrievanceBase` — the fields any grievance has whatever the scheme — which [PMFBYGrievance](PMFBYGrievance/v0.1/README.md) and [PMKISANGrievance](PMKISANGrievance/v0.1/README.md) each `allOf`-reference. Nothing ever sends `"@type": openagrinet:GrievanceBase`.
+
 ## Why these are separate
 
 A domain pack is written once for the whole network and says what a thing *is*. An API pack is written for one provider and says what that provider's API will take and give back, so an experience layer can call it without reading adapter mapping files.

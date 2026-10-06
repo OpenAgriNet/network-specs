@@ -1,0 +1,300 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Grievance API Attributes (base)
+  version: 0.1.0
+  description: >
+    The field set every grievance API pack on this network shares, plus the
+    vocabulary those fields are written in.
+
+    Not a pack, and not a payload type. There is no profile.json beside this
+    file, so it is never indexed as a schema pack, and nothing ever sends
+    "@type": openagrinet:GrievanceBase. It exists to be composed: a pack
+    allOf-references GrievanceBase, pins its own @type and scheme, and adds the
+    fields its own portal has. What a payload declares itself to be is always a
+    concrete pack.
+
+    It lives under api-schemas/ rather than schema/ on purpose. A grievance is
+    a Provider's API surface, not a thing the network describes, so the shape
+    belongs beside the packs that use it and not in a domain schema.
+
+    Two fields are deliberately absent. @type is the pack's identity, so a base
+    could only accept any string and leave the pack to restate the whole thing.
+    grievanceCategory resolves to a different IRI per scheme and the value
+    spaces are incompatible -- a dotted PMFBY code against PM-KISAN's closed
+    ten-value list -- so one definition could not hold both.
+
+    Descriptions here say what a field means network-wide. A pack restates the
+    field with a description of its own to record how its portal fills it:
+    which upstream field it is read from, and what the portal does that the
+    shape alone does not show.
+
+components:
+  schemas:
+    GrievanceBase:
+      type: object
+      # No additionalProperties: false. A pack adds its own fields on top of
+      # this, and sealing here would refuse every one of them.
+      required: [informationMode, scheme]
+      properties:
+        informationMode:
+          type: string
+          enum: [OnDemand, Direct]
+          description: >
+            Direction of this payload. OnDemand is the ask; Direct is an
+            answer carrying a real case.
+
+            Direction is carried by this field and never by the Beckn action,
+            so the same attributes serve every leg without change.
+          x-jsonld-id: "openagrinet:informationMode"
+
+        provider:
+          allOf:
+            - $ref: "#/components/schemas/ProviderReference"
+          description: >
+            The portal this grievance belongs to: who it is filed with on the
+            way in, and who the case came from on the way out. One field for
+            both, because on a grievance they are always the same party -- the
+            adapter reads a case back from the portal it filed with, and no
+            third party stands between them.
+
+            Carried in the attributes on the support leg only, and only
+            because a SupportAction composes no Contract: every other action
+            has one, and there the same fact is read from
+            commitments[].offer.provider.
+
+            Same shape in both places, deliberately. A reader writes
+            .provider.id on support and .provider.id on the contract, and the
+            adapter's own binding path says channels[].provider.id against a
+            Beckn v2 default of commitments[].offer.provider.id -- the same
+            grammar, the same tail, a different container.
+
+            scheme.code names a scheme rather than a participant, so it cannot
+            stand in.
+
+            Not required, and deliberately not part of a Direct guard. On a
+            contract leg the attributes genuinely do not carry it -- Beckn's
+            offer does -- so requiring it here would force a second copy into
+            commitmentAttributes.
+          x-jsonld-id: "openagrinet:provider"
+
+        scheme:
+          allOf:
+            - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - type: object
+              required: [code]
+          description: >
+            Scheme the grievance is raised against. Present on every payload in
+            both directions, which is what makes it the one unconditional
+            field.
+
+            A pack pins code to its own scheme, because a pack describes one
+            scheme and nothing else. Left open, a payload could name another
+            scheme and still validate -- the one field present on every payload
+            would be the one field checking nothing. allOf narrowing is
+            evaluated, so a pack's pin is enforced rather than advisory.
+
+            name is not pinned anywhere: a scheme has an official title but it
+            is written differently in different places, and the network has no
+            reason to arbitrate spelling.
+          x-jsonld-id: "openagrinet:scheme"
+
+        grievanceDescription:
+          type: string
+          minLength: 10
+          maxLength: 2000
+          x-oan-pii:
+            class: freetext
+            handling: [no-log, no-trace]
+            note: >
+              Returned verbatim on a case read, so no-echo would be wrong. It is
+              the farmer's own words and may hold anything the schema cannot see.
+          description: >
+            The farmer's account of the problem, in their own words. A minimum
+            length because a grievance that says nothing cannot be acted on, and
+            a maximum because this is unvalidated free text arriving from a
+            caller and going on to the portal. Neither portal publishes an upper
+            limit, so the bound is the network's own and matches caseRemark:
+            2000 characters, long enough for any real account of a problem.
+
+            Does not travel inside the attributes object. x-beckn-path moves it
+            to the Beckn descriptor, which is where a contract says what it is
+            about -- so a client that does not know the pack still sees what was
+            complained about.
+          x-beckn-path:
+            support: message.support.descriptor.longDesc
+            status: message.contract.descriptor.longDesc
+          x-jsonld-id: "openagrinet:grievanceDescription"
+
+        caseStatus:
+          allOf:
+            - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - type: object
+              required: [code]
+              properties:
+                code:
+                  $ref: "#/components/schemas/CaseStatusCode"
+          description: >
+            Where the grievance stands. code is the network's CaseStatusCode,
+            which is what a client branches on; name is the portal's own status
+            phrase, kept verbatim, which is what the farmer is shown.
+
+            code is required and name is not, and the absence of name is
+            informative: it is how a client tells a state the adapter inferred
+            from one the portal stated.
+
+            A phrase the adapter does not recognise maps to UnderReview, keeping
+            the phrase in name -- never to a terminal state, which must come
+            from the portal. The adapter may infer a state; it must never infer
+            that a case is finished.
+
+            The enum is not narrowed in either pack. Neither portal publishes a
+            full status vocabulary, so narrowing would be a guess that rejects a
+            legitimate state.
+          x-jsonld-id: "openagrinet:caseStatus"
+
+        filedOn:
+          $ref: "#/components/schemas/CalendarDate"
+          description: >
+            Date the grievance was filed with the portal. An IST calendar date:
+            an adapter must take today's date in IST and not from a UTC clock,
+            which would record the previous day for anything filed before
+            05:30 IST.
+          x-jsonld-id: "openagrinet:filedOn"
+
+        caseRemark:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          x-oan-pii:
+            class: freetext
+            handling: [no-log, no-trace]
+            note: Written about this farmer's case.
+          description: >
+            The most recent remark recorded against the case. Named for the
+            case rather than for an author: a remark may come from a reviewing
+            officer, from a body handling the claim, or from the system closing
+            a record, and neither portal publishes a reliable author. It is an
+            annotation on a record, not necessarily a reply addressed to the
+            farmer.
+
+            Absent rather than empty while nothing has been recorded, so an
+            absent field reads as "nothing recorded yet". Bounded at 2000
+            characters because it is unvalidated upstream free text being placed
+            in a response.
+          x-jsonld-id: "openagrinet:caseRemark"
+
+        remarkedOn:
+          $ref: "#/components/schemas/CalendarDate"
+          description: >
+            Date the remark was recorded. Absent until there is a remark. An IST
+            calendar date; see CalendarDate.
+
+            Defined here because a portal may publish it. A pack whose portal
+            does not refuses the field outright with not/required rather than
+            leaving it defined and permanently absent.
+          x-jsonld-id: "openagrinet:remarkedOn"
+
+    CaseStatusCode:
+      type: string
+      enum: [Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed]
+      description: >
+        Where a case stands, in the network's own vocabulary, rather than in the
+        portal's wording.
+
+        The split is deliberate. code is the network's word and is what a client
+        branches on; the accompanying descriptor name is the portal's own phrase,
+        kept verbatim, and is what a farmer is shown. A portal phrase the adapter
+        does not recognise maps to UnderReview -- non-terminal, and honest -- with
+        the phrase preserved in name. The adapter may infer a state; it must never
+        infer that a case is finished, so anything unmapped stays non-terminal.
+
+        One list, shared by every grievance pack. A portal vocabulary is not
+        enumerated anywhere: portals add phrases without notice, and the mapping
+        from phrase to code is the adapter's job.
+      x-enum-details:
+        - value: Registered
+          meaning: Lodged and acknowledged by the portal, not yet picked up.
+          terminal: false
+        - value: UnderReview
+          meaning: Being worked by the portal. Also the fallback for a portal phrase the adapter does not recognise.
+          terminal: false
+        - value: AwaitingApplicant
+          meaning: Blocked on the applicant -- a document or a clarification is needed before work can continue.
+          terminal: false
+        - value: Replied
+          meaning: A response has been recorded against the case, which remains open.
+          terminal: false
+        - value: Resolved
+          meaning: Closed with action taken.
+          terminal: true
+        - value: Rejected
+          meaning: Closed without action; the case was refused.
+          terminal: true
+        - value: Closed
+          meaning: Closed with no further action -- lapsed, withdrawn, or closed automatically.
+          terminal: true
+
+    CalendarDate:
+      type: string
+      format: date
+      pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+      description: >
+        A calendar date in IST, as YYYY-MM-DD.
+
+        The pattern is what enforces the shape. format is annotation-only under
+        the validator in use -- no string format is registered, so format: date
+        alone would accept any string at all. The zone is named because a bare
+        date has no day boundary of its own: an adapter deriving one from a UTC
+        clock records the previous day for anything happening before 05:30 IST.
+
+    ProviderReference:
+      allOf:
+        - $ref: "https://schema.beckn.io/Provider/v2.1/attributes.yaml#/components/schemas/Provider"
+        # A reference to a participant, not a catalog entry about one. Beckn's
+        # Provider carries both, so the two it does not need here are refused
+        # rather than left to drift into the payload.
+        - not:
+            required: [availableAt]        # a grievance portal has no premises
+        - not:
+            required: [providerAttributes] # an attributes object inside a
+                                           # channel that is already one
+        - type: object
+          # Beckn already requires both. Restated because a reader -- and the
+          # page generator -- resolves this file without fetching the remote
+          # schema, and would otherwise be told id is optional. It is the
+          # routing key; nothing about it is optional.
+          required: [id, descriptor]
+          properties:
+            id:
+              type: string
+              pattern: "^[a-z0-9][a-z0-9.-]*$"
+              maxLength: 100
+              description: >
+                Network participant id, lower-case, matching the registry
+                exactly. This is the only field the adapter routes on.
+            descriptor:
+              type: object
+              required: [name]
+              description: >
+                How the portal is named to a reader. Only name is required; the
+                routing is done on id.
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  description: >
+                    Human-readable name of the provider. Beckn requires a
+                    Provider to carry a descriptor, and a name is the only part
+                    of one worth carrying here -- a code would merely repeat id.
+
+                    Advisory, and never authoritative: the registry owns this
+                    word. The adapter reads id and ignores name, so a caller
+                    that sends a stale name is routed correctly anyway. It is
+                    required because a participant id alone makes a payload
+                    unreadable to anyone without the registry open.
+      description: >
+        A Beckn Provider narrowed to a reference: who this is, and nothing more.
+        id is required and descriptor is required by Beckn itself; this
+        narrowing adds the registry's id format and requires the descriptor to
+        carry a name.
