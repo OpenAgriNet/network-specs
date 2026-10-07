@@ -47,6 +47,22 @@ components:
         init: commitmentAttributes
         status: commitmentAttributes
         support: channels
+      # What each action must carry. Paths are relative to the attribute
+      # object; enrolmentId is named here under its attribute name, not the
+      # message.support.orderId it moves to under x-beckn-path.
+      x-oan-required-by-action:
+        init: [applicantPhone]
+        support:
+          - enrolmentId
+          - applicantPhone
+          - cropYear
+          - season
+          - grievance.category.code
+          - grievance.subCategory.code
+          - grievance.description
+          - challenge.method
+          - challenge.value
+        status: [applicantPhone, case.ticketNo]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMFBYGrievance
@@ -114,6 +130,38 @@ components:
                 enrolment, not what went wrong, and like cropYear it is never
                 returned.
               x-jsonld-id: "openagrinet:season"
+
+            complaintDate:
+              type: string
+              pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              description: >
+                The date the complaint was filed, as YYYY-MM-DD in IST. Goes
+                upstream as complaintDate on the lodge call.
+
+                Optional. Omit it and the adapter stamps the current IST date,
+                which is what a live submission wants. Send it when the filing
+                date is not today -- a submission taken offline and replayed
+                later carries the date the farmer actually filed.
+
+                Sent only. The portal stores it and returns it on a case read
+                as ComplaintDate, which the pack surfaces as case.filedOn --
+                so the value comes back in the case band, not here.
+              x-jsonld-id: "openagrinet:complaintDate"
+
+            receiptSourceId:
+              type: string
+              pattern: "^[0-9]+$"
+              maxLength: 16
+              description: >
+                The channel the ticket arrived through. PMFBY issues one id per
+                integrating channel and uses it to attribute the ticket; Bharat
+                Vistaar's is 134306. Goes upstream as receiptSourceID.
+
+                Optional. Omit it and the adapter sends the id configured for
+                itself, which is the normal case. Send it only if PMFBY issued
+                an id to you directly. It names the channel, not the farmer,
+                and is never returned on a read.
+              x-jsonld-id: "openagrinet:receiptSourceId"
 
             challenge:
               type: object
@@ -222,6 +270,19 @@ components:
                 Pinned to PMFBY: this pack describes one scheme and nothing
                 else, so there is exactly one legal value for code. The title
                 in the examples is "Pradhan Mantri Fasal Bima Yojana".
+
+            challengeMethods:
+              allOf:
+                - type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum: [SMS_OTP]
+              description: >
+                Pinned non-empty: PMFBY challenges every filing, so its catalog
+                entry publishes ["SMS_OTP"] and a caller runs init before
+                support. The item enum is the one challenge.method carries;
+                supporting a second mechanism means widening both.
 
             enrolmentId:
               allOf:
@@ -400,3 +461,6 @@ components:
             - required: [applicantPhone]    # asking for one: on init the phone
                                             # is the whole subject, since the
                                             # farmer has stated nothing yet
+            - required: [challengeMethods]  # a catalog entry: it declares what
+                                            # this desk needs and asks nothing,
+                                            # so it brings none of the above

@@ -17,6 +17,12 @@
       "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case."
     },
     {
+      "@id": "openagrinet:challengeMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge methods",
+      "rdfs:comment": "Which challenge a caller must pass before a grievance can be filed. Non-empty names the mechanism and means the challenge comes first; empty means the portal issues none. Stated on a catalog entry and on no transaction payload."
+    },
+    {
       "@id": "openagrinet:scheme",
       "@type": "rdfs:Property",
       "rdfs:label": "scheme"
@@ -55,6 +61,11 @@
       "@id": "openagrinet:grievanceDescription",
       "@type": "rdfs:Property",
       "rdfs:label": "grievance description"
+    },
+    {
+      "@id": "openagrinet:ticketNo",
+      "@type": "rdfs:Property",
+      "rdfs:label": "ticket number"
     },
     {
       "@id": "openagrinet:caseStatus",

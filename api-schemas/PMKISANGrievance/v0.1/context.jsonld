@@ -4,6 +4,7 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "PMKISANGrievance": "openagrinet:PMKISANGrievance",
     "informationMode": "openagrinet:informationMode",
+    "challengeMethods": "openagrinet:challengeMethods",
     "provider": {
       "@id": "openagrinet:provider",
       "@context": "https://schema.beckn.io/Provider/v2.1/context.jsonld"
@@ -26,6 +27,7 @@
     "case": {
       "@id": "openagrinet:case",
       "@context": {
+        "ticketNo": "openagrinet:ticketNo",
         "status": {
           "@id": "openagrinet:caseStatus",
           "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"

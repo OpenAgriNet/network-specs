@@ -46,6 +46,18 @@ components:
       x-beckn-container-by-action:
         status: commitmentAttributes
         support: channels
+      # What each action must carry. Paths are relative to the attribute
+      # object; enrolmentId is named here under its attribute name, not the
+      # message.support.orderId it moves to under x-beckn-path. No init entry:
+      # PM-KISAN issues no challenge. case.filedOn is required on status
+      # because it is half the case selector -- the portal returns every
+      # grievance on the identity and nothing else narrows it.
+      x-oan-required-by-action:
+        support:
+          - enrolmentId
+          - grievance.category.code
+          - grievance.description
+        status: [enrolmentId, case.filedOn]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMKISANGrievance
@@ -89,11 +101,26 @@ components:
                 else, so there is exactly one legal value for code. The title
                 in the examples is "Pradhan Mantri Kisan Samman Nidhi".
 
+            challengeMethods:
+              allOf:
+                - type: array
+                  maxItems: 0
+              description: >
+                Pinned empty: PM-KISAN issues no challenge, so its catalog entry
+                publishes [] and support is the first call. Present and empty
+                rather than absent -- it is also the member that lets a catalog
+                entry pass the gate below, which a declaration otherwise has
+                nothing to satisfy.
+
             enrolmentId:
               allOf:
                 - type: string
                   pattern: "^[A-Za-z0-9]+$"
                   maxLength: 20
+                # Aadhaar is refused, not merely discouraged: twelve bare digits
+                # is its shape, and the prose below is not a constraint.
+                - not:
+                    pattern: "^[0-9]{12}$"
               description: >
                 The enrolment the grievance is about; on support it is the
                 orderId. For PM-KISAN that is the scheme registration number,
@@ -104,7 +131,8 @@ components:
                 PM-KISAN has no separate reference for either -- the upstream
                 takes one field and nothing else names a case.
 
-                Aadhaar is deliberately not accepted. The portal takes a token
+                Aadhaar is deliberately not accepted, and the twelve-digit
+                shape is refused rather than left to prose. The portal takes a token
                 derived from one through /GrievanceAadhaarToken and carries it
                 in the same IdentityNo field, which would make this value
                 sometimes a stable reference and sometimes an ephemeral secret.
@@ -188,6 +216,8 @@ components:
                     grievance on the identity and is not documented to repeat
                     the handle per record, so a case read may carry no
                     ticketNo; the Direct guard below does not require one.
+
+                status:
                   description: >
                     PM-KISAN note: name carries the portal's GrievanceStatus
                     phrase. Where GrievanceStatus is missing the adapter infers
@@ -254,3 +284,6 @@ components:
             - required: [grievance]     # filing, or a case read echoing one
             - required: [case]          # reading, selected by filedOn
             - required: [enrolmentId]   # reading every case on a registration
+            - required: [challengeMethods]  # a catalog entry: it declares what
+                                            # this desk needs and asks nothing,
+                                            # so it brings none of the above

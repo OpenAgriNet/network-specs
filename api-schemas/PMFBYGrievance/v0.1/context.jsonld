@@ -4,6 +4,7 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "PMFBYGrievance": "openagrinet:PMFBYGrievance",
     "informationMode": "openagrinet:informationMode",
+    "challengeMethods": "openagrinet:challengeMethods",
     "provider": {
       "@id": "openagrinet:provider",
       "@context": "https://schema.beckn.io/Provider/v2.1/context.jsonld"
@@ -16,6 +17,8 @@
     "applicantPhone": "openagrinet:applicantPhone",
     "cropYear": "openagrinet:cropYear",
     "season": "openagrinet:season",
+    "complaintDate": "openagrinet:complaintDate",
+    "receiptSourceId": "openagrinet:receiptSourceId",
     "grievance": {
       "@id": "openagrinet:grievance",
       "@context": {

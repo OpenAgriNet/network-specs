@@ -34,6 +34,10 @@ info:
     the last two, because what counts as a complete answer and as a meaningful
     ask is the portal's business, not the network's.
 
+    One field sits in no band at all. challengeMethods says what a desk
+    requires before a grievance can be filed, and it appears on a catalog entry
+    and on no transaction payload.
+
     @type is deliberately absent: it is the pack's identity, so a base could
     only accept any string and leave the pack to restate the whole thing.
 
@@ -164,6 +168,34 @@ components:
             What the portal has on file. Absent on the way in, except where a
             caller is naming a case to read.
           x-jsonld-id: "openagrinet:case"
+
+        challengeMethods:
+          type: array
+          uniqueItems: true
+          items:
+            type: string
+          description: >
+            Which challenge a caller must pass before a grievance can be filed.
+            Non-empty means a challenge comes first and the array names it;
+            empty means the portal issues none and filing is the first call. A
+            caller reads this to know which sequence a desk needs before it
+            sends anything.
+
+            Declaration-only: it appears on a catalog entry and never on a
+            transaction payload. Each pack pins it to the one answer its portal
+            gives, so the value is the pack's statement and not the publisher's
+            choice.
+
+            Empty rather than absent where there is no challenge. The field is
+            also what tells a catalog entry apart from an ask: a grievance pack
+            uses OnDemand for both, so a declaration carries none of the things
+            each pack's "about something" gate looks for and needs a member of
+            its own to satisfy it.
+
+            A caller branches on the values and not on the length. A portal that
+            adds a second mechanism widens the list, and a caller that reads the
+            method keeps working.
+          x-jsonld-id: "openagrinet:challengeMethods"
 
     Grievance:
       type: object

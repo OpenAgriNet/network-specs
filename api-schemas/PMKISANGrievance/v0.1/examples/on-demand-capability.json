@@ -1,0 +1,10 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMKISANGrievance",
+  "informationMode": "OnDemand",
+  "scheme": {
+    "code": "PM-KISAN",
+    "name": "Pradhan Mantri Kisan Samman Nidhi"
+  },
+  "challengeMethods": []
+}
