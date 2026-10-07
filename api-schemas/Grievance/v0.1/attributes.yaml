@@ -197,6 +197,101 @@ components:
             method keeps working.
           x-jsonld-id: "openagrinet:challengeMethods"
 
+        challenge:
+          type: object
+          required: [method, value]
+          additionalProperties: false
+          x-oan-pii:
+            class: credential
+            handling: [no-log, no-trace, no-echo, no-forward]
+            note: Proven once by the verify call and never passed to the lodge call.
+          properties:
+            method:
+              type: string
+              description: >
+                Which mechanism this proof is for. Always one of the values the
+                desk published in challengeMethods; each pack pins the enum to
+                what its portal offers.
+              x-jsonld-id: "openagrinet:challengeMethod"
+            value:
+              type: string
+              pattern: "^[0-9]{4,8}$"
+              x-oan-pii:
+                class: credential
+                handling: [no-log, no-trace, no-echo, no-forward]
+                note: Proven once against the portal and never carried further.
+              description: >
+                The secret itself. The base bounds it to between four and eight
+                digits, which is the range the portals on this network issue;
+                each pack narrows to the one length its portal accepts, and the
+                narrowing is evaluated rather than left to a mapping guard.
+
+                Direction is carried by x-oan-pii, not by writeOnly. The network
+                validates every payload as a request, on the way out as well as
+                in, so writeOnly here would assert nothing while readOnly on the
+                answering field would reject the very response it describes.
+                no-echo is the rule the adapter reads, and it is unconditional.
+              x-jsonld-id: "openagrinet:challengeValue"
+          description: >
+            Proof of identity, presented with the call it guards. Which calls
+            those are is each pack's business: a desk that issues a challenge
+            says so in challengeMethods and names the guarded actions in
+            x-oan-required-by-action.
+
+            No correlator field exists and additionalProperties refuses one.
+            The portals on this network bind a challenge to the identity it was
+            issued against and hand back no handle, so a caller sending one is
+            confused about the mechanism rather than being quietly ignored.
+
+            The whole object travels inbound only: never returned in any
+            response, written to a log or attached to a trace, and the value is
+            never forwarded to the call it guards. That is x-oan-pii no-echo and
+            no-forward, which the adapter enforces.
+          x-jsonld-id: "openagrinet:challenge"
+
+        challengeIssued:
+          type: object
+          required: [method, expiresAt]
+          additionalProperties: false
+          properties:
+            method:
+              type: string
+              description: Mechanism the portal used, from the same set as challengeMethods.
+              x-jsonld-id: "openagrinet:challengeMethod"
+            sentTo:
+              type: string
+              x-oan-pii:
+                class: contact
+                handling: [no-log, no-trace]
+                note: Always the masked form of the destination, never the full value.
+              description: >
+                Masked destination, so the farmer can confirm where the
+                challenge went without the destination being disclosed.
+
+                Optional, because not every portal says. One that names the
+                destination has this field and a pack that pins the mask shape;
+                one that answers only "sent to the registered mobile number"
+                has nothing to put here, and the field is absent rather than
+                guessed at from a number the caller supplied.
+              x-jsonld-id: "openagrinet:challengeSentTo"
+            expiresAt:
+              type: string
+              format: date-time
+              description: >
+                When the challenge stops being accepted. Required because the
+                adapter always derives one, so a caller may rely on it.
+              x-jsonld-id: "openagrinet:challengeExpiresAt"
+          description: >
+            Acknowledgement that the portal has sent a challenge. Carries no
+            secret: the value itself is never returned. No correlator field
+            exists and additionalProperties refuses one, for the same reason as
+            on challenge.
+
+            Returned and never sent, but not marked readOnly: the network
+            validates responses as requests too, so readOnly would reject this
+            acknowledgement outright.
+          x-jsonld-id: "openagrinet:challengeIssued"
+
     Grievance:
       type: object
       required: [description]

@@ -44,20 +44,38 @@ components:
       type: object
       x-beckn-container: commitmentAttributes
       x-beckn-container-by-action:
+        init: commitmentAttributes
         status: commitmentAttributes
         support: channels
       # What each action must carry. Paths are relative to the attribute
       # object; enrolmentId is named here under its attribute name, not the
-      # message.support.orderId it moves to under x-beckn-path. No init entry:
-      # PM-KISAN issues no challenge. case.filedOn is required on status
-      # because it is half the case selector -- the portal returns every
-      # grievance on the identity and nothing else narrows it.
+      # message.support.orderId it moves to under x-beckn-path.
+      #
+      # init takes the registration number alone. The portal holds the farmer's
+      # mobile number and texts the OTP there, so no phone crosses the network
+      # on any leg of this scheme.
+      #
+      # Both guarded legs carry a challenge. The status read is guarded because
+      # it answers with every grievance on the registration number rather than
+      # the one asked about, so an unguarded read would expose a farmer's whole
+      # complaint history to anyone holding their number.
+      #
+      # case.filedOn is required on status because it is half the case selector
+      # -- the portal returns every grievance on the identity and nothing else
+      # narrows it.
       x-oan-required-by-action:
+        init: [enrolmentId]
         support:
           - enrolmentId
           - grievance.category.code
           - grievance.description
-        status: [enrolmentId, case.filedOn]
+          - challenge.method
+          - challenge.value
+        status:
+          - enrolmentId
+          - case.filedOn
+          - challenge.method
+          - challenge.value
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMKISANGrievance
@@ -104,13 +122,67 @@ components:
             challengeMethods:
               allOf:
                 - type: array
-                  maxItems: 0
+                  minItems: 1
+                  items:
+                    enum: [SMS_OTP]
               description: >
-                Pinned empty: PM-KISAN issues no challenge, so its catalog entry
-                publishes [] and support is the first call. Present and empty
-                rather than absent -- it is also the member that lets a catalog
-                entry pass the gate below, which a declaration otherwise has
-                nothing to satisfy.
+                Pinned to SMS_OTP: PM-KISAN texts a four-digit OTP to the mobile
+                number it holds for the registration, and a grievance cannot be
+                filed or read until that OTP is proven. A caller reads this and
+                knows to call init first.
+
+                An earlier revision of this pack published [] here, on the
+                reading that the grievance portal issues no challenge. The
+                portal API indeed carries none -- the encrypted LodgeGrievance
+                call takes an identity and a complaint and nothing else. The
+                challenge is issued a layer above it, against the scheme's own
+                desk, and the live system refuses to lodge or to read without
+                it. Publishing [] described the portal API accurately and the
+                scheme wrongly.
+
+                It is also the member that lets a catalog entry pass the gate
+                below, which a declaration otherwise has nothing to satisfy.
+
+            # Inherited from GrievanceBase and narrowed. No sentTo: see the note
+            # on challengeIssued.
+
+            challenge:
+              allOf:
+                - type: object
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                      description: >
+                        PM-KISAN offers one mechanism: a four-digit OTP texted
+                        to the mobile number held against the registration.
+                    value:
+                      pattern: "^[0-9]{4}$"
+                      description: >
+                        Four digits. PMFBY issues six and PM-KISAN four, which
+                        is why the base bounds the range and each pack pins the
+                        length.
+              description: >
+                PM-KISAN note: required on support and on status both. The
+                status read answers with every grievance on the registration
+                number rather than the one asked about, so leaving it unguarded
+                would hand a farmer's whole complaint history to anyone holding
+                their number.
+
+            challengeIssued:
+              allOf:
+                - type: object
+                  not:
+                    required: [sentTo]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+              description: >
+                PM-KISAN note: sentTo is refused rather than left optional. The
+                portal acknowledges with "OTP has been sent to the registered
+                mobile number" and names no number, and the caller supplies none
+                -- so there is no destination to mask. A masked value here could
+                only be invented, and an invented one the farmer could not
+                recognise is worse than none.
 
             enrolmentId:
               allOf:
@@ -283,7 +355,10 @@ components:
         - anyOf:
             - required: [grievance]     # filing, or a case read echoing one
             - required: [case]          # reading, selected by filedOn
-            - required: [enrolmentId]   # reading every case on a registration
+            - required: [enrolmentId]   # reading every case on a registration,
+                                        # and asking for an OTP against one
+            - required: [challengeIssued]   # acknowledging an OTP, which must
+                                            # echo nothing else
             - required: [challengeMethods]  # a catalog entry: it declares what
                                             # this desk needs and asks nothing,
                                             # so it brings none of the above

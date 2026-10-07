@@ -36,6 +36,20 @@
         "remark": "openagrinet:caseRemark",
         "remarkedOn": "openagrinet:remarkedOn"
       }
+    },
+    "challenge": {
+      "@id": "openagrinet:challenge",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "value": "openagrinet:challengeValue"
+      }
+    },
+    "challengeIssued": {
+      "@id": "openagrinet:challengeIssued",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "expiresAt": "openagrinet:challengeExpiresAt"
+      }
     }
   }
 }

@@ -86,6 +86,31 @@
       "@id": "openagrinet:remarkedOn",
       "@type": "rdfs:Property",
       "rdfs:label": "remarked on"
+    },
+    {
+      "@id": "openagrinet:challenge",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge"
+    },
+    {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method"
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value"
+    },
+    {
+      "@id": "openagrinet:challengeIssued",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge issued"
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at"
     }
   ]
 }

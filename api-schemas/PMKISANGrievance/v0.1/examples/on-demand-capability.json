@@ -6,5 +6,7 @@
     "code": "PM-KISAN",
     "name": "Pradhan Mantri Kisan Samman Nidhi"
   },
-  "challengeMethods": []
+  "challengeMethods": [
+    "SMS_OTP"
+  ]
 }

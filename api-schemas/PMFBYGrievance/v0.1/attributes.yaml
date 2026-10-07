@@ -163,96 +163,46 @@ components:
                 and is never returned on a read.
               x-jsonld-id: "openagrinet:receiptSourceId"
 
+            # Inherited from GrievanceBase and narrowed. PMFBY is the only
+            # portal here that discloses where it sent the OTP, so sentTo comes
+            # back into the required set; the base leaves it optional.
+
             challenge:
-              type: object
-              required: [method, value]
-              additionalProperties: false
-              x-oan-pii:
-                class: credential
-                handling: [no-log, no-trace, no-echo, no-forward]
-                note: Proven once by the verify call and never passed to the lodge call.
-              properties:
-                method:
-                  type: string
-                  enum: [SMS_OTP]
-                  description: >
-                    Authentication mechanism. PMFBY offers one: a six-digit OTP
-                    texted to the registered mobile number. Supporting a second
-                    mechanism later is widening this enum and pinning the format
-                    its value takes; nothing about the carrier changes.
-                  x-jsonld-id: "openagrinet:challengeMethod"
-                value:
-                  type: string
-                  pattern: "^[0-9]{6}$"
-                  x-oan-pii:
-                    class: credential
-                    handling: [no-log, no-trace, no-echo, no-forward]
-                    note: Proven once against the portal and never carried further.
-                  description: >
-                    The OTP itself, six digits, since the portal rejects any
-                    other length. The pattern is what enforces that -- allOf
-                    narrowing is evaluated, so the rule is held by the pack and
-                    not left to a mapping guard.
-
-                    Direction is carried by x-oan-pii, not by writeOnly. The
-                    network validates every payload as a request, on the way out
-                    as well as in, so writeOnly here would assert nothing while
-                    readOnly on the answering field would reject the very
-                    response it describes. no-echo is the rule the adapter
-                    reads, and it is unconditional.
-                  x-jsonld-id: "openagrinet:challengeValue"
+              allOf:
+                - type: object
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                      description: >
+                        PMFBY offers one mechanism: a six-digit OTP texted to
+                        the registered mobile number.
+                    value:
+                      pattern: "^[0-9]{6}$"
+                      description: >
+                        Six digits, since the portal rejects any other length.
               description: >
-                Proof of the phone number, presented when filing. No correlator
-                field exists, and additionalProperties refuses one: PMFBY binds
-                the challenge to the phone number alone and issues none, so a
-                caller sending one is confused about the mechanism rather than
-                being quietly ignored.
-
-                The whole object travels inbound only: never returned in any
-                response, written to a log or attached to a trace, and the value
-                is never forwarded to the lodge call. That is x-oan-pii no-echo
-                and no-forward, which the adapter enforces. It is deliberately
-                not writeOnly -- see the note on value.
-              x-jsonld-id: "openagrinet:challenge"
+                PMFBY note: proof of the phone number, presented when filing.
+                Required on support and on nothing else -- the status read takes
+                a ticket number the farmer only holds because they filed, so it
+                carries its own weak binding and the portal asks for no OTP.
 
             challengeIssued:
-              type: object
-              required: [method, sentTo, expiresAt]
-              additionalProperties: false
-              properties:
-                method:
-                  type: string
-                  enum: [SMS_OTP]
-                  description: Mechanism the portal used. PMFBY offers SMS_OTP only.
-                  x-jsonld-id: "openagrinet:challengeMethod"
-                sentTo:
-                  type: string
-                  pattern: "^[0-9]{2}X{6}[0-9]{2}$"
-                  x-oan-pii:
-                    class: contact
-                    handling: [no-log, no-trace]
-                    note: Always the masked form of the destination, never the full number.
-                  description: >
-                    Masked destination, so the farmer can confirm which number
-                    was used without the number being disclosed. PMFBY sends to
-                    a phone, so the mask is a phone mask -- first two and last
-                    two digits only, the six between them always X.
-                  x-jsonld-id: "openagrinet:challengeSentTo"
-                expiresAt:
-                  type: string
-                  format: date-time
-                  description: >
-                    When the challenge stops being accepted. Required because
-                    the adapter always derives one, so a caller may rely on it.
-                  x-jsonld-id: "openagrinet:challengeExpiresAt"
+              allOf:
+                - type: object
+                  required: [method, sentTo, expiresAt]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                    sentTo:
+                      pattern: "^[0-9]{2}X{6}[0-9]{2}$"
+                      description: >
+                        PMFBY sends to a phone, so the mask is a phone mask --
+                        first two and last two digits only, the six between them
+                        always X.
               description: >
-                Acknowledgement that the portal has sent a challenge. Carries no
-                secret: the OTP itself is never returned. No correlator field
-                exists and additionalProperties refuses one, since PMFBY issues
-                none. This is returned and never sent, but it is not marked
-                readOnly: the network validates responses as requests too, so
-                readOnly would reject this acknowledgement outright.
-              x-jsonld-id: "openagrinet:challengeIssued"
+                PMFBY note: required here rather than optional, because this
+                portal does name the destination and the farmer can use it to
+                confirm which number was used.
 
             # Inherited from GrievanceBase, narrowed to what this portal does.
             # Where a field is restated with a description alone, the shape and
