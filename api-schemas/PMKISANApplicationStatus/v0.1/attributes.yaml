@@ -16,11 +16,15 @@ info:
     anything and should not have to look at a pack that can file.
 
     Extends GrievanceBase all the same, in api-schemas/Grievance/v0.1. What the
-    two capabilities genuinely share is the challenge: both are guarded by the
-    same four-digit OTP, issued by the same PM-KISAN service, and a second copy
-    of that definition would be a second place for it to drift. The two bands
-    the base has that this pack does not -- grievance and case -- are refused
-    outright rather than left defined and never filled.
+    two capabilities genuinely share is the shape of the challenge: a
+    four-digit OTP texted to the mobile the portal holds, presented back with
+    the call it guards, never echoed and never forwarded. The services behind
+    them are not one service -- the grievance desk and this chatbot sit on
+    different hosts and encrypt differently -- but the field, its length and
+    its handling rules are identical, and a second copy of that definition
+    would be a second place for it to drift. The two bands the base has that
+    this pack does not -- grievance and case -- are refused outright rather
+    than left defined and never filled.
 
     Two actions. init asks for the OTP; status reads the record once the OTP is
     in hand. There is no support: nothing is lodged here. Both legs ride on
@@ -69,8 +73,29 @@ components:
       allOf:
         - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
         - type: object
-          required: ["@type"]
+          required: ["@context", "@type"]
           properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld
+                  items:
+                    type: string
+                    minLength: 1
+              description: >
+                The JSON-LD context these terms resolve against. Declared and
+                required, not merely assumed: it is what makes the attribute
+                object self-describing once it is detached from the schema that
+                validated it, and every payload on this network carries one.
+
+                Carried as an array when a Provider publishes extra @type
+                values, with the pack's own context always among them.
+
             "@type":
               oneOf:
                 - type: string
@@ -177,14 +202,6 @@ components:
                 number is the handle they need for every later call -- a
                 grievance, if the blockers below warrant one.
 
-            # Refused. A reading of a record is not a complaint, and leaving
-            # either band defined-but-unused would invite an adapter to start
-            # filling one.
-            grievance:
-              not: {}
-            case:
-              not: {}
-
             # Added by this pack.
 
             applicant:
@@ -273,16 +290,19 @@ components:
                 deliberate break from the v1 flow, which greeted the farmer by
                 name and village so they could confirm the record was theirs.
 
-                Both members are required together on an answer. blockers may
-                be empty, and an empty list is a real answer -- the portal was
-                asked and named nothing. Absent would mean it was never asked,
-                which a caller must be able to tell apart from "nothing is
-                wrong"; v1 could not, and reported a clean record either way.
+                Only latestInstallmentPaid is required: a record without it is
+                not a record. blockers is deliberately not, and the three
+                states it can be in are all different answers. Present and
+                non-empty names what is wrong. Present and empty is a real
+                answer too -- the portal was asked and named nothing. Absent
+                means it was never asked, which a caller must be able to tell
+                apart from "nothing is wrong"; v1 could not, and reported a
+                clean record either way.
               x-jsonld-id: "openagrinet:application"
               properties:
                 registeredOn:
-                  type: string
-                  format: date-time
+                  allOf:
+                    - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/Instant"
                   description: >
                     When the farmer was registered under the scheme, from
                     DateOfRegistration. That value carries a time but no
@@ -389,6 +409,16 @@ components:
 
                               Display it; never branch on it. The portal
                               rewords without notice.
+
+        # grievance and case are refused. A reading of a record is not a
+        # complaint, and leaving either band defined-but-unused would invite an
+        # adapter to start filling one. Stated the way PMFBY refuses the
+        # challenge bands -- not over an anyOf of required -- which is the one
+        # refusal form used throughout these packs.
+        - not:
+            anyOf:
+              - required: [grievance]
+              - required: [case]
 
         # A Direct payload is a response, and a response with no record is not
         # an answer. Stated with anyOf and not with if/then: if/then is parsed

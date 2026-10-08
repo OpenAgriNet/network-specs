@@ -11,9 +11,10 @@ info:
     lifecycle of its own, not a catalogable resource.
 
     Extends GrievanceBase, in api-schemas/Grievance/v0.1. The base owns the
-    four bands a grievance payload has -- the context at the top, the farmer's
-    complaint under grievance, the portal's record under case -- and the
-    vocabulary they are written in. This file pins @type and scheme to PMFBY,
+    five bands a grievance payload has -- the context at the top, the farmer's
+    complaint under grievance, the portal's record under case, the caller's
+    proof under challenge and the portal's acknowledgement of it under
+    challengeIssued -- and the vocabulary they are written in. This file pins @type and scheme to PMFBY,
     adds what PMFBY alone has (the phone, the crop year and the season), refuses
     the challenge bands outright, pins the value spaces inside the two
     containers, and states
@@ -69,8 +70,29 @@ components:
       allOf:
         - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
         - type: object
-          required: ["@type"]
+          required: ["@context", "@type"]
           properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld
+                  items:
+                    type: string
+                    minLength: 1
+              description: >
+                The JSON-LD context these terms resolve against. Declared and
+                required, not merely assumed: it is what makes the attribute
+                object self-describing once it is detached from the schema that
+                validated it, and every payload on this network carries one.
+
+                Carried as an array when a Provider publishes extra @type
+                values, with the pack's own context always among them.
+
             "@type":
               oneOf:
                 - type: string
@@ -94,7 +116,11 @@ components:
               pattern: "^[6-9][0-9]{9}$"
               x-oan-pii:
                 class: contact
-                handling: [no-log, no-trace, no-echo, mask-on-echo]
+                handling: [no-log, no-trace, no-echo]
+                note: >
+                  Sent upstream as requestorMobileNo and never returned in any
+                  response. No masked form either: no-echo is unconditional, so
+                  there is nothing to mask.
               description: >
                 Mobile number of the farmer raising the grievance. Ten digits,
                 Indian mobile series. It goes upstream as requestorMobileNo and
@@ -133,8 +159,8 @@ components:
               x-jsonld-id: "openagrinet:season"
 
             complaintDate:
-              type: string
-              pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+              allOf:
+                - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/CalendarDate"
               description: >
                 The date the complaint was filed, as YYYY-MM-DD in IST. Goes
                 upstream as complaintDate on the lodge call.

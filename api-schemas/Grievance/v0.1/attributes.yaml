@@ -17,14 +17,20 @@ info:
     a Provider's API surface, not a thing the network describes, so the shape
     belongs beside the packs that use it and not in a domain schema.
 
-    A payload has four bands, and the band a field sits in says who wrote it.
+    A payload has five bands, and the band a field sits in says who wrote it.
     At the top: who is asking and about what -- informationMode, provider,
     scheme, enrolmentId. Under grievance: what the farmer submitted. Under case:
-    what the portal has on file, the stamps it applied included. Anything else a
-    pack adds -- an OTP challenge, a crop season -- sits at the top with the
-    rest of the context.
+    what the portal has on file, the stamps it applied included. Under
+    challenge: the proof the caller presents with a guarded call. Under
+    challengeIssued: the portal's acknowledgement that it sent one. Anything a
+    pack adds of its own -- a crop season, an applicant's phone -- sits at the
+    top with the rest of the context.
 
-    The two containers are the point of this file. Before them the same split
+    Not every pack uses every band. A desk that issues no challenge refuses
+    both challenge bands outright rather than leave them defined and
+    unfillable, and says so in challengeMethods.
+
+    The grievance and case containers are the point of this file. Before them the same split
     lived in a prefix -- grievanceCategory against caseStatus -- which read the
     same but checked nothing: a field named either way validated either way.
     As containers the split is enforced, and three rules come with it that were
@@ -262,8 +268,12 @@ components:
               type: string
               x-oan-pii:
                 class: contact
-                handling: [no-log, no-trace]
-                note: Always the masked form of the destination, never the full value.
+                handling: [no-log, no-trace, mask-on-echo]
+                note: >
+                  Always the masked form of the destination, never the full
+                  value. The one field in these packs that is echoed at all and
+                  so the one that mask-on-echo applies to; everywhere else a
+                  contact value is no-echo, which leaves nothing to mask.
               description: >
                 Masked destination, so the farmer can confirm where the
                 challenge went without the destination being disclosed.
@@ -275,11 +285,16 @@ components:
                 guessed at from a number the caller supplied.
               x-jsonld-id: "openagrinet:challengeSentTo"
             expiresAt:
-              type: string
-              format: date-time
+              allOf:
+                - $ref: "#/components/schemas/Instant"
               description: >
                 When the challenge stops being accepted. Required because the
                 adapter always derives one, so a caller may rely on it.
+
+                Always adapter-derived, never quoted. The OTP services on this
+                network acknowledge with a message and no expiry, so the window
+                here is the adapter's own statement about how long it will
+                accept the proof.
               x-jsonld-id: "openagrinet:challengeExpiresAt"
           description: >
             Acknowledgement that the portal has sent a challenge. Carries no
@@ -401,9 +416,12 @@ components:
             so on_support returns it here and leaves orderId holding the
             enrolment reference it arrived with.
 
-            A pack whose portal issues no handle refuses the field outright
-            with not/required, rather than leaving it defined and permanently
-            absent.
+            A pack whose portal issues no handle at all would refuse the field
+            outright with not/required, rather than leave it defined and
+            permanently absent. Neither portal here is that case: both issue a
+            handle on filing. PM-KISAN simply does not repeat it on a case
+            read, so the field is present on a lodge reply and absent from a
+            read -- which is why that pack's answer gate does not require it.
           x-jsonld-id: "openagrinet:ticketNo"
 
         status:
@@ -434,7 +452,8 @@ components:
           x-jsonld-id: "openagrinet:caseStatus"
 
         filedOn:
-          $ref: "#/components/schemas/CalendarDate"
+          allOf:
+            - $ref: "#/components/schemas/CalendarDate"
           description: >
             Date the grievance was filed with the portal. An IST calendar date:
             an adapter must take today's date in IST and not from a UTC clock,
@@ -465,7 +484,8 @@ components:
           x-jsonld-id: "openagrinet:caseRemark"
 
         remarkedOn:
-          $ref: "#/components/schemas/CalendarDate"
+          allOf:
+            - $ref: "#/components/schemas/CalendarDate"
           description: >
             Date the remark was recorded. Absent until there is a remark. An IST
             calendar date; see CalendarDate.
@@ -527,6 +547,25 @@ components:
         alone would accept any string at all. The zone is named because a bare
         date has no day boundary of its own: an adapter deriving one from a UTC
         clock records the previous day for anything happening before 05:30 IST.
+
+    Instant:
+      type: string
+      format: date-time
+      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$'
+      description: >
+        A fully-qualified instant, RFC 3339, with the offset always present.
+
+        The pattern is what enforces the shape. format is annotation-only under
+        the validator in use -- no string format is registered, so
+        format: date-time alone would accept any string at all. Both are kept:
+        the format for the generators that read it, the pattern for the
+        validator that does not.
+
+        The offset is not optional. A bare local timestamp is exactly what the
+        portals send and exactly what must not cross the network, because a
+        reader has no way to know which clock it came off. Either Z or a
+        numeric offset is accepted here; which one is right is the emitting
+        field's business, and a field that reads an IST clock says so itself.
 
     ProviderReference:
       allOf:

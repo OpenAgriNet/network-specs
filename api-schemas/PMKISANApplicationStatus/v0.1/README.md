@@ -32,8 +32,9 @@ A status read is a promise the portal makes about one farmer's registration, not
 catalogable thing of value, so it does not sit on `resourceAttributes`. Unlike the
 grievance pack there is **no `support` leg**: nothing is being filed, so no `Support`
 channel is ever composed and no field moves out of the attributes object.
-`x-beckn-container-by-action` therefore lists `init` and `status` and nothing else, and no
-field in this pack carries an `x-beckn-path`.
+`x-beckn-container-by-action` therefore lists `init` and `status` and nothing else. The one
+`x-beckn-path` the base carries — on `enrolmentId` — is keyed to `support`, so with no
+`support` leg here it never fires: nothing moves out of the attributes object.
 
 `Commitment.resources` carries one thin pointer to the catalog entry
 (`res:pmkisan:application-status`). It is fixed for the provider and never minted per
@@ -198,6 +199,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 
 | Field | Required when | Meaning |
 |---|---|---|
+| `@context` | Always | The JSON-LD context these terms resolve against. Pinned to this pack's own; an array when a Provider publishes extra `@type` values |
 | `@type` | Always | Identifies the commitment as `openagrinet:PMKISANApplicationStatus` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real record |
 | `scheme` | Always | Pinned to `PM-KISAN` |

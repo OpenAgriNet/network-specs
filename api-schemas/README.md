@@ -27,14 +27,18 @@ A directory here with no `profile.json` is not a pack: it holds definitions for 
 
 A pack composes it with `allOf`, then pins its own `@type` and `scheme`, adds the fields its own portal has, and restates each inherited field with a `description` recording where its value comes from upstream. The published page shows the base's meaning and the pack's note together, and says which component each field came from.
 
-What `Grievance/v0.1` actually owns is a shape: **four bands, and the band a field sits in says who wrote it.**
+What `Grievance/v0.1` actually owns is a shape: **five bands, and the band a field sits in says who wrote it.**
 
 | band | holds | written by |
 |---|---|---|
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `remark`, `remarkedOn` | the portal |
-| anything a pack adds | an OTP challenge, a crop season — sits at the top with the rest of the context | the caller |
+| `challenge` | the proof the caller presents with a guarded call: `method`, `value`. Inbound only, never echoed | the caller |
+| `challengeIssued` | the portal's acknowledgement that it sent one: `method`, `sentTo`, `expiresAt`. Outbound only, and it carries no secret | the portal |
+| anything a pack adds | a crop season, an applicant's phone — sits at the top with the rest of the context | the caller |
+
+Not every pack uses every band. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. `challengeMethods` itself sits in no band: it appears on a catalog entry and on no transaction payload.
 
 Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
 
@@ -50,7 +54,7 @@ A pack may also refuse an inherited term outright, with `not`/`required`, rather
 
 ## Packs
 
-- [Grievance](Grievance/v0.1/attributes.yaml) — **base definitions, not a pack.** The four bands, the `Grievance` and `Case` containers, and `CaseStatusCode`, `CalendarDate` and `ProviderReference` beside them.
+- [Grievance](Grievance/v0.1/attributes.yaml) — **base definitions, not a pack.** The five bands, the `Grievance` and `Case` containers, and `CaseStatusCode`, `CalendarDate` and `ProviderReference` beside them.
 - [PMFBY Grievance](PMFBYGrievance/v0.1/README.md) — lodging and reading a PMFBY crop-insurance grievance.
 - [PM-KISAN Grievance](PMKISANGrievance/v0.1/README.md) — lodging and reading a PM-KISAN income-support grievance.
 

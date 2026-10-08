@@ -11,9 +11,10 @@ info:
     lifecycle of its own, not a catalogable resource.
 
     Extends GrievanceBase, in api-schemas/Grievance/v0.1. The base owns the
-    four bands a grievance payload has -- the context at the top, the farmer's
-    complaint under grievance, the portal's record under case -- and the
-    vocabulary they are written in. This file pins @type and scheme to
+    five bands a grievance payload has -- the context at the top, the farmer's
+    complaint under grievance, the portal's record under case, the caller's
+    proof under challenge and the portal's acknowledgement of it under
+    challengeIssued -- and the vocabulary they are written in. This file pins @type and scheme to
     PM-KISAN, declares the portal's closed category vocabulary, refuses the two
     inherited fields PM-KISAN has no equivalent for, and states what a payload
     must carry to be an answer and to be an ask. Nothing grievance-related is
@@ -25,9 +26,11 @@ info:
     notes. That is the measure of whether the base is drawn right.
 
     Direction is carried by informationMode, never by the Beckn action.
-    OnDemand is the ask, Direct is an answer carrying a real case. There is no
-    init leg: PM-KISAN issues no challenge, so the payload rides on channels
-    for support and on commitmentAttributes for status, and nothing else.
+    OnDemand is the ask, Direct is an answer carrying a real case. There is an
+    init leg, and it is there because PM-KISAN does issue a challenge: a
+    four-digit OTP guards both the lodge and the read, so init asks for one
+    before either can happen. init and status ride on commitmentAttributes;
+    support rides on channels.
     x-beckn-container-by-action says which container each action uses, and the
     per-field x-beckn-path says where a field that moves ends up.
 
@@ -82,8 +85,29 @@ components:
       allOf:
         - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
         - type: object
-          required: ["@type"]
+          required: ["@context", "@type"]
           properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld
+                  items:
+                    type: string
+                    minLength: 1
+              description: >
+                The JSON-LD context these terms resolve against. Declared and
+                required, not merely assumed: it is what makes the attribute
+                object self-describing once it is detached from the schema that
+                validated it, and every payload on this network carries one.
+
+                Carried as an array when a Provider publishes extra @type
+                values, with the pack's own context always among them.
+
             "@type":
               oneOf:
                 - type: string

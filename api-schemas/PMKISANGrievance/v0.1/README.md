@@ -52,7 +52,7 @@ This pack never sends one — see "Nothing on file" below.
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
 
-## The four bands
+## The five bands
 
 **The band a field sits in says who wrote it.**
 
@@ -61,9 +61,12 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `status`, `filedOn`, `remark`, `remarkedOn` | the portal |
+| `challenge` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
+| `challengeIssued` | the portal's acknowledgement that it sent an OTP: `method` and `expiresAt`. No `sentTo` — the portal does not say where it sent it | the portal |
 
-There is no fourth band here. PMFBY has a `challenge` band for its OTP; PM-KISAN proves
-nothing in either direction, so the band does not exist in this pack.
+All five are used here. PM-KISAN guards both the lodge and the read with a four-digit
+OTP, which is why this pack has an `init` leg and the PMFBY pack does not: PMFBY's FGMS
+has no OTP endpoint and refuses both challenge bands outright.
 
 `challengeMethods` sits in no band. It is published on the catalog entry and never sent
 on a payload, and it is what a caller reads to know whether this desk challenges it
@@ -222,9 +225,9 @@ commitment at all was never available.
 
 `PMKISANGrievance` extends **`GrievanceBase`**, in
 [`api-schemas/Grievance/v0.1`](../../Grievance/v0.1/attributes.yaml). The base owns the
-four bands and the vocabulary they are written in: `informationMode`, `provider`,
+five bands and the vocabulary they are written in: `informationMode`, `provider`,
 `scheme` and `enrolmentId` at the top, the `Grievance` and `Case` containers, and the
-`CaseStatusCode` list, `CalendarDate` and `ProviderReference` beside them. One
+`CaseStatusCode` list, `CalendarDate`, `Instant` and `ProviderReference` beside them. One
 definition, both packs; a change to the case vocabulary is one edit, not two kept in step
 by review.
 
@@ -297,6 +300,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 
 | Field | Required when | Meaning |
 |---|---|---|
+| `@context` | Always | The JSON-LD context these terms resolve against. Pinned to this pack's own; an array when a Provider publishes extra `@type` values |
 | `@type` | Always | Identifies the commitment as `openagrinet:PMKISANGrievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
@@ -364,7 +368,9 @@ x-oan-pii:
 ```
 
 `class` is one of `identifier`, `contact`, `credential` or `freetext`. `handling` draws on
-`no-log`, `no-trace`, `no-echo`, `no-forward` and `mask-on-echo`.
+`no-log`, `no-trace`, `no-echo`, `no-forward` and `mask-on-echo`. `mask-on-echo` is for a
+value that *is* returned in a masked form; it says nothing beside `no-echo`, which already
+means the value never comes back at all, so the two are never listed together.
 
 The marking is inert — the extended-schema validator ignores `x-` keys, exactly as it
 ignores the `if`/`then` branches. It exists so the rule can be read by a tool rather than

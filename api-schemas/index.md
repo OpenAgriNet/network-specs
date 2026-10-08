@@ -47,7 +47,7 @@ Not every directory under `api-schemas/` is a pack. A directory with no `profile
 
 [`Grievance/v0.1`](Grievance/v0.1/attributes.yaml) is the one such directory today. It defines `GrievanceBase` — the shape any grievance has whatever the scheme — which [PMFBYGrievance](PMFBYGrievance/v0.1/README.md) and [PMKISANGrievance](PMKISANGrievance/v0.1/README.md) each `allOf`-reference. Nothing ever sends `"@type": openagrinet:GrievanceBase`.
 
-That shape is four bands, and the band a field sits in says who wrote it: the context at the top (`informationMode`, `provider`, `scheme`, `enrolmentId`), what the farmer submitted under `grievance`, what the portal has on file under `case`, and anything a pack adds of its own — an OTP challenge, a crop season — at the top with the rest of the context. The base also publishes `CaseStatusCode`, `CalendarDate` and `ProviderReference`, so the case-status vocabulary is defined once rather than restated in each pack.
+That shape is five bands, and the band a field sits in says who wrote it: the context at the top (`informationMode`, `provider`, `scheme`, `enrolmentId`), what the farmer submitted under `grievance`, what the portal has on file under `case`, the proof the caller presents under `challenge`, and the portal's acknowledgement of it under `challengeIssued`. Anything a pack adds of its own — a crop season, an applicant's phone — sits at the top with the rest of the context. A pack whose desk issues no challenge refuses both challenge bands outright. The base also publishes `CaseStatusCode`, `CalendarDate`, `Instant` and `ProviderReference`, so the case-status vocabulary and the two date shapes are defined once rather than restated in each pack.
 
 ## Why these are separate
 

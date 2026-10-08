@@ -62,10 +62,15 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `cropName` | the portal |
 
+The base has five bands. PMFBY uses three. `challenge` and `challengeIssued` belong to
+the PM-KISAN packs — FGMS has no OTP endpoint, so neither band could ever be filled
+honestly here, and this pack refuses both outright rather than leave them defined and
+unfillable.
+
 `challengeMethods` sits in no band. It is published on the catalog entry and never sent
 on a payload, and it is what a caller reads to know whether this desk challenges it
-before filing. PMFBY publishes it empty, so there is no fourth band: the two challenge
-bands belong to the PM-KISAN packs, and this pack refuses both outright.
+before filing. PMFBY publishes it empty, which is how a caller learns there is nothing
+to ask for.
 
 Before the containers the same split lived in a prefix — `grievanceCategory` against
 `caseStatus` — which read the same and checked nothing: a field named either way
@@ -225,9 +230,9 @@ commitment at all was never available.
 
 `PMFBYGrievance` extends **`GrievanceBase`**, in
 [`api-schemas/Grievance/v0.1`](../../Grievance/v0.1/attributes.yaml). The base owns the
-four bands and the vocabulary they are written in: `informationMode`, `provider`,
+five bands and the vocabulary they are written in: `informationMode`, `provider`,
 `scheme` and `enrolmentId` at the top, the `Grievance` and `Case` containers, and the
-`CaseStatusCode` list, `CalendarDate` and `ProviderReference` beside them. One
+`CaseStatusCode` list, `CalendarDate`, `Instant` and `ProviderReference` beside them. One
 definition, both packs; a change to the case vocabulary is one edit, not two kept in step
 by review.
 
@@ -294,6 +299,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 
 | Field | Required when | Meaning |
 |---|---|---|
+| `@context` | Always | The JSON-LD context these terms resolve against. Pinned to this pack's own; an array when a Provider publishes extra `@type` values |
 | `@type` | Always | Identifies the commitment as `openagrinet:PMFBYGrievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
@@ -365,11 +371,13 @@ Every field carrying personal data is marked in `attributes.yaml` with `x-oan-pi
 ```yaml
 x-oan-pii:
   class: contact
-  handling: [no-log, no-trace, no-echo, mask-on-echo]
+  handling: [no-log, no-trace, no-echo]
 ```
 
 `class` is one of `identifier`, `contact`, `credential` or `freetext`. `handling` draws on
-`no-log`, `no-trace`, `no-echo`, `no-forward` and `mask-on-echo`.
+`no-log`, `no-trace`, `no-echo`, `no-forward` and `mask-on-echo`. `mask-on-echo` is for a
+value that *is* returned in a masked form; it says nothing beside `no-echo`, which already
+means the value never comes back at all, so the two are never listed together.
 
 The marking is inert — the extended-schema validator ignores `x-` keys, exactly as it
 ignores the `if`/`then` branches. It exists so the rule can be read by a tool rather than
