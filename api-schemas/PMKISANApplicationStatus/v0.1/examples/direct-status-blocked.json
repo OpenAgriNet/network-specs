@@ -1,0 +1,16 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld",
+  "@type": "openagrinet:PMKISANApplicationStatus",
+  "informationMode": "Direct",
+  "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
+  "enrolmentId": "UP12345678A",
+  "application": {
+    "registeredOn": "2021-06-14T00:00:00+05:30",
+    "latestInstallmentPaid": 15,
+    "ekyc": { "code": "Pending", "name": "eKYC not completed" },
+    "blockers": [
+      { "code": "LandSeedingPending", "name": "Land Seeding, KYS" },
+      { "code": "Other", "name": "Bank account details could not be verified" }
+    ]
+  }
+}

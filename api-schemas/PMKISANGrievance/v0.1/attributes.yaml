@@ -158,9 +158,9 @@ components:
                     value:
                       pattern: "^[0-9]{4}$"
                       description: >
-                        Four digits. PMFBY issues six and PM-KISAN four, which
-                        is why the base bounds the range and each pack pins the
-                        length.
+                        Four digits. The base bounds the range to what the
+                        portals on this network issue and each pack pins the one
+                        length its own portal accepts; PM-KISAN's is four.
               description: >
                 PM-KISAN note: required on support and on status both. The
                 status read answers with every grievance on the registration

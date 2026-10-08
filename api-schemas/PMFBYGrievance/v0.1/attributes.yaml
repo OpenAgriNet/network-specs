@@ -14,15 +14,17 @@ info:
     four bands a grievance payload has -- the context at the top, the farmer's
     complaint under grievance, the portal's record under case -- and the
     vocabulary they are written in. This file pins @type and scheme to PMFBY,
-    adds what PMFBY alone has (the phone, the crop year, the season and the OTP
-    challenge), pins the value spaces inside the two containers, and states
+    adds what PMFBY alone has (the phone, the crop year and the season), refuses
+    the challenge bands outright, pins the value spaces inside the two
+    containers, and states
     what a PMFBY payload must carry to be an answer and to be an ask. Nothing
     grievance-related is added to a domain schema: a grievance is a Provider's
     API surface, not a thing the network describes.
 
     Direction is carried by informationMode, never by the Beckn action.
-    OnDemand is the ask, Direct is an answer carrying a real case. The same
-    attributes serve init and status without change. On support the payload
+    OnDemand is the ask, Direct is an answer carrying a real case. There is no
+    init: PMFBY's grievance service issues no challenge, so the flow opens at
+    support and the only contract leg is status. On support the payload
     attaches through channels instead, and enrolmentId moves into the Support
     object itself. The channel also carries provider, which exists for that
     action alone: a SupportAction composes no Contract, so the adapter has
@@ -44,14 +46,14 @@ components:
       type: object
       x-beckn-container: commitmentAttributes
       x-beckn-container-by-action:
-        init: commitmentAttributes
         status: commitmentAttributes
         support: channels
       # What each action must carry. Paths are relative to the attribute
       # object; enrolmentId is named here under its attribute name, not the
       # message.support.orderId it moves to under x-beckn-path.
+      # No init entry. PMFBY publishes no challenge, so there is nothing to
+      # request and the flow opens at support.
       x-oan-required-by-action:
-        init: [applicantPhone]
         support:
           - enrolmentId
           - applicantPhone
@@ -60,8 +62,6 @@ components:
           - grievance.category.code
           - grievance.subCategory.code
           - grievance.description
-          - challenge.method
-          - challenge.value
         status: [applicantPhone, case.ticketNo]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
@@ -96,10 +96,11 @@ components:
                 class: contact
                 handling: [no-log, no-trace, no-echo, mask-on-echo]
               description: >
-                Mobile number of the farmer raising the grievance, and the number the
-                portal sends the OTP to. Ten digits, Indian mobile series. Never
-                returned in a response; on_init carries the masked challengeIssued.sentTo
-                instead.
+                Mobile number of the farmer raising the grievance. Ten digits,
+                Indian mobile series. It goes upstream as requestorMobileNo and
+                is the number the portal contacts about the ticket; nothing
+                proves the caller holds it, because PMFBY asks for no OTP.
+                Never returned in a response.
               x-jsonld-id: "openagrinet:applicantPhone"
 
             cropYear:
@@ -163,47 +164,6 @@ components:
                 and is never returned on a read.
               x-jsonld-id: "openagrinet:receiptSourceId"
 
-            # Inherited from GrievanceBase and narrowed. PMFBY is the only
-            # portal here that discloses where it sent the OTP, so sentTo comes
-            # back into the required set; the base leaves it optional.
-
-            challenge:
-              allOf:
-                - type: object
-                  properties:
-                    method:
-                      enum: [SMS_OTP]
-                      description: >
-                        PMFBY offers one mechanism: a six-digit OTP texted to
-                        the registered mobile number.
-                    value:
-                      pattern: "^[0-9]{6}$"
-                      description: >
-                        Six digits, since the portal rejects any other length.
-              description: >
-                PMFBY note: proof of the phone number, presented when filing.
-                Required on support and on nothing else -- the status read takes
-                a ticket number the farmer only holds because they filed, so it
-                carries its own weak binding and the portal asks for no OTP.
-
-            challengeIssued:
-              allOf:
-                - type: object
-                  required: [method, sentTo, expiresAt]
-                  properties:
-                    method:
-                      enum: [SMS_OTP]
-                    sentTo:
-                      pattern: "^[0-9]{2}X{6}[0-9]{2}$"
-                      description: >
-                        PMFBY sends to a phone, so the mask is a phone mask --
-                        first two and last two digits only, the six between them
-                        always X.
-              description: >
-                PMFBY note: required here rather than optional, because this
-                portal does name the destination and the farmer can use it to
-                confirm which number was used.
-
             # Inherited from GrievanceBase, narrowed to what this portal does.
             # Where a field is restated with a description alone, the shape and
             # the bounds stay with the base and the note records how PMFBY
@@ -224,15 +184,20 @@ components:
             challengeMethods:
               allOf:
                 - type: array
-                  minItems: 1
-                  items:
-                    type: string
-                    enum: [SMS_OTP]
+                  maxItems: 0
               description: >
-                Pinned non-empty: PMFBY challenges every filing, so its catalog
-                entry publishes ["SMS_OTP"] and a caller runs init before
-                support. The item enum is the one challenge.method carries;
-                supporting a second mechanism means widening both.
+                Pinned empty. PMFBY's grievance service has no OTP endpoint, so
+                this desk challenges nothing and the catalog entry publishes [].
+                The field is published rather than omitted because empty is an
+                answer and absent is a question: a caller reading [] knows to
+                open at support.
+
+                PMFBY does operate an OTP pair, at /api/v1/services/nic/getOtp
+                and /verifyMobile, but it belongs to the policy flow on a
+                different realm with different credentials. Borrowing it would
+                impose a control the portal never asked for, so this pack does
+                not. If PMFBY ever adds a challenge to FGMS, widen this and
+                restore the two bands refused below.
 
             enrolmentId:
               allOf:
@@ -373,6 +338,19 @@ components:
                     branched on.
                   x-jsonld-id: "openagrinet:cropName"
 
+        # PMFBY's grievance service issues no challenge, so neither band can
+        # ever be filled honestly. Both are refused rather than left permanently
+        # absent -- the same treatment case.remark gets above, and for the same
+        # reason: a field nobody can populate is a field that invites a caller
+        # to populate it wrongly. A payload carrying either is a caller who read
+        # challengeMethods as ["SMS_OTP"] somewhere it is not, and silently
+        # accepting it would let an unverifiable OTP look verified.
+        # Two members to delete if PMFBY ever adds a challenge to FGMS.
+        - not:
+            anyOf:
+              - required: [challenge]
+              - required: [challengeIssued]
+
         # A Direct payload is a response, and a response with no case standing
         # is not an answer. Stated with anyOf and not with if/then: if/then is
         # parsed but never evaluated by the validator in use, so a guard
@@ -396,21 +374,22 @@ components:
                     case:
                       required: [ticketNo, status, filedOn]
 
-        # Every payload must be about something. The same @type serves filing,
-        # reading and acknowledging, and informationMode cannot tell them apart
-        # -- all three asks are OnDemand -- so what separates them is what the
-        # payload brought. One that brought none of these is asking for
-        # nothing, and before the containers existed nothing caught it: a
-        # grievance could go missing field by field and still validate.
+        # Every payload must be about something. The same @type serves filing
+        # and reading, and informationMode cannot tell them apart -- both asks
+        # are OnDemand -- so what separates them is what the payload brought.
+        # One that brought none of these is asking for nothing, and before the
+        # containers existed nothing caught it: a grievance could go missing
+        # field by field and still validate.
+        #
+        # applicantPhone is deliberately not a member. It was one when init
+        # existed and the phone was the whole subject of the ask; with no init
+        # there is no payload whose only subject is a phone number, and leaving
+        # it in would let a stripped support through.
         - anyOf:
             - required: [grievance]         # filing, or a case read echoing one
             - required: [case]              # reading one case by its ticket
             - required: [enrolmentId]       # reading by the application
-            - required: [challengeIssued]   # acknowledging an OTP, which must
-                                            # echo nothing else
-            - required: [applicantPhone]    # asking for one: on init the phone
-                                            # is the whole subject, since the
-                                            # farmer has stated nothing yet
-            - required: [challengeMethods]  # a catalog entry: it declares what
-                                            # this desk needs and asks nothing,
-                                            # so it brings none of the above
+            - required: [challengeMethods]  # a catalog entry: it declares that
+                                            # this desk needs nothing and asks
+                                            # nothing, so it brings none of the
+                                            # above. Empty, but present.

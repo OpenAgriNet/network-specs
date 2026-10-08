@@ -52,7 +52,7 @@ This pack never sends one — see "Nothing on file" below.
 This is deliberately unlike the OAN domain packs. A forecast or a mandi price
 genuinely is a resource, and those packs stay on `resourceAttributes`.
 
-## The four bands
+## The three bands
 
 **The band a field sits in says who wrote it.**
 
@@ -61,11 +61,11 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantPhone`, `cropYear`, `season` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `cropName` | the portal |
-| `challenge` | proof of the phone number, on the way in only | the caller |
 
 `challengeMethods` sits in no band. It is published on the catalog entry and never sent
 on a payload, and it is what a caller reads to know whether this desk challenges it
-before filing.
+before filing. PMFBY publishes it empty, so there is no fourth band: the two challenge
+bands belong to the PM-KISAN packs, and this pack refuses both outright.
 
 Before the containers the same split lived in a prefix — `grievanceCategory` against
 `caseStatus` — which read the same and checked nothing: a field named either way
@@ -81,7 +81,7 @@ could recover the pair. As fields inside `grievance` each one has bounds the pac
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init` and `status` without change.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `support` and `status` without change.
 
 One action is an exception, and the pack names it. On `support` the payload has no
 `Commitment` to sit on, so it attaches through `Support.channels`, and one field leaves
@@ -124,16 +124,14 @@ That is true of `on_support` and `on_status` alike. `provider` is not in the lis
 contract leg the same fact lives in `commitments[].offer.provider`, outside these
 attributes, where a guard on the attributes object cannot reach it.
 
-**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, a
-`challengeIssued`, an `applicantPhone` or `challengeMethods`. The same `@type` serves filing, reading and
-acknowledging, and `informationMode` cannot tell them apart because all three asks are
-`OnDemand`. What separates them is what the payload brought. Before the containers
-existed nothing caught a payload that brought none of them.
+**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId` or
+`challengeMethods`. The same `@type` serves filing, reading and discovery, and
+`informationMode` cannot tell them apart because every ask is `OnDemand`. What separates
+them is what the payload brought. Before the containers existed nothing caught a payload
+that brought none of them.
 
-`applicantPhone` is in that list for one leg only. `init` asks for a challenge before the
-farmer has stated a complaint, so it carries no `grievance`, no `case` and no enrolment —
-the phone is the whole subject. Leaving it out made the gate reject a payload the pack is
-built to accept.
+`applicantPhone` is deliberately not in that list. Every ask carries it, so a branch on it
+would admit a payload stripped of everything else — a phone number and nothing to be about.
 
 `challengeMethods` is in that list for the catalog entry alone. A declaration states what
 this desk needs and asks for nothing, so it brings no `grievance`, no `case` and no
@@ -141,10 +139,9 @@ enrolment. Without the branch the gate would reject the very entry a caller disc
 desk by.
 
 There is deliberately no narrower `OnDemand` branch. The ask side has no field common to
-every payload: filing sends the phone, the enrolment, the season and the challenge;
-reading a case sends the phone and the ticket; a challenge acknowledgement sends neither,
-because it must not echo the phone. What each action must carry is enforced by that
-action's mapping guard.
+every payload: filing sends the phone, the enrolment, the season and the complaint;
+reading a case sends the phone and the ticket; the catalog entry sends none of them. What
+each action must carry is enforced by that action's mapping guard.
 
 ## Upstream response coverage
 
@@ -237,9 +234,9 @@ by review.
 `Grievance/v0.1` is not itself a pack. There is no `profile.json` beside it, so it is
 never indexed, and nothing ever sends `@type: openagrinet:GrievanceBase`.
 
-This pack adds what PMFBY alone has — `applicantPhone`, `cropYear`, `season`, `challenge`,
-`challengeIssued` — pins `@type` and `scheme.code` to PMFBY, pins the value spaces inside
-the two containers, and states the two gates above.
+This pack adds what PMFBY alone has — `applicantPhone`, `cropYear`, `season` — pins
+`@type` and `scheme.code` to PMFBY, pins the value spaces inside the two containers,
+refuses the two challenge bands the base makes available, and states the two gates above.
 
 `@type` stays out of the base: it is the pack's identity, so a base could only accept any
 string. `grievance.category` and `grievance.subCategory` are declared in the base but
@@ -269,7 +266,7 @@ portal does publish and a generic grievance base has no reason to define.
 
 Two things move between legs, and they are easy to confuse.
 
-**The attributes object itself moves.** On `init` and `status` it is
+**The attributes object itself moves.** On `status` it is
 `message.contract.commitments[].commitmentAttributes`. On `support` there is no
 contract to hang it from, so it becomes a support channel:
 `message.support.channels[0]`. `x-beckn-container-by-action` states this.
@@ -278,13 +275,13 @@ contract to hang it from, so it becomes a support channel:
 `orderId` slot, so a client that has never read this pack still sees a support request
 with a subject on it.
 
-`init` gets its own column because it carries neither: that leg asks for an OTP and sends
-the phone number, nothing else.
+There is no `init` column. PMFBY publishes no challenge, so the flow opens at `support`
+and the only contract leg is `status`.
 
-| Field | on `support` | on `init` | on `status` |
-|---|---|---|---|
-| `enrolmentId` | `support.orderId` | not sent | in attributes — `x-beckn-path` names no status slot |
-| `provider` | in attributes (`channels[0]`) | absent — read `commitments[].offer.provider`, which is the same shape | same |
+| Field | on `support` | on `status` |
+|---|---|---|
+| `enrolmentId` | `support.orderId` | in attributes — `x-beckn-path` names no status slot |
+| `provider` | in attributes (`channels[0]`) | absent — read `commitments[].offer.provider`, which is the same shape |
 
 Everything else stays inside the attributes object wherever that object happens to be —
 both containers included. Published examples show the logical form, every field inline;
@@ -301,45 +298,55 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `provider` | `support` legs | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from |
-| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. It is the number the challenge goes to when filing, and the portal matches a ticket to the phone it was filed from, so reading a case needs it too. Never echoed |
+| `applicantPhone` | Every ask | Ten-digit mobile of the farmer. The portal files it on the ticket and matches a ticket to the phone it was filed from, so reading a case needs it too. Nothing proves the caller holds it — PMFBY asks for no OTP. Never echoed |
 | `enrolmentId` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns. Carried as `orderId` on `support` |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid`. They qualify the enrolment, not the complaint, so they sit at the top |
 | `grievance.category`, `grievance.subCategory` | Ask, when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
 | `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
-| `challenge` | Ask, when filing | Proof of the phone number: `method` is `SMS_OTP`, `value` is six digits, and nothing else is accepted. Inbound only |
 | `case.ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
 | `case.status` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
 | `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on. Added by this pack; `case.remark` and `case.remarkedOn` are refused, because PMFBY publishes neither |
-| `challengeIssued` | Answer to a challenge request | Which mechanism was used, the masked destination and the expiry — all three required; carries no secret |
-| `challengeMethods` | The catalog entry only | Pinned to `["SMS_OTP"]`, non-empty. It says the caller must pass a challenge before filing, so the sequence is `init` → `support` → `status`. Never sent on a transaction |
+| `challengeMethods` | The catalog entry only | Pinned empty. It says this desk challenges nothing, so the sequence is `support` → `status`. Never sent on a transaction |
 
 A payload that carries `grievance` carries all three of its fields: `required` inside the
 block fires whenever the block is present, so a partial complaint is rejected rather than
 half-filed.
 
-## Challenge
+## No challenge
 
-`challenge` and `challengeIssued` are defined in this pack, pinned to the one mechanism PMFBY offers:
+**PMFBY's grievance service issues no challenge, so this pack carries none.** `challengeMethods`
+is pinned `maxItems: 0` and the catalog entry publishes `[]`. Both bands the shared base
+makes available are refused outright:
 
 ```yaml
-challenge:
-  type: object
-  required: [method, value]
-  additionalProperties: false
-  x-oan-pii:
-    class: credential
-    handling: [no-log, no-trace, no-echo, no-forward]
-  properties:
-    method: { enum: [SMS_OTP] }
-    value:  { pattern: "^[0-9]{6}$" }
+- not:
+    anyOf:
+      - required: [challenge]
+      - required: [challengeIssued]
 ```
 
-The portal issues a six-digit SMS OTP and nothing else, so that is all this pack accepts. The pattern is evaluated by the validator, so the six-digit rule is enforced by the pack rather than deferred to a mapping guard.
+A payload carrying either is rejected rather than quietly ignored, so a caller that assumed
+an OTP step is told so at the edge instead of having its proof silently dropped.
 
-`additionalProperties: false` refuses what PMFBY does not use. Some mechanisms carry a `txnId`, a correlator the upstream issues when the challenge is sent; PMFBY binds the challenge to the phone number alone and issues none, so a caller sending one is told rather than quietly ignored.
+The field is published empty rather than omitted. Empty is an answer; absent is a question.
+A caller reading `[]` knows to open at `support`.
 
-If PMFBY later offers a second mechanism, this pack widens the `enum` and pins the new format alongside it. Nothing else moves: the carrier is unchanged, the mapping reads `challenge.method` to pick a prerequisite, and the experience layer reads `challengeIssued.method` to know what to collect.
+PMFBY does operate an OTP pair — `/api/v1/services/nic/getOtp` and `/verifyMobile` — but it
+sits on the core realm, behind different credentials, and belongs to the policy flow. It
+takes a mobile number and sends a code to whatever number it is handed; it never sees an
+application number and so proves no link between the caller and the policy they are
+complaining about. Borrowing it would impose a control the portal never asked for and would
+not deliver the assurance its presence implies.
+
+**The consequence is worth stating plainly: filing here is unauthenticated.** Nothing proves
+a caller is the farmer. Anyone holding an application number can lodge a grievance against
+it, and PMFBY application numbers have visible structure. That is the portal's own posture,
+not a gap this network introduces — but it is worth raising with PMFBY, and any control it
+wants belongs on FGMS beside the lodge rather than borrowed from another realm.
+
+If PMFBY ever adds a challenge to FGMS, widen `challengeMethods` and restore the two bands.
+Nothing else moves.
 
 ## Category term
 
@@ -369,17 +376,14 @@ ignores the `if`/`then` branches. It exists so the rule can be read by a tool ra
 only by a person: a CI check can assert that no property marked `no-echo` appears in any
 `Direct` example, which is the class of mistake the v1 `identity-no` echo was.
 
-`challenge` is marked `no-echo` and `no-forward` as a whole object: it travels inbound
-only, and `challenge.value` must never be returned in a response, written to a log,
-attached to a trace, or forwarded to the lodge call.
-
 **Neither `writeOnly` nor `readOnly` appears in this pack**, and that is deliberate. The
 validator visits every payload with `VisitAsRequest`, on the way out as well as in, so
-`writeOnly` on `challenge` would assert nothing while `readOnly` on `challengeIssued`
-would reject the very acknowledgement it describes. Direction is carried by `x-oan-pii`,
-which the adapter reads, and it is unconditional.
+`writeOnly` would assert nothing while `readOnly` would reject the very response it
+describes. Direction is carried by `x-oan-pii`, which the adapter reads, and it is
+unconditional.
 
-`applicantPhone` is never echoed. A challenge acknowledgement returns `challengeIssued.sentTo`, masked to first two and last two digits, so the farmer can confirm which number was used.
+`applicantPhone` is never echoed, and there is nothing to echo it in: this pack issues no
+challenge acknowledgement, so no masked destination is returned anywhere.
 
 `enrolmentId` identifies a named farmer's policy, and `grievance.description` is free text that may contain personal details the schema cannot constrain. Neither belongs in a payload dump.
 
@@ -416,7 +420,6 @@ It also does not define credentials or transport. Those live in the adapter conf
 
 - [On-demand: file a grievance](examples/on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
-- [On-demand: challenge acknowledgement](examples/on-demand-challenge-issued.json)
 - [On-demand: the catalog entry](examples/on-demand-capability.json)
 - [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
 - [Direct: grievance under review, read from the portal](examples/direct-grievance-under-review.json)

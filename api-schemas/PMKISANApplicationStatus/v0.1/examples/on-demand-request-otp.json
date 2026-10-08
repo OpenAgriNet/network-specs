@@ -1,0 +1,7 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld",
+  "@type": "openagrinet:PMKISANApplicationStatus",
+  "informationMode": "OnDemand",
+  "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
+  "applicant": { "idType": "Mobile", "id": "9812345670" }
+}

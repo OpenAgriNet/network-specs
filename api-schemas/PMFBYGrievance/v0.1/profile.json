@@ -15,8 +15,7 @@
     "applicantPhone",
     "cropYear",
     "season",
-    "grievance",
-    "challenge"
+    "grievance"
   ],
   "result_fields": [
     "provider",
@@ -64,8 +63,8 @@
     "beckn:support.channels[0].case.filedOn"
   ],
   "privacy_notes": [
-    "applicantPhone is personal data. It travels inbound only and is never echoed in a response; on_init returns the masked challengeIssued.sentTo instead.",
-    "challenge travels inbound only. Its value must never be returned in a response, written to a log, attached to a trace, or forwarded to the lodge call -- that is the x-oan-pii no-echo and no-forward handling, which the adapter enforces. Neither object is marked writeOnly or readOnly: the network validates every payload as a request, on the way out as well as in, so writeOnly would assert nothing and readOnly would reject the very response it describes. challengeIssued carries no secret.",
+    "applicantPhone is personal data. It travels inbound only and is never echoed in a response. Nothing proves the caller holds the number: PMFBY's grievance service asks for no OTP, so this is a contact number the portal files on the ticket, not a verified one.",
+    "This pack carries no challenge. PMFBY's grievance service issues none, so neither the challenge nor the challengeIssued band exists here and the schema refuses both outright -- a payload carrying either is rejected rather than quietly ignored. The consequence is that filing is unauthenticated: anyone holding an application number can lodge a grievance against it. That is the portal's posture, not one this network introduces.",
     "enrolmentId is the crop insurance application number and identifies a named farmer's policy. It is no-log and no-trace, and never appears in an error body. On support it is Support.orderId, which on_support echoes back to the caller who sent it.",
     "grievance.description is free text written by a farmer and may contain personal details the schema cannot constrain. It is returned verbatim on a case read.",
     "The portal's case record carries far more about the farmer than this pack surfaces -- name, mobile number, email, and the full state / district / sub-district / panchayat / village hierarchy, alongside the insurance policy number and insurer. The adapter must drop all of it and map only the fields named here; none of it may reach commitmentAttributes, a log, or a trace."

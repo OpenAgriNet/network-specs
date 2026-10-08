@@ -4,7 +4,9 @@
   "informationMode": "OnDemand",
   "provider": {
     "id": "pmfby",
-    "descriptor": { "name": "PMFBY Grievance Portal" }
+    "descriptor": {
+      "name": "PMFBY Grievance Portal"
+    }
   },
   "scheme": {
     "code": "PMFBY",
@@ -15,12 +17,12 @@
   "cropYear": "2026",
   "season": "Kharif",
   "grievance": {
-    "category": { "code": "3" },
-    "subCategory": { "code": "10" },
+    "category": {
+      "code": "3"
+    },
+    "subCategory": {
+      "code": "10"
+    },
     "description": "Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment."
-  },
-  "challenge": {
-    "method": "SMS_OTP",
-    "value": "482137"
   }
 }

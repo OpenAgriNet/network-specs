@@ -44,21 +44,6 @@
         "filedOn": "openagrinet:filedOn",
         "cropName": "openagrinet:cropName"
       }
-    },
-    "challenge": {
-      "@id": "openagrinet:challenge",
-      "@context": {
-        "method": "openagrinet:challengeMethod",
-        "value": "openagrinet:challengeValue"
-      }
-    },
-    "challengeIssued": {
-      "@id": "openagrinet:challengeIssued",
-      "@context": {
-        "method": "openagrinet:challengeMethod",
-        "sentTo": "openagrinet:challengeSentTo",
-        "expiresAt": "openagrinet:challengeExpiresAt"
-      }
     }
   }
 }

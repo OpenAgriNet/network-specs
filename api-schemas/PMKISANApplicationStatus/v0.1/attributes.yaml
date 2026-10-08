@@ -1,0 +1,445 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - PM-KISAN Application Status API Attributes
+  version: 0.1.0
+  description: >
+    Attributes for reading where a farmer's PM-KISAN registration stands: how
+    many instalments have been paid, whether eKYC is done, and what is holding
+    the money up. This is an API schema, not a domain schema: it describes what
+    the PM-KISAN chatbot API accepts and returns, so an experience layer can
+    call it without reading adapter mapping files.
+
+    Not a grievance. A grievance is a complaint the farmer writes and the
+    portal works through a lifecycle; this is a read of a record the portal
+    already holds. They are separate capabilities with separate catalogs,
+    because a caller answering "why has my money not arrived" is not filing
+    anything and should not have to look at a pack that can file.
+
+    Extends GrievanceBase all the same, in api-schemas/Grievance/v0.1. What the
+    two capabilities genuinely share is the challenge: both are guarded by the
+    same four-digit OTP, issued by the same PM-KISAN service, and a second copy
+    of that definition would be a second place for it to drift. The two bands
+    the base has that this pack does not -- grievance and case -- are refused
+    outright rather than left defined and never filled.
+
+    Two actions. init asks for the OTP; status reads the record once the OTP is
+    in hand. There is no support: nothing is lodged here. Both legs ride on
+    commitmentAttributes, which is why x-beckn-container-by-action names only
+    that container.
+
+    Direction is carried by informationMode, never by the Beckn action.
+    OnDemand is the ask, Direct is an answer carrying a real record.
+
+    Identity is declared, never sniffed. The upstream takes a registration
+    number, a mobile number or an Aadhaar number in one field and decides which
+    it got by looking at the value; a mistyped registration number that happens
+    to be ten digits therefore becomes a lookup of a different kind. applicant
+    carries the kind and the value as two fields, so the wrong shape is a
+    validation error at the network edge instead of a silent change of meaning.
+
+components:
+  schemas:
+    PMKISANApplicationStatus:
+      type: object
+      x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        init: commitmentAttributes
+        status: commitmentAttributes
+      # What each action must carry. Paths are relative to the attribute
+      # object.
+      #
+      # init takes the identity alone. The portal texts the OTP to the mobile
+      # it holds against that identity, so no phone number crosses the network
+      # unless the caller is looking the farmer up by one.
+      #
+      # status is guarded because the record is the farmer's own: registration
+      # date, instalment history and the reasons they have been refused. An
+      # unguarded read would hand all of it to anyone holding a registration
+      # number.
+      x-oan-required-by-action:
+        init: [applicant.idType, applicant.id]
+        status:
+          - applicant.idType
+          - applicant.id
+          - challenge.method
+          - challenge.value
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld"
+        "@type": openagrinet:PMKISANApplicationStatus
+      allOf:
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
+        - type: object
+          required: ["@type"]
+          properties:
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:PMKISANApplicationStatus
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:PMKISANApplicationStatus
+                  items:
+                    oneOf:
+                      - const: openagrinet:PMKISANApplicationStatus
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+
+            # Inherited from GrievanceBase, narrowed to what this service does.
+
+            scheme:
+              allOf:
+                - type: object
+                  properties:
+                    code:
+                      enum: [PM-KISAN]
+                      description: The scheme this pack describes.
+              description: >
+                Pinned to PM-KISAN. The title in the examples is "Pradhan
+                Mantri Kisan Samman Nidhi".
+
+            challengeMethods:
+              allOf:
+                - type: array
+                  minItems: 1
+                  items:
+                    enum: [SMS_OTP]
+              description: >
+                Pinned to SMS_OTP: the record cannot be read until a four-digit
+                OTP texted to the registered mobile has been proven. A caller
+                reads this and knows to call init first.
+
+                It is also the member that lets a catalog entry pass the
+                "about something" gate below, which a declaration otherwise has
+                nothing to satisfy.
+
+            challenge:
+              allOf:
+                - type: object
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                      description: >
+                        One mechanism: a four-digit OTP texted to the mobile
+                        held against the identity.
+                    value:
+                      pattern: "^[0-9]{4}$"
+                      description: >
+                        Four digits. Same service and same length as the
+                        PM-KISAN grievance desk, which is why both packs pin
+                        the base's four-to-eight range to the same end of it.
+              description: >
+                PM-KISAN note: required on status. Not required on init, which
+                is the call that asks for it.
+
+            challengeIssued:
+              allOf:
+                - type: object
+                  not:
+                    required: [sentTo]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+              description: >
+                PM-KISAN note: sentTo is refused rather than left optional, as
+                on the grievance pack. The service acknowledges with "OTP has
+                been sent to the registered mobile number" and names no number.
+
+                A caller looking the farmer up by mobile number knows the
+                destination already, having just supplied it; one looking up by
+                registration or Aadhaar number does not, and neither does the
+                adapter. Masking a value the caller sent would say nothing, and
+                inventing one for the other two cases would be worse.
+
+            enrolmentId:
+              allOf:
+                - type: string
+                  pattern: "^[A-Za-z0-9]+$"
+                  maxLength: 20
+              description: >
+                The PM-KISAN registration number, read back from the portal's
+                Reg_No.
+
+                Answer-only on this pack, and that is the whole difference from
+                the grievance pack, where it is what the caller sends. Here the
+                caller sends applicant, which may be a mobile or an Aadhaar
+                number instead; the portal resolves whichever it got to one
+                registration and names it here. A caller that looked the farmer
+                up by mobile learns the registration number from this field.
+
+                Echoing it is deliberate and is not the same disclosure as
+                echoing a name or an address: the caller has just proven an OTP
+                against the mobile this registration is held under, and the
+                number is the handle they need for every later call -- a
+                grievance, if the blockers below warrant one.
+
+            # Refused. A reading of a record is not a complaint, and leaving
+            # either band defined-but-unused would invite an adapter to start
+            # filling one.
+            grievance:
+              not: {}
+            case:
+              not: {}
+
+            # Added by this pack.
+
+            applicant:
+              type: object
+              required: [idType, id]
+              additionalProperties: false
+              description: >
+                Which farmer to look up, and by what kind of identifier.
+
+                Two fields rather than one. The upstream takes a single Values
+                field and infers the kind from the shape of what it is given --
+                ten digits beginning 6 to 9 is a mobile number, twelve digits
+                is an Aadhaar number, anything else is a registration. A
+                registration number that happens to be ten digits is therefore
+                read as a phone number, and the farmer is told no record
+                exists. Naming the kind makes that a refusal at the network
+                edge with a message that says which field was wrong.
+
+                The adapter sends idType as Types and id as Values, and never
+                re-derives the first from the second.
+              x-jsonld-id: "openagrinet:applicant"
+              properties:
+                idType:
+                  type: string
+                  enum: [Registration, Mobile, Aadhaar]
+                  description: >
+                    Which kind of identifier id carries.
+
+                    Aadhaar is accepted here and refused on the grievance pack.
+                    The difference is what the identifier does on each: here it
+                    is a lookup key the portal matches and discards, while the
+                    grievance portal exchanges one for a token and then carries
+                    that token in the same field a registration number would
+                    occupy -- making one field sometimes a stable reference and
+                    sometimes an ephemeral secret. Nothing of that kind happens
+                    on a read.
+                  x-enum-details:
+                    - value: Registration
+                      meaning: PM-KISAN registration number. Sent upstream as Ben_id.
+                    - value: Mobile
+                      meaning: The mobile number registered against the enrolment. Sent upstream as Mobile.
+                    - value: Aadhaar
+                      meaning: The farmer's Aadhaar number. Sent upstream as Aadhar, which is the upstream's spelling.
+                  x-jsonld-id: "openagrinet:applicantIdType"
+                id:
+                  type: string
+                  maxLength: 20
+                  x-oan-pii:
+                    class: identity
+                    handling: [no-log, no-trace, no-echo]
+                    note: >
+                      Never logged, never traced, and never returned in a
+                      response or an error body. Where the portal resolves it
+                      to a registration number, that number is returned as
+                      enrolmentId and this field is not echoed.
+                  description: >
+                    The identifier itself, in the shape idType names. The pair
+                    is checked below: the shape is not advisory.
+
+                    ASCII-only in every shape. The upstream accepts Devanagari
+                    and other native-script digits and forwards them
+                    unconverted, which looks to the portal like a different
+                    farmer.
+                  x-jsonld-id: "openagrinet:applicantId"
+
+            application:
+              type: object
+              # blockers is NOT required, and that is the whole point of it.
+              # Absent means the blocker lookup was never run or did not answer;
+              # present and empty means it ran and found nothing. Requiring it
+              # would collapse those two into one, which is exactly the v1
+              # behaviour this band exists to correct. latestInstallmentPaid is
+              # required because a record without it is not a record.
+              required: [latestInstallmentPaid]
+              additionalProperties: false
+              description: >
+                What the portal holds against the registration. Written by the
+                portal and never by the caller.
+
+                Only what bears on the question. The upstream also returns the
+                farmer's name, father's name, date of birth, full address and
+                state, district, sub-district and village. None of it is
+                modelled, and an adapter must drop it rather than pass it
+                through: the caller already knows who they asked about, and the
+                answer to "where is my money" needs none of it. This is a
+                deliberate break from the v1 flow, which greeted the farmer by
+                name and village so they could confirm the record was theirs.
+
+                Both members are required together on an answer. blockers may
+                be empty, and an empty list is a real answer -- the portal was
+                asked and named nothing. Absent would mean it was never asked,
+                which a caller must be able to tell apart from "nothing is
+                wrong"; v1 could not, and reported a clean record either way.
+              x-jsonld-id: "openagrinet:application"
+              properties:
+                registeredOn:
+                  type: string
+                  format: date-time
+                  description: >
+                    When the farmer was registered under the scheme, from
+                    DateOfRegistration. That value carries a time but no
+                    offset -- a bare local timestamp, in practice midnight. The
+                    adapter reads it as IST and emits a fully-qualified instant, so
+                    the offset here is the adapter's conversion and not something
+                    the portal stated. The calendar date is the part that means
+                    anything.
+                  x-jsonld-id: "openagrinet:registeredOn"
+                latestInstallmentPaid:
+                  type: integer
+                  minimum: 0
+                  description: >
+                    How many instalments have been paid, from
+                    LatestInstallmentPaid. Zero means none, and zero is an
+                    answer rather than a missing value -- which is why the
+                    field is required and the minimum is nought.
+
+                    A count of instalments paid, not an instalment number.
+                  x-jsonld-id: "openagrinet:latestInstallmentPaid"
+                ekyc:
+                  allOf:
+                    - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                    - type: object
+                      required: [code]
+                      properties:
+                        code:
+                          type: string
+                          enum: [Done, Pending]
+                          description: >
+                            Whether eKYC has been completed. The upstream sends
+                            eKYC_Status as the single character Y or N; the
+                            adapter maps it, and an unrecognised character is
+                            Pending rather than a guess at Done.
+                          x-enum-details:
+                            - value: Done
+                              meaning: eKYC completed. Upstream eKYC_Status "Y".
+                            - value: Pending
+                              meaning: Not completed, or the portal sent something the adapter does not recognise. Upstream eKYC_Status "N" or anything else.
+                  description: >
+                    eKYC standing. Carried as a code and a name because every
+                    other status on this network is, and because the portal may
+                    yet start distinguishing between kinds of pending. A caller
+                    branches on code and displays name.
+                  x-jsonld-id: "openagrinet:ekycStatus"
+                blockers:
+                  type: array
+                  uniqueItems: true
+                  description: >
+                    Why the money is not arriving, as the portal's own
+                    beneficiary-status check reports it. Empty means the check
+                    ran and found nothing.
+
+                    The portal answers with a set of named conditions rather
+                    than one reason, so this is a list and a caller must show
+                    all of it. Two blockers are two separate things to fix.
+                  x-jsonld-id: "openagrinet:applicationBlockers"
+                  items:
+                    allOf:
+                      - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                      - type: object
+                        required: [code, name]
+                        properties:
+                          code:
+                            type: string
+                            enum: [IncomeTaxPayee, LandSeedingPending, Other]
+                            description: >
+                              The governed code. Branch on this.
+
+                              Only two conditions are governed, because only
+                              two have been seen. The portal publishes no
+                              master list, and the v1 adapter carries a table
+                              of exactly three entries, one of which is the
+                              no-blocker case. eKYC pending, Aadhaar not
+                              seeded against the bank account and an invalid
+                              account number are all real PM-KISAN refusal
+                              reasons and none of them appear in it.
+
+                              Everything unrecognised is Other, with the
+                              portal's own phrase in name. Inventing codes for
+                              conditions nobody here has observed would publish
+                              a vocabulary the adapter could not map onto, and
+                              a caller would branch on codes that never arrive.
+                              The list widens when PM-KISAN names the rest; a
+                              caller that renders name for Other keeps working
+                              when it does.
+                            x-enum-details:
+                              - value: IncomeTaxPayee
+                                meaning: The farmer is an income-tax payee and so ineligible. Upstream "Income Tax Payee".
+                              - value: LandSeedingPending
+                                meaning: Land records are still being seeded or verified. Upstream "Land Seeding, KYS".
+                              - value: Other
+                                meaning: A condition the network has not yet governed. name carries the portal's phrase verbatim; do not parse it.
+                          name:
+                            type: string
+                            minLength: 1
+                            maxLength: 500
+                            description: >
+                              The portal's phrase, verbatim and unmodified.
+                              Required, not optional: for Other it is the only
+                              thing that says what is wrong, and a caller with
+                              a code it does not recognise and no text has
+                              nothing to show the farmer.
+
+                              Display it; never branch on it. The portal
+                              rewords without notice.
+
+        # A Direct payload is a response, and a response with no record is not
+        # an answer. Stated with anyOf and not with if/then: if/then is parsed
+        # but never evaluated by the validator in use, so a guard written that
+        # way looks like it holds and does not.
+        #
+        # An OTP acknowledgement is OnDemand, not Direct, and so passes on the
+        # first branch. It comes back from the portal but carries no record --
+        # it says a challenge was sent and nothing else -- and Direct is
+        # reserved for the payload that carries the application itself. This
+        # matches the PMFBY pack, where the challenge-issued example is
+        # likewise OnDemand.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - required: [application]
+
+        # Every payload must be about something.
+        - anyOf:
+            - required: [applicant]         # asking -- for an OTP, or for the record
+            - required: [application]       # answering with the record
+            - required: [challengeIssued]   # acknowledging an OTP, which must
+                                            # echo nothing else
+            - required: [challengeMethods]  # a catalog entry: it declares what
+                                            # this desk needs and asks nothing
+
+        # idType and id are checked against each other. Without this the pair
+        # would be two unrelated strings and the whole point of splitting them
+        # would be lost -- a caller could declare Mobile and send eleven
+        # letters, and the adapter would send it upstream as a phone number.
+        #
+        # Each branch is guarded by its own idType, so exactly one applies to
+        # any given payload and the others are not merely unsatisfied but
+        # irrelevant. A payload with no applicant at all -- an acknowledgement,
+        # an answer, a catalog entry -- matches the first branch.
+        - anyOf:
+            - not:
+                required: [applicant]
+            - properties:
+                applicant:
+                  properties:
+                    idType: { const: Registration }
+                    id:     { pattern: "^[A-Za-z0-9]+$" }
+            - properties:
+                applicant:
+                  properties:
+                    idType: { const: Mobile }
+                    id:     { pattern: "^[6-9][0-9]{9}$" }
+            - properties:
+                applicant:
+                  properties:
+                    idType: { const: Aadhaar }
+                    id:     { pattern: "^[0-9]{12}$" }

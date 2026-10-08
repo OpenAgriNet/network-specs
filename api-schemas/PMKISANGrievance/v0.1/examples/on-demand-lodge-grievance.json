@@ -9,7 +9,8 @@
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
   "enrolmentId": "UP12345678A",
   "grievance": {
-    "category": { "code": "G003", "name": "Installment not received" },
+    "category": { "code": "G003" },
     "description": "Third instalment for 2026 has not been credited."
-  }
+  },
+  "challenge": { "method": "SMS_OTP", "value": "4821" }
 }

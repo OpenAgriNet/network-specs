@@ -1,0 +1,59 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1",
+  "name": "PM-KISAN Application Status API Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "provider-api",
+  "included_schemas": [
+    "PMKISANApplicationStatus"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "provider",
+    "scheme",
+    "applicant"
+  ],
+  "result_fields": [
+    "provider",
+    "scheme",
+    "enrolmentId",
+    "application"
+  ],
+  "indexable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:commitmentAttributes.enrolmentId",
+    "beckn:commitmentAttributes.application.ekyc.code",
+    "beckn:commitmentAttributes.application.blockers[0].code",
+    "beckn:commitmentAttributes.application.registeredOn"
+  ],
+  "filterable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:commitmentAttributes.application.ekyc.code",
+    "beckn:commitmentAttributes.application.blockers[0].code"
+  ],
+  "sortable_paths": [
+    "beckn:commitmentAttributes.application.registeredOn",
+    "beckn:commitmentAttributes.application.latestInstallmentPaid"
+  ],
+  "privacy_notes": [
+    "applicant.id carries a PM-KISAN registration number, a mobile number or an Aadhaar number, depending on applicant.idType. It is no-log and no-trace without exception, is never echoed in a response, and never appears in an error body. Where the portal resolves it, the resolved registration number is returned as enrolmentId and applicant.id itself is not returned.",
+    "enrolmentId is returned on an answer, which is a deliberate exception and the only identifier that is. The caller has just proven an OTP against the mobile the registration is held under, and the registration number is the handle every later call needs.",
+    "The upstream record also returns the farmer's name, father's name, date of birth, full address and state, district, sub-district and village. None of it is modelled; an adapter must drop these fields rather than pass them through commitmentAttributes. This is a deliberate break from the v1 flow, which showed the farmer their own name and village.",
+    "application.blockers[].name is the portal's own phrase and is returned verbatim. It states why a named farmer is ineligible or unpaid, so it is no-log and no-trace like the rest of the record.",
+    "challenge is a credential: never logged, traced, echoed, or forwarded to the read it guards.",
+    "The portal payload is carried inside an encrypted envelope whose key travels in the request beside the ciphertext. That is a portal requirement and not a confidentiality control; a decryption failure must not log the ciphertext, and nothing may rely on the envelope for protection."
+  ],
+  "beckn_dependencies": {
+    "Attributes": "2.0",
+    "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
+    "Provider": "2.1",
+    "Resource": "2.0"
+  },
+  "interaction_type": "Transact",
+  "outcome_type": "openagrinet:PMKISANApplicationStatus"
+}

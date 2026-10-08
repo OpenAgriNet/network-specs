@@ -1,0 +1,113 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMKISANApplicationStatus",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PM-KISAN Application Status",
+      "rdfs:comment": "Where a farmer's registration under the Pradhan Mantri Kisan Samman Nidhi income-support scheme stands: how many instalments have been paid, whether eKYC is done, and what is holding payment up. Read on demand against an identity the farmer proves by OTP. Not a grievance: nothing is filed and nothing has a lifecycle."
+    },
+    {
+      "@id": "openagrinet:informationMode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "information mode",
+      "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real record."
+    },
+    {
+      "@id": "openagrinet:challengeMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge methods",
+      "rdfs:comment": "Which challenge a caller must pass before the record can be read. Stated on a catalog entry and on no transaction payload."
+    },
+    {
+      "@id": "openagrinet:scheme",
+      "@type": "rdfs:Property",
+      "rdfs:label": "scheme"
+    },
+    {
+      "@id": "openagrinet:enrolmentId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "enrolment id",
+      "rdfs:comment": "The PM-KISAN registration number the portal resolved the lookup to. Answer-only on this capability: the caller sends an applicant, which may be a mobile or an Aadhaar number instead."
+    },
+    {
+      "@id": "openagrinet:applicant",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant",
+      "rdfs:comment": "Which farmer to look up, and by what kind of identifier. The kind is declared rather than inferred from the shape of the value, so a mistyped identifier is refused instead of becoming a lookup of a different kind."
+    },
+    {
+      "@id": "openagrinet:applicantIdType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant id type",
+      "rdfs:comment": "Which kind of identifier the applicant is named by: Registration, Mobile or Aadhaar."
+    },
+    {
+      "@id": "openagrinet:applicantId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant id",
+      "rdfs:comment": "The identifier itself, in the shape its type names. Never logged, traced or returned."
+    },
+    {
+      "@id": "openagrinet:application",
+      "@type": "rdfs:Property",
+      "rdfs:label": "application",
+      "rdfs:comment": "What the portal holds against the registration, and nothing more: the farmer's name, parentage, date of birth and address are returned upstream and deliberately not modelled here."
+    },
+    {
+      "@id": "openagrinet:registeredOn",
+      "@type": "rdfs:Property",
+      "rdfs:label": "registered on",
+      "rdfs:comment": "When the farmer was registered under the scheme."
+    },
+    {
+      "@id": "openagrinet:latestInstallmentPaid",
+      "@type": "rdfs:Property",
+      "rdfs:label": "latest installment paid",
+      "rdfs:comment": "How many instalments have been paid. A count, not an instalment number; nought is an answer and not a missing value."
+    },
+    {
+      "@id": "openagrinet:ekycStatus",
+      "@type": "rdfs:Property",
+      "rdfs:label": "eKYC status",
+      "rdfs:comment": "Whether eKYC has been completed. Done or Pending; anything the adapter does not recognise is Pending rather than a guess at Done."
+    },
+    {
+      "@id": "openagrinet:applicationBlockers",
+      "@type": "rdfs:Property",
+      "rdfs:label": "application blockers",
+      "rdfs:comment": "Why payment is not arriving, as the portal's beneficiary-status check reports it. A set rather than a single reason: two blockers are two separate things to fix. Empty means the check ran and found nothing; absent means it was never asked."
+    },
+    {
+      "@id": "openagrinet:challenge",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge",
+      "rdfs:comment": "Proof of identity presented with the read it guards. Shared with the PM-KISAN grievance capability: the same service issues it and the same four digits satisfy it."
+    },
+    {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method"
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value",
+      "rdfs:comment": "The secret itself. Proven once and never forwarded, logged, traced or echoed."
+    },
+    {
+      "@id": "openagrinet:challengeIssued",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge issued",
+      "rdfs:comment": "Acknowledgement that a challenge has been sent. Carries no secret, and no destination: PM-KISAN names no number."
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at"
+    }
+  ]
+}

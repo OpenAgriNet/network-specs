@@ -6,7 +6,5 @@
     "code": "PMFBY",
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
-  "challengeMethods": [
-    "SMS_OTP"
-  ]
+  "challengeMethods": []
 }

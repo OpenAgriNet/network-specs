@@ -20,7 +20,7 @@
       "@id": "openagrinet:challengeMethods",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge methods",
-      "rdfs:comment": "Which challenge a caller must pass before a grievance can be filed. Non-empty names the mechanism and means the challenge comes first; empty means the portal issues none. Stated on a catalog entry and on no transaction payload."
+      "rdfs:comment": "Which challenge a caller must pass before a grievance can be filed. Non-empty names the mechanism and means the challenge comes first; empty means the portal issues none. PMFBY publishes it empty. Stated on a catalog entry and on no transaction payload."
     },
     {
       "@id": "openagrinet:scheme",
@@ -94,24 +94,6 @@
       "rdfs:label": "grievance description"
     },
     {
-      "@id": "openagrinet:challenge",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge",
-      "rdfs:comment": "Proof presented to satisfy an authentication challenge. PMFBY offers one mechanism: a six-digit OTP texted to the registered mobile number."
-    },
-    {
-      "@id": "openagrinet:challengeMethod",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge method",
-      "rdfs:comment": "Authentication mechanism a challenge belongs to. PMFBY offers SMS_OTP only."
-    },
-    {
-      "@id": "openagrinet:challengeValue",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge value",
-      "rdfs:comment": "The proof itself. Inbound only: never returned, logged, or traced."
-    },
-    {
       "@id": "openagrinet:ticketNo",
       "@type": "rdfs:Property",
       "rdfs:label": "ticket number"
@@ -131,23 +113,6 @@
       "@type": "rdfs:Property",
       "rdfs:label": "crop name",
       "rdfs:comment": "The insured crop the ticket was raised against, as the portal names it. Returned on a case read, never sent."
-    },
-    {
-      "@id": "openagrinet:challengeIssued",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge issued",
-      "rdfs:comment": "Acknowledgement that a challenge was sent. Carries the masked destination and expiry, never the secret."
-    },
-    {
-      "@id": "openagrinet:challengeSentTo",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge sent to",
-      "rdfs:comment": "Masked destination the challenge was sent to, never the full number."
-    },
-    {
-      "@id": "openagrinet:challengeExpiresAt",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge expires at"
     }
   ]
 }

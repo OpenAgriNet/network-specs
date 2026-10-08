@@ -1,0 +1,55 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "PMKISANApplicationStatus": "openagrinet:PMKISANApplicationStatus",
+    "informationMode": "openagrinet:informationMode",
+    "challengeMethods": "openagrinet:challengeMethods",
+    "provider": {
+      "@id": "openagrinet:provider",
+      "@context": "https://schema.beckn.io/Provider/v2.1/context.jsonld"
+    },
+    "scheme": {
+      "@id": "openagrinet:scheme",
+      "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+    },
+    "enrolmentId": "openagrinet:enrolmentId",
+    "applicant": {
+      "@id": "openagrinet:applicant",
+      "@context": {
+        "idType": "openagrinet:applicantIdType",
+        "id": "openagrinet:applicantId"
+      }
+    },
+    "application": {
+      "@id": "openagrinet:application",
+      "@context": {
+        "registeredOn": "openagrinet:registeredOn",
+        "latestInstallmentPaid": "openagrinet:latestInstallmentPaid",
+        "ekyc": {
+          "@id": "openagrinet:ekycStatus",
+          "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+        },
+        "blockers": {
+          "@id": "openagrinet:applicationBlockers",
+          "@container": "@set",
+          "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+        }
+      }
+    },
+    "challenge": {
+      "@id": "openagrinet:challenge",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "value": "openagrinet:challengeValue"
+      }
+    },
+    "challengeIssued": {
+      "@id": "openagrinet:challengeIssued",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "expiresAt": "openagrinet:challengeExpiresAt"
+      }
+    }
+  }
+}
