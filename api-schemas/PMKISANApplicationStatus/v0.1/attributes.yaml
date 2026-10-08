@@ -18,13 +18,14 @@ info:
     Extends GrievanceBase all the same, in api-schemas/Grievance/v0.1. What the
     two capabilities genuinely share is the shape of the challenge: a
     four-digit OTP texted to the mobile the portal holds, presented back with
-    the call it guards, never echoed and never forwarded. The services behind
-    them are not one service -- the grievance desk and this chatbot sit on
-    different hosts and encrypt differently -- but the field, its length and
-    its handling rules are identical, and a second copy of that definition
-    would be a second place for it to drift. The two bands the base has that
-    this pack does not -- grievance and case -- are refused outright rather
-    than left defined and never filled.
+    the call it guards, never echoed and never forwarded. It is in fact the
+    same OTP: both capabilities open at /ChatbotOTP on the chatbot service.
+    Where they part is afterwards -- the grievance desk and this chatbot sit
+    on different hosts and encrypt differently -- which is why the field, its
+    length and its handling rules live in the base rather than in two packs
+    that would drift. The two bands the base has that this pack does not --
+    grievance and case -- are refused outright rather than left defined and
+    never filled.
 
     Two actions. init asks for the OTP; status reads the record once the OTP is
     in hand. There is no support: nothing is lodged here. Both legs ride on
@@ -171,12 +172,12 @@ components:
                     value:
                       pattern: "^[0-9]{4}$"
                       description: >
-                        Four digits. The same length as the PM-KISAN
-                        grievance desk, though a different service -- that desk
-                        and this chatbot sit on different hosts and encrypt
-                        differently. Both packs pin the base's four-to-eight
-                        range to the same end of it because both portals issue
-                        four.
+                        Four digits, and the same four digits as the PM-KISAN
+                        grievance pack, because the same endpoint issues them:
+                        both capabilities open at /ChatbotOTP on the chatbot
+                        service, whatever each does afterwards. That is why
+                        both packs pin the base's four-to-eight range to the
+                        same end of it.
               description: >
                 PM-KISAN note: required on status. Not required on init, which
                 is the call that asks for it.
