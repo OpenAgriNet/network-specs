@@ -171,9 +171,12 @@ components:
                     value:
                       pattern: "^[0-9]{4}$"
                       description: >
-                        Four digits. Same service and same length as the
-                        PM-KISAN grievance desk, which is why both packs pin
-                        the base's four-to-eight range to the same end of it.
+                        Four digits. The same length as the PM-KISAN
+                        grievance desk, though a different service -- that desk
+                        and this chatbot sit on different hosts and encrypt
+                        differently. Both packs pin the base's four-to-eight
+                        range to the same end of it because both portals issue
+                        four.
               description: >
                 PM-KISAN note: required on status. Not required on init, which
                 is the call that asks for it.
