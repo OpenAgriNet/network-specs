@@ -81,6 +81,13 @@ components:
                   uniqueItems: true
                   contains:
                     const: https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld
+                  # Same double negative as on @type above, and for the same
+                  # reason: contains is never evaluated, so without this an
+                  # array of two Provider contexts and none of ours would pass.
+                  not:
+                    items:
+                      not:
+                        const: https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld
                   items:
                     type: string
                     minLength: 1
@@ -102,6 +109,16 @@ components:
                   uniqueItems: true
                   contains:
                     const: openagrinet:PMFBYGrievance
+                  # contains is parsed and never evaluated by the validator in
+                  # use -- the same trap as if/then. On its own it would let an
+                  # array through with no canonical type in it at all. Restated
+                  # as a double negative over items, which is evaluated: it is
+                  # not the case that every member is something other than the
+                  # canonical type, which is to say at least one member is it.
+                  not:
+                    items:
+                      not:
+                        const: openagrinet:PMFBYGrievance
                   items:
                     oneOf:
                       - const: openagrinet:PMFBYGrievance

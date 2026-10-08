@@ -373,7 +373,7 @@ value that *is* returned in a masked form; it says nothing beside `no-echo`, whi
 means the value never comes back at all, so the two are never listed together.
 
 The marking is inert — the extended-schema validator ignores `x-` keys, exactly as it
-ignores the `if`/`then` branches. It exists so the rule can be read by a tool rather than
+ignores the `contains` assertion standing beside each `@type` guard. It exists so the rule can be read by a tool rather than
 only by a person: a CI check can assert that no property marked `no-echo` appears in any
 `Direct` example, which is the class of mistake the v1 `identity-no` echo was.
 
