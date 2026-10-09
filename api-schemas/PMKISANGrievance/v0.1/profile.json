@@ -1,0 +1,74 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1",
+  "name": "PM-KISAN Grievance API Attributes",
+  "version": "0.1.0",
+  "protocol_version": "2.0",
+  "semantic_model": "provider-api",
+  "included_schemas": [
+    "PMKISANGrievance"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "provider",
+    "scheme",
+    "enrolmentId",
+    "grievance"
+  ],
+  "result_fields": [
+    "provider",
+    "scheme",
+    "enrolmentId",
+    "grievance",
+    "case"
+  ],
+  "indexable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
+    "beckn:commitmentAttributes.enrolmentId",
+    "beckn:support.channels[0].enrolmentId",
+    "beckn:commitmentAttributes.case.status.code",
+    "beckn:support.channels[0].case.status.code",
+    "beckn:commitmentAttributes.grievance.category.code",
+    "beckn:support.channels[0].grievance.category.code",
+    "beckn:commitmentAttributes.case.filedOn",
+    "beckn:support.channels[0].case.filedOn"
+  ],
+  "filterable_paths": [
+    "beckn:commitmentAttributes.informationMode",
+    "beckn:support.channels[0].informationMode",
+    "beckn:commitmentAttributes.scheme.code",
+    "beckn:support.channels[0].scheme.code",
+    "beckn:commitmentAttributes.case.status.code",
+    "beckn:support.channels[0].case.status.code",
+    "beckn:commitmentAttributes.grievance.category.code",
+    "beckn:support.channels[0].grievance.category.code",
+    "beckn:commitmentAttributes.case.filedOn",
+    "beckn:support.channels[0].case.filedOn"
+  ],
+  "sortable_paths": [
+    "beckn:commitmentAttributes.case.filedOn",
+    "beckn:support.channels[0].case.filedOn",
+    "beckn:commitmentAttributes.case.remarkedOn",
+    "beckn:support.channels[0].case.remarkedOn"
+  ],
+  "privacy_notes": [
+    "enrolmentId carries the farmer's PM-KISAN registration number, which is both the identity the portal authenticates on and the enrolment the complaint is against; on support it is Support.orderId. It is no-log and no-trace without exception, and never appears in an error body. It is deliberately not no-echo: on_support returns it in orderId to the caller who sent it. A case read does not return it -- a Contract has no orderId, and it is not surfaced as an attribute either.",
+    "The upstream status record also returns the farmer's name, father's name, gender, mobile number and full address. None of it is modelled or emitted; an adapter must drop these fields rather than pass them through commitmentAttributes.",
+    "grievance.description is free text written by a farmer and may contain personal details the schema cannot constrain. It is returned verbatim on a case read.",
+    "The portal payload is carried inside an encrypted envelope. A decryption failure must not log the ciphertext."
+  ],
+  "beckn_dependencies": {
+    "Attributes": "2.0",
+    "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
+    "Provider": "2.1",
+    "Resource": "2.0",
+    "Support": "2.0"
+  },
+  "interaction_type": "Transact",
+  "outcome_type": "openagrinet:PMKISANGrievance"
+}

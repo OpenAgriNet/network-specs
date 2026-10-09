@@ -1,0 +1,405 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - PM-KISAN Grievance API Attributes
+  version: 0.1.0
+  description: >
+    Attributes for grievances raised against the Pradhan Mantri Kisan Samman
+    Nidhi income-support scheme. This is an API schema, not a domain schema: it
+    describes what the PM-KISAN grievance API accepts and returns, so an
+    experience layer can call it without reading adapter mapping files.
+    Attaches through commitmentAttributes: a grievance is a promise with a
+    lifecycle of its own, not a catalogable resource.
+
+    Extends GrievanceBase, in api-schemas/Grievance/v0.1. The base owns the
+    five bands a grievance payload has -- the context at the top, the farmer's
+    complaint under grievance, the portal's record under case, the caller's
+    proof under challenge and the portal's acknowledgement of it under
+    challengeIssued -- and the vocabulary they are written in. This file pins @type and scheme to
+    PM-KISAN, declares the portal's closed category vocabulary, refuses the two
+    inherited fields PM-KISAN has no equivalent for, and states what a payload
+    must carry to be an answer and to be an ask. Nothing grievance-related is
+    added to a domain schema: a grievance is a Provider's API surface, not a
+    thing the network describes.
+
+    PM-KISAN adds no field of its own. Everything it sends and everything it
+    returns is in the base; the whole of this file is pinning, refusal and
+    notes. That is the measure of whether the base is drawn right.
+
+    Direction is carried by informationMode, never by the Beckn action.
+    OnDemand is the ask, Direct is an answer carrying a real case. There is an
+    init leg, and it is there because PM-KISAN does issue a challenge: a
+    four-digit OTP guards both the lodge and the read, so init asks for one
+    before either can happen. init and status ride on commitmentAttributes;
+    support rides on channels.
+    x-beckn-container-by-action says which container each action uses, and the
+    per-field x-beckn-path says where a field that moves ends up.
+
+    Nothing is hoisted into a Beckn descriptor. An earlier draft put the
+    category and the complaint text there, which placed them outside the object
+    the validator binds to -- so the pack's own rules did not reach them and
+    the mapping files re-implemented each one by hand. Both legs now send no
+    descriptor at all, which Beckn permits: Support requires only @context and
+    @type, and Contract only commitments.
+
+components:
+  schemas:
+    PMKISANGrievance:
+      type: object
+      x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        init: commitmentAttributes
+        status: commitmentAttributes
+        support: channels
+      # What each action must carry. Paths are relative to the attribute
+      # object; enrolmentId is named here under its attribute name, not the
+      # message.support.orderId it moves to under x-beckn-path.
+      #
+      # init takes the registration number alone. The portal holds the farmer's
+      # mobile number and texts the OTP there, so no phone crosses the network
+      # on any leg of this scheme.
+      #
+      # Both guarded legs carry a challenge. The status read is guarded because
+      # it answers with every grievance on the registration number rather than
+      # the one asked about, so an unguarded read would expose a farmer's whole
+      # complaint history to anyone holding their number.
+      #
+      # case.filedOn is required on status because it is half the case selector
+      # -- the portal returns every grievance on the identity and nothing else
+      # narrows it.
+      x-oan-required-by-action:
+        init: [enrolmentId]
+        support:
+          - enrolmentId
+          - grievance.category.code
+          - grievance.description
+          - challenge.method
+          - challenge.value
+        status:
+          - enrolmentId
+          - case.filedOn
+          - challenge.method
+          - challenge.value
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
+        "@type": openagrinet:PMKISANGrievance
+      allOf:
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/GrievanceBase"
+        - type: object
+          required: ["@context", "@type"]
+          properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld
+                  # Same double negative as on @type above, and for the same
+                  # reason: contains is never evaluated, so without this an
+                  # array of two Provider contexts and none of ours would pass.
+                  not:
+                    items:
+                      not:
+                        const: https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld
+                  items:
+                    type: string
+                    minLength: 1
+              description: >
+                The JSON-LD context these terms resolve against. Declared and
+                required, not merely assumed: it is what makes the attribute
+                object self-describing once it is detached from the schema that
+                validated it, and every payload on this network carries one.
+
+                Carried as an array when a Provider publishes extra @type
+                values, with the pack's own context always among them.
+
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:PMKISANGrievance
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:PMKISANGrievance
+                  # contains is parsed and never evaluated by the validator in
+                  # use -- the same trap as if/then. On its own it would let an
+                  # array through with no canonical type in it at all. Restated
+                  # as a double negative over items, which is evaluated: it is
+                  # not the case that every member is something other than the
+                  # canonical type, which is to say at least one member is it.
+                  not:
+                    items:
+                      not:
+                        const: openagrinet:PMKISANGrievance
+                  items:
+                    oneOf:
+                      - const: openagrinet:PMKISANGrievance
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+
+            # Inherited from GrievanceBase, narrowed to what this portal does.
+            # Where a field is restated with a description alone, the shape and
+            # the bounds stay with the base and the note records how PM-KISAN
+            # fills it.
+
+            scheme:
+              allOf:
+                - type: object
+                  properties:
+                    code:
+                      enum: [PM-KISAN]
+                      description: The scheme this pack describes.
+              description: >
+                Pinned to PM-KISAN: this pack describes one scheme and nothing
+                else, so there is exactly one legal value for code. The title
+                in the examples is "Pradhan Mantri Kisan Samman Nidhi".
+
+            challengeMethods:
+              allOf:
+                - type: array
+                  minItems: 1
+                  items:
+                    enum: [SMS_OTP]
+              description: >
+                Pinned to SMS_OTP: PM-KISAN texts a four-digit OTP to the mobile
+                number it holds for the registration, and a grievance cannot be
+                filed or read until that OTP is proven. A caller reads this and
+                knows to call init first.
+
+                An earlier revision of this pack published [] here, on the
+                reading that the grievance portal issues no challenge. The
+                portal API indeed carries none -- the encrypted LodgeGrievance
+                call takes an identity and a complaint and nothing else. The
+                challenge is issued a layer above it, against the scheme's own
+                desk, and the live system refuses to lodge or to read without
+                it. Publishing [] described the portal API accurately and the
+                scheme wrongly.
+
+                It is also the member that lets a catalog entry pass the gate
+                below, which a declaration otherwise has nothing to satisfy.
+
+            # Inherited from GrievanceBase and narrowed. No sentTo: see the note
+            # on challengeIssued.
+
+            challenge:
+              allOf:
+                - type: object
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+                      description: >
+                        PM-KISAN offers one mechanism: a four-digit OTP texted
+                        to the mobile number held against the registration.
+                    value:
+                      pattern: "^[0-9]{4}$"
+                      description: >
+                        Four digits. The base bounds the range to what the
+                        portals on this network issue and each pack pins the one
+                        length its own portal accepts; PM-KISAN's is four.
+              description: >
+                PM-KISAN note: required on support and on status both. The
+                status read answers with every grievance on the registration
+                number rather than the one asked about, so leaving it unguarded
+                would hand a farmer's whole complaint history to anyone holding
+                their number.
+
+            challengeIssued:
+              allOf:
+                - type: object
+                  not:
+                    required: [sentTo]
+                  properties:
+                    method:
+                      enum: [SMS_OTP]
+              description: >
+                PM-KISAN note: sentTo is refused rather than left optional. The
+                portal acknowledges with "OTP has been sent to the registered
+                mobile number" and names no number, and the caller supplies none
+                -- so there is no destination to mask. A masked value here could
+                only be invented, and an invented one the farmer could not
+                recognise is worse than none.
+
+            enrolmentId:
+              allOf:
+                - type: string
+                  pattern: "^[A-Za-z0-9]+$"
+                  maxLength: 20
+                # Aadhaar is refused, not merely discouraged: twelve bare digits
+                # is its shape, and the prose below is not a constraint.
+                - not:
+                    pattern: "^[0-9]{12}$"
+              description: >
+                The enrolment the grievance is about; on support it is the
+                orderId. For PM-KISAN that is the scheme registration number,
+                which goes upstream as IdentityNo with Type set to
+                Reg_No_Details.
+
+                It is also the identity the portal authenticates on, because
+                PM-KISAN has no separate reference for either -- the upstream
+                takes one field and nothing else names a case.
+
+                Aadhaar is deliberately not accepted, and the twelve-digit
+                shape is refused rather than left to prose. The portal takes a token
+                derived from one through /GrievanceAadhaarToken and carries it
+                in the same IdentityNo field, which would make this value
+                sometimes a stable reference and sometimes an ephemeral secret.
+                Registration numbers only keeps it one thing, and keeps the
+                upstream Type field a constant.
+
+                The rule is only non-empty and alphanumeric. Eleven
+                alphanumeric characters is the documented shape, but nothing
+                upstream enforces it, and a length rule taken from a tool
+                docstring would reject a valid grievance before the farmer's
+                complaint reached the portal. ASCII-only is on purpose: the
+                upstream accepts Devanagari and other native-script digits and
+                forwards them unconverted.
+
+            grievance:
+              # PM-KISAN classifies at one level. The inherited second level is
+              # refused outright rather than left defined and never filled.
+              not:
+                required: [subCategory]
+              properties:
+                category:
+                  allOf:
+                    - type: object
+                      properties:
+                        code:
+                          type: string
+                          enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+                          description: >
+                            The portal's grievance type. A closed list of ten;
+                            see x-enum-details for what each one means.
+                          x-enum-details:
+                            - value: G001
+                              meaning: Account number not correct.
+                            - value: G002
+                              meaning: Online application pending for approval.
+                            - value: G003
+                              meaning: Installment not received.
+                            - value: G004
+                              meaning: Transaction failed.
+                            - value: G005
+                              meaning: Problem in Aadhaar correction.
+                            - value: G006
+                              meaning: Gender not correct.
+                            - value: G007
+                              meaning: Payment related.
+                            - value: G008
+                              meaning: Problem in OTP-based eKYC.
+                            - value: G009
+                              meaning: Problem in biometric-based eKYC.
+                            - value: G010
+                              meaning: Problem in facial-based eKYC.
+                  description: >
+                    PM-KISAN note: sent as GrievanceType, verbatim. Unlike
+                    PMFBY the portal publishes a closed list, so the pack
+                    enumerates it and an unknown code is refused at the network
+                    edge rather than upstream.
+
+                    Not returned on a case read: Reg_No_Status does not send
+                    GrievanceType back, which is why the base leaves category
+                    optional.
+                  x-jsonld-id: "openagrinet:pmkisanGrievanceCategory"
+
+                description:
+                  description: >
+                    PM-KISAN note: sent as GrievanceDescription. The inherited
+                    minimum length is measured on the raw string, while the
+                    upstream client measures it after trimming -- so ten
+                    characters of whitespace pass here and fail there. The
+                    adapter trims before sending and re-checks.
+
+            case:
+              properties:
+                ticketNo:
+                  description: >
+                    PM-KISAN note: read from the lodge reply, which answers
+                    with GrievanceID, or with GrievanceNo where GrievanceID is
+                    absent -- the portal uses both names for the same handle.
+                    Whichever arrives lands here.
+
+                    Present on a lodge reply. The status call returns every
+                    grievance on the identity and is not documented to repeat
+                    the handle per record, so a case read may carry no
+                    ticketNo; the Direct guard below does not require one.
+
+                status:
+                  description: >
+                    PM-KISAN note: name carries the portal's GrievanceStatus
+                    phrase. Where GrievanceStatus is missing the adapter infers
+                    Replied or UnderReview according to whether a remark is
+                    present, and a lodge reply carries no status of any kind,
+                    so Registered is asserted. In all three cases code stands
+                    alone.
+
+                filedOn:
+                  description: >
+                    PM-KISAN note: read from the portal on a case read;
+                    generated by the adapter on a lodge, because the lodge
+                    reply carries no date. It is also half the case selector --
+                    see the gate below.
+
+                remark:
+                  description: >
+                    PM-KISAN note: read from OfficerReply. Its companion date
+                    is OfficeReplyDate -- an office rather than an officer,
+                    which is one reason the network does not adopt the portal's
+                    field name.
+
+                remarkedOn:
+                  description: >
+                    PM-KISAN note: read from OfficeReplyDate.
+
+        # A Direct payload is a response, and a response with no case standing
+        # is not an answer. Stated with anyOf and not with if/then: if/then is
+        # parsed but never evaluated by the validator in use, so a guard
+        # written that way looks like it holds and does not.
+        #
+        # No ticket number is required, though one may be present. The portal
+        # issues a handle on lodging -- GrievanceID, or GrievanceNo -- but the
+        # status call answers with every grievance on the identity and is not
+        # documented to carry the handle back per record. So a case read is
+        # still selected by the registration number it was filed under and the
+        # date it was filed on, and two grievances filed on one day under one
+        # registration number cannot be told apart. Requiring ticketNo here
+        # would reject the read leg; the limitation is recorded rather than
+        # papered over, and it narrows to nothing the day a read returns the
+        # handle.
+        #
+        # No provenance member. provider says which portal the case came from,
+        # but on a contract leg it lives in commitments[].offer.provider rather
+        # than in these attributes, so a guard on the attributes object cannot
+        # reach it.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - allOf:
+                - required: [case]
+                - properties:
+                    case:
+                      required: [status, filedOn]
+
+        # Every payload must be about something. The same @type serves filing
+        # and reading, and informationMode cannot tell them apart -- both asks
+        # are OnDemand -- so what separates them is what the payload brought.
+        # One that brought none of these is asking for nothing, and before the
+        # containers existed nothing caught it: a grievance could go missing
+        # field by field and still validate.
+        - anyOf:
+            - required: [grievance]     # filing, or a case read echoing one
+            - required: [case]          # reading, selected by filedOn
+            - required: [enrolmentId]   # reading every case on a registration,
+                                        # and asking for an OTP against one
+            - required: [challengeIssued]   # acknowledging an OTP, which must
+                                            # echo nothing else
+            - required: [challengeMethods]  # a catalog entry: it declares what
+                                            # this desk needs and asks nothing,
+                                            # so it brings none of the above

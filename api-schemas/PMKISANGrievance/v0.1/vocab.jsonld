@@ -1,0 +1,116 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:PMKISANGrievance",
+      "@type": "rdfs:Class",
+      "rdfs:label": "PM-KISAN Grievance",
+      "rdfs:comment": "A grievance raised against the Pradhan Mantri Kisan Samman Nidhi income-support scheme, filed on demand and answered directly. The scheme issues no ticket number; a grievance is retrieved by the identity it was filed under."
+    },
+    {
+      "@id": "openagrinet:informationMode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "information mode",
+      "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case."
+    },
+    {
+      "@id": "openagrinet:challengeMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge methods",
+      "rdfs:comment": "Which challenge a caller must pass before a grievance can be filed. Non-empty names the mechanism and means the challenge comes first; empty means the portal issues none. Stated on a catalog entry and on no transaction payload."
+    },
+    {
+      "@id": "openagrinet:scheme",
+      "@type": "rdfs:Property",
+      "rdfs:label": "scheme"
+    },
+    {
+      "@id": "openagrinet:grievance",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance",
+      "rdfs:comment": "What the farmer submitted: the classification they chose and the problem in their own words. Nothing the portal authored belongs here."
+    },
+    {
+      "@id": "openagrinet:case",
+      "@type": "rdfs:Property",
+      "rdfs:label": "case",
+      "rdfs:comment": "What the portal has on file about a grievance, the stamps it applied included. Every member can differ between two reads of the same grievance."
+    },
+    {
+      "@id": "openagrinet:enrolmentId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "enrolment id",
+      "rdfs:comment": "The enrolment a grievance is about -- the farmer's standing in a scheme, not the farmer. One property across schemes: the value spaces differ and the packs pin them, but an opaque enrolment reference is not a vocabulary anyone reasons over."
+    },
+    {
+      "@id": "openagrinet:provider",
+      "@type": "rdfs:Property",
+      "rdfs:label": "provider",
+      "rdfs:comment": "The provider this grievance is for, as a Beckn Provider reference. Carried on support because a SupportAction composes no Contract to read it from; every other action reads commitments[].offer.provider."
+    },
+    {
+      "@id": "openagrinet:pmkisanGrievanceCategory",
+      "@type": "rdfs:Property",
+      "rdfs:label": "PM-KISAN grievance category",
+      "rdfs:comment": "One of the ten published PM-KISAN codes, G001 to G010. Deliberately a separate property from the PMFBY category: the two schemes publish incompatible value spaces, and one IRI holding both could not be reasoned over."
+    },
+    {
+      "@id": "openagrinet:grievanceDescription",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance description"
+    },
+    {
+      "@id": "openagrinet:ticketNo",
+      "@type": "rdfs:Property",
+      "rdfs:label": "ticket number"
+    },
+    {
+      "@id": "openagrinet:caseStatus",
+      "@type": "rdfs:Property",
+      "rdfs:label": "case status"
+    },
+    {
+      "@id": "openagrinet:filedOn",
+      "@type": "rdfs:Property",
+      "rdfs:label": "filed on"
+    },
+    {
+      "@id": "openagrinet:caseRemark",
+      "@type": "rdfs:Property",
+      "rdfs:label": "case remark"
+    },
+    {
+      "@id": "openagrinet:remarkedOn",
+      "@type": "rdfs:Property",
+      "rdfs:label": "remarked on"
+    },
+    {
+      "@id": "openagrinet:challenge",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge"
+    },
+    {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method"
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value"
+    },
+    {
+      "@id": "openagrinet:challengeIssued",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge issued"
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at"
+    }
+  ]
+}

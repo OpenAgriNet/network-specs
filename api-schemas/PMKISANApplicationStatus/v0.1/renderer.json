@@ -1,0 +1,8 @@
+{
+  "schema": "PMKISANApplicationStatus",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{scheme.name}} | {{application.latestInstallmentPaid}} instalments paid | eKYC {{application.ekyc.name}}",
+  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nRegistration: {{enrolmentId}}\nRegistered on: {{application.registeredOn}}\nInstalments paid: {{application.latestInstallmentPaid}}\neKYC: {{application.ekyc.name}}\nBlockers: {{application.blockers}}",
+  "html": "<div class=\"oan-pmkisan-application-status\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{application.latestInstallmentPaid}} paid · eKYC {{application.ekyc.name}}</span></div>",
+  "html_detail": "<div class=\"oan-pmkisan-application-status-detail\"><p><strong>Registration:</strong> {{enrolmentId}}</p><p><strong>Instalments paid:</strong> {{application.latestInstallmentPaid}}</p><p><strong>eKYC:</strong> {{application.ekyc.name}}</p><p><strong>Blockers:</strong> {{application.blockers}}</p></div>"
+}

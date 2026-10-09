@@ -1,0 +1,16 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld",
+  "@type": "openagrinet:PMKISANGrievance",
+  "informationMode": "Direct",
+  "provider": { "id": "pmkisan", "descriptor": { "name": "PM-KISAN Grievance Portal" } },
+  "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
+  "grievance": {
+    "category": { "code": "G003" },
+    "description": "Third instalment for 2026 has not been credited."
+  },
+  "case": {
+    "ticketNo": "PMK2026091234",
+    "status": { "code": "Registered" },
+    "filedOn": "2026-09-28"
+  }
+}
