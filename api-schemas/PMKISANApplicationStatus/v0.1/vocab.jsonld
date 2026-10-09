@@ -37,19 +37,25 @@
       "@id": "openagrinet:applicant",
       "@type": "rdfs:Property",
       "rdfs:label": "applicant",
-      "rdfs:comment": "Which farmer to look up, and by what kind of identifier. The kind is declared rather than inferred from the shape of the value, so a mistyped identifier is refused instead of becoming a lookup of a different kind."
+      "rdfs:comment": "Which farmer to look up. Exactly one identifier, written into the member that names its kind, so a mistyped identifier is refused instead of becoming a lookup of a different kind."
     },
     {
-      "@id": "openagrinet:applicantIdType",
+      "@id": "openagrinet:pmkisanRegistration",
       "@type": "rdfs:Property",
-      "rdfs:label": "applicant id type",
-      "rdfs:comment": "Which kind of identifier the applicant is named by: Registration, Mobile or Aadhaar."
+      "rdfs:label": "PM-KISAN registration number",
+      "rdfs:comment": "The farmer's PM-KISAN registration number, sent upstream as Ben_id. Deliberately carries no digit rule: the portal treats anything that is not a mobile or an Aadhaar number as one of these. Never logged, traced or returned."
     },
     {
-      "@id": "openagrinet:applicantId",
+      "@id": "openagrinet:mobileNumber",
       "@type": "rdfs:Property",
-      "rdfs:label": "applicant id",
-      "rdfs:comment": "The identifier itself, in the shape its type names. Never logged, traced or returned."
+      "rdfs:label": "mobile number",
+      "rdfs:comment": "The mobile number registered against the enrolment, sent upstream as Mobile. A lookup key and the OTP destination at once. Never logged, traced or returned."
+    },
+    {
+      "@id": "openagrinet:aadhaarNumber",
+      "@type": "rdfs:Property",
+      "rdfs:label": "Aadhaar number",
+      "rdfs:comment": "The farmer's Aadhaar number, twelve digits, sent upstream as Aadhar. Never logged, traced or returned, and never retained after the lookup it was sent for."
     },
     {
       "@id": "openagrinet:application",

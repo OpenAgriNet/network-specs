@@ -39,8 +39,9 @@ info:
     number, a mobile number or an Aadhaar number in one field and decides which
     it got by looking at the value; a mistyped registration number that happens
     to be ten digits therefore becomes a lookup of a different kind. applicant
-    carries the kind and the value as two fields, so the wrong shape is a
-    validation error at the network edge instead of a silent change of meaning.
+    names the kind in the member itself -- registration, mobile or aadhaar,
+    exactly one -- so the wrong shape is a validation error at the network edge
+    instead of a silent change of meaning.
 
 components:
   schemas:
@@ -62,10 +63,9 @@ components:
       # unguarded read would hand all of it to anyone holding a registration
       # number.
       x-oan-required-by-action:
-        init: [applicant.idType, applicant.id]
+        init: [applicant]
         status:
-          - applicant.idType
-          - applicant.id
+          - applicant
           - challenge.method
           - challenge.value
       x-jsonld:
@@ -227,66 +227,97 @@ components:
 
             applicant:
               type: object
-              required: [idType, id]
               additionalProperties: false
               description: >
-                Which farmer to look up, and by what kind of identifier.
+                Which farmer to look up. Exactly one identifier, named by the
+                member it is written in.
 
-                Two fields rather than one. The upstream takes a single Values
-                field and infers the kind from the shape of what it is given --
-                ten digits beginning 6 to 9 is a mobile number, twelve digits
-                is an Aadhaar number, anything else is a registration. A
-                registration number that happens to be ten digits is therefore
-                read as a phone number, and the farmer is told no record
-                exists. Naming the kind makes that a refusal at the network
-                edge with a message that says which field was wrong.
+                The upstream takes a single Values field and infers the kind
+                from the shape of what it is given -- ten digits beginning 6 to
+                9 is a mobile number, twelve digits is an Aadhaar number,
+                anything else is a registration. A registration number that
+                happens to be ten digits is therefore read as a phone number,
+                and the farmer is told no record exists. Naming the member says
+                the kind outright, and the adapter sends it as Types rather
+                than letting the portal guess.
 
-                The adapter sends idType as Types and id as Values, and never
-                re-derives the first from the second.
+                One member per kind rather than a kind field beside a generic
+                value. A pair has to be checked against itself or a caller can
+                declare a mobile and send twelve letters; named members make
+                that unrepresentable instead of merely refused, let each
+                identifier carry its own handling rules -- an Aadhaar number is
+                not governed like a phone number -- and give each a stable IRI
+                rather than one whose meaning depends on a sibling.
+
+                Aadhaar is accepted here and refused on the grievance pack. The
+                difference is what the identifier does on each: here it is a
+                lookup key the portal matches and discards, while the grievance
+                portal exchanges one for a token and then carries that token in
+                the same field a registration number would occupy -- making one
+                field sometimes a stable reference and sometimes an ephemeral
+                secret. Nothing of that kind happens on a read.
+
+                ASCII-only in every shape. The upstream accepts Devanagari and
+                other native-script digits and forwards them unconverted, which
+                looks to the portal like a different farmer.
               x-jsonld-id: "openagrinet:applicant"
+              oneOf:
+                - required: [registration]
+                - required: [mobile]
+                - required: [aadhaar]
               properties:
-                idType:
-                  type: string
-                  enum: [Registration, Mobile, Aadhaar]
-                  description: >
-                    Which kind of identifier id carries.
-
-                    Aadhaar is accepted here and refused on the grievance pack.
-                    The difference is what the identifier does on each: here it
-                    is a lookup key the portal matches and discards, while the
-                    grievance portal exchanges one for a token and then carries
-                    that token in the same field a registration number would
-                    occupy -- making one field sometimes a stable reference and
-                    sometimes an ephemeral secret. Nothing of that kind happens
-                    on a read.
-                  x-enum-details:
-                    - value: Registration
-                      meaning: PM-KISAN registration number. Sent upstream as Ben_id.
-                    - value: Mobile
-                      meaning: The mobile number registered against the enrolment. Sent upstream as Mobile.
-                    - value: Aadhaar
-                      meaning: The farmer's Aadhaar number. Sent upstream as Aadhar, which is the upstream's spelling.
-                  x-jsonld-id: "openagrinet:applicantIdType"
-                id:
+                registration:
                   type: string
                   maxLength: 20
+                  pattern: "^[A-Za-z0-9]+$"
                   x-oan-pii:
                     class: identity
                     handling: [no-log, no-trace, no-echo]
                     note: >
-                      Never logged, never traced, and never returned in a
-                      response or an error body. Where the portal resolves it
-                      to a registration number, that number is returned as
-                      enrolmentId and this field is not echoed.
+                      The farmer's PM-KISAN registration number. Not echoed on
+                      the request leg; where the portal resolves a lookup to a
+                      registration number, that number comes back as
+                      enrolmentId instead.
                   description: >
-                    The identifier itself, in the shape idType names. The pair
-                    is checked below: the shape is not advisory.
-
-                    ASCII-only in every shape. The upstream accepts Devanagari
-                    and other native-script digits and forwards them
-                    unconverted, which looks to the portal like a different
-                    farmer.
-                  x-jsonld-id: "openagrinet:applicantId"
+                    PM-KISAN registration number. Sent upstream as Types
+                    Ben_id. No digit rule: the portal treats anything that is
+                    not a mobile or an Aadhaar number as one of these, and a
+                    registration that happens to be ten digits is exactly the
+                    case this member exists to carry safely.
+                  x-jsonld-id: "openagrinet:pmkisanRegistration"
+                mobile:
+                  type: string
+                  pattern: "^[6-9][0-9]{9}$"
+                  x-oan-pii:
+                    class: contact
+                    handling: [no-log, no-trace, no-echo]
+                    note: >
+                      The mobile number registered against the enrolment. It is
+                      also where the OTP is sent, so it is a contact detail and
+                      a lookup key at once.
+                  description: >
+                    The mobile number registered against the enrolment. Ten
+                    digits beginning 6 to 9, which is the Indian numbering plan
+                    and the same test the upstream applies. Sent upstream as
+                    Types Mobile.
+                  x-jsonld-id: "openagrinet:mobileNumber"
+                aadhaar:
+                  type: string
+                  pattern: "^[0-9]{12}$"
+                  x-oan-pii:
+                    class: aadhaar
+                    handling: [no-log, no-trace, no-echo, no-store]
+                    note: >
+                      An Aadhaar number, held to a stricter rule than the other
+                      two: never logged, never traced, never echoed in a
+                      response or an error body, and never retained after the
+                      lookup it was sent for. No value derived from it may be
+                      stored either.
+                  description: >
+                    The farmer's Aadhaar number, twelve digits. Sent upstream as
+                    Types Aadhar, which is the upstream's spelling and is not
+                    adopted here.
+                  x-jsonld-id: "openagrinet:aadhaarNumber"
 
             application:
               type: object
@@ -477,30 +508,3 @@ components:
             - required: [challengeMethods]  # a catalog entry: it declares what
                                             # this desk needs and asks nothing
 
-        # idType and id are checked against each other. Without this the pair
-        # would be two unrelated strings and the whole point of splitting them
-        # would be lost -- a caller could declare Mobile and send eleven
-        # letters, and the adapter would send it upstream as a phone number.
-        #
-        # Each branch is guarded by its own idType, so exactly one applies to
-        # any given payload and the others are not merely unsatisfied but
-        # irrelevant. A payload with no applicant at all -- an acknowledgement,
-        # an answer, a catalog entry -- matches the first branch.
-        - anyOf:
-            - not:
-                required: [applicant]
-            - properties:
-                applicant:
-                  properties:
-                    idType: { const: Registration }
-                    id:     { pattern: "^[A-Za-z0-9]+$" }
-            - properties:
-                applicant:
-                  properties:
-                    idType: { const: Mobile }
-                    id:     { pattern: "^[6-9][0-9]{9}$" }
-            - properties:
-                applicant:
-                  properties:
-                    idType: { const: Aadhaar }
-                    id:     { pattern: "^[0-9]{12}$" }

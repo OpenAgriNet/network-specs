@@ -38,7 +38,7 @@
     "beckn:commitmentAttributes.application.latestInstallmentPaid"
   ],
   "privacy_notes": [
-    "applicant.id carries a PM-KISAN registration number, a mobile number or an Aadhaar number, depending on applicant.idType. It is no-log and no-trace without exception, is never echoed in a response, and never appears in an error body. Where the portal resolves it, the resolved registration number is returned as enrolmentId and applicant.id itself is not returned.",
+    "applicant carries exactly one of registration, mobile or aadhaar. All three are no-log and no-trace without exception, are never echoed in a response, and never appear in an error body. Where the portal resolves a lookup, the resolved registration number is returned as enrolmentId and the identifier the caller sent is not returned. aadhaar is held to a stricter rule still: it is never retained after the lookup it was sent for, and no value derived from it may be stored.",
     "enrolmentId is returned on an answer, which is a deliberate exception and the only identifier that is. The caller has just proven an OTP against the mobile the registration is held under, and the registration number is the handle every later call needs.",
     "The upstream record also returns the farmer's name, father's name, date of birth, full address and state, district, sub-district and village. None of it is modelled; an adapter must drop these fields rather than pass them through commitmentAttributes. This is a deliberate break from the v1 flow, which showed the farmer their own name and village.",
     "application.blockers[].name is the portal's own phrase and is returned verbatim. It states why a named farmer is ineligible or unpaid, so it is no-log and no-trace like the rest of the record.",
