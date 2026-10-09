@@ -318,7 +318,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `enrolmentId` | Every ask | The farmer's PM-KISAN registration number — both the identity the portal authenticates on and the enrolment the complaint is against. On `support` it is `orderId` |
 | `grievance.category` | Ask, when lodging | One of ten published codes, `G001`–`G010`. Echoed on a lodge response; absent from a case read, whose per-record payload carries no category field |
 | `grievance.description` | Ask, when lodging; returned on a case read | The farmer's account of the problem, minimum ten characters |
-| `case.status` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one — see below |
+| `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused — see below |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date. Read from the portal on a case read; generated on a lodge. Also half the case selector |
 | `case.remark`, `case.remarkedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `remark` is bounded at 2000 characters |
 | `challengeMethods` | The catalog entry only | Pinned `[SMS_OTP]`. It says this desk challenges before it will act, so the sequence is `init` → `support`. It is also one of the two members that mark the entry as a declaration. Never sent on a transaction |
@@ -352,9 +352,9 @@ The JSON key is `grievance.category` in both grievance packs, but it resolves to
 
 ## Case status
 
-`case.status.code` is the network's `CaseStatusCode`; `case.status.name` is the portal's own `GrievanceStatus` phrase, kept verbatim. The two are independent facts, which is why only `code` is governed.
+`case.status` carries a `CaseStatusCode` and nothing else. `name` is refused: the portal's `GrievanceStatus` phrase picks the code and is then dropped, because no sample of that vocabulary exists and a slot reserved for values nobody has seen is a guess with a field around it.
 
-Where the portal publishes a `GrievanceStatus`, the phrase goes into `name` and the adapter maps it to a `CaseStatusCode`. A phrase it does not recognise maps to `UnderReview` — never to a terminal state, which must come from the portal — and the phrase survives in `name`, so nothing fails and nothing is lost.
+Where the portal publishes a `GrievanceStatus`, the adapter maps the phrase to a `CaseStatusCode`. A phrase it does not recognise maps to `UnderReview` — never to a terminal state, which must come from the portal — so an unknown vocabulary degrades rather than fails. If PM-KISAN supplies its phrase list and the list says more than the code can, `name` can be added back as an optional member without breaking a caller.
 
 Where the portal publishes no status, the adapter infers one and emits `code` alone:
 
@@ -429,7 +429,7 @@ It also does not define credentials. Those live in the adapter configuration, wh
 
 ## Examples
 
-The two `Direct` examples show the inferred form of `case.status` — `code` with no `name`. No sample of the portal's own `GrievanceStatus` text exists anywhere in the legacy tree, so rather than invent one the examples demonstrate the inference branch only.
+The two `Direct` examples show `case.status` as a bare `code`, which is now the only form. No sample of the portal's own `GrievanceStatus` text exists anywhere in the legacy tree, which is the reason the phrase does not travel at all.
 
 - [On-demand: lodge a grievance](examples/on-demand-lodge-grievance.json)
 - [On-demand: read a case](examples/on-demand-read-cases.json)

@@ -7,7 +7,7 @@
   "application": {
     "registeredOn": "2021-06-14T00:00:00+05:30",
     "latestInstallmentPaid": 15,
-    "ekyc": { "code": "Pending", "name": "eKYC not completed" },
+    "ekyc": { "code": "Pending" },
     "blockers": [
       { "code": "LandSeedingPending", "name": "Land Seeding, KYS" },
       { "code": "Other", "name": "Bank account details could not be verified" }

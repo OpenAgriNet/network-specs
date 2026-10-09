@@ -8,13 +8,13 @@
   },
   "enrolmentId": "KA2026KH00123456",
   "grievance": {
-    "category": { "name": "Enrollment / Portal Issues" },
-    "subCategory": { "name": "Login" },
-    "description": "Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment."
+    "category": { "name": "…" },
+    "subCategory": { "name": "…" },
+    "description": "Claim for my Kharif 2026 paddy enrolment has not been credited to my account."
   },
   "case": {
     "ticketNo": "100626000099001",
-    "status": { "code": "UnderReview", "name": "Open" },
+    "status": { "code": "UnderReview" },
     "filedOn": "2026-09-28",
     "cropName": "Paddy"
   }

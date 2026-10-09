@@ -7,7 +7,7 @@
   "application": {
     "registeredOn": "2021-06-14T00:00:00+05:30",
     "latestInstallmentPaid": 16,
-    "ekyc": { "code": "Done", "name": "eKYC completed" },
+    "ekyc": { "code": "Done" },
     "blockers": []
   }
 }

@@ -349,6 +349,8 @@ components:
                     - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
                     - type: object
                       required: [code]
+                      not:
+                        required: [name]
                       properties:
                         code:
                           type: string
@@ -364,10 +366,14 @@ components:
                             - value: Pending
                               meaning: Not completed, or the portal sent something the adapter does not recognise. Upstream eKYC_Status "N" or anything else.
                   description: >
-                    eKYC standing. Carried as a code and a name because every
-                    other status on this network is, and because the portal may
-                    yet start distinguishing between kinds of pending. A caller
-                    branches on code and displays name.
+                    eKYC standing, as a code and nothing else.
+
+                    name is refused. The portal sends the single character Y or
+                    N, so there is no phrase of its own to carry -- any name
+                    here would be wording this network invented and then
+                    presented as the portal's. A caller branches on code and
+                    renders its own label. Matches case.status, which refuses
+                    name for the neighbouring reason.
                   x-jsonld-id: "openagrinet:ekycStatus"
                 blockers:
                   type: array

@@ -165,7 +165,7 @@ envelope plus two values inside `responseDynamic`:
 
 | upstream | here | note |
 |---|---|---|
-| `responseCode` | `case.status` | the lodge reply states no status, so `"1"` asserts `code: Registered` and no `name` accompanies it. Compare the stringified value: it has been seen as both a string and a number |
+| `responseCode` | `case.status` | the lodge reply states no status, so `"1"` asserts `code: Registered`. Compare the stringified value: it has been seen as both a string and a number |
 | `responseDynamic.GrievenceSupportTicketNo` | `case.ticketNo` | the number the farmer is told |
 | `responseDynamic.GrievenceSupportTicketID` | *dropped* | the portal's own row id. An internal key with no consumer: nothing sends it and the read is keyed on the ticket *number* |
 | `recordCount` | *dropped* | a count of a single record |
@@ -190,7 +190,7 @@ portal actually sends.
 | `GrievenceDescription` | `grievance.description` | |
 | `TicketCategoryName` | `grievance.category.name` | **no id accompanies it.** The id goes up on the lodge as `ticketCategoryID` and does not come back |
 | `TicketSubCategoryName` | `grievance.subCategory.name` | likewise. Two levels, kept apart: the portal's own category name contains a slash, so any joined form would be lossy |
-| `TicketStatus` | `case.status` | the phrase verbatim into `name`; mapped to a `CaseStatusCode` for `code` |
+| `TicketStatus` | `case.status` | mapped to a `CaseStatusCode` for `code`. The phrase itself is not forwarded — the pack refuses `name` |
 | `ComplaintDate` | `case.filedOn` | format unpublished, so the adapter normalises to an IST calendar date |
 | `CropName` | `case.cropName` | the insured crop. A field this pack adds rather than inherits |
 | `GrievenceSupportTicketID` | *dropped* | the portal's row id, not the number the farmer quotes |
@@ -318,7 +318,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `grievance.category`, `grievance.subCategory` | Ask, when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
 | `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
 | `case.ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
-| `case.status` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one |
+| `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
 | `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on. Added by this pack; `case.remark` and `case.remarkedOn` are refused, because PMFBY publishes neither |
 | `challengeMethods` | The catalog entry only | Pinned empty. It says this desk challenges nothing, so the sequence is `support` → `status`. Never sent on a transaction |

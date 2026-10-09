@@ -175,8 +175,10 @@ On top of it this pack:
 - narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters.
 
 `ekyc` and each entry in `blockers` compose `IdentifiedDescriptor` from the Agriculture
-Resource schema, which is the established idiom in these packs for a governed `code`
-paired with a display `name`.
+Resource schema, the established idiom for a governed `code` paired with a display `name`.
+`blockers` uses both: the portal sends real text and the `code` classifies it. `ekyc`
+refuses `name` — the portal sends `Y` or `N`, so there is no phrase to display and any
+wording here would be ours presented as the portal's.
 
 ## What this pack refuses
 

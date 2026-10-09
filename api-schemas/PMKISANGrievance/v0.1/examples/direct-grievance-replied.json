@@ -7,7 +7,7 @@
     "description": "Third instalment for 2026 has not been credited."
   },
   "case": {
-    "status": { "code": "Replied", "name": "Disposed" },
+    "status": { "code": "Replied" },
     "filedOn": "2026-09-28",
     "remark": "Bank account seeded with Aadhaar; payment in next cycle.",
     "remarkedOn": "2026-10-01"

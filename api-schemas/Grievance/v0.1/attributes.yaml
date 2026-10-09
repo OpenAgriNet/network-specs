@@ -516,22 +516,27 @@ components:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
             - type: object
               required: [code]
+              not:
+                required: [name]
               properties:
                 code:
                   $ref: "#/components/schemas/CaseStatusCode"
           description: >
-            Where the grievance stands. code is the network's CaseStatusCode,
-            which is what a client branches on; name is the portal's own status
-            phrase, kept verbatim, which is what the farmer is shown.
+            Where the grievance stands, as a CaseStatusCode and nothing else.
 
-            code is required and name is not, and the absence of name is
-            informative: it is how a client tells a state the adapter inferred
-            from one the portal stated.
+            name is refused. The portal's own status phrase does not travel:
+            neither portal has supplied its vocabulary, no captured response
+            carrying one exists, and a field shaped around values nobody has
+            seen is a guess with a slot reserved for it. The adapter still
+            reads the phrase to pick a code -- it simply does not forward it.
+            If a portal publishes its phrase list and the list turns out to
+            say more than the code does, name can be added back as an optional
+            member without breaking a caller.
 
-            A phrase the adapter does not recognise maps to UnderReview, keeping
-            the phrase in name -- never to a terminal state, which must come
-            from the portal. The adapter may infer a state; it must never infer
-            that a case is finished.
+            A phrase the adapter does not recognise maps to UnderReview --
+            never to a terminal state, which must come from the portal. The
+            adapter may infer a state; it must never infer that a case is
+            finished.
 
             The enum is not narrowed in either pack. Neither portal publishes a
             full status vocabulary, so narrowing would be a guess that rejects a
@@ -589,12 +594,12 @@ components:
         Where a case stands, in the network's own vocabulary, rather than in the
         portal's wording.
 
-        The split is deliberate. code is the network's word and is what a client
-        branches on; the accompanying descriptor name is the portal's own phrase,
-        kept verbatim, and is what a farmer is shown. A portal phrase the adapter
-        does not recognise maps to UnderReview -- non-terminal, and honest -- with
-        the phrase preserved in name. The adapter may infer a state; it must never
-        infer that a case is finished, so anything unmapped stays non-terminal.
+        This is the whole of what a case status carries. The adapter reads the
+        portal's own phrase to choose a value and then drops it; a caller
+        branches on the code and renders its own label. A portal phrase the
+        adapter does not recognise maps to UnderReview -- non-terminal, and
+        honest. The adapter may infer a state; it must never infer that a case
+        is finished, so anything unmapped stays non-terminal.
 
         One list, shared by every grievance pack. A portal vocabulary is not
         enumerated anywhere: portals add phrases without notice, and the mapping
