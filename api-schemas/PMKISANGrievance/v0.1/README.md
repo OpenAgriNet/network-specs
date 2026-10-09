@@ -72,6 +72,14 @@ has no OTP endpoint and refuses both challenge bands outright.
 on a payload, and it is what a caller reads to know whether this desk challenges it
 before filing.
 
+`grievanceOptions` sits in no band either, and for the same reason: it is published on
+the catalog entry and never sent. It carries the ten grievance types this desk accepts,
+each with the portal's own label and a plain-language descriptor, so a caller chooses
+from the portal's vocabulary instead of keeping a master list of its own. The codes are
+held to the same `G001`–`G010` enum `grievance.category.code` carries, so a catalog
+offering an eleventh type fails at publish time rather than at filing time.
+`subCategories` is refused outright: this desk classifies at one level.
+
 
 Before the containers the same split lived in a prefix — `grievanceCategory` against
 `caseStatus` — which read the same and checked nothing: a field named either way
@@ -129,16 +137,18 @@ latest remark instead. `ticketNo` is allowed and is populated on a lodge, but it
 required: the status call is not documented to repeat the handle per record, so a case
 read may carry none. See "The identifier, and what it is not good for".
 
-**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId` or
-`challengeMethods`.
+**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, or
+the two declarations a catalog entry carries.
 The same `@type` serves filing and reading, and `informationMode` cannot tell them apart
 because both asks are `OnDemand`. What separates them is what the payload brought. Before
 the containers existed nothing caught a payload that brought none of them.
 
-`challengeMethods` is in that list for the catalog entry alone. A declaration states what
-this desk needs and asks for nothing, so it brings no `grievance`, no `case` and no
-enrolment. Without the branch the gate would reject the very entry a caller discovers the
-desk by.
+`challengeMethods` and `grievanceOptions` are in that list for the catalog entry alone. A
+declaration states what this desk needs and what it accepts, and asks for nothing, so it
+brings no `grievance`, no `case` and no enrolment. Without the branch the gate would
+reject the very entry a caller discovers the desk by. Both are named on the one branch,
+so a desk that publishes what it requires without publishing what it accepts — or the
+other way round — is refused rather than half-published.
 
 There is deliberately no narrower `OnDemand` branch. Lodging sends the registration
 number, the category and the complaint; reading sends the registration number and
@@ -311,7 +321,8 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `case.status` | `Direct` | Where the grievance stands. `code` is the network's `CaseStatusCode` and is what you branch on; `name` is the portal's own phrase, present only when the portal supplied one — see below |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date. Read from the portal on a case read; generated on a lodge. Also half the case selector |
 | `case.remark`, `case.remarkedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `remark` is bounded at 2000 characters |
-| `challengeMethods` | The catalog entry only | Pinned empty. It says the portal issues no challenge, so the sequence is `support` → `status`. Present and empty rather than absent, because it is also what marks the entry as a declaration. Never sent on a transaction |
+| `challengeMethods` | The catalog entry only | Pinned `[SMS_OTP]`. It says this desk challenges before it will act, so the sequence is `init` → `support`. It is also one of the two members that mark the entry as a declaration. Never sent on a transaction |
+| `grievanceOptions` | The catalog entry only | The ten grievance types this desk accepts, each as a `code` with the portal's `name` and a `descriptor` written for the farmer. Held to the same `G001`–`G010` enum as `grievance.category.code`, so the published list and the enforced list cannot drift. `subCategories` is refused. Never sent on a transaction |
 
 A payload that carries `grievance` carries its `description`: `required` inside the block
 fires whenever the block is present. `category` is not in that list, because a case read

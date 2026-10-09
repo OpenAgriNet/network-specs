@@ -242,6 +242,53 @@ components:
                 not. If PMFBY ever adds a challenge to FGMS, widen this and
                 restore the two bands refused below.
 
+            grievanceOptions:
+              allOf:
+                - type: object
+                  required: [categories, subCategories]
+                  properties:
+                    categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            pattern: "^[0-9]+$"
+                    subCategories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            pattern: "^[0-9]+$"
+              description: >
+                Both levels are published, because PMFBY numbers two and a
+                caller must send both. subCategories is required here and
+                refused in packs whose portal has one level.
+
+                The codes carry the same digit pattern category and
+                subCategory do, restated rather than inherited -- these are
+                fields of their own and nothing propagates a constraint from
+                one to the other. They are not pinned to an enum.
+                PMFBY publishes no category list: FGMS takes
+                ticketCategoryID and ticketSubCategoryID on the way up and
+                answers with TicketCategoryName and TicketSubCategoryName on
+                the way back, and nowhere enumerates what may be sent. So
+                what this desk publishes is what is known to work, not
+                everything that would be accepted -- the one case where the
+                catalog list is narrower than the pack. Pinning it to the one
+                pair in use would refuse a valid category the day someone
+                learns another one works, and we would learn that from a
+                rejected grievance.
+
+                name is left out of both entries for the same reason. The
+                portal has never published a label for a code it accepts --
+                only the names it returns on a read -- and an invented one
+                would be read as the portal's. descriptor carries what is
+                actually known instead: that there is one bucket and the
+                farmer is not choosing.
+              x-jsonld-id: "openagrinet:grievanceOptions"
+
             enrolmentId:
               allOf:
                 - type: string
@@ -432,7 +479,10 @@ components:
             - required: [grievance]         # filing, or a case read echoing one
             - required: [case]              # reading one case by its ticket
             - required: [enrolmentId]       # reading by the application
-            - required: [challengeMethods]  # a catalog entry: it declares that
+            - required: [challengeMethods, grievanceOptions]
+                                            # a catalog entry: it declares that
                                             # this desk needs nothing and asks
                                             # nothing, so it brings none of the
-                                            # above. Empty, but present.
+                                            # above. challengeMethods is empty
+                                            # but present; both are named so a
+                                            # half-published desk is refused.

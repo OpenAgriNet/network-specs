@@ -72,6 +72,12 @@ on a payload, and it is what a caller reads to know whether this desk challenges
 before filing. PMFBY publishes it empty, which is how a caller learns there is nothing
 to ask for.
 
+`grievanceOptions` sits in no band either, and for the same reason: it is published on
+the catalog entry and never sent. It carries the categories and sub-categories this desk
+accepts, so a caller chooses from the portal's vocabulary instead of keeping a master
+list of its own. PMFBY numbers two levels, so both arrays are published and both are
+required here.
+
 Before the containers the same split lived in a prefix — `grievanceCategory` against
 `caseStatus` — which read the same and checked nothing: a field named either way
 validated either way. As containers the split is enforced, and `grievance` becomes all
@@ -129,8 +135,8 @@ That is true of `on_support` and `on_status` alike. `provider` is not in the lis
 contract leg the same fact lives in `commitments[].offer.provider`, outside these
 attributes, where a guard on the attributes object cannot reach it.
 
-**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId` or
-`challengeMethods`. The same `@type` serves filing, reading and discovery, and
+**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, or
+the two declarations a catalog entry carries. The same `@type` serves filing, reading and discovery, and
 `informationMode` cannot tell them apart because every ask is `OnDemand`. What separates
 them is what the payload brought. Before the containers existed nothing caught a payload
 that brought none of them.
@@ -138,10 +144,12 @@ that brought none of them.
 `applicantPhone` is deliberately not in that list. Every ask carries it, so a branch on it
 would admit a payload stripped of everything else — a phone number and nothing to be about.
 
-`challengeMethods` is in that list for the catalog entry alone. A declaration states what
-this desk needs and asks for nothing, so it brings no `grievance`, no `case` and no
-enrolment. Without the branch the gate would reject the very entry a caller discovers the
-desk by.
+`challengeMethods` and `grievanceOptions` are in that list for the catalog entry alone. A
+declaration states what this desk needs and what it accepts, and asks for nothing, so it
+brings no `grievance`, no `case` and no enrolment. Without the branch the gate would
+reject the very entry a caller discovers the desk by. Both are named on the one branch,
+so a desk that publishes what it requires without publishing what it accepts — or the
+other way round — is refused rather than half-published.
 
 There is deliberately no narrower `OnDemand` branch. The ask side has no field common to
 every payload: filing sends the phone, the enrolment, the season and the complaint;
@@ -314,6 +322,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
 | `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on. Added by this pack; `case.remark` and `case.remarkedOn` are refused, because PMFBY publishes neither |
 | `challengeMethods` | The catalog entry only | Pinned empty. It says this desk challenges nothing, so the sequence is `support` → `status`. Never sent on a transaction |
+| `grievanceOptions` | The catalog entry only | The categories and sub-categories this desk accepts, each as a `code` with a `descriptor` written for the farmer. Both levels are published, because PMFBY numbers two and a caller must send both. The codes carry the same digit pattern `grievance.category` does, restated rather than inherited. Never sent on a transaction |
 
 A payload that carries `grievance` carries all three of its fields: `required` inside the
 block fires whenever the block is present, so a partial complaint is rejected rather than

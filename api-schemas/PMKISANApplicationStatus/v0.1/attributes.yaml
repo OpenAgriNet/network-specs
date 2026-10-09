@@ -431,15 +431,19 @@ components:
                               Display it; never branch on it. The portal
                               rewords without notice.
 
-        # grievance and case are refused. A reading of a record is not a
-        # complaint, and leaving either band defined-but-unused would invite an
-        # adapter to start filling one. Stated the way PMFBY refuses the
-        # challenge bands -- not over an anyOf of required -- which is the one
-        # refusal form used throughout these packs.
+        # grievance, case and grievanceOptions are refused. A reading of a
+        # record is not a complaint, and leaving a band defined-but-unused
+        # would invite an adapter to start filling one. grievanceOptions goes
+        # with them: it publishes the categories a grievance may be filed
+        # under, and this desk files none, so an empty or invented list here
+        # would describe a service that does not exist. Stated the way PMFBY
+        # refuses the challenge bands -- not over an anyOf of required --
+        # which is the one refusal form used throughout these packs.
         - not:
             anyOf:
               - required: [grievance]
               - required: [case]
+              - required: [grievanceOptions]
 
         # A Direct payload is a response, and a response with no record is not
         # an answer. Stated with anyOf and not with if/then: if/then is parsed

@@ -203,6 +203,60 @@ components:
             method keeps working.
           x-jsonld-id: "openagrinet:challengeMethods"
 
+        grievanceOptions:
+          type: object
+          additionalProperties: false
+          required: [categories]
+          properties:
+            categories:
+              type: array
+              uniqueItems: true
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/GrievanceOption"
+              description: >
+                The values grievance.category.code may take on this desk.
+            subCategories:
+              type: array
+              uniqueItems: true
+              items:
+                $ref: "#/components/schemas/GrievanceOption"
+              description: >
+                The second level, where the portal numbers one. Omitted --
+                not empty -- on a desk that classifies at one level, because
+                such a desk refuses grievance.subCategory outright and an
+                empty array would contradict that refusal.
+
+                Nothing here says which sub-category goes with which
+                category. A portal that publishes no list of valid pairs
+                leaves the pairing unstated rather than implied by position.
+                When one publishes a tree, a categoryCode member is added to
+                each entry; the item shape is sealed, so that is a pack edit
+                and a version bump.
+          description: >
+            What this desk accepts, so a caller chooses from the portal's
+            vocabulary instead of keeping a master list of its own. The
+            second declaration-only field, beside challengeMethods: it
+            appears on a catalog entry and never on a transaction payload.
+
+            Named apart from the grievance band on purpose. That band is what
+            the farmer submitted, its presence is what marks a payload as an
+            ask, and it requires a description -- so a declaration cannot
+            carry one and must not look as though it does.
+
+            Each pack constrains the codes here with the same value space it
+            holds grievance.category.code to, so the list a caller reads and
+            the list the network enforces cannot disagree: a catalog
+            publishing a code the pack refuses fails at publish time rather
+            than at filing time. Where a portal publishes no list the pack
+            has none to pin, and the array is then what is known to work
+            rather than everything that would be accepted.
+
+            name is the portal's label and descriptor is ours, written for
+            the farmer. A portal that publishes no label leaves name out
+            rather than inventing one: absent means unknown, not blank.
+          x-jsonld-id: "openagrinet:grievanceOptions"
+
         challenge:
           type: object
           required: [method, value]
@@ -306,6 +360,39 @@ components:
             validates responses as requests too, so readOnly would reject this
             acknowledgement outright.
           x-jsonld-id: "openagrinet:challengeIssued"
+
+    GrievanceOption:
+      type: object
+      additionalProperties: false
+      required: [code]
+      description: >
+        One choice a caller may make on this desk, as published on a catalog
+        entry. Sealed: a reader can enumerate what an option carries without
+        guarding against a fourth member appearing.
+      properties:
+        code:
+          type: string
+          minLength: 1
+          description: >
+            The portal's own value, exactly as the matching grievance field
+            must carry it. This is what is sent; the two fields beside it are
+            for the caller's screen.
+        name:
+          type: string
+          minLength: 1
+          description: >
+            The portal's label for that code -- its words, not ours. Omitted
+            where the portal publishes none, because absent means unknown and
+            an empty string would claim the label is blank.
+        descriptor:
+          type: string
+          minLength: 1
+          description: >
+            Plain-language help text for the farmer choosing this option.
+            Ours, written for the caller's screen, and never sent upstream.
+            Where a portal publishes no label this may still be filled: it
+            can describe what is known about the option without putting words
+            in the portal's mouth.
 
     Grievance:
       type: object

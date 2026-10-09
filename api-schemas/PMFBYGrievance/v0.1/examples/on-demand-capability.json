@@ -6,5 +6,19 @@
     "code": "PMFBY",
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
-  "challengeMethods": []
+  "challengeMethods": [],
+  "grievanceOptions": {
+    "categories": [
+      {
+        "code": "3",
+        "descriptor": "The only category this desk sends. PMFBY publishes no category list, so every grievance is filed under this one."
+      }
+    ],
+    "subCategories": [
+      {
+        "code": "10",
+        "descriptor": "The only sub-category this desk sends, paired with category 3."
+      }
+    ]
+  }
 }

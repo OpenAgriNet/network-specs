@@ -38,7 +38,7 @@ What `Grievance/v0.1` actually owns is a shape: **five bands, and the band a fie
 | `challengeIssued` | the portal's acknowledgement that it sent one: `method`, `sentTo`, `expiresAt`. Outbound only, and it carries no secret | the portal |
 | anything a pack adds | a crop season, an applicant's phone — sits at the top with the rest of the context | the caller |
 
-Not every pack uses every band. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. `challengeMethods` itself sits in no band: it appears on a catalog entry and on no transaction payload.
+Not every pack uses every band. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. Two fields sit in no band at all — `challengeMethods`, which says what a desk requires before it will answer, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
 
 Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
 

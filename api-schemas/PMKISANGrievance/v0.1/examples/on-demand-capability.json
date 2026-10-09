@@ -8,5 +8,59 @@
   },
   "challengeMethods": [
     "SMS_OTP"
-  ]
+  ],
+  "grievanceOptions": {
+    "categories": [
+      {
+        "code": "G001",
+        "name": "Account number not correct",
+        "descriptor": "The bank account held against your registration is wrong, so money cannot reach you."
+      },
+      {
+        "code": "G002",
+        "name": "Online application pending for approval",
+        "descriptor": "You applied online and the application has not yet been approved."
+      },
+      {
+        "code": "G003",
+        "name": "Installment not received",
+        "descriptor": "Your registration is approved but an instalment has not reached your account."
+      },
+      {
+        "code": "G004",
+        "name": "Transaction failed",
+        "descriptor": "A payment was attempted and the transfer did not go through."
+      },
+      {
+        "code": "G005",
+        "name": "Problem in Aadhaar correction",
+        "descriptor": "A correction to your Aadhaar details has not gone through."
+      },
+      {
+        "code": "G006",
+        "name": "Gender not correct",
+        "descriptor": "The gender recorded against your registration is wrong."
+      },
+      {
+        "code": "G007",
+        "name": "Payment related",
+        "descriptor": "Any other problem with a payment that the options above do not cover."
+      },
+      {
+        "code": "G008",
+        "name": "Problem in OTP-based eKYC",
+        "descriptor": "eKYC by OTP is failing."
+      },
+      {
+        "code": "G009",
+        "name": "Problem in biometric-based eKYC",
+        "descriptor": "eKYC by fingerprint or iris is failing."
+      },
+      {
+        "code": "G010",
+        "name": "Problem in facial-based eKYC",
+        "descriptor": "eKYC by face scan is failing."
+      }
+    ]
+  }
 }

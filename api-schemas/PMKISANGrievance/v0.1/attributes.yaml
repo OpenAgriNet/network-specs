@@ -181,8 +181,45 @@ components:
                 it. Publishing [] described the portal API accurately and the
                 scheme wrongly.
 
-                It is also the member that lets a catalog entry pass the gate
-                below, which a declaration otherwise has nothing to satisfy.
+                It is also one of the two members that let a catalog entry
+                pass the gate below, which a declaration otherwise has nothing
+                to satisfy. grievanceOptions is the other.
+
+            grievanceOptions:
+              allOf:
+                - type: object
+                  not:
+                    required: [subCategories]
+                  properties:
+                    categories:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          code:
+                            enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+              description: >
+                The ten grievance types the portal accepts, published so a
+                caller chooses from this list rather than keeping one of its
+                own.
+
+                The codes are pinned to the same enum grievance.category.code
+                carries, which is the point of publishing them here: the list
+                a caller reads and the list the network enforces are the same
+                constraint, so a catalog offering an eleventh type fails at
+                publish time rather than producing a grievance the portal
+                refuses. When the portal adds one, both move together or
+                neither does.
+
+                subCategories is refused outright. PM-KISAN classifies at one
+                level and the grievance band already refuses subCategory, so
+                publishing an empty array here would contradict it -- the
+                field is absent, not empty.
+
+                name is the portal's own label for each type, carried from the
+                x-enum-details beside the enum. descriptor is ours, written
+                for the farmer's screen, and goes nowhere upstream.
+              x-jsonld-id: "openagrinet:grievanceOptions"
 
             # Inherited from GrievanceBase and narrowed. No sentTo: see the note
             # on challengeIssued.
@@ -400,6 +437,10 @@ components:
                                         # and asking for an OTP against one
             - required: [challengeIssued]   # acknowledging an OTP, which must
                                             # echo nothing else
-            - required: [challengeMethods]  # a catalog entry: it declares what
-                                            # this desk needs and asks nothing,
-                                            # so it brings none of the above
+            - required: [challengeMethods, grievanceOptions]
+                                            # a catalog entry: it declares what
+                                            # this desk needs and what it
+                                            # accepts, and asks nothing, so it
+                                            # brings none of the above. Both are
+                                            # named so a half-published desk is
+                                            # refused.

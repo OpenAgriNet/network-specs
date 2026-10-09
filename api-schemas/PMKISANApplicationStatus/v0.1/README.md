@@ -160,7 +160,8 @@ unblock their payment.
 The pack composes `GrievanceBase` from
 [`../../Grievance/v0.1/attributes.yaml`](../../Grievance/v0.1/attributes.yaml), which is
 where `informationMode`, `provider`, `scheme`, `enrolmentId`, `challengeMethods`,
-`challenge` and `challengeIssued` come from, with their privacy markings already attached.
+`grievanceOptions`, `challenge` and `challengeIssued` come from, with their privacy
+markings already attached.
 The base is shared with both grievance packs; the name is historical.
 
 On top of it this pack:
@@ -179,14 +180,17 @@ paired with a display `name`.
 
 ## What this pack refuses
 
-Two inherited bands are refused outright with `not`/`required`, so a caller who sends one
-is told rather than quietly ignored:
+Three inherited members are refused outright with `not`/`required`, so a caller who sends
+one is told rather than quietly ignored:
 
 - **`grievance`** — nothing is being submitted here.
 - **`case`** — nothing has a lifecycle here.
+- **`grievanceOptions`** — it publishes the categories a grievance may be filed under, and
+  this desk files none. An empty list would claim the desk takes grievances and has none
+  to offer; an invented one would describe a service that does not exist.
 
-Sending either means the caller has reached for the wrong pack, and the right answer is to
-say so.
+Sending any of them means the caller has reached for the wrong pack, and the right answer
+is to say so.
 
 `challengeIssued.sentTo` is refused for a different reason: the upstream acknowledgement is
 a bare success flag with no destination in it, so there is nothing to mask and nothing to
