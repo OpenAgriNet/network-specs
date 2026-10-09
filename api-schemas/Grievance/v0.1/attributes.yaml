@@ -491,6 +491,20 @@ components:
         No required list. A caller naming a case to read sends ticketNo alone; a
         response carries a status. What a complete response looks like is the
         pack's statement, since it depends on what the portal issues.
+      allOf:
+        # remarkedOn without remark is refused: a date for a remark that is not
+        # there describes nothing. The reverse is allowed and does happen -- the
+        # portal may publish OfficerReply with OfficeReplyDate null, and a remark
+        # with no date is still the remark.
+        #
+        # Stated as anyOf over "remarkedOn absent" or "remark present" rather
+        # than if/then. if/then is parsed but never evaluated by the validator in
+        # use, so a dependency written that way would look like it holds and
+        # would not.
+        - anyOf:
+            - not:
+                required: [remarkedOn]
+            - required: [remark]
       properties:
         ticketNo:
           type: string
@@ -579,8 +593,9 @@ components:
           allOf:
             - $ref: "#/components/schemas/CalendarDate"
           description: >
-            Date the remark was recorded. Absent until there is a remark. An IST
-            calendar date; see CalendarDate.
+            Date the remark was recorded. Absent until there is a remark, and
+            enforced rather than merely stated -- see the constraint on Case. An
+            IST calendar date; see CalendarDate.
 
             Defined here because a portal may publish it. A pack whose portal
             does not refuses the field outright with not/required rather than
