@@ -4,6 +4,6 @@
   "informationMode": "OnDemand",
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
   "challengeMethods": [
-    "SMS_OTP"
+    { "method": "SMS_OTP", "length": 4, "valueType": "NUMERIC" }
   ]
 }

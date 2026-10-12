@@ -104,7 +104,8 @@ components:
           maySend:   [informationMode, scheme.code,
                       enrolmentId, applicant.mobile, applicant.aadhaar]
           comesBack: [informationMode, scheme.code, scheme.name,
-                      challengeIssued.method, challengeIssued.expiresAt]
+                      challengeIssued.method, challengeIssued.length,
+                      challengeIssued.valueType, challengeIssued.expiresAt]
         status:
           mustSend:  [challenge.method, challenge.value]
           maySend:   [informationMode, scheme.code,
@@ -199,7 +200,13 @@ components:
                 - type: array
                   minItems: 1
                   items:
-                    enum: [SMS_OTP]
+                    properties:
+                      method:
+                        enum: [SMS_OTP]
+                      length:
+                        enum: [4]
+                      valueType:
+                        enum: [NUMERIC]
               description: >
                 Pinned to SMS_OTP: the record cannot be read until a four-digit
                 OTP texted to the registered mobile has been proven. A caller
@@ -239,7 +246,15 @@ components:
                   properties:
                     method:
                       enum: [SMS_OTP]
+                    length:
+                      enum: [4]
+                    valueType:
+                      enum: [NUMERIC]
               description: >
+                length and valueType are pinned to the shape challenge.value
+                is pinned to, four digits, so the acknowledgement and the field
+                it describes cannot drift apart.
+
                 PM-KISAN note: sentTo is refused rather than left optional, as
                 on the grievance pack. The service acknowledges with "OTP has
                 been sent to the registered mobile number" and names no number.

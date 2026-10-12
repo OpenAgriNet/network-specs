@@ -189,7 +189,7 @@ components:
           type: array
           uniqueItems: true
           items:
-            type: string
+            $ref: "#/components/schemas/ChallengeMethod"
           description: >
             Which challenge a caller must pass before a grievance can be filed.
             Non-empty means a challenge comes first and the array names it;
@@ -208,9 +208,15 @@ components:
             each pack's "about something" gate looks for and needs a member of
             its own to satisfy it.
 
-            A caller branches on the values and not on the length. A portal that
-            adds a second mechanism widens the list, and a caller that reads the
-            method keeps working.
+            A caller branches on method and not on the length of the array. A
+            portal that adds a second mechanism widens the list, and a caller
+            that reads method keeps working.
+
+            Each entry describes one mechanism whole: what it is, how long the
+            code is and what it is made of. That is what lets a caller design
+            the input screen from the catalog, before any transaction exists.
+            challengeIssued returns the same three on each init, so the screen
+            can be checked against the code actually sent.
           x-jsonld-id: "openagrinet:challengeMethods"
 
         grievanceOptions:
@@ -322,13 +328,41 @@ components:
 
         challengeIssued:
           type: object
-          required: [method, expiresAt]
+          required: [method, length, valueType, expiresAt]
           additionalProperties: false
           properties:
             method:
               type: string
-              description: Mechanism the portal used, from the same set as challengeMethods.
+              description: >
+                Mechanism the portal used, from the same set as
+                challengeMethods. The token names the delivery channel and the
+                kind of secret together -- SMS_OTP is a one-time code sent by
+                SMS -- so a caller reads the channel off this field and needs
+                no second one for it.
               x-jsonld-id: "openagrinet:challengeMethod"
+            length:
+              type: integer
+              minimum: 4
+              maximum: 8
+              description: >
+                How many characters the value will have. Bounded to the same
+                range as challenge.value and pinned by each pack to the one
+                length its portal issues, so the two cannot disagree.
+
+                Required so a caller can size the input without reading this
+                pack: method names the mechanism, length and valueType name
+                the shape of what is about to arrive.
+              x-jsonld-id: "openagrinet:challengeLength"
+            valueType:
+              type: string
+              enum: [NUMERIC, ALPHANUMERIC]
+              description: >
+                What the value is made of. NUMERIC is digits only, which is
+                what both portals on this network issue; ALPHANUMERIC is
+                defined so a portal that changes needs no new field. It is what
+                a caller opens the right keyboard on and validates against
+                before sending.
+              x-jsonld-id: "openagrinet:challengeValueType"
             sentTo:
               type: string
               x-oan-pii:
@@ -371,6 +405,47 @@ components:
             validates responses as requests too, so readOnly would reject this
             acknowledgement outright.
           x-jsonld-id: "openagrinet:challengeIssued"
+
+    ChallengeMethod:
+      type: object
+      additionalProperties: false
+      required: [method, length, valueType]
+      description: >
+        One challenge mechanism this desk operates, as published on a catalog
+        entry. Sealed, like GrievanceOption beside it: a reader can enumerate
+        what a mechanism carries without guarding against a fourth member
+        appearing.
+
+        The same three members challengeIssued returns, and each pack pins the
+        two to the same values, so what a caller designs against and what
+        arrives on init cannot disagree.
+      properties:
+        method:
+          type: string
+          minLength: 1
+          description: >
+            The mechanism, naming the delivery channel and the kind of secret
+            together, CHANNEL_KIND -- SMS_OTP is a one-time code sent by SMS.
+            This is what a caller branches on.
+          x-jsonld-id: "openagrinet:challengeMethod"
+        length:
+          type: integer
+          minimum: 4
+          maximum: 8
+          description: >
+            How many characters the code will have. Bounded to the same range
+            as challenge.value and pinned by each pack to the one length its
+            portal issues, so the two cannot disagree.
+          x-jsonld-id: "openagrinet:challengeLength"
+        valueType:
+          type: string
+          enum: [NUMERIC, ALPHANUMERIC]
+          description: >
+            What the code is made of. NUMERIC is digits only, which is what
+            both portals on this network issue; ALPHANUMERIC is defined so a
+            portal that changes needs no new field. It is what a caller opens
+            the right keyboard on and validates against before sending.
+          x-jsonld-id: "openagrinet:challengeValueType"
 
     GrievanceOption:
       type: object

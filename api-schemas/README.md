@@ -35,10 +35,10 @@ What `Grievance/v0.1` actually owns is a shape: **five bands, and the band a fie
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `remark`, `remarkedOn` | the portal |
 | `challenge` | the proof the caller presents with a guarded call: `method`, `value`. Inbound only, never echoed | the caller |
-| `challengeIssued` | the portal's acknowledgement that it sent one: `method`, `sentTo`, `expiresAt`. Outbound only, and it carries no secret | the portal |
+| `challengeIssued` | the portal's acknowledgement that it sent one: `method`, `length`, `valueType`, `sentTo`, `expiresAt`. Outbound only, and it carries no secret | the portal |
 | anything a pack adds | a crop season, an applicant's phone — sits at the top with the rest of the context | the caller |
 
-Not every pack uses every band. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. Two fields sit in no band at all — `challengeMethods`, which says what a desk requires before it will answer, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
+Not every pack uses every band. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. Two fields sit in no band at all — `challengeMethods`, which describes each challenge a desk requires before it will answer, down to the length and character class of the code, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
 
 Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
 

@@ -111,6 +111,16 @@
       "rdfs:comment": "Acknowledgement that a challenge has been sent. Carries no secret, and no destination: PM-KISAN names no number."
     },
     {
+      "@id": "openagrinet:challengeLength",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge length"
+    },
+    {
+      "@id": "openagrinet:challengeValueType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value type"
+    },
+    {
       "@id": "openagrinet:challengeExpiresAt",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge expires at"

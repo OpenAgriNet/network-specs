@@ -195,9 +195,12 @@ On top of it this pack:
 
 - adds `applicant` and `application`;
 - pins `scheme.code` to `PM-KISAN`;
-- pins `challenge.method` and `challengeMethods[]` to `SMS_OTP`, and `challenge.value` to
-  **four digits** — PM-KISAN's OTP is four, PMFBY's is six, and the base allows four to
-  eight so each pack pins its own;
+- pins `challenge.method` and `challengeMethods[].method` to `SMS_OTP`, and
+  `challenge.value` to **four digits** — PM-KISAN's OTP is four, PMFBY's is six, and the
+  base allows four to eight so each pack pins its own;
+- pins `challengeMethods[].length` and `challengeIssued.length` to the same four, and both
+  `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
+  cannot drift apart;
 - refuses `challengeIssued.sentTo`, because PM-KISAN names no number;
 - narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters, and refuses
   twelve bare digits so an Aadhaar number cannot be sent in the registration slot;
@@ -243,12 +246,12 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile or Aadhaar lookup |
 | `applicant` | An ask by mobile or Aadhaar, both legs | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
 | `challenge.method`, `challenge.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
-| `challengeIssued` | `Direct` on `init` | Acknowledgement that an OTP was sent. Carries no secret and no destination |
+| `challengeIssued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `application.latestInstallmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
 | `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above |
 | `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme |
 | `application.ekyc` | Optional in `Direct` | `Done` or `Pending` |
-| `challengeMethods` | The catalog entry only | `[SMS_OTP]`. It is what a caller reads to know this desk challenges before answering. Never sent on a transaction |
+| `challengeMethods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
 with paths relative to the attributes object. Three buckets per action — `mustSend`,
@@ -258,7 +261,7 @@ that enforce it are structural and bite on every action:
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods` |
-| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.expiresAt` |
+| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.length`, `challengeIssued.valueType`, `challengeIssued.expiresAt` |
 | `status` | `challenge.method`, `challenge.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstallmentPaid`, `application.ekyc.code`, `application.blockers` |
 
 Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both legs need

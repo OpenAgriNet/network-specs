@@ -62,7 +62,7 @@ genuinely is a resource, and those packs stay on `resourceAttributes`.
 | `grievance` | what the farmer submitted: `category`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `status`, `filedOn`, `remark`, `remarkedOn` | the portal |
 | `challenge` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
-| `challengeIssued` | the portal's acknowledgement that it sent an OTP: `method` and `expiresAt`. No `sentTo` — the portal does not say where it sent it | the portal |
+| `challengeIssued` | the portal's acknowledgement that it sent an OTP: `method`, `length`, `valueType` and `expiresAt`. No `sentTo` — the portal does not say where it sent it | the portal |
 
 All five are used here. PM-KISAN guards both the lodge and the read with a four-digit
 OTP, which is why this pack has an `init` leg and the PMFBY pack does not: PMFBY's FGMS
@@ -333,7 +333,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused — see below |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date. Read from the portal on a case read; generated on a lodge. Also half the case selector |
 | `case.remark`, `case.remarkedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `remark` is bounded at 2000 characters |
-| `challengeMethods` | The catalog entry only | Pinned `[SMS_OTP]`. It says this desk challenges before it will act, so the sequence is `init` → `support`. It is also one of the two members that mark the entry as a declaration. Never sent on a transaction |
+| `challengeMethods` | The catalog entry only | One entry, pinned: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. It says this desk challenges before it will act, so the sequence is `init` → `support`, and it sizes the OTP input before any transaction exists. It is also one of the two members that mark the entry as a declaration. Never sent on a transaction |
 | `grievanceOptions` | The catalog entry only | The ten grievance types this desk accepts, each as a `code` with the portal's `name` and a `descriptor` written for the farmer. Held to the same `G001`–`G010` enum as `grievance.category.code`, so the published list and the enforced list cannot drift. `subCategories` is refused. Never sent on a transaction |
 
 A payload that carries `grievance` carries its `description`: `required` inside the block

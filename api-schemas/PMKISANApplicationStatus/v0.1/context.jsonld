@@ -4,7 +4,14 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "PMKISANApplicationStatus": "openagrinet:PMKISANApplicationStatus",
     "informationMode": "openagrinet:informationMode",
-    "challengeMethods": "openagrinet:challengeMethods",
+    "challengeMethods": {
+      "@id": "openagrinet:challengeMethods",
+      "@context": {
+        "method": "openagrinet:challengeMethod",
+        "length": "openagrinet:challengeLength",
+        "valueType": "openagrinet:challengeValueType"
+      }
+    },
     "provider": {
       "@id": "openagrinet:provider",
       "@context": "https://schema.beckn.io/Provider/v2.1/context.jsonld"
@@ -48,6 +55,8 @@
       "@id": "openagrinet:challengeIssued",
       "@context": {
         "method": "openagrinet:challengeMethod",
+        "length": "openagrinet:challengeLength",
+        "valueType": "openagrinet:challengeValueType",
         "expiresAt": "openagrinet:challengeExpiresAt"
       }
     }

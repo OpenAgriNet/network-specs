@@ -486,9 +486,10 @@ components:
         # ever be filled honestly. Both are refused rather than left permanently
         # absent -- the same treatment case.remark gets above, and for the same
         # reason: a field nobody can populate is a field that invites a caller
-        # to populate it wrongly. A payload carrying either is a caller who read
-        # challengeMethods as ["SMS_OTP"] somewhere it is not, and silently
-        # accepting it would let an unverifiable OTP look verified.
+        # to populate it wrongly. A payload carrying either is a caller who
+        # read an SMS_OTP entry in challengeMethods somewhere there is none,
+        # and silently accepting it would let an unverifiable OTP look
+        # verified.
         # Two members to delete if PMFBY ever adds a challenge to FGMS.
         - not:
             anyOf:
