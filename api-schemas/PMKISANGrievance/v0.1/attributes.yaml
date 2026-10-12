@@ -50,35 +50,81 @@ components:
         init: commitmentAttributes
         status: commitmentAttributes
         support: channels
-      # What each action must carry. Paths are relative to the attribute
-      # object. Nothing moves out of it: every field named here is where it is
-      # read, on every action.
+      # Where each field is used, by action and by direction, from the
+      # caller's side. Paths are relative to the attribute object. Nothing
+      # moves out of it: every field named here is where it is read, on every
+      # action, and x-beckn-container-by-action above gives the root to prefix.
+      #
+      # An allow-list. A path not named here is not used by this capability --
+      # which covers everything IdentifiedDescriptor contributes to category,
+      # subCategory, scheme and case.status: docs, mediaFile, thumbnailImage,
+      # longDesc, shortDesc. That is 72 of this pack's 116 resolvable paths and
+      # none of its behaviour. The same rule the response mapping already
+      # follows: name what is used, and the rest is not.
+      #
+      # @context and @type are required on every action and are not repeated
+      # under each one.
       #
       # init takes the registration number alone. The portal holds the farmer's
-      # mobile number and texts the OTP there, so no phone crosses the network
-      # on any leg of this scheme.
+      # mobile number and texts the OTP there, so no phone number crosses the
+      # network on any leg of this scheme.
       #
       # Both guarded legs carry a challenge. The status read is guarded because
       # it answers with every grievance on the registration number rather than
       # the one asked about, so an unguarded read would expose a farmer's whole
       # complaint history to anyone holding their number.
       #
-      # case.filedOn is required on status because it is half the case selector
-      # -- the portal returns every grievance on the identity and nothing else
-      # narrows it.
-      x-oan-required-by-action:
-        init: [enrolmentId]
+      # provider is a support-leg field. On a contract leg the same fact lives
+      # in commitments[].offer.provider, outside this object, so it is listed
+      # on support and nowhere else.
+      #
+      # refused is stated once rather than under each action: the not/required
+      # gates below are structural, so a refused path is refused on every
+      # action. It is restated here so a caller can see what will be rejected
+      # without reading the gates. case.remarkedOn is not in it: it is allowed,
+      # but only alongside case.remark, which is a pairing rule rather than a
+      # refusal.
+      x-oan-fields-by-action:
+        refused:     [grievance.subCategory, grievanceOptions.subCategories,
+                      case.status.name, challengeIssued.sentTo,
+                      provider.availableAt, provider.providerAttributes]
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeMethods, grievanceOptions.categories]
+        init:
+          mustSend:  [enrolmentId]
+          maySend:   [informationMode, scheme.code]
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeIssued.method, challengeIssued.expiresAt]
         support:
-          - enrolmentId
-          - grievance.category.code
-          - grievance.description
-          - challenge.method
-          - challenge.value
+          mustSend:  [enrolmentId,
+                      grievance.category.code, grievance.description,
+                      challenge.method, challenge.value]
+          maySend:   [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code]
+          # case.filedOn is not in the portal's reply either. It is the filing
+          # date the network recorded, and it is also half the case selector a
+          # later status read has to send back.
+          comesBack: [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code, scheme.name, enrolmentId,
+                      grievance.category.code, grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn]
         status:
-          - enrolmentId
-          - case.filedOn
-          - challenge.method
-          - challenge.value
+          # case.filedOn is sent, not just returned: the portal answers with
+          # every grievance on the registration number and nothing else narrows
+          # it, so the date is half the case selector.
+          mustSend:  [enrolmentId, case.filedOn,
+                      challenge.method, challenge.value]
+          maySend:   [informationMode, scheme.code]
+          # Three things do not come back. The per-record payload carries no
+          # category field, the portal does not repeat the handle per record,
+          # and Reg_No is matched against the number the caller sent and then
+          # dropped -- so no grievance.category, no case.ticketNo and no
+          # enrolmentId on a read.
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      grievance.description,
+                      case.status.code, case.filedOn,
+                      case.remark, case.remarkedOn]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMKISANGrievance

@@ -53,8 +53,26 @@ components:
       x-beckn-container-by-action:
         init: commitmentAttributes
         status: commitmentAttributes
-      # What each action must carry. Paths are relative to the attribute
-      # object.
+      # Where each field is used, by action and by direction, from the
+      # caller's side. Paths are relative to the attribute object. Nothing
+      # moves out of it: every field named here is where it is read, on both
+      # actions, and x-beckn-container-by-action above gives the root to
+      # prefix. Both legs ride on commitmentAttributes, so here that root
+      # never changes.
+      #
+      # An allow-list. A path not named here is not used by this capability --
+      # which covers everything IdentifiedDescriptor contributes to scheme,
+      # application.ekyc and application.blockers: docs, mediaFile,
+      # thumbnailImage, longDesc, shortDesc. The same rule the response
+      # mapping already follows: name what is used, and the rest is not.
+      #
+      # @context and @type are required on every action and are not repeated
+      # under each one.
+      #
+      # No support entry. Nothing is lodged here; this capability only reads.
+      #
+      # No provider entry either. There is no support leg, so provider is
+      # always read from commitments[].offer.provider, outside this object.
       #
       # init takes the identity alone. The portal texts the OTP to the mobile
       # it holds against that identity, so no phone number crosses the network
@@ -64,15 +82,41 @@ components:
       # date, instalment history and the reasons they have been refused. An
       # unguarded read would hand all of it to anyone holding a registration
       # number.
-      x-oan-required-by-action:
-        # No init entry, and status names no identifier. Both legs need one of
-        # enrolmentId or applicant, and this key takes flat all-of lists only.
-        # Writing either one here would be false for the other half of the
-        # callers, so the requirement lives in the gates below, which are the
-        # only place it can actually be enforced.
+      #
+      # refused is stated once rather than under each action: the not/required
+      # gates below are structural, so a refused path is refused on both. The
+      # applicant/enrolmentId exclusion is not in it -- either is accepted,
+      # just never both -- and neither is case.remarkedOn, which the refusal
+      # of the whole case band already covers.
+      x-oan-fields-by-action:
+        refused:     [grievance, case, grievanceOptions,
+                      application.ekyc.name, challengeIssued.sentTo,
+                      provider.availableAt, provider.providerAttributes]
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeMethods]
+        init:
+          # No mustSend. Both legs need exactly one identity -- enrolmentId, or
+          # applicant.mobile, or applicant.aadhaar -- and a flat list cannot
+          # say "one of these". Naming any one of them here would be false for
+          # the other callers, so the requirement lives in the gates below,
+          # which are the only place it can be enforced.
+          maySend:   [informationMode, scheme.code,
+                      enrolmentId, applicant.mobile, applicant.aadhaar]
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeIssued.method, challengeIssued.expiresAt]
         status:
-          - challenge.method
-          - challenge.value
+          mustSend:  [challenge.method, challenge.value]
+          maySend:   [informationMode, scheme.code,
+                      enrolmentId, applicant.mobile, applicant.aadhaar]
+          # enrolmentId comes back even when the ask was by mobile or by
+          # Aadhaar: it is the portal's own Reg_No, not an echo. applicant
+          # does not come back at all -- a mobile or an Aadhaar number sent as
+          # a lookup key is never returned.
+          comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
+                      application.registeredOn,
+                      application.latestInstallmentPaid,
+                      application.ekyc.code, application.blockers]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMKISANApplicationStatus/v0.1/context.jsonld"
         "@type": openagrinet:PMKISANApplicationStatus

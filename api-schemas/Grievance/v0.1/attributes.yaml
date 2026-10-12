@@ -306,7 +306,8 @@ components:
             Proof of identity, presented with the call it guards. Which calls
             those are is each pack's business: a desk that issues a challenge
             says so in challengeMethods and names the guarded actions in
-            x-oan-required-by-action.
+            x-oan-fields-by-action, where challenge.method and challenge.value
+            appear under those actions' mustSend.
 
             No correlator field exists and additionalProperties refuses one.
             The portals on this network bind a challenge to the identity it was

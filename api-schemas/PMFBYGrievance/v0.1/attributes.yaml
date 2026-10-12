@@ -49,19 +49,68 @@ components:
       x-beckn-container-by-action:
         status: commitmentAttributes
         support: channels
-      # What each action must carry. Paths are relative to the attribute
-      # object. Nothing moves out of it: every field named here is where it is
-      # read, on every action.
+      # Where each field is used, by action and by direction, from the
+      # caller's side. Paths are relative to the attribute object. Nothing
+      # moves out of it: every field named here is where it is read, on every
+      # action, and x-beckn-container-by-action above gives the root to prefix.
+      #
+      # An allow-list. A path not named here is not used by this capability --
+      # which covers everything IdentifiedDescriptor contributes to category,
+      # subCategory, scheme and case.status: docs, mediaFile, thumbnailImage,
+      # longDesc, shortDesc. That is 72 of this pack's 122 resolvable paths and
+      # none of its behaviour. The same rule the response mapping already
+      # follows: name what is used, and the rest is not.
+      #
+      # @context and @type are required on every action and are not repeated
+      # under each one.
+      #
       # No init entry. PMFBY publishes no challenge, so there is nothing to
       # request and the flow opens at support.
-      x-oan-required-by-action:
+      #
+      # provider is a support-leg field. On a contract leg the same fact lives
+      # in commitments[].offer.provider, outside this object, so it is listed
+      # on support and nowhere else.
+      #
+      # refused is stated once rather than under each action: the not/required
+      # gates below are structural, so a refused path is refused on every
+      # action. It is restated here so a caller can see what will be rejected
+      # without reading the gates.
+      x-oan-fields-by-action:
+        refused:     [challenge, challengeIssued,
+                      case.remark, case.remarkedOn, case.status.name,
+                      provider.availableAt, provider.providerAttributes]
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeMethods,
+                      grievanceOptions.categories, grievanceOptions.subCategories]
         support:
-          - enrolmentId
-          - applicantPhone
-          - cropYear
-          - season
-          - grievance.description
-        status: [applicantPhone, case.ticketNo]
+          mustSend:  [enrolmentId, applicantPhone, cropYear, season,
+                      grievance.description]
+          maySend:   [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code,
+                      grievance.category.code, grievance.subCategory.code,
+                      complaintDate,       # omit and the adapter stamps today
+                      receiptSourceId]     # omit and the adapter sends its own
+          # provider and case.filedOn are not in the portal's reply. The
+          # adapter asserts them -- filedOn from the request's own filing date,
+          # provider from the registry entry it routed to.
+          comesBack: [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code, scheme.name, enrolmentId,
+                      grievance.category.code, grievance.subCategory.code,
+                      grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn]
+        status:
+          mustSend:  [applicantPhone, case.ticketNo]
+          maySend:   [informationMode, scheme.code,
+                      enrolmentId]         # one of the four payload selectors
+          # The portal answers a case read with TicketCategoryName and no id,
+          # so the classification comes back as name here and as code on
+          # support. Same field, different member, by action.
+          comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
+                      grievance.category.name, grievance.subCategory.name,
+                      grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn,
+                      case.cropName]
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/api-schemas/PMFBYGrievance/v0.1/context.jsonld"
         "@type": openagrinet:PMFBYGrievance

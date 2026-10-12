@@ -4,6 +4,7 @@
   "informationMode": "Direct",
   "provider": { "id": "pmfby", "descriptor": { "name": "PMFBY Grievance Portal" } },
   "scheme": { "code": "PMFBY", "name": "Pradhan Mantri Fasal Bima Yojana" },
+  "enrolmentId": "KA2026KH00123456",
   "grievance": {
     "category": { "code": "3" },
     "subCategory": { "code": "10" },

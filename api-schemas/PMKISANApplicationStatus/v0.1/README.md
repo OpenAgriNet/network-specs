@@ -250,18 +250,26 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `application.ekyc` | Optional in `Direct` | `Done` or `Pending` |
 | `challengeMethods` | The catalog entry only | `[SMS_OTP]`. It is what a caller reads to know this desk challenges before answering. Never sent on a transaction |
 
-Per-action requirements live in `x-oan-required-by-action`, with paths relative to the
-attributes object:
+Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
+with paths relative to the attributes object. Three buckets per action — `mustSend`,
+`maySend`, `comesBack` — plus a pack-wide `refused` list stated once, because the gates
+that enforce it are structural and bite on every action:
 
-| action | required |
-|---|---|
-| `init` | — |
-| `status` | `challenge.method`, `challenge.value` |
+| action | mustSend | maySend | comesBack |
+|---|---|---|---|
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods` |
+| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.expiresAt` |
+| `status` | `challenge.method`, `challenge.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstallmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-Neither row names an identifier, and there is no `init` row at all. Both legs need one of
-`enrolmentId` or `applicant`, but `x-oan-required-by-action` takes flat all-of lists:
-naming either field there would be false for the other half of the callers. That
-requirement is a gate instead, which is the only place it can actually be enforced.
+Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both legs need
+one of `enrolmentId`, `applicant.mobile` or `applicant.aadhaar`, but a `mustSend` list is
+flat and all-of: naming any one of them there would be false for the other callers. They sit
+in `maySend` instead, and the requirement is a gate, which is the only place it can actually
+be enforced.
+
+It is an allow-list. A path not named above is not used by this capability. `enrolmentId`
+comes back on `status` even when the ask was by mobile or by Aadhaar — it is the portal's
+own `Reg_No`, not an echo — and `applicant` never comes back at all.
 
 ## The gates
 

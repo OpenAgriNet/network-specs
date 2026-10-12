@@ -93,7 +93,7 @@ As fields inside `grievance` each one has bounds the pack holds.
 
 ## Direction, not action
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `status` without change; there is no `init` leg, because PM-KISAN sends no OTP.
+Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `init`, `support` and `status` without change. There *is* an `init` leg here, because PM-KISAN does issue a challenge: a four-digit OTP guards the lodge and the read alike, so the sequence opens at `init`. PMFBY has no such leg — see "The five bands".
 
 One action is an exception, and the pack names it. On `support` the payload has no
 `Commitment` to sit on, so it attaches through `Support.channels` instead.
@@ -296,11 +296,11 @@ more: the portal issues one. See "The identifier, and what it is not good for".
 
 One thing moves between legs, and only one.
 
-**The attributes object itself moves.** On `status` it is
+**The attributes object itself moves.** On `init` and `status` it is
 `message.contract.commitments[].commitmentAttributes`. On `support` there is no
 contract to hang it from, so it becomes a support channel:
 `message.support.channels[0]`. `x-beckn-container-by-action` states this, and
-lists those two actions only — PM-KISAN has no `init` leg.
+lists all three actions.
 
 **Nothing moves out of it.** Every field named in this pack is read at the same path on
 every action, relative to whichever container the action uses. There is no
@@ -373,8 +373,6 @@ Where the portal publishes no status, the adapter infers one and emits `code` al
 - `Registered` — a lodge reply, which carries no status of any kind, that did not report failure.
 - `Replied` — a status record with a remark but no `GrievanceStatus`.
 - `UnderReview` — a status record with neither.
-
-**The absence of `name` is the signal.** A caller can tell the portal's own word from the network's inference by whether `name` is there, which the earlier design could not express.
 
 ## Case remark
 

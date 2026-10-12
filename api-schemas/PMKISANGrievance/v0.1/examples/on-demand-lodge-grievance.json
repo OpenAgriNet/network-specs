@@ -4,7 +4,7 @@
   "informationMode": "OnDemand",
   "provider": {
     "id": "pmkisan",
-    "descriptor": { "name": "PM-KISAN Grievance Portal" }
+    "descriptor": { "name": "PM-KISAN Portal" }
   },
   "scheme": { "code": "PM-KISAN", "name": "Pradhan Mantri Kisan Samman Nidhi" },
   "enrolmentId": "UP12345678A",
