@@ -143,19 +143,29 @@ components:
             every pack had put its own name on the same thing and then given it
             the same Beckn placement. A reader writes .enrolmentId once.
 
-            On support it is the orderId, the thing support is required
-            against, and it holds that meaning in both directions: the ask
-            sends it and on_support echoes it unchanged. Whatever handle the
-            portal issues in return does not go there -- it comes back in
-            case.ticketNo, because a ticket is not what the complaint is
-            against.
+            It stays in the attributes object on every leg of every pack,
+            which is what the paragraph above is worth. An earlier draft moved
+            it into Beckn's Support.orderId on the support action, and that
+            made one field readable at two paths depending on the leg.
+
+            Support.orderId is not used. It is not required -- the Support
+            schema requires nothing at all -- and it means "the order against
+            which support is required", while nothing here is an order: a
+            grievance is lodged with support, not confirm, and no Order is
+            ever composed. A consumer reading an order id that resolves to no
+            order is worse off than one reading nothing. The v1 adapter is
+            evidence rather than counter-evidence: it put the OTP in order_id
+            and carried the enrolment reference in a tag, so there is no
+            inherited placement to preserve either.
+
+            Whatever handle the portal issues in return is not this field --
+            it comes back in case.ticketNo, because a ticket is not what the
+            complaint is against.
 
             The IRI is the network's own and shared. The value spaces differ by
             scheme and the packs pin them, but an opaque enrolment reference is
             not a vocabulary anyone reasons over, so there is nothing to tell
             apart at the IRI level -- unlike the category codes, which are.
-          x-beckn-path:
-            support: message.support.orderId
           x-jsonld-id: "openagrinet:enrolmentId"
 
         grievance:
@@ -513,9 +523,9 @@ components:
             thing a farmer quotes back to ask about it. Travels in both
             directions.
 
-            Stays in the attributes on every leg -- no x-beckn-path moves it --
-            so on_support returns it here and leaves orderId holding the
-            enrolment reference it arrived with.
+            Returned here on on_support, beside the enrolmentId the ask
+            arrived with. Both stay in the attributes object; nothing moves
+            into the Beckn envelope.
 
             A pack whose portal issues no handle at all would refuse the field
             outright with not/required, rather than leave it defined and

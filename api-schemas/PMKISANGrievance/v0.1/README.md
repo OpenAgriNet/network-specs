@@ -96,11 +96,11 @@ As fields inside `grievance` each one has bounds the pack holds.
 Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `status` without change; there is no `init` leg, because PM-KISAN sends no OTP.
 
 One action is an exception, and the pack names it. On `support` the payload has no
-`Commitment` to sit on, so it attaches through `Support.channels`, and one field leaves
-the attributes object for a `Support` slot of its own: `enrolmentId` becomes `orderId`.
+`Commitment` to sit on, so it attaches through `Support.channels` instead.
 `x-beckn-container-by-action` on the root schema records which container each action
-uses; `x-beckn-path` on that field records where it goes. A field with no `x-beckn-path`
-never moves.
+uses. That is the whole of it: the container changes, the payload does not. No field
+moves out of the attributes object, so every field is read at the same path on every
+action — `enrolmentId` included.
 
 A second field exists only on that leg, and it is there so the request can be routed at
 all. The adapter picks the upstream call from a binding key, `participantId|capabilityCode`,
@@ -118,11 +118,23 @@ sends a stale one still reaches the right provider. `scheme.code` is not a subst
 names a scheme rather than a participant, and it reads `PM-KISAN` where the registry holds
 `pmkisan`.
 
-`Support.orderId` carries the registration number. The spec defines `orderId` as the thing "against which support is required", and on PM-KISAN that thing is the farmer's enrolment: the upstream takes exactly one reference, `IdentityNo`, and nothing in the API names a case, a policy or an application. The registration number is therefore both the identity the portal authenticates on and the subject of the complaint. One value, one slot — and the same slot PMFBY uses for its application number.
+`Support.orderId` is not used. It is not required — `Support` has no `required` array at
+all — and it means "the order against which support is required", while nothing here is
+an order: a grievance is lodged with `support`, not `confirm`, and no `Order` is ever
+composed. The registration number is the farmer's enrolment, which the upstream takes as
+its one reference, `IdentityNo`; nothing in the API names a case, a policy or an order.
+So `enrolmentId` rides in the attributes object on the `support` leg exactly as it does
+everywhere else. One value, one path — and the same path PMFBY uses for its application
+number.
 
-`enrolmentId` is not marked `no-echo`, where an earlier draft made it so. `orderId` is the provider's to fill on the way back, and returning the caller's own registration number over the same signed exchange it arrived on discloses nothing to anyone who did not already hold it. `no-log` and `no-trace` are the markings that protect it, and those are unconditional. The echo is confined to `on_support`: a `Contract` has no `orderId`, so nothing carries it back on a case read.
+The v1 adapter is evidence here rather than counter-evidence. It did populate `order_id`,
+but with the OTP, not the enrolment; the registration number travelled in a `reg-details`
+tag. There is no inherited placement to preserve, and v1's actual use of the slot — for a
+credential — is one this design forbids outright.
 
-The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: `no-log` and `no-trace` on `enrolmentId` hold just as firmly in `Support.orderId` as in the attributes object.
+`enrolmentId` is not marked `no-echo`, where an earlier draft made it so. Returning the caller's own registration number over the same signed exchange it arrived on discloses nothing to anyone who did not already hold it. `no-log` and `no-trace` are the markings that protect it, and those are unconditional. The echo is confined to `on_support` — a case read does not return it. Nothing in the schema forces that; it is the response mapping's rule, and the mapping is an allow-list, not a passthrough.
+
+The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings are properties of the field, not of the container it rides in: `no-log` and `no-trace` on `enrolmentId` hold just as firmly inside `Support.channels` as inside `commitmentAttributes`.
 
 ## The two gates
 
@@ -183,7 +195,7 @@ echoed back.
 | `GrievanceStatus` | `case.status` | the portal returns it; the legacy direct client's model drops it, so it is missing from any sample taken there. See "Case status" |
 | `OfficerReply` | `case.remark` | the network does not adopt the portal's field name; see "Case remark" |
 | `OfficeReplyDate` | `case.remarkedOn` | an IST calendar date |
-| `Reg_No` | *dropped* | the registration number the farmer sent. A `Contract` has no `orderId` to return it in, and it is not surfaced as an attribute either: it is matched against the number the caller sent, then discarded. |
+| `Reg_No` | *dropped* | the registration number the farmer sent. Nothing structural stops it coming back — `enrolmentId` is an attribute on every leg — so this is a deliberate mapping rule: it is matched against the number the caller sent, then discarded. v1's `identity-no` echo on a case read is not carried into v2. |
 | `Farmer_Name` | *dropped* | personal data |
 | `Father_Name` | *dropped* | personal data |
 | `Gender` | *dropped* | personal data |
@@ -282,7 +294,7 @@ more: the portal issues one. See "The identifier, and what it is not good for".
 
 ## Where each field travels
 
-Two things move between legs, and they are easy to confuse.
+One thing moves between legs, and only one.
 
 **The attributes object itself moves.** On `status` it is
 `message.contract.commitments[].commitmentAttributes`. On `support` there is no
@@ -290,13 +302,13 @@ contract to hang it from, so it becomes a support channel:
 `message.support.channels[0]`. `x-beckn-container-by-action` states this, and
 lists those two actions only — PM-KISAN has no `init` leg.
 
-**One field moves out of it.** `x-beckn-path` relocates `enrolmentId` into Beckn's own
-`orderId` slot, so a client that has never read this pack still sees a support request
-with a subject on it.
+**Nothing moves out of it.** Every field named in this pack is read at the same path on
+every action, relative to whichever container the action uses. There is no
+`x-beckn-path` anywhere in the family.
 
 | Field | on `support` | on `status` |
 |---|---|---|
-| `enrolmentId` | `support.orderId` | in attributes — `x-beckn-path` names no status slot |
+| `enrolmentId` | in attributes (`channels[0]`) | in attributes (`commitmentAttributes`) |
 | `provider` | in attributes (`channels[0]`) | absent — read `commitments[].offer.provider`, which is the same shape |
 
 Everything else stays inside the attributes object wherever that object happens
@@ -315,7 +327,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `provider` | `support` legs | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from |
-| `enrolmentId` | Every ask | The farmer's PM-KISAN registration number — both the identity the portal authenticates on and the enrolment the complaint is against. On `support` it is `orderId` |
+| `enrolmentId` | Every ask | The farmer's PM-KISAN registration number — both the identity the portal authenticates on and the enrolment the complaint is against. Stays in the attributes object on every leg, `support` included |
 | `grievance.category` | Ask, when lodging | One of ten published codes, `G001`–`G010`. Echoed on a lodge response; absent from a case read, whose per-record payload carries no category field |
 | `grievance.description` | Ask, when lodging; returned on a case read | The farmer's account of the problem, minimum ten characters |
 | `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused — see below |
@@ -396,7 +408,7 @@ unconditional.
 
 `enrolmentId` is `no-log` and `no-trace` without exception: it is never written to a log, attached to a trace, or included in an error body. It is a bearer key as much as an identifier — anyone holding a registration number can read every remark recorded against it — so those two markings are the ones doing the work.
 
-It is **not** `no-echo`, and the distinction is deliberate. Returning it in `Support.orderId` on `on_support` gives it back to the caller who sent it, over the same signed exchange, and tells them nothing new. That is the only place it comes back.
+It is **not** `no-echo`, and the distinction is deliberate. Returning it on `on_support` gives it back to the caller who sent it, over the same signed exchange, and tells them nothing new. That is the only place it comes back: a case read drops it, by mapping rule rather than by structure.
 
 The v1 adapter's behaviour is still forbidden. It returns `identity-no` and `lookup-type` tags **on a case read**, where the caller asked about an identity and the response re-publishes it as loose tags outside any slot the spec defines. A v2 adapter must not carry that over: on `status` the registration number is consumed, not surfaced. The portal returns it with every record; it is matched against the number the caller sent and then discarded. It appears in no attribute and in no identifier — an earlier draft keyed the resource id on it, which would have put the registration number in a public, cacheable identifier rather than in a field the caller supplied.
 

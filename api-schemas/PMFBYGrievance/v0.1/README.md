@@ -95,13 +95,13 @@ could recover the pair. As fields inside `grievance` each one has bounds the pac
 Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the ask; `Direct` is an answer carrying a real case. The same attributes therefore serve `support` and `status` without change.
 
 One action is an exception, and the pack names it. On `support` the payload has no
-`Commitment` to sit on, so it attaches through `Support.channels`, and one field leaves
-the attributes object for a `Support` slot of its own: `enrolmentId` becomes `orderId`.
+`Commitment` to sit on, so it attaches through `Support.channels` instead.
 `x-beckn-container-by-action` on the root schema records which container each action
-uses; `x-beckn-path` on that field records where it goes. A field with no `x-beckn-path`
-never moves.
+uses. That is the whole of it: the container changes, the payload does not. No field
+moves out of the attributes object, so every field is read at the same path on every
+action — `enrolmentId` included.
 
-A second field exists only on that leg, and it is there so the request can be routed at
+One field exists only on that leg, and it is there so the request can be routed at
 all. The adapter picks the upstream call from a binding key, `participantId|capabilityCode`,
 and reads both halves out of the payload. On every other action the payload composes a
 `Contract`, so the participant is read from `commitments[].offer.provider.id`. A
@@ -117,9 +117,17 @@ sends a stale one still reaches the right provider. `scheme.code` is not a subst
 names a scheme rather than a participant, and it reads `PMFBY` where the registry holds
 `pmfby`.
 
-`Support.orderId` means the same thing in both directions. The spec defines it as the thing "against which support is required", which is an ask-side meaning, and nothing about a reply changes what the complaint is against — so `on_support` echoes the enrolment back unchanged rather than overwriting it. The ticket the portal issues is a different thing and lives in a different place: `case.ticketNo`. This is the same rule PM-KISAN follows, where `orderId` is the registration number on both legs and the portal's own `GrievanceID` rides in `case.ticketNo`. One field, one meaning, both schemes.
+`Support.orderId` is not used. It is not required — `Support` has no `required` array at
+all — and it means "the order against which support is required", while nothing here is
+an order: a grievance is lodged with `support`, not `confirm`, and no `Order` is ever
+composed. An order id that resolves to no order leaves a consumer worse off than an
+absent one. So `enrolmentId` stays in the attributes object on the `support` leg exactly
+as it does everywhere else, and `on_support` echoes it back unchanged — nothing about a
+reply changes what the complaint is against. The ticket the portal issues is a different
+thing and lives in a different place: `case.ticketNo`. PM-KISAN follows the same rule.
+One field, one path, both schemes.
 
-The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings travel with the field wherever it sits: a `no-echo` field is still `no-echo` in a `Support` slot.
+The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings are properties of the field, not of the container it rides in: a `no-echo` field is still `no-echo` inside `Support.channels`.
 
 ## The two gates
 
@@ -277,23 +285,23 @@ portal does publish and a generic grievance base has no reason to define.
 
 ## Where each field travels
 
-Two things move between legs, and they are easy to confuse.
+One thing moves between legs, and only one.
 
 **The attributes object itself moves.** On `status` it is
 `message.contract.commitments[].commitmentAttributes`. On `support` there is no
 contract to hang it from, so it becomes a support channel:
 `message.support.channels[0]`. `x-beckn-container-by-action` states this.
 
-**One field moves out of it.** `x-beckn-path` relocates `enrolmentId` into Beckn's own
-`orderId` slot, so a client that has never read this pack still sees a support request
-with a subject on it.
+**Nothing moves out of it.** Every field named in this pack is read at the same path on
+every action, relative to whichever container the action uses. There is no
+`x-beckn-path` anywhere in the family.
 
 There is no `init` column. PMFBY publishes no challenge, so the flow opens at `support`
 and the only contract leg is `status`.
 
 | Field | on `support` | on `status` |
 |---|---|---|
-| `enrolmentId` | `support.orderId` | in attributes — `x-beckn-path` names no status slot |
+| `enrolmentId` | in attributes (`channels[0]`) | in attributes (`commitmentAttributes`) |
 | `provider` | in attributes (`channels[0]`) | absent — read `commitments[].offer.provider`, which is the same shape |
 
 Everything else stays inside the attributes object wherever that object happens to be —
@@ -313,7 +321,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions |
 | `provider` | `support` legs | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from |
 | `applicantPhone` | Every ask | Ten-digit mobile of the farmer. The portal files it on the ticket and matches a ticket to the phone it was filed from, so reading a case needs it too. Nothing proves the caller holds it — PMFBY asks for no OTP. Never echoed |
-| `enrolmentId` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns. Carried as `orderId` on `support` |
+| `enrolmentId` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns. Stays in the attributes object on every leg, `support` included |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid`. They qualify the enrolment, not the complaint, so they sit at the top |
 | `grievance.category`, `grievance.subCategory` | Ask, when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
 | `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |

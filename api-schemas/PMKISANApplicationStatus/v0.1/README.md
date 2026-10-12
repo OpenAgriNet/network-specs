@@ -32,9 +32,9 @@ A status read is a promise the portal makes about one farmer's registration, not
 catalogable thing of value, so it does not sit on `resourceAttributes`. Unlike the
 grievance pack there is **no `support` leg**: nothing is being filed, so no `Support`
 channel is ever composed and no field moves out of the attributes object.
-`x-beckn-container-by-action` therefore lists `init` and `status` and nothing else. The one
-`x-beckn-path` the base carries — on `enrolmentId` — is keyed to `support`, so with no
-`support` leg here it never fires: nothing moves out of the attributes object.
+`x-beckn-container-by-action` therefore lists `init` and `status` and nothing else. No
+field in this family carries an `x-beckn-path` at all, so there is nothing to fire:
+every field is read at the same path on both legs.
 
 `Commitment.resources` carries one thin pointer to the catalog entry
 (`res:pmkisan:application-status`). It is fixed for the provider and never minted per
@@ -46,16 +46,17 @@ farmer: a registration number must not end up in a public, cacheable identifier.
 
 | band | holds | written by |
 |---|---|---|
-| top level | what is being asked and under which scheme: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller, except `enrolmentId` |
-| `applicant` | who to look up: exactly one of `registration`, `mobile` or `aadhaar` | the caller |
+| top level | what is being asked and under which scheme: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
+| `applicant` | who to look up when the caller has no registration number: exactly one of `mobile` or `aadhaar` | the caller |
 | `application` | what the portal holds: `registeredOn`, `latestInstallmentPaid`, `ekyc`, `blockers` | the portal |
 | `challenge` | the OTP presented on the read | the caller |
 | `challengeIssued` | acknowledgement that one was sent | the portal |
 
-`enrolmentId` is the exception to the top-level rule, and it is the only one: here it is
-**answer-only**. The caller names the farmer through `applicant`, which may be a mobile or
-an Aadhaar number rather than a registration; the portal resolves it and returns the
-registration number it resolved to. See "Identity is named, not sniffed".
+`enrolmentId` travels in both directions here. A caller who holds the registration number
+sends it; a caller who holds only a mobile or an Aadhaar number sends `applicant` instead,
+and the portal resolves it and returns the registration number under `enrolmentId`. The
+two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
+sniffed".
 
 `challengeMethods` sits in no band. It is published on the catalog entry and never sent on
 a payload.
@@ -70,8 +71,8 @@ The sequence is two calls:
 
 | | action | the caller sends | the portal returns |
 |---|---|---|---|
-| 1 | `init` | `applicant` | `challengeIssued` — an OTP has gone to the number the registration is held under |
-| 2 | `status` | `applicant` + `challenge` | `enrolmentId` + `application` |
+| 1 | `init` | `enrolmentId` **or** `applicant` | `challengeIssued` — an OTP has gone to the number the registration is held under |
+| 2 | `status` | the same identifier + `challenge` | `enrolmentId` + `application` |
 
 The OTP acknowledgement is `OnDemand`, not `Direct`, even though it comes back from the
 portal. It carries no record — it says a challenge was sent and nothing else — and `Direct`
@@ -84,8 +85,8 @@ flow can spend it here.
 
 ## Identity is named, not sniffed
 
-`applicant` carries exactly one identifier, and the member it is written in says what kind
-it is. This is the pack's main correction to the upstream behaviour.
+Every ask carries exactly one identifier, and the slot it is written in says what kind it
+is. This is the pack's main correction to the upstream behaviour.
 
 The portal infers what kind of identifier it has been handed from the *shape* of the
 value: ten digits beginning 6–9 is a mobile number, twelve digits is an Aadhaar number,
@@ -93,29 +94,44 @@ anything else is a registration number. A registration number that happens to be
 digits starting with a 7 therefore becomes a phone lookup, silently, and returns either
 nothing or somebody else's record. Nothing upstream reports that this happened.
 
-So the kind is named outright, each member carries its own shape rule, and the adapter
-sends the named type rather than letting the portal guess:
+So the kind is named outright, each slot carries its own shape rule, and the adapter sends
+the named type rather than letting the portal guess:
 
-| member | shape the pack enforces | sent upstream as |
+| slot | shape the pack enforces | sent upstream as |
 |---|---|---|
-| `registration` | ASCII alphanumeric, up to 20 | `Ben_id` |
-| `mobile` | `^[6-9][0-9]{9}$` | `Mobile` |
-| `aadhaar` | `^[0-9]{12}$` | `Aadhar` — the upstream's spelling, not ours |
+| `enrolmentId` | ASCII alphanumeric, up to 20; twelve bare digits refused | `Ben_id` |
+| `applicant.mobile` | `^[6-9][0-9]{9}$` | `Mobile` |
+| `applicant.aadhaar` | `^[0-9]{12}$` | `Aadhar` — the upstream's spelling, not ours |
 
-`registration` has no digit rule on purpose. The portal treats anything that is not a
-mobile or an Aadhaar number as one of these, and a registration that happens to be ten
-digits is exactly the case this member exists to carry safely.
+A registration number is `enrolmentId` — the same field under the same name as on the
+grievance packs, so a reader writes `.enrolmentId` once for the whole family rather than
+learning a second name per scheme.
 
-One member per kind, rather than a kind field beside a generic value. A pair has to be
+`enrolmentId` has no digit rule on purpose. The portal treats anything that is not a
+mobile or an Aadhaar number as a registration, and a registration that happens to be ten
+digits is exactly the case this slot exists to carry safely. It does refuse twelve bare
+digits: that is an Aadhaar number's shape, a caller may send this field, and the upstream
+would take the value as `Ben_id` and find nothing. An Aadhaar lookup belongs in
+`applicant.aadhaar`.
+
+The observed form is two letters and nine digits — `BR295454592` is the value v1's own
+test fixtures use — and v1 validates it as `/^[A-Z0-9]+$/i`, which is the pattern pinned
+here. Whether two-plus-nine holds for every state is not confirmed, so no length rule is
+imposed.
+
+One slot per kind, rather than a kind field beside a generic value. A pair has to be
 checked against itself — otherwise a caller declares a mobile and sends twelve letters —
-and that check is a gate that can be written wrong. Named members make the mismatch
+and that check is a gate that can be written wrong. Named slots make the mismatch
 unrepresentable instead of merely refused, let each identifier carry its own handling
 rules (an Aadhaar number is not governed like a phone number), and give each a stable IRI
 rather than one whose meaning depends on a sibling.
 
-Exactly one is enforced by `oneOf` over the three `required` branches, which this
-validator does evaluate: two identifiers match two branches and fail, none matches zero
-and fails. `additionalProperties: false` closes off anything else.
+Within `applicant`, exactly one of `mobile` and `aadhaar` is enforced by `oneOf` over the
+two `required` branches, which this validator does evaluate: two identifiers match two
+branches and fail, none matches zero and fails. `additionalProperties: false` closes off
+anything else. `enrolmentId` and `applicant` are held apart by a top-level gate — an
+`anyOf` of two `not`/`required` members — and a further gate requires that every payload
+carry at least one of the slots that makes it about something.
 
 **Aadhaar is accepted here and refused on the grievance pack.** The difference is real,
 not an oversight: this is a read of the farmer's own record behind an OTP, where the
@@ -183,7 +199,10 @@ On top of it this pack:
   **four digits** — PM-KISAN's OTP is four, PMFBY's is six, and the base allows four to
   eight so each pack pins its own;
 - refuses `challengeIssued.sentTo`, because PM-KISAN names no number;
-- narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters.
+- narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters, and refuses
+  twelve bare digits so an Aadhaar number cannot be sent in the registration slot;
+- holds `enrolmentId` and `applicant` mutually exclusive, and requires that every payload
+  carry at least one slot that says what it is about.
 
 `ekyc` and each entry in `blockers` compose `IdentifiedDescriptor` from the Agriculture
 Resource schema, the established idiom for a governed `code` paired with a display `name`.
@@ -221,10 +240,10 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real record |
 | `scheme` | Always | Pinned to `PM-KISAN` |
 | `provider` | Optional | Beckn `Provider` reference. Both legs compose a `Contract`, so the adapter reads the participant from `commitments[].offer.provider.id` and this is advisory |
-| `applicant` | Every ask, both legs | Which farmer to look up. Exactly one of `registration`, `mobile` or `aadhaar`; the member names the kind |
+| `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile or Aadhaar lookup |
+| `applicant` | An ask by mobile or Aadhaar, both legs | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
 | `challenge.method`, `challenge.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
 | `challengeIssued` | `Direct` on `init` | Acknowledgement that an OTP was sent. Carries no secret and no destination |
-| `enrolmentId` | `Direct` on `status` | The registration number the portal resolved the lookup to. **Answer-only** — never sent by the caller on this pack |
 | `application.latestInstallmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
 | `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above |
 | `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme |
@@ -236,29 +255,42 @@ attributes object:
 
 | action | required |
 |---|---|
-| `init` | `applicant` |
-| `status` | `applicant`, `challenge.method`, `challenge.value` |
+| `init` | — |
+| `status` | `challenge.method`, `challenge.value` |
+
+Neither row names an identifier, and there is no `init` row at all. Both legs need one of
+`enrolmentId` or `applicant`, but `x-oan-required-by-action` takes flat all-of lists:
+naming either field there would be false for the other half of the callers. That
+requirement is a gate instead, which is the only place it can actually be enforced.
 
 ## The gates
 
-Two top-level `anyOf` members, both tested against the real validator:
+Three top-level members, all tested against the real validator:
 
 1. **A `Direct` payload carries a record.** Either `informationMode` is `OnDemand`, or
    `application` is present. An answer with nothing in it is not an answer.
-2. **Every payload is about something** — one of `applicant`, `application`,
-   `challengeIssued` or `challengeMethods` must be present. This is what stops a payload
-   that is a scheme name and nothing else.
+2. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
+   — an `anyOf` of two `not`/`required` members. Both at once names the same farmer twice
+   with no rule for which wins, and it is also the shape a response would take if it
+   leaked an Aadhaar number back beside the registration it resolved to.
+3. **Every payload is about something** — one of `enrolmentId`, `applicant`,
+   `application`, `challengeIssued` or `challengeMethods` must be present. This is what
+   stops a payload that is a scheme name and nothing else.
 
-There used to be a third, checking a declared identifier type against the value beside it.
-The named members removed the need for it: there is no pair left to disagree.
+There used to be one more, checking a declared identifier type against the value beside
+it. The named slots removed the need for it: there is no pair left to disagree.
 
 ## Privacy
 
-Whichever member `applicant` carries is `no-log` and `no-trace` without exception, is
-never echoed in a response, and never appears in an error body. It is a bearer key as much
-as an identifier: anyone holding one can read the record. Where the portal resolves it,
-the resolved registration number comes back as `enrolmentId` and the identifier the caller
-sent does not.
+Every identifier here — `enrolmentId` and whichever member `applicant` carries — is
+`no-log` and `no-trace` without exception, and never appears in an error body. Each is a
+bearer key as much as an identifier: anyone holding one can read the record.
+
+`mobile` and `aadhaar` are never echoed in a response. `enrolmentId` is, and that is the
+single deliberate exception: it goes back to the caller who sent it, or comes back as the
+portal's resolution of a mobile or Aadhaar lookup. The identifier the caller sent under
+`applicant` is never returned, and the exclusivity gate makes returning both
+unrepresentable rather than merely discouraged.
 
 `aadhaar` is held to a stricter rule still. An Aadhaar number, and any token derived from
 one, must never be logged, traced, or returned in any response or error body, and must not

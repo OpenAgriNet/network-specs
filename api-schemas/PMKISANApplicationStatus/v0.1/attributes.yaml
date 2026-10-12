@@ -35,13 +35,15 @@ info:
     Direction is carried by informationMode, never by the Beckn action.
     OnDemand is the ask, Direct is an answer carrying a real record.
 
-    Identity is declared, never sniffed. The upstream takes a registration
+    Identity is named, never sniffed. The upstream takes a registration
     number, a mobile number or an Aadhaar number in one field and decides which
     it got by looking at the value; a mistyped registration number that happens
-    to be ten digits therefore becomes a lookup of a different kind. applicant
-    names the kind in the member itself -- registration, mobile or aadhaar,
-    exactly one -- so the wrong shape is a validation error at the network edge
-    instead of a silent change of meaning.
+    to be ten digits therefore becomes a lookup of a different kind. Here the
+    slot names the kind: a registration number is enrolmentId, the same field
+    under the same name as on the grievance pack, and a mobile or an Aadhaar
+    number is applicant.mobile or applicant.aadhaar. Exactly one of the two
+    slots, never both. The wrong shape is a validation error at the network
+    edge instead of a silent change of meaning.
 
 components:
   schemas:
@@ -63,9 +65,12 @@ components:
       # unguarded read would hand all of it to anyone holding a registration
       # number.
       x-oan-required-by-action:
-        init: [applicant]
+        # No init entry, and status names no identifier. Both legs need one of
+        # enrolmentId or applicant, and this key takes flat all-of lists only.
+        # Writing either one here would be false for the other half of the
+        # callers, so the requirement lives in the gates below, which are the
+        # only place it can actually be enforced.
         status:
-          - applicant
           - challenge.method
           - challenge.value
       x-jsonld:
@@ -206,16 +211,33 @@ components:
                 - type: string
                   pattern: "^[A-Za-z0-9]+$"
                   maxLength: 20
+                # Aadhaar is refused here as it is on the grievance pack:
+                # twelve bare digits is its shape, a caller may send this
+                # field, and the upstream would take the value as Ben_id and
+                # find nothing. An Aadhaar lookup goes in applicant.aadhaar.
+                - not:
+                    pattern: "^[0-9]{12}$"
               description: >
-                The PM-KISAN registration number, read back from the portal's
-                Reg_No.
+                The PM-KISAN registration number. Sent by the caller who knows
+                it, and read back from the portal's Reg_No on an answer.
 
-                Answer-only on this pack, and that is the whole difference from
-                the grievance pack, where it is what the caller sends. Here the
-                caller sends applicant, which may be a mobile or an Aadhaar
-                number instead; the portal resolves whichever it got to one
-                registration and names it here. A caller that looked the farmer
-                up by mobile learns the registration number from this field.
+                It is the same field, under the same name, as on the grievance
+                pack. A caller who has a registration number sends it here on
+                both; a caller who has only a mobile or an Aadhaar number sends
+                applicant instead, and the portal resolves whichever it got to
+                one registration and names it here. So a lookup by mobile
+                learns the registration number from this field and can carry it
+                straight to a grievance.
+
+                Sent upstream as Values with Types set to Ben_id. The observed
+                form is two letters and nine digits -- BR295454592 is the value
+                v1's own test fixtures use -- and v1 validates it as
+                /^[A-Z0-9]+$/i, which is the pattern pinned above. Whether
+                two-plus-nine holds for every state is not confirmed, so it is
+                not pinned, and no length rule is imposed: the portal treats
+                anything that is not a mobile or an Aadhaar number as one of
+                these, so a registration that happens to be ten digits is
+                exactly the case this field must carry safely.
 
                 Echoing it is deliberate and is not the same disclosure as
                 echoing a name or an address: the caller has just proven an OTP
@@ -229,15 +251,23 @@ components:
               type: object
               additionalProperties: false
               description: >
-                Which farmer to look up. Exactly one identifier, named by the
-                member it is written in.
+                Which farmer to look up when the caller does not hold their
+                registration number. Exactly one identifier, named by the
+                member it is written in: mobile or aadhaar.
+
+                A caller who does hold the registration number sends
+                enrolmentId instead, which is where that value lives on every
+                pack and every leg. applicant and enrolmentId are therefore
+                mutually exclusive, and the first gate below refuses both at
+                once -- a payload naming the same farmer twice has no rule for
+                which name wins.
 
                 The upstream takes a single Values field and infers the kind
                 from the shape of what it is given -- ten digits beginning 6 to
                 9 is a mobile number, twelve digits is an Aadhaar number,
                 anything else is a registration. A registration number that
                 happens to be ten digits is therefore read as a phone number,
-                and the farmer is told no record exists. Naming the member says
+                and the farmer is told no record exists. Naming the slot says
                 the kind outright, and the adapter sends it as Types rather
                 than letting the portal guess.
 
@@ -262,29 +292,9 @@ components:
                 looks to the portal like a different farmer.
               x-jsonld-id: "openagrinet:applicant"
               oneOf:
-                - required: [registration]
                 - required: [mobile]
                 - required: [aadhaar]
               properties:
-                registration:
-                  type: string
-                  maxLength: 20
-                  pattern: "^[A-Za-z0-9]+$"
-                  x-oan-pii:
-                    class: identity
-                    handling: [no-log, no-trace, no-echo]
-                    note: >
-                      The farmer's PM-KISAN registration number. Not echoed on
-                      the request leg; where the portal resolves a lookup to a
-                      registration number, that number comes back as
-                      enrolmentId instead.
-                  description: >
-                    PM-KISAN registration number. Sent upstream as Types
-                    Ben_id. No digit rule: the portal treats anything that is
-                    not a mobile or an Aadhaar number as one of these, and a
-                    registration that happens to be ten digits is exactly the
-                    case this member exists to carry safely.
-                  x-jsonld-id: "openagrinet:pmkisanRegistration"
                 mobile:
                   type: string
                   pattern: "^[6-9][0-9]{9}$"
@@ -499,9 +509,22 @@ components:
                   enum: [OnDemand]
             - required: [application]
 
+        # One identifier slot, not two. A caller who holds the registration
+        # number sends enrolmentId; one who holds only a mobile or an Aadhaar
+        # number sends applicant. Both at once names the same farmer twice with
+        # no rule for which wins, and it is also how a response would leak an
+        # Aadhaar number back beside the registration it resolved to.
+        - anyOf:
+            - not:
+                required: [applicant]
+            - not:
+                required: [enrolmentId]
+
         # Every payload must be about something.
         - anyOf:
-            - required: [applicant]         # asking -- for an OTP, or for the record
+            - required: [applicant]         # asking by mobile or Aadhaar
+            - required: [enrolmentId]       # asking by registration, and the
+                                            # answer's resolution of any ask
             - required: [application]       # answering with the record
             - required: [challengeIssued]   # acknowledging an OTP, which must
                                             # echo nothing else

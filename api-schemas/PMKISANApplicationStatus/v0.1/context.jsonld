@@ -17,7 +17,6 @@
     "applicant": {
       "@id": "openagrinet:applicant",
       "@context": {
-        "registration": "openagrinet:pmkisanRegistration",
         "mobile": "openagrinet:mobileNumber",
         "aadhaar": "openagrinet:aadhaarNumber"
       }

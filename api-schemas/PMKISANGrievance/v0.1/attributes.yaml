@@ -31,8 +31,8 @@ info:
     four-digit OTP guards both the lodge and the read, so init asks for one
     before either can happen. init and status ride on commitmentAttributes;
     support rides on channels.
-    x-beckn-container-by-action says which container each action uses, and the
-    per-field x-beckn-path says where a field that moves ends up.
+    x-beckn-container-by-action says which container each action uses. No
+    field moves out of the attributes object, so there is no x-beckn-path.
 
     Nothing is hoisted into a Beckn descriptor. An earlier draft put the
     category and the complaint text there, which placed them outside the object
@@ -51,8 +51,8 @@ components:
         status: commitmentAttributes
         support: channels
       # What each action must carry. Paths are relative to the attribute
-      # object; enrolmentId is named here under its attribute name, not the
-      # message.support.orderId it moves to under x-beckn-path.
+      # object. Nothing moves out of it: every field named here is where it is
+      # read, on every action.
       #
       # init takes the registration number alone. The portal holds the farmer's
       # mobile number and texts the OTP there, so no phone crosses the network
@@ -272,10 +272,17 @@ components:
                 - not:
                     pattern: "^[0-9]{12}$"
               description: >
-                The enrolment the grievance is about; on support it is the
-                orderId. For PM-KISAN that is the scheme registration number,
-                which goes upstream as IdentityNo with Type set to
-                Reg_No_Details.
+                The enrolment the grievance is about. For PM-KISAN that is
+                the scheme registration number, which goes upstream as
+                IdentityNo with Type set to Reg_No_Details. It rides in the
+                attributes object on every leg, support included;
+                Support.orderId is not used.
+
+                The observed form is two letters and nine digits -- BR295454592
+                is the value v1's own test fixtures use -- and v1 validates it
+                as /^[A-Z0-9]+$/i, which is the pattern pinned above. Whether
+                two-plus-nine holds for every state is not confirmed, so it is
+                not pinned.
 
                 It is also the identity the portal authenticates on, because
                 PM-KISAN has no separate reference for either -- the upstream

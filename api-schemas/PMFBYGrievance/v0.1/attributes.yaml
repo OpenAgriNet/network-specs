@@ -26,13 +26,13 @@ info:
     OnDemand is the ask, Direct is an answer carrying a real case. There is no
     init: PMFBY's grievance service issues no challenge, so the flow opens at
     support and the only contract leg is status. On support the payload
-    attaches through channels instead, and enrolmentId moves into the Support
-    object itself. The channel also carries provider, which exists for that
+    attaches through channels instead; nothing moves out of it into the
+    Support object. The channel also carries provider, which exists for that
     action alone: a SupportAction composes no Contract, so the adapter has
     nowhere else to read the provider from. The grievance is lodged with
     support, not confirm, so no confirm entry appears below.
-    x-beckn-container-by-action says which container each action uses, and the
-    per-field x-beckn-path says where a field that moves ends up.
+    x-beckn-container-by-action says which container each action uses. No
+    field moves out of the attributes object, so there is no x-beckn-path.
 
     Nothing is hoisted into a Beckn descriptor. An earlier draft put the
     category and the complaint text there, which placed them outside the object
@@ -50,8 +50,8 @@ components:
         status: commitmentAttributes
         support: channels
       # What each action must carry. Paths are relative to the attribute
-      # object; enrolmentId is named here under its attribute name, not the
-      # message.support.orderId it moves to under x-beckn-path.
+      # object. Nothing moves out of it: every field named here is where it is
+      # read, on every action.
       # No init entry. PMFBY publishes no challenge, so there is nothing to
       # request and the flow opens at support.
       x-oan-required-by-action:
@@ -295,10 +295,11 @@ components:
                   minLength: 10
                   maxLength: 30
               description: >
-                The enrolment the grievance is about; on support it is the
-                orderId. For PMFBY that is the crop insurance application
-                number, which goes upstream as applicationNo and comes back
-                as ApplicationNo on a case read.
+                The enrolment the grievance is about. For PMFBY that is the
+                crop insurance application number, which goes upstream as
+                applicationNo and comes back as ApplicationNo on a case read.
+                It rides in the attributes object on every leg, support
+                included; Support.orderId is not used.
 
                 The bounds are a sanity range around the observed form -- a
                 state code, a crop year, a season marker and a serial -- not a

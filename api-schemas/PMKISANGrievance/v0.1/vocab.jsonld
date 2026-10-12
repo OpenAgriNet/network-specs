@@ -23,6 +23,42 @@
       "rdfs:comment": "Which challenge a caller must pass before a grievance can be filed. Non-empty names the mechanism and means the challenge comes first; empty means the portal issues none. Stated on a catalog entry and on no transaction payload."
     },
     {
+      "@id": "openagrinet:grievanceOptions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance options",
+      "rdfs:comment": "The choices a caller may make on this desk: the values grievance.category.code and, where the desk classifies at two levels, grievance.subCategory.code may take. Stated on a catalog entry and on no transaction payload."
+    },
+    {
+      "@id": "openagrinet:grievanceCategoryOption",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance category option",
+      "rdfs:comment": "One category a grievance may be filed under on this desk. Published, never sent: what is sent is grievance.category, a Descriptor carrying the code named here."
+    },
+    {
+      "@id": "openagrinet:grievanceSubCategoryOption",
+      "@type": "rdfs:Property",
+      "rdfs:label": "grievance sub-category option",
+      "rdfs:comment": "One second-level choice, where the portal numbers one. Omitted -- not empty -- on a desk that classifies at one level, because such a desk refuses grievance.subCategory outright. Nothing here says which sub-category goes with which category."
+    },
+    {
+      "@id": "openagrinet:optionCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "option code",
+      "rdfs:comment": "The portal's own value for an option, exactly as the matching grievance field must carry it. This is what is sent; the two members beside it are for the caller's screen."
+    },
+    {
+      "@id": "openagrinet:optionName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "option name",
+      "rdfs:comment": "The portal's label for an option -- its words, not ours. Omitted where the portal publishes none, because absent means unknown and an empty string would claim the label is blank."
+    },
+    {
+      "@id": "openagrinet:optionDescriptor",
+      "@type": "rdfs:Property",
+      "rdfs:label": "option descriptor",
+      "rdfs:comment": "Plain-language help text for the farmer choosing an option. Ours, written for the caller's screen, and never sent upstream."
+    },
+    {
       "@id": "openagrinet:scheme",
       "@type": "rdfs:Property",
       "rdfs:label": "scheme"

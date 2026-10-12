@@ -5,6 +5,27 @@
     "PMFBYGrievance": "openagrinet:PMFBYGrievance",
     "informationMode": "openagrinet:informationMode",
     "challengeMethods": "openagrinet:challengeMethods",
+    "grievanceOptions": {
+      "@id": "openagrinet:grievanceOptions",
+      "@context": {
+        "categories": {
+          "@id": "openagrinet:grievanceCategoryOption",
+          "@context": {
+            "code": "openagrinet:optionCode",
+            "name": "openagrinet:optionName",
+            "descriptor": "openagrinet:optionDescriptor"
+          }
+        },
+        "subCategories": {
+          "@id": "openagrinet:grievanceSubCategoryOption",
+          "@context": {
+            "code": "openagrinet:optionCode",
+            "name": "openagrinet:optionName",
+            "descriptor": "openagrinet:optionDescriptor"
+          }
+        }
+      }
+    },
     "provider": {
       "@id": "openagrinet:provider",
       "@context": "https://schema.beckn.io/Provider/v2.1/context.jsonld"
