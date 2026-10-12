@@ -323,14 +323,14 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `applicantPhone` | Every ask | Ten-digit mobile of the farmer. The portal files it on the ticket and matches a ticket to the phone it was filed from, so reading a case needs it too. Nothing proves the caller holds it — PMFBY asks for no OTP. Never echoed |
 | `enrolmentId` | Ask, when filing; also returned in `Direct` | Crop insurance application number the grievance concerns. Stays in the attributes object on every leg, `support` included |
 | `cropYear`, `season` | Ask, when filing | Four-digit crop year, and one of `Kharif`, `Rabi`, `Zaid`. They qualify the enrolment, not the complaint, so they sit at the top |
-| `grievance.category`, `grievance.subCategory` | Ask, when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
+| `grievance.category`, `grievance.subCategory` | Ask, optional when filing; also returned in `Direct` | Two levels, each with the portal's numeric `code` and its own `name`. Kept apart because the portal numbers and names them separately at both ends |
 | `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
 | `case.ticketNo` | `Direct`; also the ask when reading a case, alongside `applicantPhone` | Portal grievance ticket number |
 | `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
 | `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on. Added by this pack; `case.remark` and `case.remarkedOn` are refused, because PMFBY publishes neither |
 | `challengeMethods` | The catalog entry only | Pinned empty. It says this desk challenges nothing, so the sequence is `support` → `status`. Never sent on a transaction |
-| `grievanceOptions` | The catalog entry only | The categories and sub-categories this desk accepts, each as a `code` with a `descriptor` written for the farmer. Both levels are published, because PMFBY numbers two and a caller must send both. The codes carry the same digit pattern `grievance.category` does, restated rather than inherited. Never sent on a transaction |
+| `grievanceOptions` | The catalog entry only | The categories and sub-categories this desk accepts, each as a `code` with a `descriptor` written for the farmer. Both levels are published, because PMFBY numbers two. A caller may send both or neither: where a desk publishes one of each, omitting them takes the published pair. The codes carry the same digit pattern `grievance.category` does, restated rather than inherited. Never sent on a transaction |
 
 A payload that carries `grievance` carries all three of its fields: `required` inside the
 block fires whenever the block is present, so a partial complaint is rejected rather than

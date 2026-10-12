@@ -60,8 +60,6 @@ components:
           - applicantPhone
           - cropYear
           - season
-          - grievance.category.code
-          - grievance.subCategory.code
           - grievance.description
         status: [applicantPhone, case.ticketNo]
       x-jsonld:
@@ -324,12 +322,16 @@ components:
                     That is why the base requires one of code or name here
                     rather than code outright.
 
-                    The live integration pins this to 3 and the sub-category to
-                    10, so the farmer never chooses. It is still carried as a
-                    value rather than written into the mapping: when the portal
-                    exposes its category list the experience layer starts
-                    sending a real choice and nothing here changes. The portal
-                    publishes no list of valid pairs; see the pack README.
+                    The live integration pins this to 3 and the sub-category
+                    to 10, so the farmer never chooses. Optional on the wire for
+                    that reason: a caller that sends neither gets the pair the
+                    catalog publishes. The default is the published
+                    grievanceOptions rather than a literal in the mapping, so
+                    the two cannot drift, and when the portal exposes a real
+                    list the entry stops being the only one and the default
+                    stops applying on its own. A caller that does send a choice
+                    is always honoured. The portal publishes no list of valid
+                    pairs; see the pack README.
                   x-jsonld-id: "openagrinet:pmfbyGrievanceCategory"
 
                 subCategory:
@@ -347,6 +349,8 @@ components:
                     the read carries a name and no id. A level of its own,
                     because the portal numbers the two levels separately on
                     the way up and names them separately on the way back.
+                    Optional on the wire with the category, and defaulted the
+                    same way.
                   x-jsonld-id: "openagrinet:pmfbyGrievanceSubCategory"
 
                 description:
