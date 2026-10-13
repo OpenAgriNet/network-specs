@@ -35,7 +35,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 | `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Facility` |
 | `agricultureSubjects` | Optional | Governed crop, commodity, scheme, or other subject references when relevant |
 | `languages` | Optional | Languages supported by or present in the facility information |
-| `coverageAreas` | Optional | Geographic service or discovery coverage |
+| `coverageAreas` | Optional | Geographic applicability inherited from [Agriculture Resource](../../AgricultureResource/v0.1/README.md#coverage-areas); each item is an administrative reference or direct GeoJSON geometry, not a Beckn Location |
 | `supportedFacilityTypes` | `OnDemand` | Facility categories available on demand |
 | `facilityType` | `Direct` | Governed category of a specific facility |
 | `location`, `address` | `Direct`: at least one | Verified Beckn Location, or a non-empty Beckn Address when verified geometry is unavailable |

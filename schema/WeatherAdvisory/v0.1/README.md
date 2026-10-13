@@ -33,7 +33,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Weather` |
 | `agricultureSubjects` | Optional | Governed crop, pest, disease, or practice references when relevant |
 | `languages` | `OnDemand`; optional in `Direct` | Supported response languages; each Direct recommendation declares its own language |
-| `coverageAreas` | Optional | Geographic applicability or supported coverage |
+| `coverageAreas` | Optional | Geographic applicability inherited from [Agriculture Resource](../../AgricultureResource/v0.1/README.md#coverage-areas); each item is an administrative reference or direct GeoJSON geometry, not a Beckn Location |
 | `topics` | Both modes | Topics addressed by the advisory |
 | `supportedWeatherParameters` | `OnDemand` | Weather parameters available as the basis for on-demand advice |
 | `forecastHorizon` | Optional | Maximum supported forecast horizon |

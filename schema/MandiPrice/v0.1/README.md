@@ -33,7 +33,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Both modes 
 | `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Market` |
 | `agricultureSubjects` | Optional | Governed commodity or market references when available |
 | `languages` | Optional | Languages used by textual descriptors |
-| `coverageAreas` | Optional | Geographic applicability or supported market coverage |
+| `coverageAreas` | Optional | Geographic applicability inherited from [Agriculture Resource](../../AgricultureResource/v0.1/README.md#coverage-areas); each item is an administrative reference or direct GeoJSON geometry, not a Beckn Location |
 | `supportedCommodities` | Always | One or more coded commodity descriptors covered by the Resource; one price set in a `Direct` Resource applies to every listed commodity |
 | `supportedPriceFields` | `OnDemand` | Price values available on demand |
 | `historicalDataAvailable`, `historyPeriod` | Optional | Availability and maximum period of historical data |

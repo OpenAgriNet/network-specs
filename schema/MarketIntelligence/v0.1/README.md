@@ -33,7 +33,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. An `OnDeman
 | `subjectCategories` | Always | Required by the composed Agriculture Resource field set; this pack additionally requires `Market` |
 | `agricultureSubjects` | Optional | Governed commodity or market references when available |
 | `languages` | `OnDemand`; optional in `Direct` | Supported or available BCP 47 languages |
-| `coverageAreas` | Optional | Geographic applicability or supported market coverage |
+| `coverageAreas` | Optional | Geographic applicability inherited from [Agriculture Resource](../../AgricultureResource/v0.1/README.md#coverage-areas); each item is an administrative reference or direct GeoJSON geometry, not a Beckn Location |
 | `supportedCommodities` | Always | One or more coded commodity descriptors covered by the Resource |
 | `supportedInsightTypes` | `OnDemand` | Supported categories: price trend, demand forecast, and market opportunity |
 | `historyPeriod` | Optional | Maximum historical period available for analysis |

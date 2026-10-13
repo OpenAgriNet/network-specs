@@ -46,7 +46,8 @@ OAN does not redefine the Beckn objects that carry its domain attributes. The li
 | [Resource 2.0](https://github.com/beckn/schemas/tree/draft/schema/Resource/v2.0) | Carries OAN data in `resourceAttributes` |
 | [Attributes 2.0](https://github.com/beckn/schemas/tree/draft/schema/Attributes/v2.0) | Provides the JSON-LD extension container used by `resourceAttributes` |
 | [Descriptor 2.1](https://github.com/beckn/schemas/tree/draft/schema/Descriptor/v2.1) | Supplies names, codes, and human-readable descriptions |
-| [GeoJSONGeometry 2.0](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry/v2.0) | Represents points and geographic areas using GeoJSON |
+| [GeoJSONGeometry 2.0](https://github.com/beckn/schemas/tree/draft/schema/GeoJSONGeometry/v2.0) | Represents coordinate-defined `coverageAreas` directly and geometry inside `Location.geo` |
+| [Location 2.0](https://github.com/beckn/schemas/tree/draft/schema/Location/v2.0) | Represents resolved pack-specific locations with geometry under `geo` and an optional address |
 | [Participant](https://github.com/beckn/schemas/tree/draft/schema/Participant) | Defines the Beckn participant boundary; OAN does not introduce `OANParticipant` |
 | [Consumer](https://github.com/beckn/schemas/tree/draft/schema/Consumer) | Defines the Beckn consumer object where a protocol interaction requires one |
 
