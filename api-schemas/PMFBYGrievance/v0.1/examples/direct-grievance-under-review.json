@@ -8,8 +8,8 @@
   },
   "enrolmentId": "KA2026KH00123456",
   "grievance": {
-    "category": { "name": "…" },
-    "subCategory": { "name": "…" },
+    "category": { "name": "Claim Related / Claim Not Received" },
+    "subCategory": { "name": "Claim amount not credited" },
     "description": "Claim for my Kharif 2026 enrolment has not been credited to my account."
   },
   "case": {

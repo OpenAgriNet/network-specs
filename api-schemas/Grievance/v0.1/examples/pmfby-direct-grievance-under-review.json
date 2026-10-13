@@ -1,0 +1,27 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "informationMode": "Direct",
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "enrolmentId": "KA2026KH00123456",
+  "grievance": {
+    "category": {
+      "name": "Claim Related / Claim Not Received"
+    },
+    "subCategory": {
+      "name": "Claim amount not credited"
+    },
+    "description": "Claim for my Kharif 2026 enrolment has not been credited to my account."
+  },
+  "case": {
+    "ticketNo": "100626000099001",
+    "status": {
+      "code": "UnderReview"
+    },
+    "filedOn": "2026-09-28",
+    "cropName": "Paddy"
+  }
+}

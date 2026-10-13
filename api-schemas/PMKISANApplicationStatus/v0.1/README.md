@@ -351,7 +351,8 @@ hostname. The portal's own message is never returned to a caller.
 ## Examples
 
 - [On-demand: the catalog entry](examples/on-demand-capability.json)
-- [On-demand: request an OTP](examples/on-demand-request-otp.json)
+- [On-demand: request an OTP by mobile or Aadhaar](examples/on-demand-request-otp.json)
+- [On-demand: request an OTP by registration number](examples/on-demand-request-otp-by-registration.json)
 - [On-demand: OTP issued](examples/on-demand-challenge-issued.json)
 - [On-demand: read the status](examples/on-demand-read-status.json)
 - [Direct: status, nothing blocking](examples/direct-status-clear.json)

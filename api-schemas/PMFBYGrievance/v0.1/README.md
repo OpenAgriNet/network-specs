@@ -466,4 +466,4 @@ It also does not define credentials or transport. Those live in the adapter conf
 - [On-demand: read an existing case](examples/on-demand-read-case.json)
 - [On-demand: the catalog entry](examples/on-demand-capability.json)
 - [Direct: lodge reply, as the portal sends it](examples/direct-grievance-registered.json)
-- [Direct: grievance under review, read from the portal](examples/direct-grievance-under-review.json)
+- [Direct: grievance under review, read from the portal](examples/direct-grievance-under-review.json) — the category and sub-category names in it are illustrative. The portal answers a read with `TicketCategoryName` and `TicketSubCategoryName` and has published no phrase list, so there is no captured value to quote.

@@ -471,6 +471,8 @@ It also does not define credentials. Those live in the adapter configuration, wh
 
 The two `Direct` examples show `case.status` as a bare `code`, which is now the only form. No sample of the portal's own `GrievanceStatus` text exists anywhere in the legacy tree, which is the reason the phrase does not travel at all.
 
+- [On-demand: request an OTP against a registration](examples/on-demand-request-otp.json)
+- [On-demand: OTP issued](examples/on-demand-challenge-issued.json)
 - [On-demand: lodge a grievance](examples/on-demand-lodge-grievance.json)
 - [On-demand: read a case](examples/on-demand-read-cases.json)
 - [Direct: grievance registered](examples/direct-grievance-registered.json)

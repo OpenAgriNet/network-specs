@@ -1,104 +1,39 @@
 openapi: 3.1.1
 info:
-  title: OpenAgriNet - Grievance API Attributes (base)
+  title: OpenAgriNet - Grievance API Attributes
   version: 0.1.0
   description: >
-    The field set every grievance API pack on this network shares, plus the
-    vocabulary those fields are written in.
+    File a grievance against a government scheme and check where it stands.
+    One capability, one type, one scheme per payload. The scheme is named by
+    scheme.code and each scheme pins its own rules through a oneOf branch.
 
-    Not a pack, and not a payload type. There is no profile.json beside this
-    file, so it is never indexed as a schema pack, and nothing ever sends
-    "@type": openagrinet:GrievanceBase. It exists to be composed: a pack
-    allOf-references GrievanceBase, pins its own @type and scheme, and adds the
-    fields its own portal has. What a payload declares itself to be is always a
-    concrete pack.
+    An API schema, not a domain schema: it describes what a scheme's grievance
+    desk accepts and returns. Attaches through commitmentAttributes on contract
+    legs and through support.channels on a support leg.
 
-    It lives under api-schemas/ rather than schema/ on purpose. A grievance is
-    a Provider's API surface, not a thing the network describes, so the shape
-    belongs beside the packs that use it and not in a domain schema.
-
-    A payload has five bands, and the band a field sits in says who wrote it.
-    At the top: who is asking and about what -- informationMode, provider,
-    scheme, enrolmentId. Under grievance: what the farmer submitted. Under case:
-    what the portal has on file, the stamps it applied included. Under
-    challenge: the proof the caller presents with a guarded call. Under
-    challengeIssued: the portal's acknowledgement that it sent one. Anything a
-    pack adds of its own -- a crop season, an applicant's phone -- sits at the
-    top with the rest of the context.
-
-    Not every pack uses every band. A desk that issues no challenge refuses
-    both challenge bands outright rather than leave them defined and
-    unfillable, and says so in challengeMethods.
-
-    The grievance and case containers are the point of this file. Before them the same split
-    lived in a prefix -- grievanceCategory against caseStatus -- which read the
-    same but checked nothing: a field named either way validated either way.
-    As containers the split is enforced, and three rules come with it that were
-    conventions before. A grievance is all or nothing, because required inside
-    the block fires whenever the block is present. A response must say where the
-    case stands. And a request must be asking for something. Each pack states
-    the last two, because what counts as a complete answer and as a meaningful
-    ask is the portal's business, not the network's.
-
-    One field sits in no band at all. challengeMethods says what a desk
-    requires before a grievance can be filed, and it appears on a catalog entry
-    and on no transaction payload.
-
-    @type is deliberately absent: it is the pack's identity, so a base could
-    only accept any string and leave the pack to restate the whole thing.
-
-    Descriptions here say what a field means network-wide. A pack restates the
-    field with a description of its own to record how its portal fills it:
-    which upstream field it is read from, and what the portal does that the
-    shape alone does not show.
+    Reasoning, per-scheme behaviour and worked examples are in README.md.
 
 components:
   schemas:
-    GrievanceBase:
+
+    # ---------------------------------------------------------------
+    # Shared base: what any scheme desk needs, grievance or not.
+    # SchemeApplication composes this one.
+    # ---------------------------------------------------------------
+    SchemeServiceBase:
       type: object
-      # No additionalProperties: false. A pack adds its own fields on top of
-      # this, and sealing here would refuse every one of them.
       required: [informationMode, scheme]
       properties:
         informationMode:
           type: string
           enum: [OnDemand, Direct]
-          description: >
-            Direction of this payload. OnDemand is the ask; Direct is an
-            answer carrying a real case.
-
-            Direction is carried by this field and never by the Beckn action,
-            so the same attributes serve every leg without change.
+          description: OnDemand is an ask, Direct is an answer. Direction never comes from the Beckn action.
           x-jsonld-id: "openagrinet:informationMode"
 
         provider:
           allOf:
             - $ref: "#/components/schemas/ProviderReference"
-          description: >
-            The portal this grievance belongs to: who it is filed with on the
-            way in, and who the case came from on the way out. One field for
-            both, because on a grievance they are always the same party -- the
-            adapter reads a case back from the portal it filed with, and no
-            third party stands between them.
-
-            Carried in the attributes on the support leg only, and only
-            because a SupportAction composes no Contract: every other action
-            has one, and there the same fact is read from
-            commitments[].offer.provider.
-
-            Same shape in both places, deliberately. A reader writes
-            .provider.id on support and .provider.id on the contract, and the
-            adapter's own binding path says channels[].provider.id against a
-            Beckn v2 default of commitments[].offer.provider.id -- the same
-            grammar, the same tail, a different container.
-
-            scheme.code names a scheme rather than a participant, so it cannot
-            stand in.
-
-            Not required, and deliberately not part of a Direct guard. On a
-            contract leg the attributes genuinely do not carry it -- Beckn's
-            offer does -- so requiring it here would force a second copy into
-            commitmentAttributes.
+          description: The portal this payload came from. Support leg only; on a contract leg it lives in commitments[].offer.provider.
           x-jsonld-id: "openagrinet:provider"
 
         scheme:
@@ -106,20 +41,10 @@ components:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
             - type: object
               required: [code]
-          description: >
-            Scheme the grievance is raised against. Present on every payload in
-            both directions, which is what makes it the one unconditional
-            field.
-
-            A pack pins code to its own scheme, because a pack describes one
-            scheme and nothing else. Left open, a payload could name another
-            scheme and still validate -- the one field present on every payload
-            would be the one field checking nothing. allOf narrowing is
-            evaluated, so a pack's pin is enforced rather than advisory.
-
-            name is not pinned anywhere: a scheme has an official title but it
-            is written differently in different places, and the network has no
-            reason to arbitrate spelling.
+              properties:
+                code:
+                  enum: [PMFBY, PM-KISAN]
+          description: The scheme this payload is about. Present on every payload, both directions. Each oneOf branch pins it to one value.
           x-jsonld-id: "openagrinet:scheme"
 
         enrolmentId:
@@ -129,149 +54,17 @@ components:
           x-oan-pii:
             class: identifier
             handling: [no-log, no-trace]
-            note: >
-              Ties a case to a named farmer's standing in a scheme. Returned on
-              a case read, so no-echo would be wrong; it is the caller's own
-              reference coming back.
-          description: >
-            The enrolment the grievance is about: the farmer's standing in the
-            scheme, not the farmer. Every scheme issues one under some name --
-            an insurance application number, a registration number -- and it is
-            what support is raised against.
-
-            One slot rather than a differently-named field per scheme, because
-            every pack had put its own name on the same thing and then given it
-            the same Beckn placement. A reader writes .enrolmentId once.
-
-            It stays in the attributes object on every leg of every pack,
-            which is what the paragraph above is worth. An earlier draft moved
-            it into Beckn's Support.orderId on the support action, and that
-            made one field readable at two paths depending on the leg.
-
-            Support.orderId is not used. It is not required -- the Support
-            schema requires nothing at all -- and it means "the order against
-            which support is required", while nothing here is an order: a
-            grievance is lodged with support, not confirm, and no Order is
-            ever composed. A consumer reading an order id that resolves to no
-            order is worse off than one reading nothing. The v1 adapter is
-            evidence rather than counter-evidence: it put the OTP in order_id
-            and carried the enrolment reference in a tag, so there is no
-            inherited placement to preserve either.
-
-            Whatever handle the portal issues in return is not this field --
-            it comes back in case.ticketNo, because a ticket is not what the
-            complaint is against.
-
-            The IRI is the network's own and shared. The value spaces differ by
-            scheme and the packs pin them, but an opaque enrolment reference is
-            not a vocabulary anyone reasons over, so there is nothing to tell
-            apart at the IRI level -- unlike the category codes, which are.
+            note: Ties a case to a named farmer. Echoed back to the caller who sent it, so not no-echo.
+          description: The enrolment this payload is about, as the scheme numbers it.
           x-jsonld-id: "openagrinet:enrolmentId"
-
-        grievance:
-          allOf:
-            - $ref: "#/components/schemas/Grievance"
-          description: >
-            What the farmer submitted. Absent on a payload that is not about a
-            specific complaint -- reading every case on an enrolment, or
-            acknowledging a challenge.
-          x-jsonld-id: "openagrinet:grievance"
-
-        case:
-          allOf:
-            - $ref: "#/components/schemas/Case"
-          description: >
-            What the portal has on file. Absent on the way in, except where a
-            caller is naming a case to read.
-          x-jsonld-id: "openagrinet:case"
 
         challengeMethods:
           type: array
           uniqueItems: true
           items:
             $ref: "#/components/schemas/ChallengeMethod"
-          description: >
-            Which challenge a caller must pass before a grievance can be filed.
-            Non-empty means a challenge comes first and the array names it;
-            empty means the portal issues none and filing is the first call. A
-            caller reads this to know which sequence a desk needs before it
-            sends anything.
-
-            Declaration-only: it appears on a catalog entry and never on a
-            transaction payload. Each pack pins it to the one answer its portal
-            gives, so the value is the pack's statement and not the publisher's
-            choice.
-
-            Empty rather than absent where there is no challenge. The field is
-            also what tells a catalog entry apart from an ask: a grievance pack
-            uses OnDemand for both, so a declaration carries none of the things
-            each pack's "about something" gate looks for and needs a member of
-            its own to satisfy it.
-
-            A caller branches on method and not on the length of the array. A
-            portal that adds a second mechanism widens the list, and a caller
-            that reads method keeps working.
-
-            Each entry describes one mechanism whole: what it is, how long the
-            code is and what it is made of. That is what lets a caller design
-            the input screen from the catalog, before any transaction exists.
-            challengeIssued returns the same three on each init, so the screen
-            can be checked against the code actually sent.
+          description: What this desk challenges with. Published in the catalog. Empty means no OTP.
           x-jsonld-id: "openagrinet:challengeMethods"
-
-        grievanceOptions:
-          type: object
-          additionalProperties: false
-          required: [categories]
-          properties:
-            categories:
-              type: array
-              uniqueItems: true
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/GrievanceOption"
-              description: >
-                The values grievance.category.code may take on this desk.
-            subCategories:
-              type: array
-              uniqueItems: true
-              items:
-                $ref: "#/components/schemas/GrievanceOption"
-              description: >
-                The second level, where the portal numbers one. Omitted --
-                not empty -- on a desk that classifies at one level, because
-                such a desk refuses grievance.subCategory outright and an
-                empty array would contradict that refusal.
-
-                Nothing here says which sub-category goes with which
-                category. A portal that publishes no list of valid pairs
-                leaves the pairing unstated rather than implied by position.
-                When one publishes a tree, a categoryCode member is added to
-                each entry; the item shape is sealed, so that is a pack edit
-                and a version bump.
-          description: >
-            What this desk accepts, so a caller chooses from the portal's
-            vocabulary instead of keeping a master list of its own. The
-            second declaration-only field, beside challengeMethods: it
-            appears on a catalog entry and never on a transaction payload.
-
-            Named apart from the grievance band on purpose. That band is what
-            the farmer submitted, its presence is what marks a payload as an
-            ask, and it requires a description -- so a declaration cannot
-            carry one and must not look as though it does.
-
-            Each pack constrains the codes here with the same value space it
-            holds grievance.category.code to, so the list a caller reads and
-            the list the network enforces cannot disagree: a catalog
-            publishing a code the pack refuses fails at publish time rather
-            than at filing time. Where a portal publishes no list the pack
-            has none to pin, and the array is then what is known to work
-            rather than everything that would be accepted.
-
-            name is the portal's label and descriptor is ours, written for
-            the farmer. A portal that publishes no label leaves name out
-            rather than inventing one: absent means unknown, not blank.
-          x-jsonld-id: "openagrinet:grievanceOptions"
 
         challenge:
           type: object
@@ -280,14 +73,11 @@ components:
           x-oan-pii:
             class: credential
             handling: [no-log, no-trace, no-echo, no-forward]
-            note: Proven once by the verify call and never passed to the lodge call.
+            note: Spent once against the portal and never carried further.
           properties:
             method:
               type: string
-              description: >
-                Which mechanism this proof is for. Always one of the values the
-                desk published in challengeMethods; each pack pins the enum to
-                what its portal offers.
+              description: Must name a method this desk published.
               x-jsonld-id: "openagrinet:challengeMethod"
             value:
               type: string
@@ -295,35 +85,9 @@ components:
               x-oan-pii:
                 class: credential
                 handling: [no-log, no-trace, no-echo, no-forward]
-                note: Proven once against the portal and never carried further.
-              description: >
-                The secret itself. The base bounds it to between four and eight
-                digits, which is the range the portals on this network issue;
-                each pack narrows to the one length its portal accepts, and the
-                narrowing is evaluated rather than left to a mapping guard.
-
-                Direction is carried by x-oan-pii, not by writeOnly. The network
-                validates every payload as a request, on the way out as well as
-                in, so writeOnly here would assert nothing while readOnly on the
-                answering field would reject the very response it describes.
-                no-echo is the rule the adapter reads, and it is unconditional.
+                note: Never logged, traced, echoed or forwarded to a later call.
               x-jsonld-id: "openagrinet:challengeValue"
-          description: >
-            Proof of identity, presented with the call it guards. Which calls
-            those are is each pack's business: a desk that issues a challenge
-            says so in challengeMethods and names the guarded actions in
-            x-oan-fields-by-action, where challenge.method and challenge.value
-            appear under those actions' mustSend.
-
-            No correlator field exists and additionalProperties refuses one.
-            The portals on this network bind a challenge to the identity it was
-            issued against and hand back no handle, so a caller sending one is
-            confused about the mechanism rather than being quietly ignored.
-
-            The whole object travels inbound only: never returned in any
-            response, written to a log or attached to a trace, and the value is
-            never forwarded to the call it guards. That is x-oan-pii no-echo and
-            no-forward, which the adapter enforces.
+          description: The proof the caller presents on a guarded call.
           x-jsonld-id: "openagrinet:challenge"
 
         challengeIssued:
@@ -333,170 +97,482 @@ components:
           properties:
             method:
               type: string
-              description: >
-                Mechanism the portal used, from the same set as
-                challengeMethods. The token names the delivery channel and the
-                kind of secret together -- SMS_OTP is a one-time code sent by
-                SMS -- so a caller reads the channel off this field and needs
-                no second one for it.
               x-jsonld-id: "openagrinet:challengeMethod"
             length:
               type: integer
               minimum: 4
               maximum: 8
-              description: >
-                How many characters the value will have. Bounded to the same
-                range as challenge.value and pinned by each pack to the one
-                length its portal issues, so the two cannot disagree.
-
-                Required so a caller can size the input without reading this
-                pack: method names the mechanism, length and valueType name
-                the shape of what is about to arrive.
               x-jsonld-id: "openagrinet:challengeLength"
             valueType:
               type: string
               enum: [NUMERIC, ALPHANUMERIC]
-              description: >
-                What the value is made of. NUMERIC is digits only, which is
-                what both portals on this network issue; ALPHANUMERIC is
-                defined so a portal that changes needs no new field. It is what
-                a caller opens the right keyboard on and validates against
-                before sending.
               x-jsonld-id: "openagrinet:challengeValueType"
             sentTo:
               type: string
               x-oan-pii:
                 class: contact
                 handling: [no-log, no-trace, mask-on-echo]
-                note: >
-                  Always the masked form of the destination, never the full
-                  value. The one field in these packs that is echoed at all and
-                  so the one that mask-on-echo applies to; everywhere else a
-                  contact value is no-echo, which leaves nothing to mask.
-              description: >
-                Masked destination, so the farmer can confirm where the
-                challenge went without the destination being disclosed.
-
-                Optional, because not every portal says. One that names the
-                destination has this field and a pack that pins the mask shape;
-                one that answers only "sent to the registered mobile number"
-                has nothing to put here, and the field is absent rather than
-                guessed at from a number the caller supplied.
+                note: Masked form only, never the full destination.
               x-jsonld-id: "openagrinet:challengeSentTo"
             expiresAt:
               allOf:
                 - $ref: "#/components/schemas/Instant"
-              description: >
-                When the challenge stops being accepted. Required because the
-                adapter always derives one, so a caller may rely on it.
-
-                Always adapter-derived, never quoted. The OTP services on this
-                network acknowledge with a message and no expiry, so the window
-                here is the adapter's own statement about how long it will
-                accept the proof.
               x-jsonld-id: "openagrinet:challengeExpiresAt"
-          description: >
-            Acknowledgement that the portal has sent a challenge. Carries no
-            secret: the value itself is never returned. No correlator field
-            exists and additionalProperties refuses one, for the same reason as
-            on challenge.
-
-            Returned and never sent, but not marked readOnly: the network
-            validates responses as requests too, so readOnly would reject this
-            acknowledgement outright.
+          description: The portal's acknowledgement that it sent a challenge.
           x-jsonld-id: "openagrinet:challengeIssued"
 
+    # ---------------------------------------------------------------
+    # Grievance base: the complaint bands on top of the shared base.
+    # ---------------------------------------------------------------
+    GrievanceBase:
+      allOf:
+        - $ref: "#/components/schemas/SchemeServiceBase"
+        - type: object
+          properties:
+            grievance:
+              allOf:
+                - $ref: "#/components/schemas/Complaint"
+              description: What the farmer says went wrong. Authored by the farmer.
+              x-jsonld-id: "openagrinet:grievance"
+
+            case:
+              allOf:
+                - $ref: "#/components/schemas/Case"
+              description: What the portal recorded about it. Authored by the portal.
+              x-jsonld-id: "openagrinet:case"
+
+            grievanceOptions:
+              type: object
+              additionalProperties: false
+              required: [categories]
+              properties:
+                categories:
+                  type: array
+                  uniqueItems: true
+                  minItems: 1
+                  items:
+                    $ref: "#/components/schemas/GrievanceOption"
+                subCategories:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    $ref: "#/components/schemas/GrievanceOption"
+              description: The complaint form this desk publishes. Catalog only.
+              x-jsonld-id: "openagrinet:grievanceOptions"
+
+    # ---------------------------------------------------------------
+    # The published type.
+    # ---------------------------------------------------------------
+    Grievance:
+      type: object
+      x-beckn-container: commitmentAttributes
+      # Union across both branches. PMFBY uses no init; its branch says so
+      # in x-oan-fields-by-action.
+      x-beckn-container-by-action:
+        init: commitmentAttributes
+        status: commitmentAttributes
+        support: channels
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld"
+        "@type": openagrinet:Grievance
+      allOf:
+        - $ref: "#/components/schemas/GrievanceBase"
+        - type: object
+          required: ["@context", "@type"]
+          properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  # Stated twice: contains for spec-compliant validators, the
+                  # double negative for the one in use, which skips contains.
+                  contains:
+                    const: https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld
+                  not:
+                    items:
+                      not:
+                        const: https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld
+                  items:
+                    type: string
+                    minLength: 1
+              description: The JSON-LD context these terms resolve against. An array when a Provider publishes extra contexts.
+
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:Grievance
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:Grievance
+                  not:
+                    items:
+                      not:
+                        const: openagrinet:Grievance
+                  items:
+                    oneOf:
+                      - const: openagrinet:Grievance
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally beside Provider-defined types.
+
+        # One branch per scheme. Each pins scheme.code to a different const,
+        # so exactly one can ever match.
+        - oneOf:
+            - $ref: "#/components/schemas/PMFBYGrievance"
+            - $ref: "#/components/schemas/PMKISANGrievance"
+
+    # ---------------------------------------------------------------
+    # PMFBY branch. No challenge, two category levels, crop fields.
+    # ---------------------------------------------------------------
+    PMFBYGrievance:
+      x-oan-fields-by-action:
+        # Allow-list, relative to the attribute object. A path not named here
+        # is not used. No init: PMFBY issues no challenge.
+        refused:     [challenge, challengeIssued,
+                      case.reply, case.repliedOn, case.status.name,
+                      provider.availableAt, provider.providerAttributes]
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeMethods,
+                      grievanceOptions.categories, grievanceOptions.subCategories]
+        support:
+          mustSend:  [enrolmentId, applicantMobile, cropYear, season,
+                      grievance.description]
+          maySend:   [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code,
+                      grievance.category.code, grievance.subCategory.code,
+                      complaintDate, receiptSourceId]
+          comesBack: [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code, scheme.name, enrolmentId,
+                      grievance.category.code, grievance.subCategory.code,
+                      grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn]
+        status:
+          mustSend:  [applicantMobile, case.ticketNo]
+          maySend:   [informationMode, scheme.code, enrolmentId]
+          comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
+                      grievance.category.name, grievance.subCategory.name,
+                      grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn,
+                      case.cropName]
+      properties:
+        scheme:
+          properties:
+            code:
+              const: PMFBY
+
+        applicantMobile:
+          type: string
+          pattern: "^[6-9][0-9]{9}$"
+          x-oan-pii:
+            class: contact
+            handling: [no-log, no-trace, no-echo]
+            note: Sent upstream as requestorMobileNo. Never returned, so nothing to mask.
+          description: Mobile number of the farmer raising the grievance. Unverified - PMFBY asks for no OTP.
+          x-jsonld-id: "openagrinet:applicantMobile"
+
+        cropYear:
+          type: string
+          pattern: "^[0-9]{4}$"
+          description: Crop year of the insurance application. Sent, never returned.
+          x-jsonld-id: "openagrinet:cropYear"
+
+        season:
+          type: string
+          enum: [Kharif, Rabi, Zaid]
+          description: Crop season of the application. The adapter maps to the portal's numeric code. Sent, never returned.
+          x-jsonld-id: "openagrinet:season"
+
+        complaintDate:
+          allOf:
+            - $ref: "#/components/schemas/CalendarDate"
+          description: Filing date. Omit and the adapter stamps today. Comes back as case.filedOn, not here.
+          x-jsonld-id: "openagrinet:complaintDate"
+
+        receiptSourceId:
+          type: string
+          pattern: "^[0-9]+$"
+          maxLength: 16
+          description: The channel the ticket arrived through. Omit and the adapter sends its own. Names the channel, not the farmer.
+          x-jsonld-id: "openagrinet:receiptSourceId"
+
+        challengeMethods:
+          type: array
+          maxItems: 0
+          description: Pinned empty. PMFBY's grievance service has no OTP endpoint.
+
+        grievanceOptions:
+          type: object
+          required: [categories, subCategories]
+          properties:
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    pattern: "^[0-9]+$"
+            subCategories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    pattern: "^[0-9]+$"
+          description: Both levels published. PMFBY numbers two and a caller sends both. Not pinned to an enum - the portal publishes no list.
+
+        enrolmentId:
+          type: string
+          minLength: 10
+          maxLength: 30
+          description: The crop insurance application number. Bounds are a sanity range; PMFBY documents no format.
+
+        grievance:
+          properties:
+            category:
+              properties:
+                code:
+                  type: string
+                  pattern: "^[0-9]+$"
+            subCategory:
+              properties:
+                code:
+                  type: string
+                  pattern: "^[0-9]+$"
+
+        case:
+          # No reply published against a PMFBY ticket.
+          not:
+            anyOf:
+              - required: [reply]
+              - required: [repliedOn]
+          properties:
+            ticketNo:
+              type: string
+              pattern: "^[0-9]+$"
+              maxLength: 32
+            cropName:
+              type: string
+              minLength: 1
+              maxLength: 120
+              description: The insured crop the ticket was raised against. Returned on a read, never sent.
+              x-jsonld-id: "openagrinet:cropName"
+
+      allOf:
+        # No challenge exists here, so neither band can be filled honestly.
+        - not:
+            anyOf:
+              - required: [challenge]
+              - required: [challengeIssued]
+
+        # A Direct payload is an answer and must carry a standing case.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - allOf:
+                - required: [case]
+                - properties:
+                    case:
+                      required: [ticketNo, status, filedOn]
+
+        # Every payload must be about something.
+        - anyOf:
+            - required: [grievance]
+            - required: [case]
+            - required: [enrolmentId]
+            - required: [challengeMethods, grievanceOptions]
+
+    # ---------------------------------------------------------------
+    # PM-KISAN branch. OTP on both guarded legs, one category level.
+    # ---------------------------------------------------------------
+    PMKISANGrievance:
+      x-oan-fields-by-action:
+        refused:     [grievance.subCategory, grievanceOptions.subCategories,
+                      case.status.name, challengeIssued.sentTo,
+                      provider.availableAt, provider.providerAttributes]
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeMethods, grievanceOptions.categories]
+        init:
+          mustSend:  [enrolmentId]
+          maySend:   [informationMode, scheme.code]
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      challengeIssued.method, challengeIssued.length,
+                      challengeIssued.valueType, challengeIssued.expiresAt]
+        support:
+          mustSend:  [enrolmentId,
+                      grievance.category.code, grievance.description,
+                      challenge.method, challenge.value]
+          maySend:   [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code]
+          comesBack: [informationMode, provider.id, provider.descriptor.name,
+                      scheme.code, scheme.name, enrolmentId,
+                      grievance.category.code, grievance.description,
+                      case.ticketNo, case.status.code, case.filedOn]
+        status:
+          # filedOn is sent: the portal answers with every grievance on the
+          # registration, so the date is half the case selector.
+          mustSend:  [enrolmentId, case.filedOn,
+                      challenge.method, challenge.value]
+          maySend:   [informationMode, scheme.code]
+          comesBack: [informationMode, scheme.code, scheme.name,
+                      grievance.description,
+                      case.status.code, case.filedOn,
+                      case.reply, case.repliedOn]
+      properties:
+        scheme:
+          properties:
+            code:
+              const: PM-KISAN
+
+        challengeMethods:
+          type: array
+          minItems: 1
+          items:
+            properties:
+              method:
+                enum: [SMS_OTP]
+              length:
+                enum: [4]
+              valueType:
+                enum: [NUMERIC]
+
+        challenge:
+          properties:
+            method:
+              enum: [SMS_OTP]
+            value:
+              pattern: "^[0-9]{4}$"
+
+        challengeIssued:
+          not:
+            required: [sentTo]
+          properties:
+            method:
+              enum: [SMS_OTP]
+            length:
+              enum: [4]
+            valueType:
+              enum: [NUMERIC]
+
+        grievanceOptions:
+          not:
+            required: [subCategories]
+          properties:
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+          description: One level only. A closed list of ten.
+
+        enrolmentId:
+          allOf:
+            - type: string
+              pattern: "^[A-Za-z0-9]+$"
+              maxLength: 20
+            # Refuses a bare Aadhaar number: this field carries a registration
+            # number or an exchanged token, never the Aadhaar itself.
+            - not:
+                pattern: "^[0-9]{12}$"
+          description: The PM-KISAN registration number, or the token exchanged for an Aadhaar.
+
+        grievance:
+          not:
+            required: [subCategory]
+          properties:
+            category:
+              properties:
+                code:
+                  type: string
+                  enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+
+      allOf:
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - allOf:
+                - required: [case]
+                - properties:
+                    case:
+                      required: [status, filedOn]
+
+        - anyOf:
+            - required: [grievance]
+            - required: [case]
+            - required: [enrolmentId]
+            - required: [challengeIssued]
+            - required: [challengeMethods, grievanceOptions]
+
+        # A payload presenting a challenge is a caller's ask, so it cannot
+        # also carry the portal's acknowledgement of one.
+        - anyOf:
+            - not:
+                required: [challenge]
+            - allOf:
+                - not:
+                    required: [challengeIssued]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
+
+    # ---------------------------------------------------------------
+    # Shared components.
+    # ---------------------------------------------------------------
     ChallengeMethod:
       type: object
       additionalProperties: false
       required: [method, length, valueType]
-      description: >
-        One challenge mechanism this desk operates, as published on a catalog
-        entry. Sealed, like GrievanceOption beside it: a reader can enumerate
-        what a mechanism carries without guarding against a fourth member
-        appearing.
-
-        The same three members challengeIssued returns, and each pack pins the
-        two to the same values, so what a caller designs against and what
-        arrives on init cannot disagree.
       properties:
         method:
           type: string
           minLength: 1
-          description: >
-            The mechanism, naming the delivery channel and the kind of secret
-            together, CHANNEL_KIND -- SMS_OTP is a one-time code sent by SMS.
-            This is what a caller branches on.
+          description: Delivery channel and secret kind together, CHANNEL_KIND. SMS_OTP is a one-time code by SMS.
           x-jsonld-id: "openagrinet:challengeMethod"
         length:
           type: integer
           minimum: 4
           maximum: 8
-          description: >
-            How many characters the code will have. Bounded to the same range
-            as challenge.value and pinned by each pack to the one length its
-            portal issues, so the two cannot disagree.
           x-jsonld-id: "openagrinet:challengeLength"
         valueType:
           type: string
           enum: [NUMERIC, ALPHANUMERIC]
-          description: >
-            What the code is made of. NUMERIC is digits only, which is what
-            both portals on this network issue; ALPHANUMERIC is defined so a
-            portal that changes needs no new field. It is what a caller opens
-            the right keyboard on and validates against before sending.
           x-jsonld-id: "openagrinet:challengeValueType"
 
     GrievanceOption:
       type: object
       additionalProperties: false
       required: [code]
-      description: >
-        One choice a caller may make on this desk, as published on a catalog
-        entry. Sealed: a reader can enumerate what an option carries without
-        guarding against a fourth member appearing.
+      description: One entry on the complaint form. code is what you send; descriptor is help text and never travels.
       properties:
         code:
           type: string
           minLength: 1
-          description: >
-            The portal's own value, exactly as the matching grievance field
-            must carry it. This is what is sent; the two fields beside it are
-            for the caller's screen.
+          x-jsonld-id: "openagrinet:optionCode"
         name:
           type: string
           minLength: 1
-          description: >
-            The portal's label for that code -- its words, not ours. Omitted
-            where the portal publishes none, because absent means unknown and
-            an empty string would claim the label is blank.
+          x-jsonld-id: "openagrinet:optionName"
         descriptor:
           type: string
           minLength: 1
-          description: >
-            Plain-language help text for the farmer choosing this option.
-            Ours, written for the caller's screen, and never sent upstream.
-            Where a portal publishes no label this may still be filled: it
-            can describe what is known about the option without putting words
-            in the portal's mouth.
+          x-jsonld-id: "openagrinet:optionDescriptor"
 
-    Grievance:
+    Complaint:
       type: object
       required: [description]
-      description: >
-        The complaint as the farmer submitted it. Nothing the portal authored
-        belongs in here, including the date it stamped on receipt -- that is
-        case.filedOn.
-
-        Present or absent as a whole. The required list fires only when the
-        block is there, which is the rule worth having: a partial grievance is
-        an error, an absent one is a payload that is not about a complaint.
-
-        category is not required, because it is not always returned. PM-KISAN's
-        status call does not send the grievance type back, so a response would
-        have to omit it. Whether a caller must choose one to file is an
-        action-level rule and is enforced by that action's mapping guard, which
-        is where the rest of the per-action requirements already live.
+      description: The farmer's complaint. Named Complaint so it does not collide with the Grievance type.
       properties:
         category:
           allOf:
@@ -504,42 +580,16 @@ components:
             - anyOf:
                 - required: [code]
                 - required: [name]
-          description: >
-            What the complaint is about, in the portal's own classification.
-            code is the portal's value and name is its label.
-
-            One of the two must be present, rather than code outright. A
-            caller filing a grievance states code, because that is what the
-            portal accepts. PMFBY's case read answers with
-            TicketCategoryName and no id at all, so a response that carried
-            the classification the portal actually sent could not satisfy a
-            code requirement. Requiring either lets both legs say what they
-            have; requiring neither would let an empty object through.
-
-            Each pack pins its own value space and supplies its own IRI: the
-            codes are published lists that do not overlap, and one IRI holding
-            both could not be reasoned over.
-
+          description: One of code or name. A read may answer with a name and no id.
+          x-jsonld-id: "openagrinet:grievanceCategory"
         subCategory:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
             - anyOf:
                 - required: [code]
                 - required: [name]
-          description: >
-            A second level of classification, where the portal has one. Carries
-            the same code-or-name rule as category, and for the same reason:
-            PMFBY returns TicketSubCategoryName without an id. Defined
-            here rather than in a pack because a two-level taxonomy is ordinary
-            in grievance systems, and a pack whose portal has one level refuses
-            the field outright with not/required.
-
-            A level of its own rather than half of a joined string. An earlier
-            draft put both levels in one code separated by a dot, which the
-            adapter then split back apart to send and rejoined to return --
-            and the rejoin was ambiguous, because the portal's own category
-            names contain the separator.
-
+          description: Second classification level. Refused by schemes that number one.
+          x-jsonld-id: "openagrinet:grievanceSubCategory"
         description:
           type: string
           minLength: 10
@@ -547,113 +597,44 @@ components:
           x-oan-pii:
             class: freetext
             handling: [no-log, no-trace]
-            note: >
-              Returned verbatim on a case read, so no-echo would be wrong. It is
-              the farmer's own words and may hold anything the schema cannot see.
-          description: >
-            The farmer's account of the problem, in their own words. A minimum
-            length because a grievance that says nothing cannot be acted on, and
-            a maximum because this is unvalidated free text arriving from a
-            caller and going on to the portal. Neither portal publishes an upper
-            limit, so the bound is the network's own and matches case.remark:
-            2000 characters, long enough for any real account of a problem.
-
-            The one required member, because it is the only thing a grievance
-            cannot be without.
+            note: Written by a farmer and may hold personal detail the schema cannot constrain.
+          description: What went wrong, in the farmer's words. Returned verbatim on a read.
           x-jsonld-id: "openagrinet:grievanceDescription"
 
     Case:
       type: object
-      description: >
-        The record as the portal holds it, the stamps it applied included. Every
-        field here can differ between two reads of the same grievance.
-
-        filedOn sits here rather than with the complaint even though it never
-        changes: the portal stamps it, the farmer does not send it, and who
-        authored a value is the line these two blocks are drawn on. Drawn on
-        mutability instead, ticketNo would have had to move the other way, which
-        reads wrong.
-
-        No required list. A caller naming a case to read sends ticketNo alone; a
-        response carries a status. What a complete response looks like is the
-        pack's statement, since it depends on what the portal issues.
+      description: The portal's record. Every member is authored by the portal.
       allOf:
-        # remarkedOn without remark is refused: a date for a remark that is not
-        # there describes nothing. The reverse is allowed and does happen -- the
-        # portal may publish OfficerReply with OfficeReplyDate null, and a remark
-        # with no date is still the remark.
-        #
-        # Stated as anyOf over "remarkedOn absent" or "remark present" rather
-        # than if/then. if/then is parsed but never evaluated by the validator in
-        # use, so a dependency written that way would look like it holds and
-        # would not.
+        # A date on a reply needs the reply.
         - anyOf:
             - not:
-                required: [remarkedOn]
-            - required: [remark]
+                required: [repliedOn]
+            - required: [reply]
       properties:
         ticketNo:
           type: string
-          description: >
-            The handle the portal issues when a grievance is filed, and the
-            thing a farmer quotes back to ask about it. Travels in both
-            directions.
-
-            Returned here on on_support, beside the enrolmentId the ask
-            arrived with. Both stay in the attributes object; nothing moves
-            into the Beckn envelope.
-
-            A pack whose portal issues no handle at all would refuse the field
-            outright with not/required, rather than leave it defined and
-            permanently absent. Neither portal here is that case: both issue a
-            handle on filing. PM-KISAN simply does not repeat it on a case
-            read, so the field is present on a lodge reply and absent from a
-            read -- which is why that pack's answer gate does not require it.
+          minLength: 1
+          maxLength: 64
+          description: The handle the portal issued on filing.
           x-jsonld-id: "openagrinet:ticketNo"
-
         status:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
             - type: object
               required: [code]
+              # The portal's own status phrase does not travel.
               not:
                 required: [name]
               properties:
                 code:
                   $ref: "#/components/schemas/CaseStatusCode"
-          description: >
-            Where the grievance stands, as a CaseStatusCode and nothing else.
-
-            name is refused. The portal's own status phrase does not travel:
-            neither portal has supplied its vocabulary, no captured response
-            carrying one exists, and a field shaped around values nobody has
-            seen is a guess with a slot reserved for it. The adapter still
-            reads the phrase to pick a code -- it simply does not forward it.
-            If a portal publishes its phrase list and the list turns out to
-            say more than the code does, name can be added back as an optional
-            member without breaking a caller.
-
-            A phrase the adapter does not recognise maps to UnderReview --
-            never to a terminal state, which must come from the portal. The
-            adapter may infer a state; it must never infer that a case is
-            finished.
-
-            The enum is not narrowed in either pack. Neither portal publishes a
-            full status vocabulary, so narrowing would be a guess that rejects a
-            legitimate state.
+          description: Where the case stands, as a CaseStatusCode and nothing else.
           x-jsonld-id: "openagrinet:caseStatus"
-
         filedOn:
           allOf:
             - $ref: "#/components/schemas/CalendarDate"
-          description: >
-            Date the grievance was filed with the portal. An IST calendar date:
-            an adapter must take today's date in IST and not from a UTC clock,
-            which would record the previous day for anything filed before
-            05:30 IST.
           x-jsonld-id: "openagrinet:filedOn"
-
-        remark:
+        reply:
           type: string
           minLength: 1
           maxLength: 2000
@@ -661,153 +642,53 @@ components:
             class: freetext
             handling: [no-log, no-trace]
             note: Written about this farmer's case.
-          description: >
-            The most recent remark recorded against the case. Named for the
-            case rather than for an author: a remark may come from a reviewing
-            officer, from a body handling the claim, or from the system closing
-            a record, and the one portal that publishes remarks at all does not
-            name the author reliably. It is an annotation on a record, not
-            necessarily a reply addressed to the farmer.
-
-            Absent rather than empty while nothing has been recorded, so an
-            absent field reads as "nothing recorded yet". Bounded at 2000
-            characters because it is unvalidated upstream free text being placed
-            in a response.
-          x-jsonld-id: "openagrinet:caseRemark"
-
-        remarkedOn:
+          description: What the portal answered against the ticket.
+          x-jsonld-id: "openagrinet:caseReply"
+        repliedOn:
           allOf:
             - $ref: "#/components/schemas/CalendarDate"
-          description: >
-            Date the remark was recorded. Absent until there is a remark, and
-            enforced rather than merely stated -- see the constraint on Case. An
-            IST calendar date; see CalendarDate.
-
-            Defined here because a portal may publish it. A pack whose portal
-            does not refuses the field outright with not/required rather than
-            leaving it defined and permanently absent.
-          x-jsonld-id: "openagrinet:remarkedOn"
+          description: When the reply was written. Only valid alongside reply.
+          x-jsonld-id: "openagrinet:repliedOn"
 
     CaseStatusCode:
       type: string
       enum: [Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed]
       description: >
-        Where a case stands, in the network's own vocabulary, rather than in the
-        portal's wording.
-
-        This is the whole of what a case status carries. The adapter reads the
-        portal's own phrase to choose a value and then drops it; a caller
-        branches on the code and renders its own label. A portal phrase the
-        adapter does not recognise maps to UnderReview -- non-terminal, and
-        honest. The adapter may infer a state; it must never infer that a case
-        is finished, so anything unmapped stays non-terminal.
-
-        One list, shared by every grievance pack. A portal vocabulary is not
-        enumerated anywhere: portals add phrases without notice, and the mapping
-        from phrase to code is the adapter's job.
-      x-enum-details:
-        - value: Registered
-          meaning: Lodged and acknowledged by the portal, not yet picked up.
-          terminal: false
-        - value: UnderReview
-          meaning: Being worked by the portal. Also the fallback for a portal phrase the adapter does not recognise.
-          terminal: false
-        - value: AwaitingApplicant
-          meaning: Blocked on the applicant -- a document or a clarification is needed before work can continue.
-          terminal: false
-        - value: Replied
-          meaning: A response has been recorded against the case, which remains open.
-          terminal: false
-        - value: Resolved
-          meaning: Closed with action taken.
-          terminal: true
-        - value: Rejected
-          meaning: Closed without action; the case was refused.
-          terminal: true
-        - value: Closed
-          meaning: Closed with no further action -- lapsed, withdrawn, or closed automatically.
-          terminal: true
+        The network's own status vocabulary. The adapter reads the portal's phrase, picks a
+        value and drops the phrase. An unrecognised phrase maps to UnderReview - never to a
+        terminal state.
 
     CalendarDate:
       type: string
       format: date
       pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
-      description: >
-        A calendar date in IST, as YYYY-MM-DD.
-
-        The pattern is what enforces the shape. format is annotation-only under
-        the validator in use -- no string format is registered, so format: date
-        alone would accept any string at all. The zone is named because a bare
-        date has no day boundary of its own: an adapter deriving one from a UTC
-        clock records the previous day for anything happening before 05:30 IST.
+      description: A calendar date in IST, YYYY-MM-DD. Pattern and format both, because format alone accepts any string.
 
     Instant:
       type: string
       format: date-time
-      pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$'
-      description: >
-        A fully-qualified instant, RFC 3339, with the offset always present.
-
-        The pattern is what enforces the shape. format is annotation-only under
-        the validator in use -- no string format is registered, so
-        format: date-time alone would accept any string at all. Both are kept:
-        the format for the generators that read it, the pattern for the
-        validator that does not.
-
-        The offset is not optional. A bare local timestamp is exactly what the
-        portals send and exactly what must not cross the network, because a
-        reader has no way to know which clock it came off. Either Z or a
-        numeric offset is accepted here; which one is right is the emitting
-        field's business, and a field that reads an IST clock says so itself.
+      pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+      description: A point in time with an explicit offset.
 
     ProviderReference:
       allOf:
         - $ref: "https://schema.beckn.io/Provider/v2.1/attributes.yaml#/components/schemas/Provider"
-        # A reference to a participant, not a catalog entry about one. Beckn's
-        # Provider carries both, so the two it does not need here are refused
-        # rather than left to drift into the payload.
         - not:
-            required: [availableAt]        # a grievance portal has no premises
+            required: [availableAt]
         - not:
-            required: [providerAttributes] # an attributes object inside a
-                                           # channel that is already one
+            required: [providerAttributes]
         - type: object
-          # Beckn already requires both. Restated because a reader -- and the
-          # page generator -- resolves this file without fetching the remote
-          # schema, and would otherwise be told id is optional. It is the
-          # routing key; nothing about it is optional.
           required: [id, descriptor]
           properties:
             id:
               type: string
               pattern: "^[a-z0-9][a-z0-9.-]*$"
               maxLength: 100
-              description: >
-                Network participant id, lower-case, matching the registry
-                exactly. This is the only field the adapter routes on.
             descriptor:
               type: object
               required: [name]
-              description: >
-                How the portal is named to a reader. Only name is required; the
-                routing is done on id.
               properties:
                 name:
                   type: string
                   minLength: 1
                   maxLength: 200
-                  description: >
-                    Human-readable name of the provider. Beckn requires a
-                    Provider to carry a descriptor, and a name is the only part
-                    of one worth carrying here -- a code would merely repeat id.
-
-                    Advisory, and never authoritative: the registry owns this
-                    word. The adapter reads id and ignores name, so a caller
-                    that sends a stale name is routed correctly anyway. It is
-                    required because a participant id alone makes a payload
-                    unreadable to anyone without the registry open.
-      description: >
-        A Beckn Provider narrowed to a reference: who this is, and nothing more.
-        id is required and descriptor is required by Beckn itself; this
-        narrowing adds the registry's id format and requires the descriptor to
-        carry a name.

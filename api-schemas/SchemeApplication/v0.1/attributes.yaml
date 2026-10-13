@@ -1,0 +1,247 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Scheme Application API Attributes
+  version: 0.1.0
+  description: >
+    Read where a farmer's application to a government scheme stands: how many
+    instalments have been paid, whether eKYC is done, and what is holding the
+    money up. One scheme is covered today, PM-KISAN, named by scheme.code.
+
+    Not a grievance. A grievance is a complaint the farmer writes and the
+    portal works through a lifecycle; this is a read of a record the portal
+    already holds. Separate capability, separate catalog, separate pack.
+
+    Composes SchemeServiceBase from api-schemas/Grievance/v0.1, which owns the
+    scheme, the enrolment and the challenge trio. Two actions: init asks for
+    the OTP, status reads the record. Both ride on commitmentAttributes.
+
+    Reasoning and worked examples are in README.md.
+
+components:
+  schemas:
+
+    SchemeApplication:
+      type: object
+      x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        init: commitmentAttributes
+        status: commitmentAttributes
+      x-oan-fields-by-action:
+        refused:
+          - application.ekyc.name
+          - challengeIssued.sentTo
+          - provider.availableAt
+          - provider.providerAttributes
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name, challengeMethods]
+        init:
+          maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
+          comesBack:
+            - informationMode
+            - scheme.code
+            - scheme.name
+            - challengeIssued.method
+            - challengeIssued.length
+            - challengeIssued.valueType
+            - challengeIssued.expiresAt
+        status:
+          mustSend: [challenge.method, challenge.value]
+          maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
+          comesBack:
+            - informationMode
+            - scheme.code
+            - scheme.name
+            - enrolmentId
+            - application.registeredOn
+            - application.latestInstalmentPaid
+            - application.ekyc.code
+            - application.blockers
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+        "@type": "openagrinet:SchemeApplication"
+      allOf:
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/SchemeServiceBase"
+
+        - type: object
+          required: ["@context", "@type"]
+          properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                  not:
+                    items:
+                      not:
+                        const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                  items:
+                    type: string
+                    minLength: 1
+            "@type":
+              oneOf:
+                - type: string
+                  const: "openagrinet:SchemeApplication"
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: "openagrinet:SchemeApplication"
+                  not:
+                    items:
+                      not:
+                        const: "openagrinet:SchemeApplication"
+                  items:
+                    oneOf:
+                      - const: "openagrinet:SchemeApplication"
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+
+            scheme:
+              allOf:
+                - type: object
+                  properties:
+                    code:
+                      enum: [PM-KISAN]
+              description: PM-KISAN is the only scheme offering this capability today. A second scheme widens this enum.
+
+            challengeMethods:
+              allOf:
+                - type: array
+                  minItems: 1
+                  items:
+                    properties:
+                      method: { enum: [SMS_OTP] }
+                      length: { enum: [4] }
+                      valueType: { enum: [NUMERIC] }
+
+            challenge:
+              allOf:
+                - type: object
+                  properties:
+                    method: { enum: [SMS_OTP] }
+                    value: { pattern: "^[0-9]{4}$" }
+
+            challengeIssued:
+              allOf:
+                - type: object
+                  not:
+                    required: [sentTo]
+                  properties:
+                    method: { enum: [SMS_OTP] }
+                    length: { enum: [4] }
+                    valueType: { enum: [NUMERIC] }
+
+            enrolmentId:
+              allOf:
+                - type: string
+                  pattern: "^[A-Za-z0-9]+$"
+                  maxLength: 20
+                - not:
+                    pattern: "^[0-9]{12}$"
+              description: The PM-KISAN registration number. A bare Aadhaar number is refused here; it belongs in applicant.aadhaar.
+
+            applicant:
+              type: object
+              additionalProperties: false
+              oneOf:
+                - required: [mobile]
+                - required: [aadhaar]
+              properties:
+                mobile:
+                  type: string
+                  pattern: "^[6-9][0-9]{9}$"
+                  x-oan-pii:
+                    class: contact
+                    handling: [no-log, no-trace, no-echo]
+                    note: A contact detail and a lookup key at once -- it is also where the OTP is sent.
+                  x-jsonld-id: "openagrinet:applicantMobile"
+                aadhaar:
+                  type: string
+                  pattern: "^[0-9]{12}$"
+                  x-oan-pii:
+                    class: aadhaar
+                    handling: [no-log, no-trace, no-echo, no-store]
+                    note: Never logged, traced, echoed or retained after the lookup it was sent for. No derived value may be stored either.
+                  x-jsonld-id: "openagrinet:aadhaarNumber"
+              description: Who the lookup is for, when it is not by enrolment. Exactly one of the two, never both.
+              x-jsonld-id: "openagrinet:applicant"
+
+            application:
+              type: object
+              required: [latestInstalmentPaid]
+              additionalProperties: false
+              properties:
+                registeredOn:
+                  allOf:
+                    - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/Instant"
+                  x-jsonld-id: "openagrinet:registeredOn"
+                latestInstalmentPaid:
+                  type: integer
+                  minimum: 0
+                  description: Count of instalments credited so far. Zero means none.
+                  x-jsonld-id: "openagrinet:latestInstalmentPaid"
+                ekyc:
+                  allOf:
+                    - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                    - type: object
+                      required: [code]
+                      not:
+                        required: [name]
+                      properties:
+                        code:
+                          type: string
+                          enum: [Done, Pending]
+                  x-jsonld-id: "openagrinet:ekycStatus"
+                blockers:
+                  type: array
+                  uniqueItems: true
+                  items:
+                    allOf:
+                      - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                      - type: object
+                        required: [code, name]
+                        properties:
+                          code:
+                            type: string
+                            enum: [IncomeTaxPayee, LandSeedingPending, Other]
+                          name:
+                            type: string
+                            minLength: 1
+                            maxLength: 500
+                  description: What is holding the money up. Absent means the check did not run; empty means it ran and found nothing.
+                  x-jsonld-id: "openagrinet:applicationBlockers"
+              description: What the portal holds against the application. Every member is authored by the portal.
+              x-jsonld-id: "openagrinet:application"
+
+        # A Direct payload must carry the record it answers with.
+        - anyOf:
+            - properties:
+                informationMode: { enum: [OnDemand] }
+            - required: [application]
+
+        # Identity is named, never sniffed: enrolment or applicant, never both.
+        - anyOf:
+            - not: { required: [applicant] }
+            - not: { required: [enrolmentId] }
+
+        # Every payload must be about something.
+        - anyOf:
+            - required: [applicant]
+            - required: [enrolmentId]
+            - required: [application]
+            - required: [challengeIssued]
+            - required: [challengeMethods]
+
+        # An answer may not carry the challenge.
+        - anyOf:
+            - not: { required: [challenge] }
+            - allOf:
+                - not: { required: [challengeIssued] }
+                - properties:
+                    informationMode: { enum: [OnDemand] }
