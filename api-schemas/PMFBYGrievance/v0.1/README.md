@@ -336,6 +336,25 @@ A payload that carries `grievance` carries all three of its fields: `required` i
 block fires whenever the block is present, so a partial complaint is rejected rather than
 half-filed.
 
+Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
+with paths relative to the attributes object. Three buckets per action — `mustSend`,
+`maySend`, `comesBack` — plus a pack-wide `refused` list stated once, because the gates
+that enforce it are structural and bite on every action:
+
+| action | mustSend | maySend | comesBack |
+|---|---|---|---|
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
+| `support` | `enrolmentId`, `applicantPhone`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `applicantPhone`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.name`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.cropName` |
+
+It is an allow-list. A path not named above is not used by this capability. `discover` has
+only a `comesBack` bucket, because the catalog entry is published, never asked for.
+`enrolmentId` is a `mustSend` on `support` and only a `maySend` on `status`: the lodge is
+about an enrolment, while the read is selected by `case.ticketNo` and `applicantPhone`
+together, and those two are the handle. `applicantPhone` never comes back on either.
+
+Refused pack-wide: `challenge`, `challengeIssued`, `case.remark`, `case.remarkedOn`, `case.status.name`, `provider.availableAt`, `provider.providerAttributes`.
+
 ## No challenge
 
 **PMFBY's grievance service issues no challenge, so this pack carries none.** `challengeMethods`

@@ -136,9 +136,10 @@ credential — is one this design forbids outright.
 
 The grievance is lodged through `support`, not `confirm` — the rationale and the live flow are both in `docs/grievance-usecase.md`. `x-beckn-container-by-action` therefore has no `confirm` entry. The privacy markings are properties of the field, not of the container it rides in: `no-log` and `no-trace` on `enrolmentId` hold just as firmly inside `Support.channels` as inside `commitmentAttributes`.
 
-## The two gates
+## The three gates
 
-Both are top-level `anyOf` members, and both are tested against the real validator.
+All three are top-level `anyOf` members, and all three are tested against the real
+validator.
 `if`/`then` would read more naturally and does not work: the validator parses it and
 never evaluates it, so a guard written that way looks like it holds and does not.
 
@@ -166,6 +167,12 @@ There is deliberately no narrower `OnDemand` branch. Lodging sends the registrat
 number, the category and the complaint; reading sends the registration number and
 `case.filedOn`. Requiring the lodge fields here would reject a legitimate read. What each
 action must carry is enforced by that action's mapping guard.
+
+**An answer may not carry the `challenge`** — the OTP is sent, never returned. A payload
+carrying `challenge` must be a request: `informationMode` not `Direct`, and no
+`challengeIssued` beside it, which rules out the `init` acknowledgement as well. The
+secret could otherwise have been echoed back and still validated. `x-oan-pii` marks the
+value `no-echo`, but that binds the mapping; this is the structural half of the same rule.
 
 ## Upstream response coverage
 
@@ -260,7 +267,7 @@ never indexed, and nothing ever sends `@type: openagrinet:GrievanceBase`.
 in the base; the whole of this file is pinning, refusal and notes — `@type` and
 `scheme.code` pinned to PM-KISAN, `enrolmentId` narrowed to an ASCII alphanumeric
 registration number, the closed category vocabulary declared, `grievance.subCategory`
-refused, `case.ticketNo` annotated, and the two gates stated. That is the measure of whether the
+refused, `case.ticketNo` annotated, and the three gates stated. That is the measure of whether the
 base is drawn right.
 
 `@type` stays out of the base: it is the pack's identity, so a base could only accept any
@@ -340,6 +347,29 @@ A payload that carries `grievance` carries its `description`: `required` inside 
 fires whenever the block is present. `category` is not in that list, because a case read
 returns a `grievance` band with no category in it. Whether a caller must choose one to
 file is an action-level rule, enforced by the `support` mapping guard.
+
+Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
+with paths relative to the attributes object. Three buckets per action — `mustSend`,
+`maySend`, `comesBack` — plus a pack-wide `refused` list stated once, because the gates
+that enforce it are structural and bite on every action:
+
+| action | mustSend | maySend | comesBack |
+|---|---|---|---|
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods`, `grievanceOptions.categories` |
+| `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.length`, `challengeIssued.valueType`, `challengeIssued.expiresAt` |
+| `support` | `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.method`, `challenge.value` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `enrolmentId`, `case.filedOn`, `challenge.method`, `challenge.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.remark`, `case.remarkedOn` |
+
+It is an allow-list. A path not named above is not used by this capability. `discover` has
+only a `comesBack` bucket, because the catalog entry is published, never asked for.
+`challenge.method` and `challenge.value` are a `mustSend` on `support` and `status` but
+absent from `init`, which is the call that asks for the OTP rather than spends it. The
+`status` read is selected by `case.filedOn` rather than by `case.ticketNo`: the portal
+answers per registration, so the date is what picks a case out of the reply. Neither
+`challenge` band ever appears in a `comesBack` bucket, and a structural gate now enforces
+that as well.
+
+Refused pack-wide: `grievance.subCategory`, `grievanceOptions.subCategories`, `case.status.name`, `challengeIssued.sentTo`, `provider.availableAt`, `provider.providerAttributes`.
 
 ## Grievance categories
 

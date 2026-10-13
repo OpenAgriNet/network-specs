@@ -276,7 +276,7 @@ own `Reg_No`, not an echo — and `applicant` never comes back at all.
 
 ## The gates
 
-Three top-level members, all tested against the real validator:
+Four top-level members, all tested against the real validator:
 
 1. **A `Direct` payload carries a record.** Either `informationMode` is `OnDemand`, or
    `application` is present. An answer with nothing in it is not an answer.
@@ -287,6 +287,11 @@ Three top-level members, all tested against the real validator:
 3. **Every payload is about something** — one of `enrolmentId`, `applicant`,
    `application`, `challengeIssued` or `challengeMethods` must be present. This is what
    stops a payload that is a scheme name and nothing else.
+4. **An answer may not carry the `challenge`.** The OTP is sent, never returned. A payload
+   carrying `challenge` must be a request: `informationMode` not `Direct`, and no
+   `challengeIssued` beside it, which rules out the `init` acknowledgement as well.
+   `x-oan-pii` marks the value `no-echo`, but that binds the mapping; this is the
+   structural half of the same rule.
 
 There used to be one more, checking a declared identifier type against the value beside
 it. The named slots removed the need for it: there is no pair left to disagree.

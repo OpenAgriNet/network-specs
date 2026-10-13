@@ -590,3 +590,20 @@ components:
             - required: [challengeMethods]  # a catalog entry: it declares what
                                             # this desk needs and asks nothing
 
+        # The OTP is sent, never returned. A challenge is something the caller
+        # proves with, so it belongs on a request and nowhere else. Two kinds
+        # of payload are answers and must not carry it: a Direct record, and
+        # the challengeIssued acknowledgement that init returns. Neither pack
+        # had a gate for this, so the secret could structurally have been
+        # echoed back; x-oan-pii marks it no-echo, but that is a mapping rule
+        # and this is the structural one. informationMode absent is treated as
+        # a request here, exactly as the gates above treat it.
+        - anyOf:
+            - not:
+                required: [challenge]
+            - allOf:
+                - not:
+                    required: [challengeIssued]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
