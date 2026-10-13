@@ -56,8 +56,8 @@ farmer: a registration number must not end up in a public, cacheable identifier.
 | top level | what is being asked and under which scheme: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
 | `applicant` | who to look up when the caller has no enrolment number: exactly one of `mobile` or `aadhaar` | the caller |
 | `application` | what the portal holds: `registeredOn`, `latestInstalmentPaid`, `ekyc`, `blockers` | the portal |
-| `challenge` | the OTP presented on the read | the caller |
-| `challengeIssued` | acknowledgement that one was sent | the portal |
+| `challenge.response` | the OTP presented on the read | the caller |
+| `challenge.issued` | acknowledgement that one was sent | the portal |
 
 `enrolmentId` travels in both directions here. A caller who holds the registration number
 sends it; a caller who holds only a mobile or an Aadhaar number sends `applicant` instead,
@@ -65,8 +65,13 @@ and the portal resolves it and returns the registration number under `enrolmentI
 two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
 sniffed".
 
-`challengeMethods` sits in no band. It is published on the catalog entry and never sent on
-a payload.
+Everything about challenging this desk lives under one `challenge` object, which is why
+the last two bands are nested rather than top level. The container itself carries no
+authorship marking — `methods` is published in the catalog, `issued` is the portal's and
+`response` is the caller's, so each member is marked on its own.
+
+`challenge.methods` sits in no band. It is published on the catalog entry and never sent
+on a payload.
 
 ## Direction, not action
 
@@ -78,8 +83,8 @@ The sequence is two calls:
 
 | | action | the caller sends | the portal returns |
 |---|---|---|---|
-| 1 | `init` | `enrolmentId` **or** `applicant` | `challengeIssued` — an OTP has gone to the number the application is held under |
-| 2 | `status` | the same identifier + `challenge` | `enrolmentId` + `application` |
+| 1 | `init` | `enrolmentId` **or** `applicant` | `challenge.issued` — an OTP has gone to the number the application is held under |
+| 2 | `status` | the same identifier + `challenge.response` | `enrolmentId` + `application` |
 
 The OTP acknowledgement is `OnDemand`, not `Direct`, even though it comes back from the
 portal. It carries no record — it says a challenge was sent and nothing else — and `Direct`
@@ -207,8 +212,8 @@ any wording here would be ours presented as the portal's.
 
 The pack composes **`SchemeServiceBase`** from
 [`../../Grievance/v0.1/attributes.yaml`](../../Grievance/v0.1/attributes.yaml), which is
-where `informationMode`, `provider`, `scheme`, `enrolmentId`, `challengeMethods`,
-`challenge` and `challengeIssued` come from, with their privacy markings already attached.
+where `informationMode`, `provider`, `scheme`, `enrolmentId` and the whole `challenge`
+object come from, with their privacy markings already attached.
 
 That base is the scheme-service layer: what any desk needs whether or not it handles
 grievances. The grievance bands — `grievance`, `case`, `grievanceOptions` — sit one layer
@@ -224,13 +229,13 @@ On top of the base this pack:
 
 - adds `applicant` and `application`;
 - pins `scheme.code` to `PM-KISAN`, the only scheme offering this capability today;
-- pins `challenge.method` and `challengeMethods[].method` to `SMS_OTP`, and
-  `challenge.value` to **four digits** — the base allows four to eight, so each desk pins
-  its own;
-- pins `challengeMethods[].length` and `challengeIssued.length` to the same four, and both
-  `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
+- pins `challenge.response.method` and `challenge.methods[].method` to `SMS_OTP`, and
+  `challenge.response.value` to **four digits** — the base allows four to eight, so each
+  desk pins its own;
+- pins `challenge.methods[].length` and `challenge.issued.length` to the same four, and
+  both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
   cannot drift apart;
-- refuses `challengeIssued.sentTo`, because the upstream acknowledgement is a bare success
+- refuses `challenge.issued.sentTo`, because the upstream acknowledgement is a bare success
   flag with no destination in it — there is nothing to mask and nothing to report;
 - narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters, and refuses
   twelve bare digits so an Aadhaar number cannot be sent in the registration slot;
@@ -251,13 +256,20 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `provider` | Optional | Beckn `Provider` reference. Both legs compose a `Contract`, so the adapter reads the participant from `commitments[].offer.provider.id` and this is advisory |
 | `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile or Aadhaar lookup |
 | `applicant` | An ask by mobile or Aadhaar, both legs | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
-| `challenge.method`, `challenge.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
-| `challengeIssued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
+| `challenge.response.method`, `challenge.response.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
+| `challenge.issued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `application.latestInstalmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
 | `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above |
-| `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme |
+| `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme. An instant, not a date — see below |
 | `application.ekyc` | Optional in `Direct` | `Done` or `Pending` |
-| `challengeMethods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
+| `challenge.methods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
+
+`application.registeredOn` is the one timestamp here, and the offset in it is ours.
+Upstream `DateOfRegistration` carries a time but no offset — a bare local timestamp, in
+practice midnight. The adapter reads it as IST and emits a fully-qualified instant, so
+`2021-06-14T00:00:00+05:30` means "the portal said 2021-06-14, and we are telling you we
+read that as IST". `Instant` refuses a naked local timestamp precisely so that this
+conversion has to happen somewhere nameable rather than being left to the reader.
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
 with paths relative to the attributes object. Three buckets per action — `mustSend`,
@@ -266,11 +278,11 @@ that enforce it are structural and bite on every action:
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
-| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods` |
-| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.length`, `challengeIssued.valueType`, `challengeIssued.expiresAt` |
-| `status` | `challenge.method`, `challenge.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
+| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `status` | `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-Refused: `application.ekyc.name`, `challengeIssued.sentTo`, `provider.availableAt`,
+Refused: `application.ekyc.name`, `challenge.issued.sentTo`, `provider.availableAt`,
 `provider.providerAttributes`.
 
 Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both legs need
@@ -296,14 +308,18 @@ evaluated.
    — an `anyOf` of two `not`/`required` members. Both at once names the same farmer twice
    with no rule for which wins, and it is also the shape a response would take if it
    leaked an Aadhaar number back beside the registration it resolved to.
-3. **Every payload is about something** — one of `enrolmentId`, `applicant`, `application`,
-   `challengeIssued` or `challengeMethods` must be present. This is what stops a payload
-   that is a scheme name and nothing else.
-4. **An answer may not carry the `challenge`.** The OTP is sent, never returned. A payload
-   carrying `challenge` must be a request: `informationMode` not `Direct`, and no
-   `challengeIssued` beside it, which rules out the `init` acknowledgement as well.
-   `x-oan-pii` marks the value `no-echo`, but that binds the mapping; this is the
-   structural half of the same rule.
+3. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
+   `challenge` carrying `issued` or `methods`. This is what stops a payload that is a
+   scheme name and nothing else. The `on_init` acknowledgement and the catalog entry both
+   start at `challenge`, so they are told apart by which member is present: `issued` on
+   the acknowledgement, `methods` on the entry. A bare `challenge` with neither is about
+   nothing and is refused.
+4. **An answer may not carry `challenge.response`.** The OTP is sent, never returned. A
+   payload carrying it must be a request: `informationMode` not `Direct`, and no
+   `challenge.issued` beside it, which rules out the `init` acknowledgement as well. Each
+   member is absent vacuously when `challenge` itself is, which is what lets both halves
+   of this gate be written against the container. `x-oan-pii` marks the value `no-echo`,
+   but that binds the mapping; this is the structural half of the same rule.
 
 There used to be two more. One checked a declared identifier type against the value beside
 it; the named slots removed the need, because there is no pair left to disagree. The other
@@ -326,8 +342,8 @@ unrepresentable rather than merely discouraged.
 one, must never be logged, traced, or returned in any response or error body, and must not
 be retained after the lookup it was sent for.
 
-`challenge.value` is a credential. It is never forwarded to the read it guards, never
-logged, never traced, never echoed.
+`challenge.response.value` is a credential. It is never forwarded to the read it guards,
+never logged, never traced, never echoed.
 
 **The upstream record carries far more about the farmer than this pack surfaces.**
 Alongside the status it returns the farmer's name, father's name, date of birth, gender,

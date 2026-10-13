@@ -10,7 +10,9 @@
     "mobile": "9999999999"
   },
   "challenge": {
-    "method": "SMS_OTP",
-    "value": "4821"
+    "response": {
+      "method": "SMS_OTP",
+      "value": "4821"
+    }
   }
 }

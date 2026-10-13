@@ -91,17 +91,23 @@ is a resource, and those packs stay on `resourceAttributes`.
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn`, `cropName` | the portal |
-| `challenge` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
-| `challengeIssued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt`, and a masked `sentTo` where a desk publishes one | the portal |
+| `challenge.response` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
+| `challenge.issued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt`, and a masked `sentTo` where a desk publishes one | the portal |
+
+Everything about challenging this desk lives under one `challenge` object, which is why
+the last two bands are nested rather than top level. The container itself carries no
+authorship marking — `methods` is published in the catalog, `issued` is the portal's and
+`response` is the caller's, so each member is marked on its own.
 
 PM-KISAN uses all five. PMFBY uses three: its grievance service has no OTP endpoint, so
 neither challenge band could ever be filled honestly there, and the PMFBY branch refuses
-both outright rather than leave them defined and unfillable.
+`challenge` outright rather than leave it defined and unfillable. One refusal now takes
+out the declaration, the acknowledgement and the answer together.
 
-`challengeMethods` sits in no band. It is published on the catalog entry and never sent
+`challenge.methods` sits in no band. It is published on the catalog entry and never sent
 on a payload, and it is what a caller reads to know whether this desk challenges it
-before filing. PMFBY publishes it empty, which is how a caller learns there is nothing to
-ask for; PM-KISAN publishes one pinned entry.
+before filing. PMFBY emits no `challenge` at all, which is how a caller learns there is
+nothing to ask for; PM-KISAN publishes one pinned entry.
 
 `grievanceOptions` sits in no band either, and for the same reason: it is published on
 the catalog entry and never sent. It carries the categories — and, where the desk
@@ -198,33 +204,35 @@ outside these attributes, where a guard on the attributes object cannot reach it
 the two declarations a catalog entry carries. The same `@type` serves filing, reading and
 discovery, and `informationMode` cannot tell them apart because every ask is `OnDemand`.
 What separates them is what the payload brought. Before the containers existed nothing
-caught a payload that brought none of them. On PM-KISAN the list adds `challengeIssued`,
-which is the whole of an `on_init` acknowledgement.
+caught a payload that brought none of them. On PM-KISAN the list adds a `challenge`
+carrying `issued`, which is the whole of an `on_init` acknowledgement.
 
 `applicantMobile` is deliberately not in that list. Every PMFBY ask carries it, so a
 branch on it would admit a payload stripped of everything else — a mobile number and
 nothing to be about.
 
-`challengeMethods` and `grievanceOptions` are in that list for the catalog entry alone. A
-declaration states what this desk needs and what it accepts, and asks for nothing, so it
-brings no `grievance`, no `case` and no enrolment. Without the branch the gate would
+`challenge.methods` and `grievanceOptions` are in that list for the catalog entry alone.
+A declaration states what this desk needs and what it accepts, and asks for nothing, so
+it brings no `grievance`, no `case` and no enrolment. Without the branch the gate would
 reject the very entry a caller discovers the desk by. Both are named on the one branch,
 so a desk that publishes what it requires without publishing what it accepts — or the
-other way round — is refused rather than half-published.
+other way round — is refused rather than half-published. The catalog branch and the
+`on_init` branch both start at `challenge`, so they are told apart by which member is
+present: `methods` on the entry, `issued` on the acknowledgement.
 
 There is deliberately no narrower `OnDemand` branch. The ask side has no field common to
 every payload: PMFBY filing sends the mobile, the enrolment, the season and the
 complaint; reading a case sends the mobile and the ticket; the catalog entry sends none
 of them. What each action must carry is enforced by that action's mapping guard.
 
-**An answer may not carry the `challenge`** (PM-KISAN). The code is sent, never returned.
-A payload carrying `challenge` must be a request: `informationMode` not `Direct`, and no
-`challengeIssued` beside it, which rules out the `init` acknowledgement as well. The
+**An answer may not carry `challenge.response`** (PM-KISAN). The code is sent, never
+returned. A payload carrying it must be a request: `informationMode` not `Direct`, and no
+`challenge.issued` beside it, which rules out the `init` acknowledgement as well. The
 secret could otherwise have been echoed back and still validated. `x-oan-pii` marks the
 value `no-echo`, but that binds the mapping; this is the structural half of the same rule.
 
-**PMFBY refuses both challenge bands** with a single `not`/`anyOf`/`required`. See "PMFBY
-issues no challenge".
+**PMFBY refuses `challenge`** with a single `not`/`required`. See "PMFBY issues no
+challenge".
 
 **A reply date needs a reply.** `case.repliedOn` without `case.reply` is refused on both
 branches: a date for an answer nobody wrote is not a fact.
@@ -370,7 +378,7 @@ no commitment at all was never available.
 
 | schema | holds | published |
 |---|---|---|
-| `SchemeServiceBase` | what any scheme service needs: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the `challengeMethods` / `challenge` / `challengeIssued` trio | no |
+| `SchemeServiceBase` | what any scheme service needs: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the `challenge` object | no |
 | `GrievanceBase` | `SchemeServiceBase` plus the three grievance bands: `grievance`, `case`, `grievanceOptions` | no |
 | `Grievance` | `GrievanceBase`, the `@context` / `@type` guards, and the `oneOf` over the two branches | **yes** |
 | `PMFBYGrievance` | the PMFBY branch: `scheme.code: PMFBY`, its five extra top-level fields, its value spaces, its refusals, its gates | branch only |
@@ -383,7 +391,7 @@ internal structure, named so a reader can see which rule belongs to which desk.
 **The split at `SchemeServiceBase` is the room left for a future capability.** Checking
 the status of a *scheme application* is a different capability from a grievance, and it
 lives in its own pack — but it needs exactly the top layer: the scheme, the enrolment,
-the provider, and the challenge trio. It composes `SchemeServiceBase` and adds its own
+the provider, and the challenge object. It composes `SchemeServiceBase` and adds its own
 bands, so nothing about grievances follows it in. If the network later wants to *file* an
 application, that is one more pack over the same base, and this one does not move.
 
@@ -441,7 +449,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `case.ticketNo` | PMFBY `Direct`; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
 | `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
 | `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
-| `challengeMethods` | The catalog entry only | What this desk challenges with before it will act. Never sent on a transaction |
+| `challenge.methods` | The catalog entry only | What this desk challenges with before it will act. Never sent on a transaction |
 | `grievanceOptions` | The catalog entry only | The categories, and where the desk has them the sub-categories, this desk accepts. Never sent on a transaction |
 
 ### PMFBY only
@@ -462,8 +470,8 @@ enumeration, so the pack constrains only "digits" — see "Non-goals".
 
 | Field | Required when | Meaning |
 |---|---|---|
-| `challenge` | `support` and `status` | `method: SMS_OTP` and a four-digit `value`. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
-| `challengeIssued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. `sentTo` is refused — the portal does not say where it sent the code |
+| `challenge.response` | `support` and `status` | `method: SMS_OTP` and a four-digit `value`. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
+| `challenge.issued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. `sentTo` is refused — the portal does not say where it sent the code |
 | `case.reply`, `case.repliedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `reply` is bounded at 2000 characters, and `repliedOn` without it is refused |
 
 PM-KISAN's `grievance.category.code` is closed to `G001`–`G010`, and `enrolmentId` must
@@ -480,52 +488,54 @@ because the gates that enforce it are structural and bite on every action.
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
-| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
 | `support` | `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.name`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.cropName` |
 
-Refused: `challenge`, `challengeIssued`, `case.reply`, `case.repliedOn`,
-`case.status.name`, `provider.availableAt`, `provider.providerAttributes`.
+Refused: `challenge`, `case.reply`, `case.repliedOn`, `case.status.name`,
+`provider.availableAt`, `provider.providerAttributes`.
 
 **PM-KISAN**
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
-| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challengeMethods`, `grievanceOptions.categories` |
-| `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challengeIssued.method`, `challengeIssued.length`, `challengeIssued.valueType`, `challengeIssued.expiresAt` |
-| `support` | `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.method`, `challenge.value` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `enrolmentId`, `case.filedOn`, `challenge.method`, `challenge.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
+| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` |
+| `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `support` | `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Refused: `grievance.subCategory`, `grievanceOptions.subCategories`, `case.status.name`,
-`challengeIssued.sentTo`, `provider.availableAt`, `provider.providerAttributes`.
+`challenge.issued.sentTo`, `provider.availableAt`, `provider.providerAttributes`.
 
 Both are allow-lists. A path not named is not used by that capability. `discover` has
 only a `comesBack` bucket, because the catalog entry is published, never asked for.
 `enrolmentId` is a `mustSend` on PMFBY's `support` and only a `maySend` on its `status`:
 the lodge is about an enrolment, while the read is selected by `case.ticketNo` and
 `applicantMobile` together. `applicantMobile` never comes back on either leg.
-PM-KISAN's `challenge` is a `mustSend` on `support` and `status` but absent from `init`,
-which is the call that asks for the code rather than spends it. `challenge` appears in
-no `comesBack` bucket on either leg; `challengeIssued` is the whole of what `init`
-answers with.
+PM-KISAN's `challenge.response` is a `mustSend` on `support` and `status` but absent from
+`init`, which is the call that asks for the code rather than spends it. It appears in no
+`comesBack` bucket on either leg; `challenge.issued` is the whole of what `init` answers
+with.
 
 ## PMFBY issues no challenge
 
-`challengeMethods` is pinned `maxItems: 0` on the PMFBY branch and the catalog entry
-publishes `[]`. Both challenge bands are refused outright:
+The whole `challenge` object is refused on the PMFBY branch, in one line:
 
 ```yaml
 - not:
-    anyOf:
-      - required: [challenge]
-      - required: [challengeIssued]
+    required: [challenge]
 ```
 
-A payload carrying either is rejected rather than quietly ignored, so a caller that
-assumed an OTP step is told so at the edge instead of having its proof silently dropped.
+One refusal takes out the declaration, the acknowledgement and the answer together,
+because all three now live under the same key. A payload carrying any of them is
+rejected rather than quietly ignored, so a caller that assumed an OTP step is told so at
+the edge instead of having its proof silently dropped.
 
-The field is published empty rather than omitted. Empty is an answer; absent is a
-question. A caller reading `[]` knows to open at `support`.
+Absence is the answer here, not a question. A published empty list would be the usual
+way to say "nothing to ask for" while leaving absent to mean "unknown", but the branch
+makes that distinction unnecessary: `scheme.code: PMFBY` selects a branch on which
+`challenge` cannot appear at all, so a caller reading a PMFBY entry without one knows to
+open at `support`.
 
 PMFBY does operate an OTP pair — `/api/v1/services/nic/getOtp` and `/verifyMobile` — but
 it sits on the core realm, behind different credentials, and belongs to the policy flow.
@@ -541,8 +551,8 @@ portal's own posture, not a gap this network introduces — but it is worth rais
 PMFBY, and any control it wants belongs on FGMS beside the lodge rather than borrowed
 from another realm.
 
-If PMFBY ever adds a challenge to FGMS, widen `challengeMethods` on that branch and drop
-the refusal. Nothing else moves.
+If PMFBY ever adds a challenge to FGMS, drop the refusal and pin `challenge.methods` on
+that branch. Nothing else moves.
 
 ## PM-KISAN grievance categories
 
@@ -638,13 +648,13 @@ validator visits every payload with `VisitAsRequest`, on the way out as well as 
 describes. Direction is carried by `x-oan-pii`, which the adapter reads, and it is
 unconditional.
 
-**`challenge.value` is the strictest field here.** It is never logged, traced, echoed in
+**`challenge.response.value` is the strictest field here.** It is never logged, traced, echoed in
 a response, or forwarded to the lodge call. The structural half of that rule is the gate
 above; this is the mapping half.
 
 **`applicantMobile` is never echoed**, and on PMFBY there is nothing to echo it in: that
 desk issues no challenge acknowledgement, so no masked destination is returned anywhere.
-Where a desk does publish `challengeIssued.sentTo`, it is a masked destination and never
+Where a desk does publish `challenge.issued.sentTo`, it is a masked destination and never
 the full number. PM-KISAN emits no `sentTo` at all.
 
 **`enrolmentId` is `no-log` and `no-trace` without exception**: it is never written to a
@@ -677,7 +687,7 @@ passthrough.**
 
 **A portal's own message or body is never returned to the caller.** It may hold a stack
 trace, an internal hostname, or a quoted-back credential. Log it redacted and return our
-own message. No error path carries `challenge.value`, `enrolmentId`, or a service token.
+own message. No error path carries `challenge.response.value`, `enrolmentId`, or a service token.
 
 **PM-KISAN's portal payload travels inside an encrypted envelope.** A decryption failure
 must not log the ciphertext.

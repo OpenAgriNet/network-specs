@@ -4,12 +4,34 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "Grievance": "openagrinet:Grievance",
     "informationMode": "openagrinet:informationMode",
-    "challengeMethods": {
-      "@id": "openagrinet:challengeMethods",
+    "challenge": {
+      "@id": "openagrinet:challenge",
       "@context": {
-        "method": "openagrinet:challengeMethod",
-        "length": "openagrinet:challengeLength",
-        "valueType": "openagrinet:challengeValueType"
+        "methods": {
+          "@id": "openagrinet:challengeMethods",
+          "@context": {
+            "method": "openagrinet:challengeMethod",
+            "length": "openagrinet:challengeLength",
+            "valueType": "openagrinet:challengeValueType"
+          }
+        },
+        "issued": {
+          "@id": "openagrinet:challengeIssued",
+          "@context": {
+            "method": "openagrinet:challengeMethod",
+            "length": "openagrinet:challengeLength",
+            "valueType": "openagrinet:challengeValueType",
+            "sentTo": "openagrinet:challengeSentTo",
+            "expiresAt": "openagrinet:challengeExpiresAt"
+          }
+        },
+        "response": {
+          "@id": "openagrinet:challengeResponse",
+          "@context": {
+            "method": "openagrinet:challengeMethod",
+            "value": "openagrinet:challengeValue"
+          }
+        }
       }
     },
     "grievanceOptions": {
@@ -73,23 +95,6 @@
         "reply": "openagrinet:caseReply",
         "repliedOn": "openagrinet:repliedOn",
         "cropName": "openagrinet:cropName"
-      }
-    },
-    "challenge": {
-      "@id": "openagrinet:challenge",
-      "@context": {
-        "method": "openagrinet:challengeMethod",
-        "value": "openagrinet:challengeValue"
-      }
-    },
-    "challengeIssued": {
-      "@id": "openagrinet:challengeIssued",
-      "@context": {
-        "method": "openagrinet:challengeMethod",
-        "length": "openagrinet:challengeLength",
-        "valueType": "openagrinet:challengeValueType",
-        "sentTo": "openagrinet:challengeSentTo",
-        "expiresAt": "openagrinet:challengeExpiresAt"
       }
     }
   }

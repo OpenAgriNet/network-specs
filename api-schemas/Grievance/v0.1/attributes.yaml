@@ -58,68 +58,76 @@ components:
           description: The enrolment this payload is about, as the scheme numbers it.
           x-jsonld-id: "openagrinet:enrolmentId"
 
-        challengeMethods:
-          type: array
-          uniqueItems: true
-          items:
-            $ref: "#/components/schemas/ChallengeMethod"
-          description: What this desk challenges with. Published in the catalog. Empty means no OTP.
-          x-jsonld-id: "openagrinet:challengeMethods"
-
         challenge:
           type: object
-          required: [method, value]
           additionalProperties: false
-          x-oan-pii:
-            class: credential
-            handling: [no-log, no-trace, no-echo, no-forward]
-            note: Spent once against the portal and never carried further.
+          # No marking on the container: methods is published in the catalog
+          # while response is a secret. Each member carries its own.
           properties:
-            method:
-              type: string
-              description: Must name a method this desk published.
-              x-jsonld-id: "openagrinet:challengeMethod"
-            value:
-              type: string
-              pattern: "^[0-9]{4,8}$"
+            methods:
+              type: array
+              uniqueItems: true
+              items:
+                $ref: "#/components/schemas/ChallengeMethod"
+              description: What this desk challenges with. Published in the catalog. Authored by the portal.
+              x-jsonld-id: "openagrinet:challengeMethods"
+
+            issued:
+              type: object
+              required: [method, length, valueType, expiresAt]
+              additionalProperties: false
+              properties:
+                method:
+                  type: string
+                  x-jsonld-id: "openagrinet:challengeMethod"
+                length:
+                  type: integer
+                  minimum: 4
+                  maximum: 8
+                  x-jsonld-id: "openagrinet:challengeLength"
+                valueType:
+                  type: string
+                  enum: [NUMERIC, ALPHANUMERIC]
+                  x-jsonld-id: "openagrinet:challengeValueType"
+                sentTo:
+                  type: string
+                  x-oan-pii:
+                    class: contact
+                    handling: [no-log, no-trace, mask-on-echo]
+                    note: Masked form only, never the full destination.
+                  x-jsonld-id: "openagrinet:challengeSentTo"
+                expiresAt:
+                  allOf:
+                    - $ref: "#/components/schemas/Instant"
+                  x-jsonld-id: "openagrinet:challengeExpiresAt"
+              description: The challenge the portal says it sent. Authored by the portal.
+              x-jsonld-id: "openagrinet:challengeIssued"
+
+            response:
+              type: object
+              required: [method, value]
+              additionalProperties: false
               x-oan-pii:
                 class: credential
                 handling: [no-log, no-trace, no-echo, no-forward]
-                note: Never logged, traced, echoed or forwarded to a later call.
-              x-jsonld-id: "openagrinet:challengeValue"
-          description: The proof the caller presents on a guarded call.
+                note: Spent once against the portal and never carried further.
+              properties:
+                method:
+                  type: string
+                  description: Must name a method this desk published.
+                  x-jsonld-id: "openagrinet:challengeMethod"
+                value:
+                  type: string
+                  pattern: "^[0-9]{4,8}$"
+                  x-oan-pii:
+                    class: credential
+                    handling: [no-log, no-trace, no-echo, no-forward]
+                    note: Never logged, traced, echoed or forwarded to a later call.
+                  x-jsonld-id: "openagrinet:challengeValue"
+              description: The caller's answer to the challenge. Authored by the caller.
+              x-jsonld-id: "openagrinet:challengeResponse"
+          description: Challenging on this desk - what it accepts, what it sent, what the caller answered.
           x-jsonld-id: "openagrinet:challenge"
-
-        challengeIssued:
-          type: object
-          required: [method, length, valueType, expiresAt]
-          additionalProperties: false
-          properties:
-            method:
-              type: string
-              x-jsonld-id: "openagrinet:challengeMethod"
-            length:
-              type: integer
-              minimum: 4
-              maximum: 8
-              x-jsonld-id: "openagrinet:challengeLength"
-            valueType:
-              type: string
-              enum: [NUMERIC, ALPHANUMERIC]
-              x-jsonld-id: "openagrinet:challengeValueType"
-            sentTo:
-              type: string
-              x-oan-pii:
-                class: contact
-                handling: [no-log, no-trace, mask-on-echo]
-                note: Masked form only, never the full destination.
-              x-jsonld-id: "openagrinet:challengeSentTo"
-            expiresAt:
-              allOf:
-                - $ref: "#/components/schemas/Instant"
-              x-jsonld-id: "openagrinet:challengeExpiresAt"
-          description: The portal's acknowledgement that it sent a challenge.
-          x-jsonld-id: "openagrinet:challengeIssued"
 
     # ---------------------------------------------------------------
     # Grievance base: the complaint bands on top of the shared base.
@@ -235,12 +243,11 @@ components:
       x-oan-fields-by-action:
         # Allow-list, relative to the attribute object. A path not named here
         # is not used. No init: PMFBY issues no challenge.
-        refused:     [challenge, challengeIssued,
+        refused:     [challenge,
                       case.reply, case.repliedOn, case.status.name,
                       provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
-                      challengeMethods,
                       grievanceOptions.categories, grievanceOptions.subCategories]
         support:
           mustSend:  [enrolmentId, applicantMobile, cropYear, season,
@@ -303,11 +310,6 @@ components:
           description: The channel the ticket arrived through. Omit and the adapter sends its own. Names the channel, not the farmer.
           x-jsonld-id: "openagrinet:receiptSourceId"
 
-        challengeMethods:
-          type: array
-          maxItems: 0
-          description: Pinned empty. PMFBY's grievance service has no OTP endpoint.
-
         grievanceOptions:
           type: object
           required: [categories, subCategories]
@@ -366,11 +368,10 @@ components:
               x-jsonld-id: "openagrinet:cropName"
 
       allOf:
-        # No challenge exists here, so neither band can be filled honestly.
+        # PMFBY's grievance service has no OTP endpoint. One refusal now takes
+        # out the declaration, the acknowledgement and the answer together.
         - not:
-            anyOf:
-              - required: [challenge]
-              - required: [challengeIssued]
+            required: [challenge]
 
         # A Direct payload is an answer and must carry a standing case.
         - anyOf:
@@ -388,7 +389,7 @@ components:
             - required: [grievance]
             - required: [case]
             - required: [enrolmentId]
-            - required: [challengeMethods, grievanceOptions]
+            - required: [grievanceOptions]
 
     # ---------------------------------------------------------------
     # PM-KISAN branch. OTP on both guarded legs, one category level.
@@ -396,21 +397,21 @@ components:
     PMKISANGrievance:
       x-oan-fields-by-action:
         refused:     [grievance.subCategory, grievanceOptions.subCategories,
-                      case.status.name, challengeIssued.sentTo,
+                      case.status.name, challenge.issued.sentTo,
                       provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
-                      challengeMethods, grievanceOptions.categories]
+                      challenge.methods, grievanceOptions.categories]
         init:
           mustSend:  [enrolmentId]
           maySend:   [informationMode, scheme.code]
           comesBack: [informationMode, scheme.code, scheme.name,
-                      challengeIssued.method, challengeIssued.length,
-                      challengeIssued.valueType, challengeIssued.expiresAt]
+                      challenge.issued.method, challenge.issued.length,
+                      challenge.issued.valueType, challenge.issued.expiresAt]
         support:
           mustSend:  [enrolmentId,
                       grievance.category.code, grievance.description,
-                      challenge.method, challenge.value]
+                      challenge.response.method, challenge.response.value]
           maySend:   [informationMode, provider.id, provider.descriptor.name,
                       scheme.code]
           comesBack: [informationMode, provider.id, provider.descriptor.name,
@@ -421,7 +422,7 @@ components:
           # filedOn is sent: the portal answers with every grievance on the
           # registration, so the date is half the case selector.
           mustSend:  [enrolmentId, case.filedOn,
-                      challenge.method, challenge.value]
+                      challenge.response.method, challenge.response.value]
           maySend:   [informationMode, scheme.code]
           comesBack: [informationMode, scheme.code, scheme.name,
                       grievance.description,
@@ -433,35 +434,35 @@ components:
             code:
               const: PM-KISAN
 
-        challengeMethods:
-          type: array
-          minItems: 1
-          items:
-            properties:
-              method:
-                enum: [SMS_OTP]
-              length:
-                enum: [4]
-              valueType:
-                enum: [NUMERIC]
-
         challenge:
           properties:
-            method:
-              enum: [SMS_OTP]
-            value:
-              pattern: "^[0-9]{4}$"
-
-        challengeIssued:
-          not:
-            required: [sentTo]
-          properties:
-            method:
-              enum: [SMS_OTP]
-            length:
-              enum: [4]
-            valueType:
-              enum: [NUMERIC]
+            methods:
+              type: array
+              minItems: 1
+              items:
+                properties:
+                  method:
+                    enum: [SMS_OTP]
+                  length:
+                    enum: [4]
+                  valueType:
+                    enum: [NUMERIC]
+            issued:
+              not:
+                required: [sentTo]
+              properties:
+                method:
+                  enum: [SMS_OTP]
+                length:
+                  enum: [4]
+                valueType:
+                  enum: [NUMERIC]
+            response:
+              properties:
+                method:
+                  enum: [SMS_OTP]
+                value:
+                  pattern: "^[0-9]{4}$"
 
         grievanceOptions:
           not:
@@ -512,17 +513,32 @@ components:
             - required: [grievance]
             - required: [case]
             - required: [enrolmentId]
-            - required: [challengeIssued]
-            - required: [challengeMethods, grievanceOptions]
-
-        # A payload presenting a challenge is a caller's ask, so it cannot
-        # also carry the portal's acknowledgement of one.
-        - anyOf:
-            - not:
-                required: [challenge]
+            # an on_init acknowledgement
             - allOf:
-                - not:
-                    required: [challengeIssued]
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [issued]
+            # a catalog entry, which publishes both declarations or neither
+            - allOf:
+                - required: [challenge, grievanceOptions]
+                - properties:
+                    challenge:
+                      required: [methods]
+
+        # A payload answering a challenge is a caller's ask, so it cannot also
+        # carry the portal's acknowledgement of one. Each member is absent
+        # vacuously when challenge itself is, which is what makes this hold.
+        - anyOf:
+            - properties:
+                challenge:
+                  not:
+                    required: [response]
+            - allOf:
+                - properties:
+                    challenge:
+                      not:
+                        required: [issued]
                 - properties:
                     informationMode:
                       enum: [OnDemand]

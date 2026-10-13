@@ -35,22 +35,28 @@
       "rdfs:comment": "The enrolment the grievance is about, as the scheme numbers it: a crop insurance application number for PMFBY, a registration number or exchanged token for PM-KISAN."
     },
     {
-      "@id": "openagrinet:challengeMethods",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge methods",
-      "rdfs:comment": "Which challenge this desk issues before a guarded call. Non-empty names the mechanism; empty means the desk challenges nothing. Catalog only."
-    },
-    {
       "@id": "openagrinet:challenge",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge",
-      "rdfs:comment": "The proof a caller presents on a guarded call."
+      "rdfs:comment": "Challenging on this desk, gathered in one place: what it accepts, what it sent, what the caller answered. Absent altogether on a desk that challenges nothing."
+    },
+    {
+      "@id": "openagrinet:challengeMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge methods",
+      "rdfs:comment": "What this desk challenges with before a guarded call. Catalog only."
     },
     {
       "@id": "openagrinet:challengeIssued",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge issued",
       "rdfs:comment": "The portal's acknowledgement that it sent a challenge, and what shape the answer must take."
+    },
+    {
+      "@id": "openagrinet:challengeResponse",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge response",
+      "rdfs:comment": "The caller's answer to a challenge, presented on a guarded call."
     },
     {
       "@id": "openagrinet:challengeMethod",

@@ -12,7 +12,7 @@ info:
     already holds. Separate capability, separate catalog, separate pack.
 
     Composes SchemeServiceBase from api-schemas/Grievance/v0.1, which owns the
-    scheme, the enrolment and the challenge trio. Two actions: init asks for
+    scheme, the enrolment and the challenge object. Two actions: init asks for
     the OTP, status reads the record. Both ride on commitmentAttributes.
 
     Reasoning and worked examples are in README.md.
@@ -29,23 +29,23 @@ components:
       x-oan-fields-by-action:
         refused:
           - application.ekyc.name
-          - challengeIssued.sentTo
+          - challenge.issued.sentTo
           - provider.availableAt
           - provider.providerAttributes
         discover:
-          comesBack: [informationMode, scheme.code, scheme.name, challengeMethods]
+          comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
           maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
             - scheme.code
             - scheme.name
-            - challengeIssued.method
-            - challengeIssued.length
-            - challengeIssued.valueType
-            - challengeIssued.expiresAt
+            - challenge.issued.method
+            - challenge.issued.length
+            - challenge.issued.valueType
+            - challenge.issued.expiresAt
         status:
-          mustSend: [challenge.method, challenge.value]
+          mustSend: [challenge.response.method, challenge.response.value]
           maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
@@ -110,32 +110,29 @@ components:
                       enum: [PM-KISAN]
               description: PM-KISAN is the only scheme offering this capability today. A second scheme widens this enum.
 
-            challengeMethods:
-              allOf:
-                - type: array
-                  minItems: 1
-                  items:
-                    properties:
-                      method: { enum: [SMS_OTP] }
-                      length: { enum: [4] }
-                      valueType: { enum: [NUMERIC] }
-
             challenge:
               allOf:
                 - type: object
                   properties:
-                    method: { enum: [SMS_OTP] }
-                    value: { pattern: "^[0-9]{4}$" }
-
-            challengeIssued:
-              allOf:
-                - type: object
-                  not:
-                    required: [sentTo]
-                  properties:
-                    method: { enum: [SMS_OTP] }
-                    length: { enum: [4] }
-                    valueType: { enum: [NUMERIC] }
+                    methods:
+                      type: array
+                      minItems: 1
+                      items:
+                        properties:
+                          method: { enum: [SMS_OTP] }
+                          length: { enum: [4] }
+                          valueType: { enum: [NUMERIC] }
+                    issued:
+                      not:
+                        required: [sentTo]
+                      properties:
+                        method: { enum: [SMS_OTP] }
+                        length: { enum: [4] }
+                        valueType: { enum: [NUMERIC] }
+                    response:
+                      properties:
+                        method: { enum: [SMS_OTP] }
+                        value: { pattern: "^[0-9]{4}$" }
 
             enrolmentId:
               allOf:
@@ -180,6 +177,7 @@ components:
                 registeredOn:
                   allOf:
                     - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/Instant"
+                  description: When the farmer was registered, from DateOfRegistration. The offset is the adapter's, not the portal's -- see README.
                   x-jsonld-id: "openagrinet:registeredOn"
                 latestInstalmentPaid:
                   type: integer
@@ -230,18 +228,34 @@ components:
             - not: { required: [applicant] }
             - not: { required: [enrolmentId] }
 
-        # Every payload must be about something.
+        # Every payload must be about something. The on_init acknowledgement
+        # and the catalog entry both start at challenge, so they are told
+        # apart by which member is present.
         - anyOf:
             - required: [applicant]
             - required: [enrolmentId]
             - required: [application]
-            - required: [challengeIssued]
-            - required: [challengeMethods]
-
-        # An answer may not carry the challenge.
-        - anyOf:
-            - not: { required: [challenge] }
             - allOf:
-                - not: { required: [challengeIssued] }
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [issued]
+            - allOf:
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [methods]
+
+        # A payload answering a challenge is a caller's ask, so it cannot also
+        # carry the portal's acknowledgement of one. Each member is absent
+        # vacuously when challenge itself is, which is what makes this hold.
+        - anyOf:
+            - properties:
+                challenge:
+                  not: { required: [response] }
+            - allOf:
+                - properties:
+                    challenge:
+                      not: { required: [issued] }
                 - properties:
                     informationMode: { enum: [OnDemand] }
