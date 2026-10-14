@@ -1,0 +1,49 @@
+{
+  "@context": [
+    "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+      "WeatherAdvisory": "openagrinet:WeatherAdvisory",
+      "topics": {
+        "@id": "openagrinet:topics",
+        "@container": "@set"
+      },
+      "supportedWeatherParameters": {
+        "@id": "openagrinet:supportedWeatherParameters",
+        "@container": "@set"
+      },
+      "forecastHorizon": "openagrinet:forecastHorizon",
+      "updateFrequency": "openagrinet:updateFrequency",
+      "geographicGranularities": {
+        "@id": "openagrinet:geographicGranularities",
+        "@container": "@set"
+      },
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
+      "issuedAt": "openagrinet:issuedAt",
+      "validity": "openagrinet:validity",
+      "recommendations": { "@id": "openagrinet:recommendations", "@container": "@set" },
+      "topic": "openagrinet:topic",
+      "message": "openagrinet:message",
+      "language": "openagrinet:language",
+      "severity": "openagrinet:severity",
+      "actions": { "@id": "openagrinet:actions", "@container": "@set" },
+      "weatherBasis": "openagrinet:weatherBasis",
+      "parameters": { "@id": "openagrinet:weatherParameters", "@container": "@set" },
+      "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },
+      "source": "openagrinet:source"
+    }
+  ]
+}

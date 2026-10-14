@@ -1,0 +1,181 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Weather Advisory Attributes
+  version: 0.1.0
+  description: >
+    Weather-informed agricultural guidance that may be obtained on demand or
+    supplied directly. Combines with AgricultureResource through allOf and
+    attaches to a Beckn Resource through resourceAttributes.
+
+components:
+  schemas:
+    WeatherAdvisory:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld"
+        "@type": openagrinet:WeatherAdvisory
+      allOf:
+        - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields"
+        - type: object
+          required: ["@type"]
+          properties:
+            subjectCategories:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgricultureResourceFields/properties/subjectCategories"
+                - type: array
+                  description: Required broad classification for this pack. It must include Weather.
+                  contains:
+                    const: Weather
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:WeatherAdvisory
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:WeatherAdvisory
+                  items:
+                    oneOf:
+                      - const: openagrinet:WeatherAdvisory
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+            topics:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Topics addressed by this advisory outcome.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"
+            supportedWeatherParameters:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Weather parameters the Provider can use to produce advice on demand.
+              items:
+                type: string
+                enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+              x-jsonld-id: "openagrinet:supportedWeatherParameters"
+            forecastHorizon:
+              type: string
+              format: duration
+              description: Maximum supported forecast horizon for on-demand advice.
+              x-jsonld-id: "openagrinet:forecastHorizon"
+            updateFrequency:
+              type: string
+              format: duration
+              description: Expected refresh interval for the underlying information.
+              x-jsonld-id: "openagrinet:updateFrequency"
+            geographicGranularities:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Geographic granularities at which the Provider can produce advice.
+              items:
+                type: string
+                enum: [Point, Village, Block, District, State]
+              x-jsonld-id: "openagrinet:geographicGranularities"
+            location:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/CompleteLocation"
+              description: Beckn Location to which the advice applies. Its geo member carries the required GeoJSON geometry; Point coordinates use longitude, latitude order.
+              x-jsonld-id: "openagrinet:location"
+            issuedAt:
+              type: string
+              format: date-time
+              description: Time at which the Provider issued the advisory.
+              x-jsonld-id: "openagrinet:issuedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/ClosedTimePeriod"
+              description: Period during which the advice applies.
+              x-jsonld-id: "openagrinet:validity"
+            recommendations:
+              type: array
+              minItems: 1
+              description: Human-readable recommendations issued for this place and validity period.
+              items:
+                type: object
+                required: [message, language]
+                properties:
+                  topic:
+                    type: string
+                    minLength: 1
+                    description: Advisory topic addressed by this recommendation.
+                    x-jsonld-id: "openagrinet:topic"
+                  message:
+                    type: string
+                    minLength: 1
+                    description: Recommendation expressed in the declared language.
+                    x-jsonld-id: "openagrinet:message"
+                  language:
+                    type: string
+                    minLength: 2
+                    description: BCP 47 language tag of the recommendation.
+                    x-jsonld-id: "openagrinet:language"
+                  severity:
+                    type: string
+                    enum: [Information, Watch, Warning, Critical]
+                    description: Weather-related severity associated with the recommendation.
+                    x-jsonld-id: "openagrinet:severity"
+                  actions:
+                    type: array
+                    minItems: 1
+                    uniqueItems: true
+                    description: Concise actions the recipient may take.
+                    items:
+                      type: string
+                      minLength: 1
+                    x-jsonld-id: "openagrinet:actions"
+                additionalProperties: false
+              x-jsonld-id: "openagrinet:recommendations"
+            weatherBasis:
+              type: object
+              description: Weather information used to produce the advice.
+              required: [parameters]
+              properties:
+                parameters:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Weather parameters considered when the Provider produced the recommendation.
+                  items:
+                    type: string
+                    enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+                  x-jsonld-id: "openagrinet:weatherParameters"
+                supportingResourceIds:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Beckn Resource identifiers for observations or forecasts that support this advice.
+                  items:
+                    type: string
+                    minLength: 1
+                  x-jsonld-id: "openagrinet:supportingResourceIds"
+              additionalProperties: false
+              x-jsonld-id: "openagrinet:weatherBasis"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/SourceReference"
+              description: Provider or authoritative source that issued the advisory.
+              x-jsonld-id: "openagrinet:source"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [topics, supportedWeatherParameters, geographicGranularities, languages]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [topics, location, issuedAt, validity, recommendations, weatherBasis, source]

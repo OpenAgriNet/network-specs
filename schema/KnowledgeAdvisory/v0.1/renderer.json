@@ -1,0 +1,8 @@
+{
+  "schema": "KnowledgeAdvisory",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{topics}} | {{languages}} | {{issuedAt}}",
+  "detail_template": "Mode: {{informationMode}}\nTopics: {{topics}}\nLanguages: {{languages}}\nIssued: {{issuedAt}}\nRecommendations: {{recommendations}}\nRationale: {{rationale}}",
+  "html": "<div class=\"oan-knowledge-advisory\"><strong>{{informationMode}}</strong><span>{{topics}}</span><span>{{languages}}</span></div>",
+  "html_detail": "<div class=\"oan-knowledge-advisory-detail\"><p><strong>Mode:</strong> {{informationMode}}</p><p><strong>Topics:</strong> {{topics}}</p><p><strong>Issued:</strong> {{issuedAt}}</p><p><strong>Recommendations:</strong> {{recommendations}}</p><p><strong>Rationale:</strong> {{rationale}}</p></div>"
+}
