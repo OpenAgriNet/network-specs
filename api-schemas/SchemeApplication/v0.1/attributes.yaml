@@ -28,14 +28,16 @@ components:
         status: commitmentAttributes
       x-oan-fields-by-action:
         refused:
+          - provider
           - application.ekyc.name
-          - challenge.issued.sentTo
-          - provider.availableAt
-          - provider.providerAttributes
+          - grievance
+          - case
+          - grievanceOptions
         discover:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
-          maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
+          maySend: [informationMode, scheme.code, enrolmentId,
+                    applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
             - scheme.code
@@ -45,8 +47,11 @@ components:
             - challenge.issued.valueType
             - challenge.issued.expiresAt
         status:
+          # Identity is also required, but it is one of two slots and
+          # mustSend names a single path -- see the gates in README.
           mustSend: [challenge.response.method, challenge.response.value]
-          maySend: [informationMode, scheme.code, enrolmentId, applicant.mobile, applicant.aadhaar]
+          maySend: [informationMode, scheme.code, enrolmentId,
+                    applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
             - scheme.code
@@ -123,8 +128,6 @@ components:
                           length: { enum: [4] }
                           valueType: { enum: [NUMERIC] }
                     issued:
-                      not:
-                        required: [sentTo]
                       properties:
                         method: { enum: [SMS_OTP] }
                         length: { enum: [4] }
@@ -138,6 +141,7 @@ components:
               allOf:
                 - type: string
                   pattern: "^[A-Za-z0-9]+$"
+                  minLength: 6
                   maxLength: 20
                 - not:
                     pattern: "^[0-9]{12}$"
@@ -187,6 +191,9 @@ components:
                 ekyc:
                   allOf:
                     - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                    # Refuses longDesc, shortDesc and the rest alongside name:
+                    # the portal's phrase has more than one door into these.
+                    - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoDescriptorExtras"
                     - type: object
                       required: [code]
                       not:
@@ -202,6 +209,7 @@ components:
                   items:
                     allOf:
                       - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                      - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoDescriptorExtras"
                       - type: object
                         required: [code, name]
                         properties:
@@ -212,6 +220,10 @@ components:
                             type: string
                             minLength: 1
                             maxLength: 500
+                            x-oan-pii:
+                              class: freetext
+                              handling: [no-log, no-trace]
+                              note: The portal's own phrase about a named farmer. The one place a portal phrase is returned, and deliberate -- see README.
                   description: What is holding the money up. Absent means the check did not run; empty means it ran and found nothing.
                   x-jsonld-id: "openagrinet:applicationBlockers"
               description: What the portal holds against the application. Every member is authored by the portal.
@@ -246,16 +258,57 @@ components:
                     challenge:
                       required: [methods]
 
-        # A payload answering a challenge is a caller's ask, so it cannot also
-        # carry the portal's acknowledgement of one. Each member is absent
-        # vacuously when challenge itself is, which is what makes this hold.
+        # A payload answering a challenge is a caller's ask, never an answer.
+        # The member is absent vacuously when challenge itself is, which is
+        # what makes this hold. The base's oneOf does the rest: an
+        # acknowledgement and an answer cannot ride together either.
         - anyOf:
             - properties:
                 challenge:
                   not: { required: [response] }
+            - properties:
+                informationMode: { enum: [OnDemand] }
+
+        # A catalog declaration is published and never sent. Carrying one
+        # makes the payload a catalog entry, which names no farmer.
+        - anyOf:
+            - properties:
+                challenge:
+                  not: { required: [methods] }
             - allOf:
                 - properties:
-                    challenge:
-                      not: { required: [issued] }
-                - properties:
                     informationMode: { enum: [OnDemand] }
+                - not:
+                    anyOf:
+                      - required: [enrolmentId]
+                      - required: [applicant]
+                      - required: [application]
+
+        # The application band is the portal's and rides on an answer alone.
+        # Unlike a grievance case there is no selector inside it: a read is
+        # keyed on enrolmentId or applicant, so nothing in the band is the
+        # caller's to send.
+        - anyOf:
+            - properties:
+                informationMode: { enum: [Direct] }
+            - not: { required: [application] }
+
+        # The mirror of that rule. applicant is the caller's lookup key, and
+        # a mobile number and an Aadhaar number are both no-echo, so neither
+        # may ride on an answer. Where the portal resolves a lookup it
+        # answers with enrolmentId, never with the key it was given.
+        - anyOf:
+            - properties:
+                informationMode: { enum: [OnDemand] }
+            - not: { required: [applicant] }
+
+        # The grievance bands are not this capability's, and neither is
+        # provider: it belongs on a support leg and this capability has none.
+        # None is inherited any more, but the composed root is open, so
+        # leaving them undeclared does not keep them out.
+        - not:
+            anyOf:
+              - required: [provider]
+              - required: [grievance]
+              - required: [case]
+              - required: [grievanceOptions]

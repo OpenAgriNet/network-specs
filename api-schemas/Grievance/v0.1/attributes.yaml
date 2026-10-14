@@ -39,6 +39,7 @@ components:
         scheme:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - $ref: "#/components/schemas/NoDescriptorExtras"
             - type: object
               required: [code]
               properties:
@@ -63,6 +64,12 @@ components:
           additionalProperties: false
           # No marking on the container: methods is published in the catalog
           # while response is a secret. Each member carries its own.
+          # Exactly one member per payload: a catalog entry declares, an
+          # acknowledgement reports, an ask answers. No payload does two.
+          oneOf:
+            - required: [methods]
+            - required: [issued]
+            - required: [response]
           properties:
             methods:
               type: array
@@ -89,13 +96,6 @@ components:
                   type: string
                   enum: [NUMERIC, ALPHANUMERIC]
                   x-jsonld-id: "openagrinet:challengeValueType"
-                sentTo:
-                  type: string
-                  x-oan-pii:
-                    class: contact
-                    handling: [no-log, no-trace, mask-on-echo]
-                    note: Masked form only, never the full destination.
-                  x-jsonld-id: "openagrinet:challengeSentTo"
                 expiresAt:
                   allOf:
                     - $ref: "#/components/schemas/Instant"
@@ -107,10 +107,6 @@ components:
               type: object
               required: [method, value]
               additionalProperties: false
-              x-oan-pii:
-                class: credential
-                handling: [no-log, no-trace, no-echo, no-forward]
-                note: Spent once against the portal and never carried further.
               properties:
                 method:
                   type: string
@@ -160,13 +156,43 @@ components:
                   minItems: 1
                   items:
                     $ref: "#/components/schemas/GrievanceOption"
+                  x-jsonld-id: "openagrinet:grievanceCategoryOption"
                 subCategories:
                   type: array
                   uniqueItems: true
                   items:
                     $ref: "#/components/schemas/GrievanceOption"
+                  x-jsonld-id: "openagrinet:grievanceSubCategoryOption"
               description: The complaint form this desk publishes. Catalog only.
               x-jsonld-id: "openagrinet:grievanceOptions"
+
+        # A catalog declaration is published and never sent. Carrying one
+        # makes the payload a catalog entry, which names no farmer and holds
+        # no live challenge. Both members are vacuously absent on a payload
+        # that carries neither.
+        - anyOf:
+            - allOf:
+                - not:
+                    required: [grievanceOptions]
+                - properties:
+                    challenge:
+                      not:
+                        required: [methods]
+            - allOf:
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
+                - not:
+                    anyOf:
+                      - required: [enrolmentId]
+                      - required: [grievance]
+                      - required: [case]
+                - properties:
+                    challenge:
+                      not:
+                        anyOf:
+                          - required: [issued]
+                          - required: [response]
 
     # ---------------------------------------------------------------
     # The published type.
@@ -360,12 +386,6 @@ components:
               type: string
               pattern: "^[0-9]+$"
               maxLength: 32
-            cropName:
-              type: string
-              minLength: 1
-              maxLength: 120
-              description: The insured crop the ticket was raised against. Returned on a read, never sent.
-              x-jsonld-id: "openagrinet:cropName"
 
       allOf:
         # PMFBY's grievance service has no OTP endpoint. One refusal now takes
@@ -391,13 +411,44 @@ components:
             - required: [enrolmentId]
             - required: [grievanceOptions]
 
+        # The mirror of the case rule: these five are the caller's inputs and
+        # the portal reports none of them back, so none may ride on an answer.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+            - not:
+                anyOf:
+                  - required: [applicantMobile]
+                  - required: [cropYear]
+                  - required: [season]
+                  - required: [complaintDate]
+                  - required: [receiptSourceId]
+
+        # The case band is the portal's, with one exception: the selector the
+        # caller reads with. Here that is the ticket number. Nothing else of
+        # the portal's record may ride on an ask.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [Direct]
+            - properties:
+                case:
+                  not:
+                    anyOf:
+                      - required: [status]
+                      - required: [filedOn]
+                      - required: [cropName]
+
     # ---------------------------------------------------------------
     # PM-KISAN branch. OTP on both guarded legs, one category level.
     # ---------------------------------------------------------------
     PMKISANGrievance:
       x-oan-fields-by-action:
-        refused:     [grievance.subCategory, grievanceOptions.subCategories,
-                      case.status.name, challenge.issued.sentTo,
+        refused:     [applicantMobile, cropYear, season, complaintDate,
+                      receiptSourceId, grievance.subCategory,
+                      grievanceOptions.subCategories, case.cropName,
+                      case.status.name,
                       provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
@@ -448,8 +499,6 @@ components:
                   valueType:
                     enum: [NUMERIC]
             issued:
-              not:
-                required: [sentTo]
               properties:
                 method:
                   enum: [SMS_OTP]
@@ -481,6 +530,7 @@ components:
           allOf:
             - type: string
               pattern: "^[A-Za-z0-9]+$"
+              minLength: 6
               maxLength: 20
             # Refuses a bare Aadhaar number: this field carries a registration
             # number or an exchanged token, never the Aadhaar itself.
@@ -526,26 +576,67 @@ components:
                     challenge:
                       required: [methods]
 
-        # A payload answering a challenge is a caller's ask, so it cannot also
-        # carry the portal's acknowledgement of one. Each member is absent
-        # vacuously when challenge itself is, which is what makes this hold.
+        # A payload answering a challenge is a caller's ask, never an answer.
+        # The member is absent vacuously when challenge itself is, which is
+        # what makes this hold. The container's oneOf does the rest: an
+        # acknowledgement and an answer cannot ride together either.
         - anyOf:
             - properties:
                 challenge:
                   not:
                     required: [response]
-            - allOf:
-                - properties:
-                    challenge:
-                      not:
-                        required: [issued]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
+            - properties:
+                informationMode:
+                  enum: [OnDemand]
+
+        # The five fields PMFBY numbers and this desk does not. Declaring them
+        # inside the other branch does not keep them out of this one: the
+        # composed root is open, so each has to be refused by name.
+        - not:
+            anyOf:
+              - required: [applicantMobile]
+              - required: [cropYear]
+              - required: [season]
+              - required: [complaintDate]
+              - required: [receiptSourceId]
+
+        - properties:
+            case:
+              not:
+                required: [cropName]
+
+        # Same rule, different selector: this desk reads by filing date,
+        # because the portal answers with every case on the registration.
+        - anyOf:
+            - properties:
+                informationMode:
+                  enum: [Direct]
+            - properties:
+                case:
+                  not:
+                    anyOf:
+                      - required: [ticketNo]
+                      - required: [status]
+                      - required: [reply]
+                      - required: [repliedOn]
 
     # ---------------------------------------------------------------
     # Shared components.
     # ---------------------------------------------------------------
+
+    # A Beckn Descriptor carries five members beyond code and name. None is
+    # modelled here, and two of them are free text, so every Descriptor slot
+    # in this pack refuses them by name rather than leaving them to the
+    # allow-list in x-oan-fields-by-action.
+    NoDescriptorExtras:
+      not:
+        anyOf:
+          - required: [longDesc]
+          - required: [shortDesc]
+          - required: [thumbnailImage]
+          - required: [docs]
+          - required: [mediaFile]
+
     ChallengeMethod:
       type: object
       additionalProperties: false
@@ -587,12 +678,14 @@ components:
 
     Complaint:
       type: object
+      additionalProperties: false
       required: [description]
       description: The farmer's complaint. Named Complaint so it does not collide with the Grievance type.
       properties:
         category:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - $ref: "#/components/schemas/NoDescriptorExtras"
             - anyOf:
                 - required: [code]
                 - required: [name]
@@ -601,6 +694,7 @@ components:
         subCategory:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            - $ref: "#/components/schemas/NoDescriptorExtras"
             - anyOf:
                 - required: [code]
                 - required: [name]
@@ -619,6 +713,7 @@ components:
 
     Case:
       type: object
+      additionalProperties: false
       description: The portal's record. Every member is authored by the portal.
       allOf:
         # A date on a reply needs the reply.
@@ -636,6 +731,9 @@ components:
         status:
           allOf:
             - $ref: "../../../schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/IdentifiedDescriptor"
+            # Refuses longDesc, shortDesc and the rest alongside name: the
+            # portal's own phrase has more than one door into a Descriptor.
+            - $ref: "#/components/schemas/NoDescriptorExtras"
             - type: object
               required: [code]
               # The portal's own status phrase does not travel.
@@ -665,6 +763,12 @@ components:
             - $ref: "#/components/schemas/CalendarDate"
           description: When the reply was written. Only valid alongside reply.
           x-jsonld-id: "openagrinet:repliedOn"
+        cropName:
+          type: string
+          minLength: 1
+          maxLength: 120
+          description: The insured crop the ticket was raised against. PMFBY only; PM-KISAN refuses it.
+          x-jsonld-id: "openagrinet:cropName"
 
     CaseStatusCode:
       type: string
@@ -701,10 +805,12 @@ components:
               pattern: "^[a-z0-9][a-z0-9.-]*$"
               maxLength: 100
             descriptor:
-              type: object
-              required: [name]
-              properties:
-                name:
-                  type: string
-                  minLength: 1
-                  maxLength: 200
+              allOf:
+                - $ref: "#/components/schemas/NoDescriptorExtras"
+                - type: object
+                  required: [name]
+                  properties:
+                    name:
+                      type: string
+                      minLength: 1
+                      maxLength: 200

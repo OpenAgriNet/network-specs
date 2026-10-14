@@ -53,13 +53,15 @@ farmer: a registration number must not end up in a public, cacheable identifier.
 
 | band | holds | written by |
 |---|---|---|
-| top level | what is being asked and under which scheme: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
-| `applicant` | who to look up when the caller has no enrolment number: exactly one of `mobile` or `aadhaar` | the caller |
-| `application` | what the portal holds: `registeredOn`, `latestInstalmentPaid`, `ekyc`, `blockers` | the portal |
+| top level | what is being asked and under which scheme: `informationMode`, `scheme`, `enrolmentId` | the caller |
+| `applicant` | who to look up when the caller has no enrolment number: exactly one of `mobile` or `aadhaar` | the caller, and inbound only |
+| `application` | what the portal holds: `registeredOn`, `latestInstalmentPaid`, `ekyc`, `blockers` | the portal, and outbound only |
 | `challenge.response` | the OTP presented on the read | the caller |
 | `challenge.issued` | acknowledgement that one was sent | the portal |
 
-`enrolmentId` travels in both directions here. A caller who holds the registration number
+`applicant` and `application` are each enforced one-way, not merely described that
+way: `applicant` may not ride on a `Direct` payload and `application` may not ride on an
+`OnDemand` one. `enrolmentId` is the exception and travels in both directions. A caller who holds the registration number
 sends it; a caller who holds only a mobile or an Aadhaar number sends `applicant` instead,
 and the portal resolves it and returns the registration number under `enrolmentId`. The
 two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
@@ -68,7 +70,9 @@ sniffed".
 Everything about challenging this desk lives under one `challenge` object, which is why
 the last two bands are nested rather than top level. The container itself carries no
 authorship marking — `methods` is published in the catalog, `issued` is the portal's and
-`response` is the caller's, so each member is marked on its own.
+`response` is the caller's, so each member is marked on its own. Exactly one of the three
+is present on any payload; the base enforces it, so a catalog entry cannot carry a live
+code beside the declaration it publishes.
 
 `challenge.methods` sits in no band. It is published on the catalog entry and never sent
 on a payload.
@@ -223,7 +227,9 @@ removed the need. They are not in this pack's vocabulary at all.
 
 `ekyc` and each entry in `blockers` compose Beckn's `Descriptor`, which is the established
 idiom for a governed `code` paired with a display `name`. `blockers` uses both: the portal
-sends real text and the `code` classifies it.
+sends real text and the `code` classifies it. Both also compose `NoDescriptorExtras` from
+the grievance pack, which refuses the five `Descriptor` members this network does not
+model — see "The gates".
 
 On top of the base this pack:
 
@@ -235,10 +241,11 @@ On top of the base this pack:
 - pins `challenge.methods[].length` and `challenge.issued.length` to the same four, and
   both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
   cannot drift apart;
-- refuses `challenge.issued.sentTo`, because the upstream acknowledgement is a bare success
-  flag with no destination in it — there is nothing to mask and nothing to report;
-- narrows `enrolmentId` to ASCII alphanumeric, at most twenty characters, and refuses
-  twelve bare digits so an Aadhaar number cannot be sent in the registration slot;
+- refuses `grievance`, `case`, `grievanceOptions` and `provider` by name, because none
+  belongs to this capability and an undeclared field on an open root is accepted, not
+  rejected;
+- narrows `enrolmentId` to ASCII alphanumeric, between six and twenty characters, and
+  refuses twelve bare digits so an Aadhaar number cannot be sent in the registration slot;
 - holds `enrolmentId` and `applicant` mutually exclusive, and requires that every payload
   carry at least one slot that says what it is about.
 
@@ -253,13 +260,12 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `@type` | Always | Identifies the commitment as `openagrinet:SchemeApplication` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real record |
 | `scheme` | Always | Pinned to `PM-KISAN` |
-| `provider` | Optional | Beckn `Provider` reference. Both legs compose a `Contract`, so the adapter reads the participant from `commitments[].offer.provider.id` and this is advisory |
 | `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile or Aadhaar lookup |
 | `applicant` | An ask by mobile or Aadhaar, both legs | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
 | `challenge.response.method`, `challenge.response.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
 | `challenge.issued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `application.latestInstalmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
-| `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above |
+| `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above. `name` is the portal's own phrase and is marked `freetext` / `no-log` / `no-trace` |
 | `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme. An instant, not a date — see below |
 | `application.ekyc` | Optional in `Direct` | `Done` or `Pending` |
 | `challenge.methods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
@@ -282,8 +288,7 @@ that enforce it are structural and bite on every action:
 | `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `status` | `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile`, `applicant.aadhaar` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-Refused: `application.ekyc.name`, `challenge.issued.sentTo`, `provider.availableAt`,
-`provider.providerAttributes`.
+Refused: `provider`, `application.ekyc.name`, `grievance`, `case`, `grievanceOptions`.
 
 Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both legs need
 one of `enrolmentId`, `applicant.mobile` or `applicant.aadhaar`, but a `mustSend` list is
@@ -297,7 +302,7 @@ own `Reg_No`, not an echo — and `applicant` never comes back at all.
 
 ## The gates
 
-Four top-level members, all tested against the real validator. `if`/`then` would read more
+Eight top-level gates, all tested against the real validator. `if`/`then` would read more
 naturally and does not work: this validator parses it and never evaluates it, so a guard
 written that way looks like it holds and does not. `anyOf`, `not` and `oneOf` *are*
 evaluated.
@@ -314,17 +319,74 @@ evaluated.
    start at `challenge`, so they are told apart by which member is present: `issued` on
    the acknowledgement, `methods` on the entry. A bare `challenge` with neither is about
    nothing and is refused.
-4. **An answer may not carry `challenge.response`.** The OTP is sent, never returned. A
-   payload carrying it must be a request: `informationMode` not `Direct`, and no
-   `challenge.issued` beside it, which rules out the `init` acknowledgement as well. Each
-   member is absent vacuously when `challenge` itself is, which is what lets both halves
-   of this gate be written against the container. `x-oan-pii` marks the value `no-echo`,
-   but that binds the mapping; this is the structural half of the same rule.
+4. **An answer may not carry `challenge.response`.** The OTP is sent, never returned: a
+   payload carrying it must have `informationMode` other than `Direct`. The member is
+   absent vacuously when `challenge` itself is, which is what lets the gate be written
+   against the container. `x-oan-pii` marks the value `no-echo`, but that binds the
+   mapping; this is the structural half of the same rule.
+5. **A catalog declaration makes the payload a catalog entry.** Carrying
+   `challenge.methods` is not merely incompatible with `Direct`: an entry names no
+   farmer, so the gate also requires `OnDemand` and the absence of `enrolmentId`,
+   `applicant` and `application`. A declaration cannot ride alongside a real lookup.
+6. **The `application` band may not ride on an ask.** Everything in it is the portal's,
+   and unlike a grievance case there is no selector inside it — a read is keyed on
+   `enrolmentId` or `applicant` — so nothing in the band is the caller's to send.
+7. **The `applicant` band may not ride on an answer.** The mirror of rule 6. It is the
+   caller's lookup key, and both members are `no-echo`; where the portal resolves a
+   lookup it answers with `enrolmentId`, never with the key it was given. Together with
+   rule 2 this makes an Aadhaar echo unrepresentable rather than merely forbidden.
+8. **`provider` and the grievance bands are refused by name** — `provider`, `grievance`,
+   `case`, `grievanceOptions`. See "The composed root is open".
 
-There used to be two more. One checked a declared identifier type against the value beside
-it; the named slots removed the need, because there is no pair left to disagree. The other
-refused the three grievance bands; rebasing on `SchemeServiceBase` removed the need,
-because they are no longer inherited.
+Two further refusals sit below the root. **Nothing but `code` and `name` travels in a
+`Descriptor`:** `application.ekyc` and each entry in `application.blockers` compose
+`NoDescriptorExtras`, which refuses `longDesc`, `shortDesc`, `thumbnailImage`, `docs` and
+`mediaFile` by name. Two of the five are free text and none is modelled here, so an
+adapter that passed a portal's `Descriptor` through wholesale is rejected rather than
+quietly widening what travels. And **`enrolmentId` has a floor**: six characters, not
+one, alongside the twenty-character ceiling. A single-character registration number is
+not a registration number.
+
+Exactly one member of `challenge` is a seventh rule, and it comes from
+`SchemeServiceBase` rather than from here: the container closes with a `oneOf` over the
+three members, so a catalog entry cannot carry a live code, an acknowledgement cannot
+ride with an answer, and a bare `challenge: {}` is about nothing and refused.
+
+There used to be one more: a check of a declared identifier type against the value beside
+it. The named slots removed the need, because there is no pair left to disagree.
+
+The refusal of the three grievance bands **came back**. Rebasing on `SchemeServiceBase`
+took them out of this pack's vocabulary, and an earlier revision of this file read that
+as having removed the need for the refusal. It had not: the composed root is open, so a
+field this pack never declares is accepted rather than rejected, and `grievance` and
+`case` validated here for as long as the refusal was gone. They are refused by name
+again.
+
+`provider` joined them in this revision. It is declared on `SchemeServiceBase` and so
+*is* in this pack's vocabulary, but it belongs to a support leg — where a caller names
+the desk it is addressing — and this capability has none. Both actions here ride on
+`commitmentAttributes`, where the provider is already carried in
+`commitments[].offer.provider`, so naming it a second time inside the attributes object
+gives a second place for it to disagree with the first.
+
+## The composed root is open
+
+`SchemeApplication` is an `allOf` over `SchemeServiceBase`, the JSON-LD guards and this
+pack's own layer. A root composed that way **cannot be closed**: `additionalProperties:
+false` on the root sees only the properties the root itself declares, and every real
+field is declared in a sibling `allOf` member, so adding it rejects every valid payload.
+It is left off deliberately, and the consequence is worth stating plainly: **an unknown
+top-level key is accepted.**
+
+Only at the root. The bands below it are ordinary objects, not compositions, and both of
+them **are** closed: `applicant` and `application` carry `additionalProperties: false`,
+so an unknown key inside either is rejected. So the gap is exactly one level wide — a
+stray top-level key is accepted, a stray key anywhere beneath one is not.
+
+Within that one level, a field that must not appear is refused by name with a
+`not`/`required`. Not declaring it is not a refusal. And the "response mapping is an
+allow-list, not a passthrough" rule under "Privacy" is one the adapter keeps, not one the
+schema can enforce.
 
 ## Privacy
 
@@ -332,11 +394,13 @@ Every identifier here — `enrolmentId` and whichever member `applicant` carries
 `no-log` and `no-trace` without exception, and never appears in an error body. Each is a
 bearer key as much as an identifier: anyone holding one can read the record.
 
-`mobile` and `aadhaar` are never echoed in a response. `enrolmentId` is, and that is the
-single deliberate exception: it goes back to the caller who sent it, or comes back as the
-portal's resolution of a mobile or Aadhaar lookup. The identifier the caller sent under
-`applicant` is never returned, and the exclusivity gate makes returning both
-unrepresentable rather than merely discouraged.
+`mobile` and `aadhaar` are never echoed in a response, and that is now structural rather
+than only a mapping rule: the whole `applicant` band is refused on a `Direct` payload, so
+neither member can be returned. `enrolmentId` is the single deliberate exception: it goes
+back to the caller who sent it, or comes back as the portal's resolution of a mobile or
+Aadhaar lookup. Between that refusal and the exclusivity gate, an answer carrying both an
+Aadhaar number and the registration it resolved to is unrepresentable rather than merely
+discouraged.
 
 `aadhaar` is held to a stricter rule still. An Aadhaar number, and any token derived from
 one, must never be logged, traced, or returned in any response or error body, and must not
@@ -356,9 +420,15 @@ drop these fields rather than pass them through — the pack cannot stop it, bec
 This is a deliberate break from the v1 flow, which showed the farmer their own name and
 village back to them.
 
-`application.blockers[].name` is the portal's own phrase, returned verbatim. It states why a
-named farmer is ineligible or unpaid, so it carries the same `no-log` and `no-trace`
-handling as the rest of the record.
+`application.blockers[].name` is the portal's own phrase, returned verbatim, and it is
+the **one place in either pack where a portal's phrase travels**. The general rule is
+that a portal's message is logged redacted and never returned, because it may hold a
+stack trace, an internal hostname or a quoted-back credential. This field is the
+deliberate exception: the phrase is the answer — it is the only statement of why payment
+is not arriving, and the `code` beside it classifies at a grain too coarse to replace it.
+It is marked `freetext` with `no-log` and `no-trace` handling, so it reaches the caller
+and nowhere else. Every other `Descriptor` slot in this pack refuses the free-text
+members outright; this one keeps `name` and refuses the other five.
 
 ## Naming
 

@@ -10,8 +10,7 @@
   "discovery_fields": [
     "informationMode",
     "scheme",
-    "enrolmentId",
-    "applicant"
+    "challenge.methods"
   ],
   "result_fields": [
     "scheme",
@@ -37,12 +36,13 @@
     "beckn:commitmentAttributes.application.latestInstalmentPaid"
   ],
   "privacy_notes": [
-    "applicant carries exactly one of mobile or aadhaar, and is mutually exclusive with enrolmentId, which is where a registration number travels. enrolmentId, mobile and aadhaar are all no-log and no-trace without exception, and never appear in an error body. mobile and aadhaar are never echoed in a response; enrolmentId is, and is the single deliberate exception noted below. Where the portal resolves a lookup made by mobile or Aadhaar, the resolved registration number is returned as enrolmentId and the identifier the caller sent is not returned. aadhaar is held to a stricter rule still: it is never retained after the lookup it was sent for, and no value derived from it may be stored.",
+    "applicant carries exactly one of mobile or aadhaar, and is mutually exclusive with enrolmentId, which is where a registration number travels. enrolmentId, mobile and aadhaar are all no-log and no-trace without exception, and never appear in an error body. applicant is refused on a Direct payload, so neither mobile nor aadhaar can be echoed in an answer; enrolmentId is echoed, and is the single deliberate exception noted below. Where the portal resolves a lookup made by mobile or Aadhaar, the resolved registration number is returned as enrolmentId and the identifier the caller sent is not returned. aadhaar is held to a stricter rule still: it is never retained after the lookup it was sent for, and no value derived from it may be stored.",
     "enrolmentId is returned on an answer, which is a deliberate exception and the only identifier that is. The caller has just proven an OTP against the mobile the registration is held under, and the registration number is the handle every later call needs.",
     "The upstream record also returns the farmer's name, father's name, date of birth, full address and state, district, sub-district and village. None of it is modelled; an adapter must drop these fields rather than pass them through commitmentAttributes. This is a deliberate break from the v1 flow, which showed the farmer their own name and village.",
-    "application.blockers[].name is the portal's own phrase and is returned verbatim. It states why a named farmer is ineligible or unpaid, so it is no-log and no-trace like the rest of the record.",
+    "application.blockers[].name is the portal's own phrase and is returned verbatim. It is the one place in either pack where a portal phrase travels, and it is deliberate: an Other blocker has no code that says anything, so without the phrase the farmer learns only that something is wrong. It is marked no-log and no-trace like the rest of the record. Everywhere else the phrase is refused -- application.ekyc and every Descriptor slot refuse name, longDesc, shortDesc, thumbnailImage, docs and mediaFile.",
     "challenge.response.value is a credential: never logged, traced, echoed, or forwarded to the read it guards.",
-    "The portal payload is carried inside an encrypted envelope whose key travels in the request beside the ciphertext. That is a portal requirement and not a confidentiality control; a decryption failure must not log the ciphertext, and nothing may rely on the envelope for protection."
+    "The portal payload is carried inside an encrypted envelope whose key travels in the request beside the ciphertext. That is a portal requirement and not a confidentiality control; a decryption failure must not log the ciphertext, and nothing may rely on the envelope for protection.",
+    "provider is refused outright. It belongs on a support leg, where a caller names the desk it is addressing, and this capability has none: both of its actions ride on commitmentAttributes, where the provider is already carried in commitments[].offer.provider."
   ],
   "beckn_dependencies": {
     "Attributes": "2.0",

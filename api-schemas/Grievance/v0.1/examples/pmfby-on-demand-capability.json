@@ -10,13 +10,15 @@
     "categories": [
       {
         "code": "3",
-        "descriptor": "The only category this desk sends. PMFBY publishes no category list, so every grievance is filed under this one."
+        "name": "Enrollment / Portal Issues",
+        "descriptor": "Something about your enrolment, or about the portal itself, is not working."
       }
     ],
     "subCategories": [
       {
         "code": "10",
-        "descriptor": "The only sub-category this desk sends, paired with category 3."
+        "name": "Login",
+        "descriptor": "You cannot sign in to the portal to see your enrolment."
       }
     ]
   }

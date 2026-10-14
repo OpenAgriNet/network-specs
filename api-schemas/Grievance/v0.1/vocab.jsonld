@@ -113,12 +113,6 @@
       "rdfs:comment": "The one-time code the caller presents. Never logged, traced, echoed or forwarded."
     },
     {
-      "@id": "openagrinet:challengeSentTo",
-      "@type": "rdfs:Property",
-      "rdfs:label": "challenge sent to",
-      "rdfs:comment": "Masked form of the destination the code was sent to. Never the full value."
-    },
-    {
       "@id": "openagrinet:challengeExpiresAt",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge expires at",

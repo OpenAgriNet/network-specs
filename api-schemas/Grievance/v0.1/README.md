@@ -90,14 +90,31 @@ is a resource, and those packs stay on `resourceAttributes`.
 |---|---|---|
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
-| `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn`, `cropName` | the portal |
+| `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn`, `cropName` | the portal, except the selector — see below |
+| top level, PMFBY-only | the caller's own inputs: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller, and inbound only — see below |
 | `challenge.response` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
-| `challenge.issued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt`, and a masked `sentTo` where a desk publishes one | the portal |
+| `challenge.issued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt` | the portal |
 
 Everything about challenging this desk lives under one `challenge` object, which is why
 the last two bands are nested rather than top level. The container itself carries no
 authorship marking — `methods` is published in the catalog, `issued` is the portal's and
-`response` is the caller's, so each member is marked on its own.
+`response` is the caller's, so each member is marked on its own. Exactly one of the three
+is present on any payload, and the container enforces it: a catalog entry declares, an
+acknowledgement reports, an ask answers, and no payload does two of those at once.
+
+**The five PMFBY-only top-level fields travel inbound and never come back.** The portal
+reports none of them: the filing date returns as `case.filedOn`, the crop returns as
+`case.cropName`, and the mobile, the crop year, the season and the receipt source return
+not at all. A `Direct` PMFBY payload carrying any of them is refused, which is the mirror
+of the case rule below — one band is the portal's and may not ride on an ask, these five
+are the caller's and may not ride on an answer.
+
+**The `case` band has one exception, and only one: the selector.** A read has to name the
+case it wants, and the handle for that is the portal's own. PMFBY reads by
+`case.ticketNo`; PM-KISAN reads by `case.filedOn`, because its portal answers with every
+case on the registration and the date is what picks one out. Each branch permits its own
+selector on an ask and refuses every other member of the band there, so a caller cannot
+hand the portal a status, a reply or a reply date and have it read back as fact.
 
 PM-KISAN uses all five. PMFBY uses three: its grievance service has no OTP endpoint, so
 neither challenge band could ever be filled honestly there, and the PMFBY branch refuses
@@ -105,12 +122,13 @@ neither challenge band could ever be filled honestly there, and the PMFBY branch
 out the declaration, the acknowledgement and the answer together.
 
 `challenge.methods` sits in no band. It is published on the catalog entry and never sent
-on a payload, and it is what a caller reads to know whether this desk challenges it
-before filing. PMFBY emits no `challenge` at all, which is how a caller learns there is
+on a payload — and that is enforced, not just stated: a payload carrying it must be
+`OnDemand`, must name no farmer and must hold no live challenge. It is what a caller
+reads to know whether this desk challenges it before filing. PMFBY emits no `challenge` at all, which is how a caller learns there is
 nothing to ask for; PM-KISAN publishes one pinned entry.
 
 `grievanceOptions` sits in no band either, and for the same reason: it is published on
-the catalog entry and never sent. It carries the categories — and, where the desk
+the catalog entry and never sent, under the same enforced rule. It carries the categories — and, where the desk
 classifies at two levels, the sub-categories — this desk accepts, so a caller chooses
 from the portal's vocabulary instead of keeping a master list of its own. PMFBY numbers
 two levels and publishes both. PM-KISAN numbers one and refuses `subCategories`.
@@ -190,7 +208,8 @@ container it rides in: a `no-echo` field is still `no-echo` inside `Support.chan
 ## The gates
 
 Every gate is an `anyOf`, a `not` or a `oneOf`, and every one is tested against the real
-validator. Three are stated on both branches, one on PM-KISAN alone and one on PMFBY alone.
+validator. Some are stated once on a shared layer and hold for both desks; the rest are
+stated on the branch they belong to, and each is marked below.
 
 **A `Direct` payload must carry a case.** A response with no case standing is not an
 answer. PMFBY requires `ticketNo`, `status` and `filedOn`; PM-KISAN requires `status` and
@@ -226,16 +245,89 @@ complaint; reading a case sends the mobile and the ticket; the catalog entry sen
 of them. What each action must carry is enforced by that action's mapping guard.
 
 **An answer may not carry `challenge.response`** (PM-KISAN). The code is sent, never
-returned. A payload carrying it must be a request: `informationMode` not `Direct`, and no
-`challenge.issued` beside it, which rules out the `init` acknowledgement as well. The
+returned: a payload carrying it must have `informationMode` other than `Direct`. The
 secret could otherwise have been echoed back and still validated. `x-oan-pii` marks the
 value `no-echo`, but that binds the mapping; this is the structural half of the same rule.
+
+**Exactly one member of `challenge`.** The container closes with a `oneOf` over
+`required: [methods]`, `required: [issued]` and `required: [response]`. Two members match
+two branches and fail; none matches zero and fails. This is what stops a catalog entry —
+a document published to anyone who discovers the desk — from carrying a live one-time
+code beside the declaration, and it is why the rule above no longer has to mention
+`issued` separately. It also disposes of a bare `challenge: {}`, which was about nothing.
+
+**A catalog declaration makes the payload a catalog entry.** `grievanceOptions` and
+`challenge.methods` are published and never sent, so a payload carrying either must be
+`OnDemand`, must bring no `enrolmentId`, no `grievance` and no `case`, and must hold no
+`challenge.issued` or `challenge.response`. An earlier revision only kept them off a
+`Direct` answer, which left the larger hole open: a farmer's filing could carry the
+desk's own published form alongside the complaint, and a catalog entry could carry an
+enrolment number. Stated once in `GrievanceBase`, so it holds on both branches.
+
+**The five PMFBY-only top-level fields may not ride on an answer.** `applicantMobile`,
+`cropYear`, `season`, `complaintDate` and `receiptSourceId` are the caller's inputs and
+appear in no `comesBack` list; the gate refuses them on a `Direct` payload. Each one's
+own description already said *sent, never returned* — this is the structural half of
+that sentence, and until it existed a PMFBY answer could echo the farmer's mobile number
+back out over the network.
+
+**Nothing but `code` and `name` travels in a `Descriptor`.** Beckn's `Descriptor` carries
+five more members — `longDesc`, `shortDesc`, `thumbnailImage`, `docs`, `mediaFile` — and
+every slot in this pack built on one refuses all five through the shared
+`NoDescriptorExtras`. That is `scheme`, `grievance.category`, `grievance.subCategory`,
+`case.status` and `provider.descriptor`. It matters most on `case.status`, which goes to
+the trouble of refusing `name` so the portal's own status phrase cannot travel: without
+this, `shortDesc` and `longDesc` were two open doors into the same room.
+
+**The `grievance` and `case` bands are closed.** `additionalProperties: false` on
+`Complaint` and on `Case`, so an unknown key inside either is rejected. That is not
+possible on the root — see below — but it is possible here, and it is where it matters:
+the portal's record holds the farmer's name, father's name, gender and address, and a
+mapping slip would otherwise copy any of them straight through. Closing `Case` meant
+moving `cropName` out of the PMFBY branch into the shared component, since a sibling
+branch's properties are invisible to `additionalProperties` for the same reason the root
+cannot close. PM-KISAN goes on refusing it by name.
+
+**The case band on an ask carries the selector and nothing else.** Stated per branch,
+because the selector differs: `case.ticketNo` on PMFBY, `case.filedOn` on PM-KISAN. See
+"The five bands".
+
+**PM-KISAN refuses the five PMFBY-only top-level fields and `case.cropName`.** The five
+are declared inside the PMFBY branch, which is not the same as being kept out of this one
+— see "The composed root is open". Each is refused by name, and without the refusal
+`applicantMobile` was not even pattern-checked on this branch, because the branch that
+holds the pattern was not the branch being matched. `cropName` now sits in the shared
+`Case`, so the refusal there is a plain exclusion of a field this desk does not number.
 
 **PMFBY refuses `challenge`** with a single `not`/`required`. See "PMFBY issues no
 challenge".
 
 **A reply date needs a reply.** `case.repliedOn` without `case.reply` is refused on both
 branches: a date for an answer nobody wrote is not a fact.
+
+**`enrolmentId` has a floor on both branches.** PMFBY pins 10 to 30 characters, PM-KISAN
+6 to 20. The base allowed one character, which is not a registration number on any desk.
+
+## The composed root is open
+
+`Grievance` is an `allOf` over a base, the JSON-LD guards and a `oneOf` of two branches.
+A root composed that way **cannot be closed**: `additionalProperties: false` on the root
+sees only the properties the root itself declares, and every real field is declared in a
+sibling `allOf` member, so adding it takes the examples from 12 valid to 0. It is left
+off deliberately, and the consequence is worth stating plainly: **an unknown top-level
+key is accepted.**
+
+Two things follow. A field that must not appear has to be **refused by name** with a
+`not`/`required` — which is what every refusal in this pack is, and why the PM-KISAN
+branch names the PMFBY-only fields rather than relying on not declaring them. And the
+"response mapping is an allow-list, not a passthrough" rule in "Privacy" is, *at the root
+only*, a rule the adapter keeps rather than one the schema enforces.
+
+Only at the root. The bands below it are ordinary objects, not compositions, and every
+one of them **is** closed: `grievance`, `case`, `grievanceOptions`, `challenge` and its
+three members, and each `GrievanceOption`. A stray portal field copied into `case` is
+rejected. So the gap is exactly one level wide — a key hung off the top of the attributes
+object, beside `informationMode` — and nowhere else.
 
 ## Upstream response coverage
 
@@ -471,7 +563,7 @@ enumeration, so the pack constrains only "digits" — see "Non-goals".
 | Field | Required when | Meaning |
 |---|---|---|
 | `challenge.response` | `support` and `status` | `method: SMS_OTP` and a four-digit `value`. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
-| `challenge.issued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. `sentTo` is refused — the portal does not say where it sent the code |
+| `challenge.issued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `case.reply`, `case.repliedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `reply` is bounded at 2000 characters, and `repliedOn` without it is refused |
 
 PM-KISAN's `grievance.category.code` is closed to `G001`–`G010`, and `enrolmentId` must
@@ -504,8 +596,13 @@ Refused: `challenge`, `case.reply`, `case.repliedOn`, `case.status.name`,
 | `support` | `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
-Refused: `grievance.subCategory`, `grievanceOptions.subCategories`, `case.status.name`,
-`challenge.issued.sentTo`, `provider.availableAt`, `provider.providerAttributes`.
+Refused: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId`,
+`grievance.subCategory`, `grievanceOptions.subCategories`, `case.cropName`,
+`case.status.name`, `provider.availableAt`, `provider.providerAttributes`.
+
+The first five and `case.cropName` are PMFBY's fields. They are refused here by name
+rather than left undeclared, because an undeclared field on an open root is accepted,
+not rejected — see "The composed root is open".
 
 Both are allow-lists. A path not named is not used by that capability. `discover` has
 only a `comesBack` bucket, because the catalog entry is published, never asked for.
@@ -631,11 +728,9 @@ x-oan-pii:
 ```
 
 In this pack `class` is one of `identifier`, `contact`, `credential` or `freetext`, and
-`handling` draws on `no-log`, `no-trace`, `no-echo`, `no-forward` and `mask-on-echo`.
+`handling` draws on `no-log`, `no-trace`, `no-echo` and `no-forward`.
 Neither vocabulary is closed — [SchemeApplication](../../SchemeApplication/v0.1/README.md)
-adds `aadhaar` and `no-store` for a field this pack does not carry. `mask-on-echo` is for a
-value that *is* returned in a masked form; it says nothing beside `no-echo`, which already
-means the value never comes back at all, so the two are never listed together.
+adds `aadhaar` and `no-store` for a field this pack does not carry.
 
 The marking is inert — the validator ignores `x-` keys. It exists so the rule can be read
 by a tool rather than only by a person: a CI check can assert that no property marked
@@ -652,10 +747,11 @@ unconditional.
 a response, or forwarded to the lodge call. The structural half of that rule is the gate
 above; this is the mapping half.
 
-**`applicantMobile` is never echoed**, and on PMFBY there is nothing to echo it in: that
-desk issues no challenge acknowledgement, so no masked destination is returned anywhere.
-Where a desk does publish `challenge.issued.sentTo`, it is a masked destination and never
-the full number. PM-KISAN emits no `sentTo` at all.
+**`applicantMobile` is never echoed**, and PM-KISAN now refuses the field outright, so it
+reaches only the desk that asks for it. **No desk in this pack reports where it sent a
+code.** An earlier revision carried a masked `challenge.issued.sentTo` for a desk that
+might; every branch refused it, no payload could ever hold one, and it is gone. A desk
+that does report a destination adds the field back with its own masking rule.
 
 **`enrolmentId` is `no-log` and `no-trace` without exception**: it is never written to a
 log, attached to a trace, or included in an error body. It is a bearer key as much as an
@@ -764,7 +860,7 @@ legacy tree, which is why the phrase does not travel at all.
 
 **PMFBY**
 
-- [The catalog entry](examples/pmfby-on-demand-capability.json)
+- [The catalog entry](examples/pmfby-on-demand-capability.json) — one pair, because one pair is all the portal has ever been asked for; see "Non-goals"
 - [On-demand: file a grievance](examples/pmfby-on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/pmfby-on-demand-read-case.json)
 - [Direct: lodge reply, as the portal sends it](examples/pmfby-direct-grievance-registered.json)
