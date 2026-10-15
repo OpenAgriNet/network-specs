@@ -45,8 +45,7 @@
     "applicant": {
       "@id": "openagrinet:applicant",
       "@context": {
-        "mobile": "openagrinet:applicantMobile",
-        "aadhaar": "openagrinet:aadhaarNumber"
+        "mobile": "openagrinet:applicantMobile"
       }
     },
     "application": {

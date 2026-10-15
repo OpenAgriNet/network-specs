@@ -29,6 +29,11 @@ components:
         status: commitmentAttributes
       x-oan-fields-by-action:
         refused:
+          # The provider member of the attribute object only, which exists so a
+          # support channel can name its desk -- this capability has no support
+          # call. Routing is unaffected: every init and status still carries
+          # commitments[0].offer.provider.id, which is what resolves the Portal
+          # and its base URL in the registry.
           - provider
           - application.ekyc.name
           - grievance
@@ -37,8 +42,11 @@ components:
         discover:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
+          # Identity is required here too -- exactly one of enrolmentId or
+          # applicant.mobile, never both and never neither. mustSend names a
+          # single path, so the gate is structural rather than listed below.
           maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
-                    applicant.mobile, applicant.aadhaar]
+                    applicant.mobile]
           comesBack:
             - informationMode
             - scheme.code
@@ -52,7 +60,7 @@ components:
           # mustSend names a single path -- see the gates in README.
           mustSend: [challenge.response.method, challenge.response.value]
           maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
-                    applicant.mobile, applicant.aadhaar]
+                    applicant.mobile]
           comesBack:
             - informationMode
             - scheme.code
@@ -146,14 +154,15 @@ components:
                   maxLength: 20
                 - not:
                     pattern: "^[0-9]{12}$"
-              description: The PM-KISAN registration number. A bare Aadhaar number is refused here; it belongs in applicant.aadhaar.
+              description: >-
+                The PM-KISAN registration number. Twelve bare digits are refused -- an
+                Aadhaar number is not a lookup key on this capability and must not be
+                smuggled into the registration slot.
 
             applicant:
               type: object
               additionalProperties: false
-              oneOf:
-                - required: [mobile]
-                - required: [aadhaar]
+              required: [mobile]
               properties:
                 mobile:
                   type: string
@@ -163,15 +172,10 @@ components:
                     handling: [no-log, no-trace, no-echo]
                     note: A contact detail and a lookup key at once -- it is also where the OTP is sent.
                   x-jsonld-id: "openagrinet:applicantMobile"
-                aadhaar:
-                  type: string
-                  pattern: "^[0-9]{12}$"
-                  x-oan-pii:
-                    class: aadhaar
-                    handling: [no-log, no-trace, no-echo, no-store]
-                    note: Never logged, traced, echoed or retained after the lookup it was sent for. No derived value may be stored either.
-                  x-jsonld-id: "openagrinet:aadhaarNumber"
-              description: Who the lookup is for, when it is not by enrolment. Exactly one of the two, never both.
+              description: >-
+                Who the lookup is for, when it is not by enrolment. A mobile number is the
+                only alternative key this capability takes. Kept as an object rather than a
+                flat applicantMobile, which the PM-KISAN grievance branch refuses.
               x-jsonld-id: "openagrinet:applicant"
 
             application:
@@ -294,10 +298,10 @@ components:
                 informationMode: { enum: [Direct] }
             - not: { required: [application] }
 
-        # The mirror of that rule. applicant is the caller's lookup key, and
-        # a mobile number and an Aadhaar number are both no-echo, so neither
-        # may ride on an answer. Where the portal resolves a lookup it
-        # answers with enrolmentId, never with the key it was given.
+        # The mirror of that rule. applicant is the caller's lookup key and
+        # the mobile number in it is no-echo, so it may not ride on an answer.
+        # Where the portal resolves a lookup it answers with enrolmentId,
+        # never with the key it was given.
         - anyOf:
             - properties:
                 informationMode: { enum: [OnDemand] }

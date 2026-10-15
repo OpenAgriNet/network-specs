@@ -27,7 +27,11 @@ components:
         informationMode:
           type: string
           enum: [OnDemand, Direct]
-          description: OnDemand is an ask, Direct is an answer. Direction never comes from the Beckn action.
+          description: >-
+            Direct means the payload carries the record itself -- a case here, an
+            application on SchemeApplication. OnDemand is everything else -- a catalog
+            entry, an ask, and an OTP acknowledgement, all of which stay OnDemand even
+            when they are answers. Direction never comes from the Beckn action.
           x-jsonld-id: "openagrinet:informationMode"
 
         provider:

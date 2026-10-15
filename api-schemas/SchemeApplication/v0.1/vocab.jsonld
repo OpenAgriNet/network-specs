@@ -92,19 +92,13 @@
       "@id": "openagrinet:applicant",
       "@type": "rdfs:Property",
       "rdfs:label": "applicant",
-      "rdfs:comment": "Who the lookup is for, when it is not made by enrolment. Carries exactly one of a mobile number or an Aadhaar number, never both."
+      "rdfs:comment": "Who the lookup is for, when it is not made by enrolment. Carries a mobile number, the only alternative lookup key this capability takes."
     },
     {
       "@id": "openagrinet:applicantMobile",
       "@type": "rdfs:Property",
       "rdfs:label": "applicant mobile",
       "rdfs:comment": "Ten-digit Indian mobile number of the farmer. Sent inbound only and never returned."
-    },
-    {
-      "@id": "openagrinet:aadhaarNumber",
-      "@type": "rdfs:Property",
-      "rdfs:label": "Aadhaar number",
-      "rdfs:comment": "A twelve-digit Aadhaar number, used as a lookup key. Never logged, traced, echoed, or retained after the lookup it was sent for."
     },
     {
       "@id": "openagrinet:application",
