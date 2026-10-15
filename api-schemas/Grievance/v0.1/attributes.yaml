@@ -274,16 +274,17 @@ components:
       x-oan-fields-by-action:
         # Allow-list, relative to the attribute object. A path not named here
         # is not used. No init: PMFBY issues no challenge.
-        refused:     [challenge,
-                      case.repliedOn, case.status.name,
-                      provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
                       grievanceOptions.categories, grievanceOptions.subCategories]
         support:
-          mustSend:  [enrolmentId, applicantMobile, cropYear, season,
+          # provider.id routes the call: it is what resolves the Portal and its
+          # base URL in the registry. On support there is no contract, so the
+          # channel's own provider is the only place it can be named.
+          mustSend:  [provider.id,
+                      enrolmentId, applicantMobile, cropYear, season,
                       grievance.description]
-          maySend:   [informationMode, provider.id, provider.descriptor.name,
+          maySend:   [informationMode, provider.descriptor.name,
                       scheme.code, scheme.name,
                       grievance.category.code, grievance.subCategory.code,
                       complaintDate, receiptSourceId]
@@ -449,11 +450,6 @@ components:
     # ---------------------------------------------------------------
     PMKISANGrievance:
       x-oan-fields-by-action:
-        refused:     [applicantMobile, cropYear, season, complaintDate,
-                      receiptSourceId, grievance.subCategory,
-                      grievanceOptions.subCategories, case.cropName,
-                      case.status.name,
-                      provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
                       challenge.methods, grievanceOptions.categories]
@@ -464,10 +460,11 @@ components:
                       challenge.issued.method, challenge.issued.length,
                       challenge.issued.valueType, challenge.issued.expiresAt]
         support:
-          mustSend:  [enrolmentId,
+          # provider.id routes the call -- see the PMFBY branch.
+          mustSend:  [provider.id, enrolmentId,
                       grievance.category.code, grievance.description,
                       challenge.response.method, challenge.response.value]
-          maySend:   [informationMode, provider.id, provider.descriptor.name,
+          maySend:   [informationMode, provider.descriptor.name,
                       scheme.code, scheme.name]
           comesBack: [informationMode, provider.id, provider.descriptor.name,
                       scheme.code, scheme.name, enrolmentId,

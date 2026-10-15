@@ -276,17 +276,21 @@ read that as IST". `Instant` refuses a naked local timestamp precisely so that t
 conversion has to happen somewhere nameable rather than being left to the reader.
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
-with paths relative to the attributes object. Three buckets per action — `mustSend`,
-`maySend`, `comesBack` — plus a pack-wide `refused` list stated once, because the gates
-that enforce it are structural and bite on every action:
+with paths relative to the attributes object. Three buckets per action: `mustSend`,
+`maySend`, `comesBack`. What this pack refuses is in the schema itself, not here — the
+gates are structural and bite on every action.
+
+`commitments[0].offer.provider.id` is required on both `init` and `status`. It sits
+outside the attributes object, so it cannot appear in the table, but it is what resolves
+the Portal and its base URL in the registry and a call without it cannot be routed. The
+`provider` member *inside* the attributes object is a different thing and is refused
+here, because this capability has no `support` channel to name a desk on.
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
 | `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `status` | `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
-
-Refused: `provider`, `application.ekyc.name`, `grievance`, `case`, `grievanceOptions`.
 
 Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both calls
 need exactly one of `enrolmentId` or `applicant.mobile`, but a `mustSend` list is flat and

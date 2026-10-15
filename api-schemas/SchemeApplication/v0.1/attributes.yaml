@@ -28,17 +28,6 @@ components:
         init: commitmentAttributes
         status: commitmentAttributes
       x-oan-fields-by-action:
-        refused:
-          # The provider member of the attribute object only, which exists so a
-          # support channel can name its desk -- this capability has no support
-          # call. Routing is unaffected: every init and status still carries
-          # commitments[0].offer.provider.id, which is what resolves the Portal
-          # and its base URL in the registry.
-          - provider
-          - application.ekyc.name
-          - grievance
-          - case
-          - grievanceOptions
         discover:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:

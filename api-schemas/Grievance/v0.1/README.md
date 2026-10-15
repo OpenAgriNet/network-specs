@@ -619,20 +619,24 @@ be ASCII alphanumeric and is refused if it is a bare twelve-digit Aadhaar number
 ### Per-action use
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`
-**on each branch**, with paths relative to the attributes object. Three buckets per action
-— `mustSend`, `maySend`, `comesBack` — plus a branch-wide `refused` list stated once,
-because the gates that enforce it are structural and bite on every action.
+**on each branch**, with paths relative to the attributes object. Three buckets per
+action: `mustSend`, `maySend`, `comesBack`. What each branch refuses is in the schema
+itself, not here — the gates are structural and bite on every action.
+
+**The provider must be named on every call that reaches a Portal.** On `support` that is
+`provider.id` inside the channel, which is why it is a `mustSend` below. On `init` and
+`status` it is `commitments[0].offer.provider.id`, which sits outside the attributes
+object and so cannot appear in these tables — it is required all the same. It is what
+resolves the Portal and its base URL in the registry, so a call without it cannot be
+routed.
 
 **PMFBY**
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
-| `support` | `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `support` | `provider.id`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
-
-Refused: `challenge`, `case.repliedOn`, `case.status.name`,
-`provider.availableAt`, `provider.providerAttributes`.
 
 **PM-KISAN**
 
@@ -640,16 +644,8 @@ Refused: `challenge`, `case.repliedOn`, `case.status.name`,
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` |
 | `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `support` | `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `support` | `provider.id`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
-
-Refused: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId`,
-`grievance.subCategory`, `grievanceOptions.subCategories`, `case.cropName`,
-`case.status.name`, `provider.availableAt`, `provider.providerAttributes`.
-
-The first five and `case.cropName` are PMFBY's fields. They are refused here by name
-rather than left undeclared, because an undeclared field on an open root is accepted,
-not rejected — see "The composed root is open".
 
 Both are allow-lists. A path not named is not used by that capability. `discover` has
 only a `comesBack` bucket, because the catalog entry is published, never asked for.
