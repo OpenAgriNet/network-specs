@@ -18,6 +18,9 @@
     "application"
   ],
   "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.challenge.methods[].method",
     "beckn:commitmentAttributes.informationMode",
     "beckn:commitmentAttributes.scheme.code",
     "beckn:commitmentAttributes.enrolmentId",
@@ -26,6 +29,9 @@
     "beckn:commitmentAttributes.application.registeredOn"
   ],
   "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.challenge.methods[].method",
     "beckn:commitmentAttributes.informationMode",
     "beckn:commitmentAttributes.scheme.code",
     "beckn:commitmentAttributes.application.ekyc.code",
@@ -42,7 +48,7 @@
     "application.blockers[].name is the portal's own phrase and is returned verbatim. It is the one place in either pack where a portal phrase travels, and it is deliberate: an Other blocker has no code that says anything, so without the phrase the farmer learns only that something is wrong. It is marked no-log and no-trace like the rest of the record. Everywhere else the phrase is refused -- application.ekyc and every Descriptor slot refuse name, longDesc, shortDesc, thumbnailImage, docs and mediaFile.",
     "challenge.response.value is a credential: never logged, traced, echoed, or forwarded to the read it guards.",
     "The portal payload is carried inside an encrypted envelope whose key travels in the request beside the ciphertext. That is a portal requirement and not a confidentiality control; a decryption failure must not log the ciphertext, and nothing may rely on the envelope for protection.",
-    "provider is refused outright. It belongs on a support leg, where a caller names the desk it is addressing, and this capability has none: both of its actions ride on commitmentAttributes, where the provider is already carried in commitments[].offer.provider."
+    "provider is refused outright. It belongs on a support call, where a caller names the desk it is addressing, and this capability has none: both of its actions ride on commitmentAttributes, where the provider is already carried in commitments[].offer.provider."
   ],
   "beckn_dependencies": {
     "Attributes": "2.0",

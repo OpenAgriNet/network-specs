@@ -54,9 +54,23 @@ intended.
 
 ## Attachment point
 
-Applied to `commitmentAttributes` of a Beckn `Commitment`, not to `resourceAttributes`.
+Two different things travel under this pack, and they do not ride in the same place.
 
-A grievance is a promise with a lifecycle, not a catalogable thing of value.
+| what | where | on which call |
+|---|---|---|
+| the **declaration** — this desk exists, here is what it accepts | `resourceAttributes` of a catalog `Resource` | `catalog/publish`, `discover`, `on_discover` |
+| a **case** — one farmer's grievance | `commitmentAttributes` of a `Commitment` | `init`, `status` |
+| a **case**, where there is no commitment to hang it from | `support.channels[0]` | `support` |
+
+The declaration sits on `resourceAttributes` for the same reason every other OAN pack
+does: a grievance desk is a catalogable thing a Provider publishes. `informationMode`,
+`scheme`, the challenge methods and the category lists all describe the desk, not any
+farmer. That is why the profile declares indexable paths under both prefixes — a caller
+filters catalogs on `resourceAttributes.scheme.code` and filters cases on
+`commitmentAttributes.case.status.code`.
+
+A case is the other half, and it is not catalogable: it is a promise with a lifecycle,
+not a thing of value.
 `resourceAttributes` is defined as "all the properties of a resource that describe its
 value, its terms of usage, fulfillment, and consideration", and a `Resource` is what a
 Provider publishes in a catalog. One farmer's mobile number, ticket number and case
@@ -79,8 +93,9 @@ action" below.
 The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal. This
 pack never sends one — see "Nothing on file".
 
-This is deliberately unlike the OAN domain packs. A forecast or a mandi price genuinely
-is a resource, and those packs stay on `resourceAttributes`.
+This is where the pack parts company with the OAN domain packs. A forecast or a mandi
+price genuinely is a resource, so those packs carry their payload on `resourceAttributes`
+and have nothing that corresponds to a case. Here only the declaration goes there.
 
 ## The five bands
 
@@ -91,7 +106,7 @@ is a resource, and those packs stay on `resourceAttributes`.
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn`, `cropName` | the portal, except the selector — see below |
-| top level, PMFBY-only | the caller's own inputs: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller, and inbound only — see below |
+| top level, PMFBY-only | the caller's own inputs: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller; three of them inbound only — see below |
 | `challenge.response` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
 | `challenge.issued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt` | the portal |
 
@@ -102,12 +117,15 @@ authorship marking — `methods` is published in the catalog, `issued` is the po
 is present on any payload, and the container enforces it: a catalog entry declares, an
 acknowledgement reports, an ask answers, and no payload does two of those at once.
 
-**The five PMFBY-only top-level fields travel inbound and never come back.** The portal
-reports none of them: the filing date returns as `case.filedOn`, the crop returns as
-`case.cropName`, and the mobile, the crop year, the season and the receipt source return
-not at all. A `Direct` PMFBY payload carrying any of them is refused, which is the mirror
-of the case rule below — one band is the portal's and may not ride on an ask, these five
-are the caller's and may not ride on an answer.
+**Three of the five PMFBY-only top-level fields travel inbound and never come back.**
+`applicantMobile` is personal data the network does not echo. `complaintDate` is the
+farmer's own stated date, where `case.filedOn` is the portal's. `receiptSourceId` names
+our channel and has no consumer. A `Direct` PMFBY payload carrying any of the three is
+refused, which is the mirror of the case rule below — one band is the portal's and may
+not ride on an ask, these three are the caller's and may not ride on an answer.
+
+`cropYear` and `season` are not among them. The portal reports both back, as
+`RequestYear` and `RequestSeason`, so they travel in both directions.
 
 **The `case` band has one exception, and only one: the selector.** A read has to name the
 case it wants, and the handle for that is the portal's own. PMFBY reads by
@@ -164,7 +182,7 @@ this key is a network-wide convention used by 14 packs and tooling reads it at t
 so it stays there and each branch's `x-oan-fields-by-action` says whether `init` applies.
 This is the one place the merge is less precise than two separate packs were.
 
-One field exists only on the `support` leg, and it is there so the request can be routed
+One field exists only on the `support` call, and it is there so the request can be routed
 at all. The adapter picks the upstream call from a binding key,
 `participantId|capabilityCode`, and reads both halves out of the payload. On every other
 action the payload composes a `Contract`, so the participant is read from
@@ -173,7 +191,7 @@ is sealed at three fields, none of which names a participant — so the channel 
 `provider` instead, a Beckn `Provider` narrowed to a reference: an `id` and a descriptor
 carrying a name.
 
-It is the same shape the contract legs supply, so a reader writes `.provider.id` on both,
+It is the same shape `init` and `status` supply, so a reader writes `.provider.id` on both,
 and the adapter's binding path reads `channels[].provider.id` against a Beckn v2 default
 of `commitments[].offer.provider.id` — the same grammar, the same tail, a different
 container. The name is advisory and never routed on: the registry owns that word, and a
@@ -190,7 +208,7 @@ per-action and do not change.
 all — and it means "the order against which support is required", while nothing here is
 an order: a grievance is lodged with `support`, not `confirm`, and no `Order` is ever
 composed. An order id that resolves to no order leaves a consumer worse off than an
-absent one. So `enrolmentId` stays in the attributes object on the `support` leg exactly
+absent one. So `enrolmentId` stays in the attributes object on the `support` call exactly
 as it does everywhere else, and `on_support` echoes it back unchanged — nothing about a
 reply changes what the complaint is against. The ticket the portal issues is a different
 thing and lives in a different place: `case.ticketNo`. One field, one path, both schemes.
@@ -216,7 +234,7 @@ answer. PMFBY requires `ticketNo`, `status` and `filedOn`; PM-KISAN requires `st
 `filedOn` only. The difference is real: PMFBY's read is keyed on the ticket, so the
 number is always in hand and echoed back, while PM-KISAN's status call is not documented
 to repeat the handle per record, so a case read there may carry none. `provider` is not
-in either list: on a contract leg the same fact lives in `commitments[].offer.provider`,
+in either list: on `init` and `status` the same fact lives in `commitments[].offer.provider`,
 outside these attributes, where a guard on the attributes object cannot reach it.
 
 **Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, or
@@ -264,12 +282,10 @@ code beside the declaration, and it is why the rule above no longer has to menti
 desk's own published form alongside the complaint, and a catalog entry could carry an
 enrolment number. Stated once in `GrievanceBase`, so it holds on both branches.
 
-**The five PMFBY-only top-level fields may not ride on an answer.** `applicantMobile`,
-`cropYear`, `season`, `complaintDate` and `receiptSourceId` are the caller's inputs and
-appear in no `comesBack` list; the gate refuses them on a `Direct` payload. Each one's
-own description already said *sent, never returned* — this is the structural half of
-that sentence, and until it existed a PMFBY answer could echo the farmer's mobile number
-back out over the network.
+**Three PMFBY-only top-level fields may not ride on an answer.** `applicantMobile`,
+`complaintDate` and `receiptSourceId` appear in no `comesBack` list; the gate refuses
+them on a `Direct` payload. Until that gate existed a PMFBY answer could echo the
+farmer's mobile number back out over the network.
 
 **Nothing but `code` and `name` travels in a `Descriptor`.** Beckn's `Descriptor` carries
 five more members — `longDesc`, `shortDesc`, `thumbnailImage`, `docs`, `mediaFile` — and
@@ -292,7 +308,7 @@ cannot close. PM-KISAN goes on refusing it by name.
 because the selector differs: `case.ticketNo` on PMFBY, `case.filedOn` on PM-KISAN. See
 "The five bands".
 
-**PM-KISAN refuses the five PMFBY-only top-level fields and `case.cropName`.** The five
+**PM-KISAN refuses all five PMFBY-only top-level fields and `case.cropName`.** The five
 are declared inside the PMFBY branch, which is not the same as being kept out of this one
 — see "The composed root is open". Each is refused by name, and without the refusal
 `applicantMobile` was not even pattern-checked on this branch, because the branch that
@@ -333,6 +349,12 @@ object, beside `informationMode` — and nowhere else.
 
 Every field each portal sends back, and where it goes. Nothing is left unaccounted for.
 
+These tables are the allow-list in readable form. They are built from live responses
+where we have them and from the v1 adapter where we do not, and the PMFBY case read
+shows why the distinction matters: the v1 adapter reads twelve fields, the portal sends
+forty-five, and three facts this branch was designed around turned out to be in the
+thirty-three nobody had looked at.
+
 ### PMFBY lodge reply
 
 `POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket`. The FGMS envelope plus two values
@@ -354,38 +376,63 @@ carries `code` alone, so the absent `name` tells a caller the portal did not say
 
 ### PMFBY case read
 
-`POST /krphapi/FGMS/GetGrievenceTicketsStatus`. The twelve `responseDynamic` fields are
-read from the v1 adapter on `Beckn`'s `main` branch.
+`POST /krphapi/FGMS/GetGrievenceTicketsStatus`. A live response carries **45 members of
+`responseDynamic`**. The v1 adapter on `Beckn`'s `main` branch reads twelve of them, and
+the three absences that shaped an earlier draft of this branch turned out not to be
+absences at all: the ticket number, both category ids and the year and season are all in
+the record. Eleven are mapped, thirty-four are dropped, and every one is listed.
+
+**Mapped.**
 
 | upstream | here | note |
 |---|---|---|
 | `ApplicationNo` | `enrolmentId` | |
+| `GrievenceSupportTicketNo` | `case.ticketNo` | the number the farmer quotes, returned by the portal. Not to be confused with `GrievenceSupportTicketID` |
 | `GrievenceDescription` | `grievance.description` | |
-| `TicketCategoryName` | `grievance.category.name` | **no id accompanies it.** The id goes up on the lodge as `ticketCategoryID` and does not come back |
-| `TicketSubCategoryName` | `grievance.subCategory.name` | likewise. Two levels, kept apart: the portal's own category name contains a slash, so any joined form would be lossy |
-| `TicketStatus` | `case.status` | mapped to a `CaseStatusCode` for `code`. The phrase itself is not forwarded — the pack refuses `name` |
-| `ComplaintDate` | `case.filedOn` | format unpublished, so the adapter normalises to an IST calendar date |
+| `TicketCategoryID` | `grievance.category.code` | numeric upstream, string here, as on the lodge |
+| `TicketCategoryName` | `grievance.category.name` | |
+| `TicketSubCategoryID` | `grievance.subCategory.code` | |
+| `TicketSubCategoryName` | `grievance.subCategory.name` | two levels, kept apart: the portal's own category name contains a slash, so any joined form would be lossy |
+| `TicketStatus` | `case.status.code` | mapped to a `CaseStatusCode`. The phrase itself is not forwarded — the pack refuses `name`. The only value yet observed is `Open` |
+| `RequestYear` | `cropYear` | |
+| `RequestSeason` | `season` | the same 1/2/3 to `Kharif`/`Rabi`/`Zaid` lookup as the lodge, read the other way |
 | `CropName` | `case.cropName` | the insured crop |
-| `GrievenceSupportTicketID` | *dropped* | the portal's row id, not the number the farmer quotes |
-| `FarmerName`, `InsuranceCompany`, `StateMasterName`, `DistrictMasterName` | *dropped* | personal data |
-| `responseCode` | *consumed* | the success flag the guard tests; not a field |
-| `responseMessage`, `recordCount` | *dropped* | the portal's own text, and a count |
+| `latestRemark` | `case.reply` | **omit when empty.** The portal sends `""` for an unanswered ticket and `case.reply` is `minLength: 1`, so an empty string must be left out, not forwarded as blank |
+| `InsertDateTime` | `case.filedOn` | a UTC instant; the adapter takes the IST calendar date from it. See below |
 
-Four absences shape the PMFBY branch:
+**Dropped as personal data** — `FarmerName`, `RequestorMobileNo`, `Email`,
+`StateMasterName`, `DistrictMasterName`, `SubDistrictName`, `VillageName`,
+`GramPanchayat`, `NyayPanchayat`. Nine fields naming or locating the farmer.
 
-- **The ticket number is not returned.** The read answers with `GrievenceSupportTicketID`
-  instead, which is not mapped, so on a case read the adapter echoes the number the
-  caller asked with.
-- **No category ids.** Which is why a classification requires `code` **or** `name` rather
-  than `code` outright.
-- **No `requestYear` or `requestSeason` comes back.** `cropYear` and `season` go up on the
-  lodge and are absent from every response.
-- **No reply, and no reply date.** Nothing in the record resembles an answer from the
-  portal, which is why the PMFBY branch refuses both `case.reply` and `case.repliedOn` —
-  unlike PM-KISAN, which publishes both.
+**Dropped as the portal's internal keys** — `GrievenceSupportTicketID`,
+`TicketRequestorID`, `DistrictRequestorID`, `VillageRequestorID`, `NyayPanchayatID`,
+`GramPanchayatID`, `SubDistrictID`, `TicketStatusID`, `GrievenceTicketSourceTypeID`,
+`ReceiptSourceID`, `InsuranceCompanyID`, `SocialMediaTypeID`, `InsertUserID`,
+`StateCodeAlpha`. Row ids and master-table keys nothing outside PMFBY can resolve.
 
-One thing is still open: `recordCount` sits beside a `responseDynamic` that v1 reads as a
-single object. Whether a multi-ticket read returns an array is unconfirmed.
+**Dropped as unused** — `InsuranceCompany`, `InsurancePolicyNo`, `RepresentationType`,
+`GrievenceSourceOtherType`, `OtherSocialMedia`, `SocialMediaURL`, `IsLegal`,
+`LegalRemarks`, `CPGramRegistrationNumber`, `NCIPReferenceNumber`, `ComplaintDate`.
+Null in every sample, or carrying no fact a caller asked for.
+
+**The envelope** — `responseCode` is consumed as the success flag the guard tests;
+`responseMessage`, `recordCount`, `responseObject` and `jsonString` are dropped. The
+portal's own message may carry a stack trace or an internal hostname and is never
+returned.
+
+**Two dates, and they disagree.** `ComplaintDate` is a field the *caller* sends on the
+lodge, so it is the farmer's stated date. `InsertDateTime` is server-generated. In the
+one live sample they are five months apart, which settles it: `case.filedOn` comes from
+`InsertDateTime`, and `ComplaintDate` is not echoed back to the caller who sent it.
+
+**One absence is left.** There is no reply *date*. `latestRemark` arrives with nothing
+beside it, which is why the PMFBY branch refuses `case.repliedOn` while allowing
+`case.reply` — and why the `Case` rule refusing a date without a reply matters here.
+
+Two things are still open. `recordCount` sits beside a `responseDynamic` that v1 reads as
+a single object, so whether a multi-ticket read returns an array is unconfirmed. And
+`TicketStatusID` is a key into a PMFBY master table we have not been given; until we are,
+the status mapping reads the phrase and degrades unknown values to `UnderReview`.
 
 ### PM-KISAN lodge reply
 
@@ -396,7 +443,7 @@ that is inconsistent.
 | upstream | here | note |
 |---|---|---|
 | `GrievanceID` / `grievanceId` / `GrievanceNo` | `case.ticketNo` | **the case identifier.** Whichever name arrives, lands here |
-| `Status` / `Responce` / `Rsponce` | — | `"True"` / `"False"`, string-valued; becomes the ACK or a NACK, not a field. Absent means success on this leg, so test for `"False"` rather than for `"True"` |
+| `Status` / `Responce` / `Rsponce` | — | `"True"` / `"False"`, string-valued; becomes the ACK or a NACK, not a field. Absent means success here, so test for `"False"` rather than for `"True"` |
 | `Message` / `message` / `Remark` | *dropped* | the portal's own text, never returned; logged redacted |
 
 So a lodge response carries one portal value and no more. `case.status.code` is asserted
@@ -415,7 +462,7 @@ All fourteen fields of the record:
 | `GrievanceStatus` | `case.status` | the portal returns it; the legacy direct client's model drops it, so it is missing from any sample taken there. See "Case status" |
 | `OfficerReply` | `case.reply` | the network does not adopt the portal's field name; see "Case reply" |
 | `OfficeReplyDate` | `case.repliedOn` | an IST calendar date |
-| `Reg_No` | *dropped* | the registration number the farmer sent. Nothing structural stops it coming back — `enrolmentId` is an attribute on every leg — so this is a deliberate mapping rule: it is matched against the number the caller sent, then discarded. v1's `identity-no` echo on a case read is not carried into v2 |
+| `Reg_No` | *dropped* | the registration number the farmer sent. Nothing structural stops it coming back — `enrolmentId` is an attribute on every call — so this is a deliberate mapping rule: it is matched against the number the caller sent, then discarded. v1's `identity-no` echo on a case read is not carried into v2 |
 | `Farmer_Name`, `Father_Name`, `Gender`, `MobileNo`, `StateName`, `DistrictName`, `BlockName`, `RevenueVillageName` | *dropped* | personal data |
 
 Nine of fourteen are dropped. That is the point of the allow-list.
@@ -498,7 +545,7 @@ Resource holding information, which this pack is not.
 
 ## Where each field travels
 
-One thing moves between legs, and only one.
+One thing moves between calls, and only one.
 
 **The attributes object itself moves.** On `init` and `status` it is
 `message.contract.commitments[].commitmentAttributes`. On `support` there is no contract
@@ -518,8 +565,8 @@ Everything else stays inside the attributes object wherever that object happens 
 both containers included. Published examples show the logical form, every field inline;
 they are not wire payloads.
 
-PMFBY has no `init` leg: it publishes no challenge, so its flow opens at `support` and
-its only contract leg is `status`.
+PMFBY has no `init` call: it publishes no challenge, so its flow opens at `support` and
+`status` is the only call it makes that carries a contract.
 
 ## Fields
 
@@ -534,8 +581,8 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `@type` | Always | Identifies the commitment as `openagrinet:Grievance` |
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions. `code` is the branch selector — `PMFBY` or `PM-KISAN` |
-| `provider` | `support` legs | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` on this leg, so it has nowhere else to read the provider from |
-| `enrolmentId` | Ask, when filing; also returned in `Direct` | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every leg, `support` included |
+| `provider` | `support` only | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` for `support`, so it has nowhere else to read the provider from |
+| `enrolmentId` | Ask, when filing; also returned in `Direct` | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every call, `support` included |
 | `grievance.category` | Ask, optional when filing; sometimes returned | The portal's own classification, as a `code`, a `name`, or both |
 | `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
 | `case.ticketNo` | PMFBY `Direct`; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
@@ -582,9 +629,9 @@ because the gates that enforce it are structural and bite on every action.
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
 | `support` | `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.name`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.cropName` |
+| `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
-Refused: `challenge`, `case.reply`, `case.repliedOn`, `case.status.name`,
+Refused: `challenge`, `case.repliedOn`, `case.status.name`,
 `provider.availableAt`, `provider.providerAttributes`.
 
 **PM-KISAN**
@@ -608,10 +655,10 @@ Both are allow-lists. A path not named is not used by that capability. `discover
 only a `comesBack` bucket, because the catalog entry is published, never asked for.
 `enrolmentId` is a `mustSend` on PMFBY's `support` and only a `maySend` on its `status`:
 the lodge is about an enrolment, while the read is selected by `case.ticketNo` and
-`applicantMobile` together. `applicantMobile` never comes back on either leg.
+`applicantMobile` together. `applicantMobile` never comes back on either call.
 PM-KISAN's `challenge.response` is a `mustSend` on `support` and `status` but absent from
 `init`, which is the call that asks for the code rather than spends it. It appears in no
-`comesBack` bucket on either leg; `challenge.issued` is the whole of what `init` answers
+`comesBack` bucket on either call; `challenge.issued` is the whole of what `init` answers
 with.
 
 ## PMFBY issues no challenge
@@ -704,15 +751,39 @@ Where a portal publishes no status, the adapter infers one and emits `code` alon
 - `Replied` — a status record with a reply but no status phrase.
 - `UnderReview` — a status record with neither.
 
+The seven codes and what each one claims:
+
+| code | what it says | how it is reached today |
+|---|---|---|
+| `Registered` | filed, nobody has looked at it | inferred from a lodge reply |
+| `UnderReview` | with the desk | inferred, and the landing place for any phrase we do not recognise |
+| `AwaitingApplicant` | the desk has asked the farmer for something and is waiting | a portal phrase only |
+| `Replied` | the desk has answered | inferred from a reply with no status phrase |
+| `Resolved` | settled, the complaint was acted on | a portal phrase only |
+| `Rejected` | settled, the complaint was not accepted | a portal phrase only |
+| `Closed` | shut without a decision — withdrawn, duplicate, or timed out | a portal phrase only |
+
+`Resolved`, `Rejected` and `Closed` are the terminal three: a case in one of them is
+finished, and nothing the adapter infers may put a case there. Only a portal saying so
+can. Four codes are marked *a portal phrase only* because neither portal has given us its
+phrase list, so nothing maps to them yet. They are in the enum because a caller branching
+on status should be written against the full set now rather than have codes appear under
+it later. **Open with both portals:** the status phrase lists.
+
 ## Case reply
 
-PM-KISAN's field is `OfficerReply`; the network's is `case.reply`. The name is not
-adopted, for two reasons. A network term should not be one portal's internal field name —
-and it has to name something PMFBY could fill too, which today it cannot: that portal
-publishes no reply at all and the branch refuses both fields. And PM-KISAN is not
-consistent about who writes it: the companion date is `OfficeReplyDate`, an office rather
-than an officer. Naming the field for the case rather than for an author claims only what
-we can show.
+Both portals publish a reply, under different names: PM-KISAN sends `OfficerReply`,
+PMFBY sends `latestRemark`. The network's is `case.reply`, which adopts neither — a
+network term should not be one portal's internal field name, and with two portals
+spelling it two ways there is no name to adopt. PM-KISAN is not even consistent with
+itself: the companion date is `OfficeReplyDate`, an office rather than an officer.
+Naming the field for the case rather than for an author claims only what we can show.
+
+The two differ in one respect that reaches the schema. PM-KISAN sends a reply date
+beside the reply; PMFBY sends none, so the PMFBY branch allows `case.reply` and refuses
+`case.repliedOn`. And PMFBY writes `""` rather than omitting the field when a ticket is
+unanswered, which `minLength: 1` rejects — the mapping must drop an empty
+`latestRemark`, not forward it as a blank reply.
 
 `reply` / `repliedOn` replaced `remark` / `remarkedOn` in this revision. "Remark" is a
 note *about* a case; what the portal sends is an answer *to* one, and `reply` says so.
@@ -864,7 +935,8 @@ legacy tree, which is why the phrase does not travel at all.
 - [On-demand: file a grievance](examples/pmfby-on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/pmfby-on-demand-read-case.json)
 - [Direct: lodge reply, as the portal sends it](examples/pmfby-direct-grievance-registered.json)
-- [Direct: grievance under review, read from the portal](examples/pmfby-direct-grievance-under-review.json) — the category and sub-category names in it are illustrative. The portal answers a read with `TicketCategoryName` and `TicketSubCategoryName` and has published no phrase list, so there is no captured value to quote.
+- [Direct: grievance under review, read from the portal](examples/pmfby-direct-grievance-under-review.json) — an unanswered ticket, so `case.reply` is absent rather than blank. The category names are illustrative: the portal publishes no phrase list, so there is no captured value to quote. The codes beside them are real, from `TicketCategoryID` and `TicketSubCategoryID`.
+- [Direct: grievance with the portal's reply](examples/pmfby-direct-grievance-replied.json) — the same ticket once `latestRemark` carries text. No `repliedOn`: PMFBY sends no reply date.
 
 **PM-KISAN**
 

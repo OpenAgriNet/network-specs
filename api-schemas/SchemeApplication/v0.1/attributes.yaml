@@ -24,6 +24,7 @@ components:
       type: object
       x-beckn-container: commitmentAttributes
       x-beckn-container-by-action:
+        discover: resourceAttributes
         init: commitmentAttributes
         status: commitmentAttributes
       x-oan-fields-by-action:
@@ -36,7 +37,7 @@ components:
         discover:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
-          maySend: [informationMode, scheme.code, enrolmentId,
+          maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
                     applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
@@ -50,7 +51,7 @@ components:
           # Identity is also required, but it is one of two slots and
           # mustSend names a single path -- see the gates in README.
           mustSend: [challenge.response.method, challenge.response.value]
-          maySend: [informationMode, scheme.code, enrolmentId,
+          maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
                     applicant.mobile, applicant.aadhaar]
           comesBack:
             - informationMode
@@ -303,7 +304,7 @@ components:
             - not: { required: [applicant] }
 
         # The grievance bands are not this capability's, and neither is
-        # provider: it belongs on a support leg and this capability has none.
+        # provider: it belongs on a support call and this capability has none.
         # None is inherited any more, but the composed root is open, so
         # leaving them undeclared does not keep them out.
         - not:

@@ -33,15 +33,21 @@ base schema, and share no subject.
 
 ## Attachment point
 
-Applied to `commitmentAttributes` of a Beckn `Commitment`, on `init` and on `status`.
+| what | where | on which call |
+|---|---|---|
+| the **declaration** — this desk exists, here is what it accepts | `resourceAttributes` of a catalog `Resource` | `catalog/publish`, `discover`, `on_discover` |
+| one farmer's **application record** | `commitmentAttributes` of a `Commitment` | `init`, `status` |
 
-A status read is a promise the portal makes about one farmer's application, not a
-catalogable thing of value, so it does not sit on `resourceAttributes`. Unlike the
-grievance pack there is **no `support` leg**: nothing is being filed, so no `Support`
-channel is ever composed and no field moves out of the attributes object.
-`x-beckn-container-by-action` therefore lists `init` and `status` and nothing else. No
-field in this family carries an `x-beckn-path` at all, so there is nothing to fire: every
-field is read at the same path on both legs.
+The declaration is catalogable: `informationMode`, `scheme` and the challenge methods
+describe the desk, so they sit on `resourceAttributes` as in every other OAN pack. A
+status read is not catalogable — it is a promise the portal makes about one farmer's
+application, so it sits on `commitmentAttributes`.
+
+Unlike the grievance pack there is **no `support` call**: nothing is being filed, so no
+`Support` channel is ever composed and no field moves out of the attributes object.
+`x-beckn-container-by-action` therefore lists `discover`, `init` and `status`, and no
+`channels`. No field in this family carries an `x-beckn-path` at all, so there is nothing
+to fire: every field is read at the same path on both calls.
 
 `Commitment.resources` carries one thin pointer to the catalog entry
 (`res:pmkisan:application-status`). It is fixed for the provider and never minted per
@@ -95,7 +101,7 @@ portal. It carries no record — it says a challenge was sent and nothing else �
 is reserved for the payload carrying the application itself. The grievance pack does the
 same.
 
-`init` exists here and not on PM-KISAN's grievance leg for the same reason it exists at
+`init` exists here and not on PM-KISAN's grievance desk for the same reason it exists at
 all: this read is gated and lodging a grievance is not. The OTP is the same OTP — the same
 upstream service issues it and the same four digits satisfy it — so a caller who holds one
 from a grievance flow can spend it here.
@@ -261,7 +267,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real record |
 | `scheme` | Always | Pinned to `PM-KISAN` |
 | `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile or Aadhaar lookup |
-| `applicant` | An ask by mobile or Aadhaar, both legs | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
+| `applicant` | An ask by mobile or Aadhaar, both calls | Which farmer to look up when the caller has no registration number. Exactly one of `mobile` or `aadhaar`; the member names the kind. Never echoed |
 | `challenge.response.method`, `challenge.response.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
 | `challenge.issued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `application.latestInstalmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
@@ -290,7 +296,7 @@ that enforce it are structural and bite on every action:
 
 Refused: `provider`, `application.ekyc.name`, `grievance`, `case`, `grievanceOptions`.
 
-Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both legs need
+Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both calls need
 one of `enrolmentId`, `applicant.mobile` or `applicant.aadhaar`, but a `mustSend` list is
 flat and all-of: naming any one of them there would be false for the other callers. They
 sit in `maySend` instead, and the requirement is a gate, which is the only place it can
@@ -363,7 +369,7 @@ field this pack never declares is accepted rather than rejected, and `grievance`
 again.
 
 `provider` joined them in this revision. It is declared on `SchemeServiceBase` and so
-*is* in this pack's vocabulary, but it belongs to a support leg — where a caller names
+*is* in this pack's vocabulary, but it belongs to a `support` call — where a caller names
 the desk it is addressing — and this capability has none. Both actions here ride on
 `commitmentAttributes`, where the provider is already carried in
 `commitments[].offer.provider`, so naming it a second time inside the attributes object

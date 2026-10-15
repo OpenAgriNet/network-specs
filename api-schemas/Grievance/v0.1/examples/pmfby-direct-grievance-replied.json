@@ -1,0 +1,32 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "informationMode": "Direct",
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "enrolmentId": "KA2026KH00123456",
+  "cropYear": "2026",
+  "season": "Kharif",
+  "grievance": {
+    "category": {
+      "code": "3",
+      "name": "Enrollment / Portal Issues"
+    },
+    "subCategory": {
+      "code": "10",
+      "name": "Login"
+    },
+    "description": "Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment."
+  },
+  "case": {
+    "ticketNo": "100626000099001",
+    "status": {
+      "code": "Replied"
+    },
+    "filedOn": "2026-09-28",
+    "reply": "Your portal login has been reset. Please try again with the registered mobile number.",
+    "cropName": "Paddy"
+  }
+}

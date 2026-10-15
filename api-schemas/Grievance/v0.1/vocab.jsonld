@@ -20,7 +20,7 @@
       "@id": "openagrinet:provider",
       "@type": "rdfs:Property",
       "rdfs:label": "provider",
-      "rdfs:comment": "The portal the payload came from. Carried on a support leg only; on a contract leg the same fact lives in commitments[].offer.provider."
+      "rdfs:comment": "The portal the payload came from. Carried on the support call only; on init and status the same fact lives in commitments[].offer.provider."
     },
     {
       "@id": "openagrinet:scheme",

@@ -9,7 +9,7 @@ info:
 
     An API schema, not a domain schema: it describes what a scheme's grievance
     desk accepts and returns. Attaches through commitmentAttributes on contract
-    legs and through support.channels on a support leg.
+    init and status, and through support.channels on support.
 
     Reasoning, per-scheme behaviour and worked examples are in README.md.
 
@@ -33,7 +33,7 @@ components:
         provider:
           allOf:
             - $ref: "#/components/schemas/ProviderReference"
-          description: The portal this payload came from. Support leg only; on a contract leg it lives in commitments[].offer.provider.
+          description: The portal this payload came from. The support call only; init and status carry it at commitments[].offer.provider.
           x-jsonld-id: "openagrinet:provider"
 
         scheme:
@@ -203,6 +203,7 @@ components:
       # Union across both branches. PMFBY uses no init; its branch says so
       # in x-oan-fields-by-action.
       x-beckn-container-by-action:
+        discover: resourceAttributes
         init: commitmentAttributes
         status: commitmentAttributes
         support: channels
@@ -270,7 +271,7 @@ components:
         # Allow-list, relative to the attribute object. A path not named here
         # is not used. No init: PMFBY issues no challenge.
         refused:     [challenge,
-                      case.reply, case.repliedOn, case.status.name,
+                      case.repliedOn, case.status.name,
                       provider.availableAt, provider.providerAttributes]
         discover:
           comesBack: [informationMode, scheme.code, scheme.name,
@@ -279,7 +280,7 @@ components:
           mustSend:  [enrolmentId, applicantMobile, cropYear, season,
                       grievance.description]
           maySend:   [informationMode, provider.id, provider.descriptor.name,
-                      scheme.code,
+                      scheme.code, scheme.name,
                       grievance.category.code, grievance.subCategory.code,
                       complaintDate, receiptSourceId]
           comesBack: [informationMode, provider.id, provider.descriptor.name,
@@ -289,12 +290,14 @@ components:
                       case.ticketNo, case.status.code, case.filedOn]
         status:
           mustSend:  [applicantMobile, case.ticketNo]
-          maySend:   [informationMode, scheme.code, enrolmentId]
+          maySend:   [informationMode, scheme.code, scheme.name, enrolmentId]
           comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
-                      grievance.category.name, grievance.subCategory.name,
+                      cropYear, season,
+                      grievance.category.code, grievance.category.name,
+                      grievance.subCategory.code, grievance.subCategory.name,
                       grievance.description,
                       case.ticketNo, case.status.code, case.filedOn,
-                      case.cropName]
+                      case.reply, case.cropName]
       properties:
         scheme:
           properties:
@@ -376,11 +379,9 @@ components:
                   pattern: "^[0-9]+$"
 
         case:
-          # No reply published against a PMFBY ticket.
+          # The reply comes from latestRemark; no date comes with it.
           not:
-            anyOf:
-              - required: [reply]
-              - required: [repliedOn]
+            required: [repliedOn]
           properties:
             ticketNo:
               type: string
@@ -411,8 +412,9 @@ components:
             - required: [enrolmentId]
             - required: [grievanceOptions]
 
-        # The mirror of the case rule: these five are the caller's inputs and
-        # the portal reports none of them back, so none may ride on an answer.
+        # Three of the caller's inputs that never ride on an answer.
+        # cropYear and season are not among them: the portal does report those
+        # back, as RequestYear and RequestSeason.
         - anyOf:
             - properties:
                 informationMode:
@@ -420,8 +422,6 @@ components:
             - not:
                 anyOf:
                   - required: [applicantMobile]
-                  - required: [cropYear]
-                  - required: [season]
                   - required: [complaintDate]
                   - required: [receiptSourceId]
 
@@ -441,7 +441,7 @@ components:
                       - required: [cropName]
 
     # ---------------------------------------------------------------
-    # PM-KISAN branch. OTP on both guarded legs, one category level.
+    # PM-KISAN branch. OTP on both guarded calls, one category level.
     # ---------------------------------------------------------------
     PMKISANGrievance:
       x-oan-fields-by-action:
@@ -455,7 +455,7 @@ components:
                       challenge.methods, grievanceOptions.categories]
         init:
           mustSend:  [enrolmentId]
-          maySend:   [informationMode, scheme.code]
+          maySend:   [informationMode, scheme.code, scheme.name]
           comesBack: [informationMode, scheme.code, scheme.name,
                       challenge.issued.method, challenge.issued.length,
                       challenge.issued.valueType, challenge.issued.expiresAt]
@@ -464,7 +464,7 @@ components:
                       grievance.category.code, grievance.description,
                       challenge.response.method, challenge.response.value]
           maySend:   [informationMode, provider.id, provider.descriptor.name,
-                      scheme.code]
+                      scheme.code, scheme.name]
           comesBack: [informationMode, provider.id, provider.descriptor.name,
                       scheme.code, scheme.name, enrolmentId,
                       grievance.category.code, grievance.description,
@@ -474,7 +474,7 @@ components:
           # registration, so the date is half the case selector.
           mustSend:  [enrolmentId, case.filedOn,
                       challenge.response.method, challenge.response.value]
-          maySend:   [informationMode, scheme.code]
+          maySend:   [informationMode, scheme.code, scheme.name]
           comesBack: [informationMode, scheme.code, scheme.name,
                       grievance.description,
                       case.status.code, case.filedOn,

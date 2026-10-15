@@ -7,11 +7,15 @@
     "name": "Pradhan Mantri Fasal Bima Yojana"
   },
   "enrolmentId": "KA2026KH00123456",
+  "cropYear": "2026",
+  "season": "Kharif",
   "grievance": {
     "category": {
+      "code": "3",
       "name": "Enrollment / Portal Issues"
     },
     "subCategory": {
+      "code": "10",
       "name": "Login"
     },
     "description": "Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment."
