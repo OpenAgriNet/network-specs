@@ -6,9 +6,10 @@ Read the [Complete Examples](examples/) to see these packs composed inside Beckn
 
 ## Schema Packs
 
-The index is generated from the versioned `profile.json` files. Adding a schema directory with a profile makes it appear here automatically.
+The index is generated from the versioned `profile.json` files under `schema/`. Adding a domain schema directory with a profile makes it appear here automatically. Provider API packs live under [`api-schemas/`](../api-schemas/) and are indexed separately.
 
-{% assign profile_files = site.static_files | where: "name", "profile.json" | sort: "path" %}
+{% assign all_profiles = site.static_files | where: "name", "profile.json" | sort: "path" %}
+{% assign profile_files = all_profiles | where_exp: "p", "p.path contains '/schema/'" %}
 <div class="schema-grid">
 {% for profile in profile_files %}
   {% assign path_parts = profile.path | split: "/" %}
