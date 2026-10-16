@@ -77,6 +77,7 @@ components:
           properties:
             methods:
               type: array
+              minItems: 1
               uniqueItems: true
               items:
                 $ref: "#/components/schemas/ChallengeMethod"
@@ -90,6 +91,7 @@ components:
               properties:
                 method:
                   type: string
+                  minLength: 1
                   x-jsonld-id: "openagrinet:challengeMethod"
                 length:
                   type: integer
@@ -114,11 +116,14 @@ components:
               properties:
                 method:
                   type: string
+                  minLength: 1
                   description: Must name a method this desk published.
                   x-jsonld-id: "openagrinet:challengeMethod"
                 value:
                   type: string
-                  pattern: "^[0-9]{4,8}$"
+                  # Both valueTypes, so ALPHANUMERIC is answerable. Every desk
+                  # today publishes NUMERIC and pins this tighter on its branch.
+                  pattern: "^[A-Za-z0-9]{4,8}$"
                   x-oan-pii:
                     class: credential
                     handling: [no-log, no-trace, no-echo, no-forward]
@@ -135,6 +140,7 @@ components:
     GrievanceBase:
       allOf:
         - $ref: "#/components/schemas/SchemeServiceBase"
+        - $ref: "#/components/schemas/NoApplicationBands"
         - type: object
           properties:
             grievance:
@@ -281,10 +287,13 @@ components:
           # provider.id routes the call: it is what resolves the Portal and its
           # base URL in the registry. On support there is no contract, so the
           # channel's own provider is the only place it can be named.
-          mustSend:  [provider.id,
+          # descriptor.name rides with it because ProviderReference requires
+          # descriptor, and descriptor requires name -- a provider carrying
+          # only an id is refused.
+          mustSend:  [provider.id, provider.descriptor.name,
                       enrolmentId, applicantMobile, cropYear, season,
                       grievance.description]
-          maySend:   [informationMode, provider.descriptor.name,
+          maySend:   [informationMode,
                       scheme.code, scheme.name,
                       grievance.category.code, grievance.subCategory.code,
                       complaintDate, receiptSourceId]
@@ -444,6 +453,7 @@ components:
                       - required: [status]
                       - required: [filedOn]
                       - required: [cropName]
+                      - required: [reply]
 
     # ---------------------------------------------------------------
     # PM-KISAN branch. OTP on both guarded calls, one category level.
@@ -461,11 +471,10 @@ components:
                       challenge.issued.valueType, challenge.issued.expiresAt]
         support:
           # provider.id routes the call -- see the PMFBY branch.
-          mustSend:  [provider.id, enrolmentId,
+          mustSend:  [provider.id, provider.descriptor.name, enrolmentId,
                       grievance.category.code, grievance.description,
                       challenge.response.method, challenge.response.value]
-          maySend:   [informationMode, provider.descriptor.name,
-                      scheme.code, scheme.name]
+          maySend:   [informationMode, scheme.code, scheme.name]
           comesBack: [informationMode, provider.id, provider.descriptor.name,
                       scheme.code, scheme.name, enrolmentId,
                       grievance.category.code, grievance.description,
@@ -591,15 +600,8 @@ components:
                   enum: [OnDemand]
 
         # The five fields PMFBY numbers and this desk does not. Declaring them
-        # inside the other branch does not keep them out of this one: the
-        # composed root is open, so each has to be refused by name.
-        - not:
-            anyOf:
-              - required: [applicantMobile]
-              - required: [cropYear]
-              - required: [season]
-              - required: [complaintDate]
-              - required: [receiptSourceId]
+        # inside the other branch does not keep them out of this one.
+        - $ref: "#/components/schemas/NoPMFBYFields"
 
         - properties:
             case:
@@ -629,6 +631,39 @@ components:
     # modelled here, and two of them are free text, so every Descriptor slot
     # in this pack refuses them by name rather than leaving them to the
     # allow-list in x-oan-fields-by-action.
+    # The composed root is open, so a field left undeclared is accepted rather
+    # than rejected. These three lists name what each capability does NOT own,
+    # so a field cannot cross from one pack into the other under its own name.
+    # Stated once here and referenced from both packs, because a per-pack list
+    # catches only what its author happened to think of.
+
+    # Owned by SchemeApplication. applicant is the one that matters: the
+    # PM-KISAN grievance branch refuses applicantMobile, and applicant.mobile
+    # would otherwise walk the same number straight past that refusal.
+    NoApplicationBands:
+      not:
+        anyOf:
+          - required: [applicant]
+          - required: [application]
+
+    # Owned by the PMFBY grievance branch.
+    NoPMFBYFields:
+      not:
+        anyOf:
+          - required: [applicantMobile]
+          - required: [cropYear]
+          - required: [season]
+          - required: [complaintDate]
+          - required: [receiptSourceId]
+
+    # Owned by the Grievance capability.
+    NoGrievanceBands:
+      not:
+        anyOf:
+          - required: [grievance]
+          - required: [case]
+          - required: [grievanceOptions]
+
     NoDescriptorExtras:
       not:
         anyOf:
@@ -662,7 +697,7 @@ components:
       type: object
       additionalProperties: false
       required: [code]
-      description: One entry on the complaint form. code is what you send; descriptor is help text and never travels.
+      description: One entry on the complaint form. code is what you send; help is display text and never travels.
       properties:
         code:
           type: string
@@ -672,10 +707,11 @@ components:
           type: string
           minLength: 1
           x-jsonld-id: "openagrinet:optionName"
-        descriptor:
+        help:
           type: string
           minLength: 1
-          x-jsonld-id: "openagrinet:optionDescriptor"
+          description: A sentence explaining when to pick this option. Named help, not descriptor, because a Beckn Descriptor is an object and this is a string.
+          x-jsonld-id: "openagrinet:optionHelp"
 
     Complaint:
       type: object

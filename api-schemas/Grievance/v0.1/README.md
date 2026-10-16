@@ -156,7 +156,10 @@ Before the containers the same split lived in a prefix — `grievanceCategory` a
 validated either way. As containers the split is enforced, and `grievance` becomes all or
 nothing, because `required` inside a block fires whenever the block is present.
 
-Nothing rides in a Beckn `descriptor`. An earlier draft hoisted the category and the
+Nothing rides in a Beckn `descriptor`, and nothing is named one either. A published
+option's help text is `help`, not `descriptor`: a Beckn `Descriptor` is an object
+everywhere else in this pack, and a plain string under the same name would have read as
+one. An earlier draft hoisted the category and the
 farmer's words there, which read well and checked nothing: a `Descriptor` is three
 free-text strings, so the category, the sub-category and the complaint all validated as
 any string at all. The join was lossy too — PMFBY's own category name contains the
@@ -312,14 +315,29 @@ because the selector differs: `case.ticketNo` on PMFBY, `case.filedOn` on PM-KIS
 are declared inside the PMFBY branch, which is not the same as being kept out of this one
 — see "The composed root is open". Each is refused by name, and without the refusal
 `applicantMobile` was not even pattern-checked on this branch, because the branch that
-holds the pattern was not the branch being matched. `cropName` now sits in the shared
-`Case`, so the refusal there is a plain exclusion of a field this desk does not number.
+holds the pattern was not the branch being matched. The five are named once, in the
+shared `NoPMFBYFields`, which the PM-KISAN branch and the `SchemeApplication` pack both
+`$ref` — a per-pack list catches only what its author happened to think of, and these two
+had drifted apart. `cropName` now sits in the shared `Case`, so the refusal there is a
+plain exclusion of a field this desk does not number.
+
+**Both grievance branches refuse the `applicant` and `application` bands.** They belong
+to `SchemeApplication`, and `applicant.mobile` is the one that matters: PM-KISAN refuses
+`applicantMobile`, and a mobile number nested one level down would have walked straight
+past that refusal. The refusal is `NoApplicationBands`, composed on `GrievanceBase` so it
+binds both desks, and the mirror of it — `NoGrievanceBands` — is what the other pack
+`$ref`s back.
 
 **PMFBY refuses `challenge`** with a single `not`/`required`. See "PMFBY issues no
 challenge".
 
 **A reply date needs a reply.** `case.repliedOn` without `case.reply` is refused on both
 branches: a date for an answer nobody wrote is not a fact.
+
+**The reply text is the portal's, not the caller's.** `case.reply` is refused on an
+`OnDemand` payload on both branches, beside `case.status`, `case.filedOn` and
+`case.cropName`. An ask carries the selector and nothing else; the answer is what comes
+back.
 
 **`enrolmentId` has a floor on both branches.** PMFBY pins 10 to 30 characters, PM-KISAN
 6 to 20. The base allowed one character, which is not a registration number on any desk.
@@ -624,9 +642,11 @@ action: `mustSend`, `maySend`, `comesBack`. What each branch refuses is in the s
 itself, not here — the gates are structural and bite on every action.
 
 **The provider must be named on every call that reaches a Portal.** On `support` that is
-`provider.id` inside the channel, which is why it is a `mustSend` below. On `init` and
-`status` it is `commitments[0].offer.provider.id`, which sits outside the attributes
-object and so cannot appear in these tables — it is required all the same. It is what
+`provider.id` inside the channel, which is why it is a `mustSend` below, and
+`provider.descriptor.name` is one too: `ProviderReference` requires `descriptor` and
+`descriptor` requires `name`, so a provider carrying only an `id` is refused. On `init`
+and `status` the same pair sits at `commitments[0].offer.provider`, outside the
+attributes object and so outside these tables — required all the same. The `id` is what
 resolves the Portal and its base URL in the registry, so a call without it cannot be
 routed.
 
@@ -635,7 +655,7 @@ routed.
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
-| `support` | `provider.id`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `provider.descriptor.name`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `support` | `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
 **PM-KISAN**
@@ -644,7 +664,7 @@ routed.
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` |
 | `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `support` | `provider.id`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `provider.descriptor.name`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `support` | `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Both are allow-lists. A path not named is not used by that capability. `discover` has

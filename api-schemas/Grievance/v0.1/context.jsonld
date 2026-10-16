@@ -41,7 +41,7 @@
           "@context": {
             "code": "openagrinet:optionCode",
             "name": "openagrinet:optionName",
-            "descriptor": "openagrinet:optionDescriptor"
+            "help": "openagrinet:optionHelp"
           }
         },
         "subCategories": {
@@ -49,7 +49,7 @@
           "@context": {
             "code": "openagrinet:optionCode",
             "name": "openagrinet:optionName",
-            "descriptor": "openagrinet:optionDescriptor"
+            "help": "openagrinet:optionHelp"
           }
         }
       }

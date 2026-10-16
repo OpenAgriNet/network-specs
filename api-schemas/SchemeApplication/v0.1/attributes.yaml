@@ -114,6 +114,7 @@ components:
               description: PM-KISAN is the only scheme offering this capability today. A second scheme widens this enum.
 
             challenge:
+              description: As the base defines it, narrowed to what PM-KISAN runs -- a four-digit numeric code by SMS.
               allOf:
                 - type: object
                   properties:
@@ -196,6 +197,7 @@ components:
                         code:
                           type: string
                           enum: [Done, Pending]
+                  description: Whether the farmer's eKYC is complete. Pending is a blocker in its own right, and often the only one.
                   x-jsonld-id: "openagrinet:ekycStatus"
                 blockers:
                   type: array
@@ -228,6 +230,15 @@ components:
             - properties:
                 informationMode: { enum: [OnDemand] }
             - required: [application]
+
+        # And it must name the farmer it is about. A lookup by mobile is
+        # resolved upstream to a registration number, and that is what comes
+        # back -- an answer with no identity in it cannot be filed against
+        # anything by the caller.
+        - anyOf:
+            - properties:
+                informationMode: { enum: [OnDemand] }
+            - required: [enrolmentId]
 
         # Identity is named, never sniffed: enrolment or applicant, never both.
         - anyOf:
@@ -296,13 +307,19 @@ components:
                 informationMode: { enum: [OnDemand] }
             - not: { required: [applicant] }
 
-        # The grievance bands are not this capability's, and neither is
-        # provider: it belongs on a support call and this capability has none.
-        # None is inherited any more, but the composed root is open, so
-        # leaving them undeclared does not keep them out.
+        # The grievance bands are not this capability's. None is inherited any
+        # more, but the composed root is open, so leaving them undeclared does
+        # not keep them out. The list is shared with the Grievance pack rather
+        # than restated, so neither side can drift.
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoGrievanceBands"
+
+        # Nor are PMFBY's. A mobile number belongs in applicant here, and
+        # a bare applicantMobile would be a second way to send one.
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoPMFBYFields"
+
+        # provider is refused separately: it belongs on a support call and
+        # this capability has none. Routing is unaffected -- every init and
+        # status still carries commitments[0].offer.provider.id, which is what
+        # resolves the Portal and its base URL in the registry.
         - not:
-            anyOf:
-              - required: [provider]
-              - required: [grievance]
-              - required: [case]
-              - required: [grievanceOptions]
+            required: [provider]

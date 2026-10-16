@@ -11,14 +11,14 @@
       {
         "code": "3",
         "name": "Enrollment / Portal Issues",
-        "descriptor": "Something about your enrolment, or about the portal itself, is not working."
+        "help": "Something about your enrolment, or about the portal itself, is not working."
       }
     ],
     "subCategories": [
       {
         "code": "10",
         "name": "Login",
-        "descriptor": "You cannot sign in to the portal to see your enrolment."
+        "help": "You cannot sign in to the portal to see your enrolment."
       }
     ]
   }

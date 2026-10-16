@@ -218,9 +218,9 @@ object come from, with their privacy markings already attached.
 
 That base is the scheme-service layer: what any desk needs whether or not it handles
 grievances. The grievance bands — `grievance`, `case`, `grievanceOptions` — sit one layer
-up, in `GrievanceBase`, which this pack does not touch. An earlier revision composed
-`GrievanceBase` and then refused those three members one by one; splitting the base
-removed the need. They are not in this pack's vocabulary at all.
+up, in `GrievanceBase`, which this pack does not touch. They are not in this pack's
+vocabulary, and they are refused by name all the same: the composed root is open, so
+not declaring a field is not the same as keeping it out.
 
 `ekyc` and each entry in `blockers` compose Beckn's `Descriptor`, which is the established
 idiom for a governed `code` paired with a display `name`. `blockers` uses both: the portal
@@ -238,7 +238,7 @@ On top of the base this pack:
 - pins `challenge.methods[].length` and `challenge.issued.length` to the same four, and
   both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
   cannot drift apart;
-- refuses `grievance`, `case`, `grievanceOptions` and `provider` by name, because none
+- refuses the grievance bands, PMFBY's five fields and `provider` by name, because none
   belongs to this capability and an undeclared field on an open root is accepted, not
   rejected;
 - narrows `enrolmentId` to ASCII alphanumeric, between six and twenty characters, and
@@ -280,11 +280,12 @@ with paths relative to the attributes object. Three buckets per action: `mustSen
 `maySend`, `comesBack`. What this pack refuses is in the schema itself, not here — the
 gates are structural and bite on every action.
 
-`commitments[0].offer.provider.id` is required on both `init` and `status`. It sits
-outside the attributes object, so it cannot appear in the table, but it is what resolves
-the Portal and its base URL in the registry and a call without it cannot be routed. The
-`provider` member *inside* the attributes object is a different thing and is refused
-here, because this capability has no `support` channel to name a desk on.
+`commitments[0].offer.provider` is required on both `init` and `status`, both its `id`
+and the `descriptor.name` beside it — a provider carrying only an `id` is refused. It
+sits outside the attributes object, so it cannot appear in the table, but the `id` is
+what resolves the Portal and its base URL in the registry and a call without it cannot
+be routed. The `provider` member *inside* the attributes object is a different thing and
+is refused here, because this capability has no `support` channel to name a desk on.
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
@@ -305,41 +306,52 @@ not an echo — and `applicant` never comes back at all.
 
 ## The gates
 
-Eight top-level gates, all tested against the real validator. `if`/`then` would read more
+Nine top-level gates, all tested against the real validator. `if`/`then` would read more
 naturally and does not work: this validator parses it and never evaluates it, so a guard
 written that way looks like it holds and does not. `anyOf`, `not` and `oneOf` *are*
 evaluated.
 
 1. **A `Direct` payload carries a record.** Either `informationMode` is `OnDemand`, or
    `application` is present. An answer with nothing in it is not an answer.
-2. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
+2. **And it names the farmer it is about.** The mirror of gate 1: a `Direct` payload must
+   also carry `enrolmentId`. A lookup by `mobile` is resolved upstream to a registration
+   number, and that number is what comes back, so an answer with no identity in it cannot
+   be filed against anything by the caller. Gate 7 keeps `applicant` out of the answer,
+   which leaves `enrolmentId` as the only identifier an answer can carry.
+3. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
    — an `anyOf` of two `not`/`required` members. Both at once names the same farmer twice
    with no rule for which wins, and it is also the shape a response would take if it
    leaked the lookup key back beside the registration it resolved to.
-3. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
+4. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
    `challenge` carrying `issued` or `methods`. This is what stops a payload that is a
    scheme name and nothing else. The `on_init` acknowledgement and the catalog entry both
    start at `challenge`, so they are told apart by which member is present: `issued` on
    the acknowledgement, `methods` on the entry. A bare `challenge` with neither is about
    nothing and is refused.
-4. **An answer may not carry `challenge.response`.** The OTP is sent, never returned: a
+5. **An answer may not carry `challenge.response`.** The OTP is sent, never returned: a
    payload carrying it must have `informationMode` other than `Direct`. The member is
    absent vacuously when `challenge` itself is, which is what lets the gate be written
    against the container. `x-oan-pii` marks the value `no-echo`, but that binds the
    mapping; this is the structural half of the same rule.
-5. **A catalog declaration makes the payload a catalog entry.** Carrying
+6. **A catalog declaration makes the payload a catalog entry.** Carrying
    `challenge.methods` is not merely incompatible with `Direct`: an entry names no
    farmer, so the gate also requires `OnDemand` and the absence of `enrolmentId`,
    `applicant` and `application`. A declaration cannot ride alongside a real lookup.
-6. **The `application` band may not ride on an ask.** Everything in it is the portal's,
+7. **The `application` band may not ride on an ask.** Everything in it is the portal's,
    and unlike a grievance case there is no selector inside it — a read is keyed on
    `enrolmentId` or `applicant` — so nothing in the band is the caller's to send.
-7. **The `applicant` band may not ride on an answer.** The mirror of rule 6. It is the
+8. **The `applicant` band may not ride on an answer.** The mirror of gate 7. It is the
    caller's lookup key and `mobile` is `no-echo`; where the portal resolves a lookup it
-   answers with `enrolmentId`, never with the key it was given. Together with rule 2 this
+   answers with `enrolmentId`, never with the key it was given. Together with gate 3 this
    makes echoing the key back unrepresentable rather than merely forbidden.
-8. **`provider` and the grievance bands are refused by name** — `provider`, `grievance`,
-   `case`, `grievanceOptions`. See "The composed root is open".
+9. **The other capability's fields are refused by name** — the grievance bands
+   (`grievance`, `case`, `grievanceOptions`) and PMFBY's five (`applicantMobile`,
+   `cropYear`, `season`, `complaintDate`, `receiptSourceId`), both by `$ref` to the
+   shared lists `NoGrievanceBands` and `NoPMFBYFields` in the grievance pack, so neither
+   side can drift. `applicantMobile` matters most: a mobile number belongs in
+   `applicant` here, and a bare `applicantMobile` would be a second way to send one past
+   the rules that govern the first. `provider` is refused separately — it belongs on a
+   `support` channel and this capability has none. See "The composed root is open".
 
 Two further refusals sit below the root. **Nothing but `code` and `name` travels in a
 `Descriptor`:** `application.ekyc` and each entry in `application.blockers` compose
@@ -363,7 +375,13 @@ took them out of this pack's vocabulary, and an earlier revision of this file re
 as having removed the need for the refusal. It had not: the composed root is open, so a
 field this pack never declares is accepted rather than rejected, and `grievance` and
 `case` validated here for as long as the refusal was gone. They are refused by name
-again.
+again — and by `$ref` to `NoGrievanceBands` in the grievance pack rather than by a copy,
+because the copy is what went stale the first time.
+
+PMFBY's five top-level fields are refused the same way, through `NoPMFBYFields`. They
+were never declared here either, and the consequence was the same: a bare
+`applicantMobile` validated against this pack, which gives a mobile number a second route
+in, beside `applicant.mobile` and outside every rule that governs it.
 
 `provider` joined them in this revision. It is declared on `SchemeServiceBase` and so
 *is* in this pack's vocabulary, but it belongs to a `support` call — where a caller names

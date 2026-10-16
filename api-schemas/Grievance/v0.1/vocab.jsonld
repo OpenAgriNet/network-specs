@@ -149,9 +149,9 @@
       "rdfs:comment": "The portal's own label for a published option."
     },
     {
-      "@id": "openagrinet:optionDescriptor",
+      "@id": "openagrinet:optionHelp",
       "@type": "rdfs:Property",
-      "rdfs:label": "option descriptor",
+      "rdfs:label": "option help",
       "rdfs:comment": "Plain-language help text for a published option. Shown to the farmer and never sent."
     },
     {
