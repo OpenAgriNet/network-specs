@@ -134,6 +134,10 @@ mobile number as a registration, and a registration that happens to be ten digit
 exactly the case this slot exists to carry safely. It does refuse twelve bare digits:
 that is an Aadhaar number's shape, and this capability takes no Aadhaar lookup, so the
 refusal keeps one out of the registration slot rather than redirecting it elsewhere.
+Both the registration rule and that refusal are `$ref`s into the Grievance pack —
+`PMKISANEnrolmentId` over `NotBareAadhaar` — because the grievance desk reads the same
+registration on the same portal, and two copies of a rule are two chances to lose one.
+The `challenge` narrowing to a four-digit numeric code by SMS is shared the same way.
 
 The observed form is two letters and nine digits — `BR295454592` is the value v1's own
 test fixtures use — and v1 validates it as `/^[A-Z0-9]+$/i`, which is the pattern pinned

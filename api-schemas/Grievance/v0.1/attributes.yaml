@@ -379,10 +379,12 @@ components:
           description: Both levels published. PMFBY numbers two and a caller sends both. Not pinned to an enum - the portal publishes no list.
 
         enrolmentId:
-          type: string
-          minLength: 10
-          maxLength: 30
-          description: The crop insurance application number. Bounds are a sanity range; PMFBY documents no format.
+          allOf:
+            - type: string
+              minLength: 10
+              maxLength: 30
+            - $ref: "#/components/schemas/NotBareAadhaar"
+          description: The crop insurance application number. Bounds are a sanity range; PMFBY documents no format. Twelve bare digits are refused on the assumption no state issues one -- every number seen carries a state prefix.
 
         grievance:
           properties:
@@ -424,11 +426,13 @@ components:
                     case:
                       required: [ticketNo, status, filedOn]
 
-        # Every payload must be about something.
+        # Every payload must be about something, and on this desk that is
+        # narrower than on PM-KISAN: an enrolment on its own is an init ask,
+        # and PMFBY issues no challenge, so it has no init. The three shapes
+        # left are the two asks and the published catalog.
         - anyOf:
             - required: [grievance]
             - required: [case]
-            - required: [enrolmentId]
             - required: [grievanceOptions]
 
         # Three of the caller's inputs that never ride on an answer.
@@ -535,32 +539,7 @@ components:
               const: PM-KISAN
 
         challenge:
-          properties:
-            methods:
-              type: array
-              minItems: 1
-              items:
-                properties:
-                  method:
-                    enum: [SMS_OTP]
-                  length:
-                    enum: [4]
-                  valueType:
-                    enum: [NUMERIC]
-            issued:
-              properties:
-                method:
-                  enum: [SMS_OTP]
-                length:
-                  enum: [4]
-                valueType:
-                  enum: [NUMERIC]
-            response:
-              properties:
-                method:
-                  enum: [SMS_OTP]
-                value:
-                  pattern: "^[0-9]{4}$"
+          $ref: "#/components/schemas/SMSOTPChallenge"
 
         grievanceOptions:
           not:
@@ -577,14 +556,7 @@ components:
 
         enrolmentId:
           allOf:
-            - type: string
-              pattern: "^[A-Za-z0-9]+$"
-              minLength: 6
-              maxLength: 20
-            # Refuses a bare Aadhaar number: this field carries a registration
-            # number or an exchanged token, never the Aadhaar itself.
-            - not:
-                pattern: "^[0-9]{12}$"
+            - $ref: "#/components/schemas/PMKISANEnrolmentId"
           description: The PM-KISAN registration number, or the token exchanged for an Aadhaar.
 
         grievance:
@@ -592,6 +564,12 @@ components:
             required: [subCategory]
           properties:
             category:
+              # Complaint takes a code or a name, which is right for PMFBY --
+              # its case read answers with a name and no id. This desk files
+              # under a code from a closed list of ten and the portal takes
+              # nothing else, so a category named and not coded is one the
+              # adapter cannot forward.
+              required: [code]
               properties:
                 code:
                   type: string
@@ -721,10 +699,6 @@ components:
     # Shared components.
     # ---------------------------------------------------------------
 
-    # A Beckn Descriptor carries five members beyond code and name. None is
-    # modelled here, and two of them are free text, so every Descriptor slot
-    # in this pack refuses them by name rather than leaving them to the
-    # allow-list in x-oan-fields-by-action.
     # The composed root is open, so a field left undeclared is accepted rather
     # than rejected. These three lists name what each capability does NOT own,
     # so a field cannot cross from one pack into the other under its own name.
@@ -758,6 +732,10 @@ components:
           - required: [case]
           - required: [grievanceOptions]
 
+    # A Beckn Descriptor carries five members beyond code and name. None is
+    # modelled here, and two of them are free text, so every Descriptor slot
+    # in this pack refuses them by name rather than leaving them to the
+    # allow-list in x-oan-fields-by-action.
     NoDescriptorExtras:
       not:
         anyOf:
@@ -766,6 +744,47 @@ components:
           - required: [thumbnailImage]
           - required: [docs]
           - required: [mediaFile]
+
+    # Twelve bare digits are an Aadhaar number. No enrolment slot in either
+    # pack carries one: what travels is a registration or application number,
+    # or a token exchanged for an Aadhaar upstream. Shared because three slots
+    # need the same refusal and a restated one drifts.
+    NotBareAadhaar:
+      not:
+        pattern: "^[0-9]{12}$"
+
+    # PM-KISAN's registration number. Shared with SchemeApplication, which
+    # reads the same registration on the same portal.
+    PMKISANEnrolmentId:
+      allOf:
+        - type: string
+          pattern: "^[A-Za-z0-9]+$"
+          minLength: 6
+          maxLength: 20
+        - $ref: "#/components/schemas/NotBareAadhaar"
+
+    # What PM-KISAN challenges with, on every desk it runs: a four-digit
+    # numeric code by SMS. Narrows the base's challenge object and is shared
+    # with SchemeApplication, which is challenged by the same portal.
+    SMSOTPChallenge:
+      properties:
+        methods:
+          type: array
+          minItems: 1
+          items:
+            properties:
+              method: { enum: [SMS_OTP] }
+              length: { enum: [4] }
+              valueType: { enum: [NUMERIC] }
+        issued:
+          properties:
+            method: { enum: [SMS_OTP] }
+            length: { enum: [4] }
+            valueType: { enum: [NUMERIC] }
+        response:
+          properties:
+            method: { enum: [SMS_OTP] }
+            value: { pattern: "^[0-9]{4}$" }
 
     ChallengeMethod:
       type: object

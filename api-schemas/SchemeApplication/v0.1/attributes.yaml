@@ -116,36 +116,13 @@ components:
               description: PM-KISAN is the only scheme offering this capability today. A second scheme widens this enum.
 
             challenge:
-              description: As the base defines it, narrowed to what PM-KISAN runs -- a four-digit numeric code by SMS.
+              description: As the base defines it, narrowed to what PM-KISAN runs -- a four-digit numeric code by SMS. The narrowing is shared with the grievance desk on the same portal.
               allOf:
-                - type: object
-                  properties:
-                    methods:
-                      type: array
-                      minItems: 1
-                      items:
-                        properties:
-                          method: { enum: [SMS_OTP] }
-                          length: { enum: [4] }
-                          valueType: { enum: [NUMERIC] }
-                    issued:
-                      properties:
-                        method: { enum: [SMS_OTP] }
-                        length: { enum: [4] }
-                        valueType: { enum: [NUMERIC] }
-                    response:
-                      properties:
-                        method: { enum: [SMS_OTP] }
-                        value: { pattern: "^[0-9]{4}$" }
+                - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/SMSOTPChallenge"
 
             enrolmentId:
               allOf:
-                - type: string
-                  pattern: "^[A-Za-z0-9]+$"
-                  minLength: 6
-                  maxLength: 20
-                - not:
-                    pattern: "^[0-9]{12}$"
+                - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANEnrolmentId"
               description: >-
                 The PM-KISAN registration number. Twelve bare digits are refused -- an
                 Aadhaar number is not a lookup key on this capability and must not be

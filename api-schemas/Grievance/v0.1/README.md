@@ -240,12 +240,18 @@ to repeat the handle per record, so a case read there may carry none. `provider`
 in either list: on `init` and `status` the same fact lives in `commitments[].offer.provider`,
 outside these attributes, where a guard on the attributes object cannot reach it.
 
-**Every payload must be about something** — a `grievance`, a `case`, an `enrolmentId`, or
-the two declarations a catalog entry carries. The same `@type` serves filing, reading and
-discovery, and `informationMode` cannot tell them apart because every ask is `OnDemand`.
-What separates them is what the payload brought. Before the containers existed nothing
-caught a payload that brought none of them. On PM-KISAN the list adds a `challenge`
-carrying `issued`, which is the whole of an `on_init` acknowledgement.
+**Every payload must be about something** — a `grievance`, a `case`, or the declarations
+a catalog entry carries. The same `@type` serves filing, reading and discovery, and
+`informationMode` cannot tell them apart because every ask is `OnDemand`. What separates
+them is what the payload brought. Before the containers existed nothing caught a payload
+that brought none of them.
+
+The list is **narrower on PMFBY than on PM-KISAN**, and the difference is the whole of
+why PMFBY has no `init`. On PM-KISAN a bare `enrolmentId` is a real call: it is the ask
+for an OTP. PMFBY issues no challenge, so there is nothing a bare enrolment could be
+asking for, and it is refused — the three shapes left are the two asks and the published
+catalog. PM-KISAN's list also takes a `challenge` carrying `issued`, which is the whole
+of an `on_init` acknowledgement.
 
 `applicantMobile` is deliberately not in that list. Every PMFBY ask carries it, so a
 branch on it would admit a payload stripped of everything else — a mobile number and
@@ -365,6 +371,23 @@ apart needs the action, which only the adapter knows.
 
 **`enrolmentId` has a floor on both branches.** PMFBY pins 10 to 30 characters, PM-KISAN
 6 to 20. The base allowed one character, which is not a registration number on any desk.
+
+**Neither branch takes twelve bare digits.** That is the shape of an Aadhaar number, and
+no enrolment slot in either pack carries one: what travels is a registration or
+application number, or a token exchanged for an Aadhaar upstream. The refusal is
+`NotBareAadhaar`, shared by all three slots — both grievance branches and
+`SchemeApplication` — rather than restated, so none of them can quietly lose it.
+
+On PMFBY this rests on an assumption worth stating: that no state issues a crop
+insurance application number of exactly twelve digits with no letters. Every number seen
+carries a state prefix (`BR295454592`, `KA2026KH00123456`). **PMFBY has not confirmed
+it**, and if some state does, this one `$ref` comes off the PMFBY branch.
+
+**PM-KISAN files under a code, never a name.** `Complaint.category` takes a code or a
+name, which is right for PMFBY — its case read answers with a name and no id. PM-KISAN
+files under a code from a closed list of ten and the portal takes nothing else, so the
+branch requires `code`. Without it a caller could send a category named and not coded,
+which the adapter has no way to forward.
 
 ## The composed root is open
 

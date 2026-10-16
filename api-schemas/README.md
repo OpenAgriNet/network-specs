@@ -39,11 +39,10 @@ What the bases own is a shape: **five bands, and the band a field sits in says w
 | top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn` | the portal |
-| `challenge` | the proof the caller presents with a guarded call: `method`, `value`. Inbound only, never echoed | the caller |
-| `challengeIssued` | the portal's acknowledgement that it sent one: `method`, `length`, `valueType`, `sentTo`, `expiresAt`. Outbound only, and it carries no secret | the portal |
+| `challenge` | challenging on this desk, one member per payload: `methods` is what it accepts and is published in the catalog, `issued` is its acknowledgement that it sent one (`method`, `length`, `valueType`, `expiresAt`, and no destination), `response` is the caller's answer (`method`, `value`) and is inbound only, never echoed or forwarded | `methods` and `issued` by the portal, `response` by the caller |
 | anything a pack adds | a crop season, an applicant's mobile — sits at the top with the rest of the context | the caller |
 
-Not every pack uses every band. `SchemeApplication` swaps two of them for `applicant` and `application`, the same split by author, by composing the lower base. A desk that issues no challenge refuses both challenge bands outright rather than leave them defined and unfillable, and publishes `challengeMethods` empty so a caller can see that before it asks. Two fields sit in no band at all — `challengeMethods`, which describes each challenge a desk requires before it will answer, down to the length and character class of the code, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
+Not every pack uses every band. `SchemeApplication` swaps two of them for `applicant` and `application`, the same split by author, by composing the lower base. A desk that issues no challenge refuses the whole `challenge` band outright rather than leave it defined and unfillable. Two declarations sit in no band at all — `challenge.methods`, which describes each challenge a desk requires before it will answer, down to the length and character class of the code, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
 
 Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
 
@@ -61,7 +60,7 @@ Packs reuse a term's IRI when the term means the same thing everywhere — `info
 
 Where two desks classify differently, the difference is carried by the value space, not by a second term. `grievance.category` is one property, `openagrinet:grievanceCategory`, and each branch pins the codes its own portal issues.
 
-A branch or a pack may refuse an inherited term outright, with `not`/`required`, rather than leave it defined and never filled. The PM-KISAN branch refuses `grievance.subCategory`, because it classifies at one level. The PMFBY branch refuses `case.reply` and `case.repliedOn`, because it publishes no reply against a ticket, and it refuses the two challenge bands outright, because its desk asks for no OTP. Each is one member to delete if the portal changes.
+A branch or a pack may refuse an inherited term outright, with `not`/`required`, rather than leave it defined and never filled. The PM-KISAN branch refuses `grievance.subCategory`, because it classifies at one level. The PMFBY branch refuses `case.repliedOn`, because its reply arrives as `latestRemark` with no date beside it, and it refuses the whole `challenge` band outright, because its desk asks for no OTP. Each is one member to delete if the portal changes.
 
 ## Packs
 
