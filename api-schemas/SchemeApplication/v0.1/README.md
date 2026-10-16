@@ -290,10 +290,14 @@ is refused here, because this capability has no `support` channel to name a desk
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
-| `init` | — | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `status` | `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
+| `init` | `informationMode`, `scheme.code` | `scheme.name`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `status` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `scheme.name`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-Neither `mustSend` names an identifier, and `init` has no `mustSend` at all. Both calls
+`informationMode` and `scheme.code` lead both `mustSend` lists because the base requires
+both outright and `scheme.code` is what picks the branch; `scheme.name` is genuinely
+optional and stays in `maySend`.
+
+Neither `mustSend` names an identifier, and `init` names nothing beyond those two. Both calls
 need exactly one of `enrolmentId` or `applicant.mobile`, but a `mustSend` list is flat and
 all-of: naming either there would be false for the other kind of caller. They sit in
 `maySend` instead, and the requirement is a gate, which is the only place it can actually

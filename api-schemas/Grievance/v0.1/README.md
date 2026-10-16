@@ -339,6 +339,30 @@ branches: a date for an answer nobody wrote is not a fact.
 `case.cropName`. An ask carries the selector and nothing else; the answer is what comes
 back.
 
+**Each call must be complete.** `mustSend` is a published contract, and until these
+gates existed it was a contract the validator did not hold anyone to — a caller could
+omit every field on the list and still pass. The gates close that. There is one per ask,
+and each names exactly its branch's `mustSend` list.
+
+The schema cannot be told which call is in flight: one attributes object serves the
+catalog entry, `init`, `support` and `status`, and every ask carries
+`informationMode: OnDemand`. So each gate reads the call off the payload's own shape --
+a `grievance` band means a support ask, a `case` band means a status ask,
+`grievanceOptions` means a catalog entry, a `challenge.issued` means an `init` answer,
+and `enrolmentId` alone means an `init` ask. Every gate is guarded on `OnDemand`, because
+those same bands on a `Direct` payload are the Portal's answer rather than a request.
+
+PM-KISAN's status gate is stated twice over, keyed on the `case` band and again on the
+OTP, because either can be the member that goes missing — and dropping `case.filedOn`
+leaves `case` empty, so a gate keyed on `case` alone would stop firing at exactly the
+moment the payload stopped being complete. PM-KISAN's `init` ask needs no gate of its
+own: it carries nothing but `enrolmentId`, which "every payload must be about something"
+already requires.
+
+What this cannot catch is a well-formed ask sent to the wrong endpoint — a complete
+`status` payload posted to `support` reads as a status ask and passes. Telling those
+apart needs the action, which only the adapter knows.
+
 **`enrolmentId` has a floor on both branches.** PMFBY pins 10 to 30 characters, PM-KISAN
 6 to 20. The base allowed one character, which is not a registration number on any desk.
 
@@ -655,20 +679,29 @@ routed.
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
-| `support` | `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `informationMode`, `scheme.code`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `applicantMobile`, `case.ticketNo` | `informationMode`, `scheme.code`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
+| `support` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `scheme.name`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
 **PM-KISAN**
 
 | action | mustSend | maySend | comesBack |
 |---|---|---|---|
 | `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` |
-| `init` | `enrolmentId` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `support` | `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `informationMode`, `scheme.code` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
+| `init` | `informationMode`, `scheme.code`, `enrolmentId` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `support` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Both are allow-lists. A path not named is not used by that capability. `discover` has
 only a `comesBack` bucket, because the catalog entry is published, never asked for.
+`informationMode` and `scheme.code` lead every `mustSend` because the base requires both
+outright and `scheme.code` is what picks the branch; listing them makes each row the
+whole of what the call must carry rather than most of it. `scheme.name` is genuinely
+optional and stays in `maySend`.
+
+Every other `mustSend` name is enforced by a gate in the schema — see "Completeness,
+per call". The two lists are checked against each other: drop any one `mustSend` field
+from a complete request and the validator refuses it; drop any one `maySend` field and
+it still passes.
 `enrolmentId` is a `mustSend` on PMFBY's `support` and only a `maySend` on its `status`:
 the lodge is about an enrolment, while the read is selected by `case.ticketNo` and
 `applicantMobile` together. `applicantMobile` never comes back on either call.

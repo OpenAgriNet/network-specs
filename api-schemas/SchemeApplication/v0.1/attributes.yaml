@@ -32,10 +32,12 @@ components:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
           # Identity is required here too -- exactly one of enrolmentId or
-          # applicant.mobile, never both and never neither. mustSend names a
-          # single path, so the gate is structural rather than listed below.
-          maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
-                    applicant.mobile]
+          # applicant.mobile, never both and never neither. Neither is in
+          # mustSend, which names a single path; the gate is structural.
+          # informationMode and scheme.code are in mustSend because the base
+          # requires both outright and scheme.code picks the branch.
+          mustSend: [informationMode, scheme.code]
+          maySend: [scheme.name, enrolmentId, applicant.mobile]
           comesBack:
             - informationMode
             - scheme.code
@@ -47,9 +49,9 @@ components:
         status:
           # Identity is also required, but it is one of two slots and
           # mustSend names a single path -- see the gates in README.
-          mustSend: [challenge.response.method, challenge.response.value]
-          maySend: [informationMode, scheme.code, scheme.name, enrolmentId,
-                    applicant.mobile]
+          mustSend: [informationMode, scheme.code,
+                     challenge.response.method, challenge.response.value]
+          maySend: [scheme.name, enrolmentId, applicant.mobile]
           comesBack:
             - informationMode
             - scheme.code
