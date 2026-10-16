@@ -490,12 +490,13 @@ the grievance one has [its own pack](../../Grievance/v0.1/README.md).
 
 ## Examples
 
-- [On-demand: the catalog entry](examples/on-demand-capability.json)
-- [On-demand: request an OTP by mobile](examples/on-demand-request-otp.json)
-- [On-demand: request an OTP by registration number](examples/on-demand-request-otp-by-registration.json)
+One per call, and every one is `OnDemand`, because every payload on this capability is:
+the discovery service holds no application of its own, so the Experience layer always asks
+the portal.
+
+- [The catalog entry](examples/on-demand-capability.json)
+- [On-demand: request an OTP](examples/on-demand-request-otp.json) — by mobile here; a registration number works the same way, and either one alone is enough
 - [On-demand: OTP issued](examples/on-demand-challenge-issued.json)
 - [On-demand: read the status](examples/on-demand-read-status.json)
-- [Direct: status, nothing blocking](examples/direct-status-clear.json)
-- [Direct: status, two blockers](examples/direct-status-blocked.json)
 
 Published examples show the logical form, every field inline; they are not wire payloads.

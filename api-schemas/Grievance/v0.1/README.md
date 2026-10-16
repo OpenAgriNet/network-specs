@@ -394,7 +394,7 @@ which the adapter has no way to forward.
 `Grievance` is an `allOf` over a base, the JSON-LD guards and a `oneOf` of two branches.
 A root composed that way **cannot be closed**: `additionalProperties: false` on the root
 sees only the properties the root itself declares, and every real field is declared in a
-sibling `allOf` member, so adding it takes the examples from 12 valid to 0. It is left
+sibling `allOf` member, so adding it takes every example from valid to invalid. It is left
 off deliberately, and the consequence is worth stating plainly: **an unknown top-level
 key is accepted.**
 
@@ -997,18 +997,15 @@ another pack over that base, not a change to this one.
 
 ## Examples
 
-Five PMFBY, seven PM-KISAN. The `Direct` examples show `case.status` as a bare `code`,
-which is the only form: no sample of either portal's status phrase exists anywhere in the
-legacy tree, which is why the phrase does not travel at all.
+One per call, and every one is `OnDemand`, because every payload on this capability is:
+the discovery service holds no case of its own, so the Experience layer always asks the
+portal.
 
 **PMFBY**
 
 - [The catalog entry](examples/pmfby-on-demand-capability.json) — one pair, because one pair is all the portal has ever been asked for; see "Non-goals"
 - [On-demand: file a grievance](examples/pmfby-on-demand-file-grievance.json)
 - [On-demand: read an existing case](examples/pmfby-on-demand-read-case.json)
-- [Direct: lodge reply, as the portal sends it](examples/pmfby-direct-grievance-registered.json)
-- [Direct: grievance under review, read from the portal](examples/pmfby-direct-grievance-under-review.json) — an unanswered ticket, so `case.reply` is absent rather than blank. The category names are illustrative: the portal publishes no phrase list, so there is no captured value to quote. The codes beside them are real, from `TicketCategoryID` and `TicketSubCategoryID`.
-- [Direct: grievance with the portal's reply](examples/pmfby-direct-grievance-replied.json) — the same ticket once `latestRemark` carries text. No `repliedOn`: PMFBY sends no reply date.
 
 **PM-KISAN**
 
@@ -1017,5 +1014,3 @@ legacy tree, which is why the phrase does not travel at all.
 - [On-demand: OTP issued](examples/pmkisan-on-demand-challenge-issued.json)
 - [On-demand: lodge a grievance](examples/pmkisan-on-demand-lodge-grievance.json)
 - [On-demand: read a case](examples/pmkisan-on-demand-read-cases.json)
-- [Direct: grievance registered](examples/pmkisan-direct-grievance-registered.json)
-- [Direct: grievance with a reply recorded](examples/pmkisan-direct-grievance-replied.json)
