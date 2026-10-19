@@ -280,9 +280,10 @@ read that as IST". `Instant` refuses a naked local timestamp precisely so that t
 conversion has to happen somewhere nameable rather than being left to the reader.
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
-with paths relative to the attributes object. Three buckets per action: `mustSend`,
-`maySend`, `comesBack`. What this pack refuses is in the schema itself, not here — the
-gates are structural and bite on every action.
+with paths relative to the attributes object. Four buckets per action: `mustSend`,
+`oneOf`, `maySend`, `comesBack`. `oneOf` reads as JSON Schema's does — exactly one of
+the paths named, never both and never neither. What this pack refuses is in the schema
+itself, not here — the gates are structural and bite on every action.
 
 `commitments[0].offer.provider` is required on both `init` and `status`, both its `id`
 and the `descriptor.name` beside it — a provider carrying only an `id` is refused. It
@@ -291,22 +292,22 @@ what resolves the Portal and its base URL in the registry and a call without it 
 be routed. The `provider` member *inside* the attributes object is a different thing and
 is refused here, because this capability has no `support` channel to name a desk on.
 
-| action | mustSend | maySend | comesBack |
-|---|---|---|---|
-| `discover` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
-| `init` | `informationMode`, `scheme.code` | `scheme.name`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `status` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `scheme.name`, `enrolmentId`, `applicant.mobile` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
+| action | mustSend | oneOf | maySend | comesBack |
+|---|---|---|---|---|
+| `discover` | — | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
+| `init` | `informationMode`, `scheme.code` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `status` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
 `informationMode` and `scheme.code` lead both `mustSend` lists because the base requires
 both outright and `scheme.code` is what picks the branch; `scheme.name` is genuinely
 optional and stays in `maySend`.
 
-Neither `mustSend` names an identifier, and `init` names nothing beyond those two. Both calls
-need exactly one of `enrolmentId` or `applicant.mobile`, but a `mustSend` list is flat and
-all-of: naming either there would be false for the other kind of caller. They sit in
-`maySend` instead, and the requirement is a gate, which is the only place it can actually
-be enforced. Both lists carry a comment saying so, because a request builder generated
-from `mustSend` alone would send no identifier and be refused.
+Identity is why `oneOf` exists. Both calls need `enrolmentId` or `applicant.mobile` —
+one of them, and not the other beside it. A `mustSend` list is flat and all-of, so
+naming either there would be false for the other kind of caller, and leaving both in
+`maySend` would let a request builder generated from the lists send no identifier at
+all. Two gates enforce it: one refuses a payload that is about nothing, the other
+refuses a payload carrying both.
 
 It is an allow-list. A path not named above is not used by this capability. `enrolmentId`
 comes back on `status` even when the ask was by mobile — it is the portal's own `Reg_No`,

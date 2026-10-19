@@ -31,13 +31,14 @@ components:
         discover:
           comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
         init:
-          # Identity is required here too -- exactly one of enrolmentId or
-          # applicant.mobile, never both and never neither. Neither is in
-          # mustSend, which names a single path; the gate is structural.
           # informationMode and scheme.code are in mustSend because the base
           # requires both outright and scheme.code picks the branch.
+          # oneOf reads as JSON Schema's does: exactly one of these, never
+          # both and never neither. It is its own bucket because mustSend
+          # names a single path and cannot say "either of these two".
           mustSend: [informationMode, scheme.code]
-          maySend: [scheme.name, enrolmentId, applicant.mobile]
+          oneOf: [enrolmentId, applicant.mobile]
+          maySend: [scheme.name]
           comesBack:
             - informationMode
             - scheme.code
@@ -47,11 +48,10 @@ components:
             - challenge.issued.valueType
             - challenge.issued.expiresAt
         status:
-          # Identity is also required, but it is one of two slots and
-          # mustSend names a single path -- see the gates in README.
           mustSend: [informationMode, scheme.code,
                      challenge.response.method, challenge.response.value]
-          maySend: [scheme.name, enrolmentId, applicant.mobile]
+          oneOf: [enrolmentId, applicant.mobile]
+          maySend: [scheme.name]
           comesBack:
             - informationMode
             - scheme.code

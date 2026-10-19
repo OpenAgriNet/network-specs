@@ -685,8 +685,10 @@ be ASCII alphanumeric and is refused if it is a bare twelve-digit Aadhaar number
 
 Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`
 **on each branch**, with paths relative to the attributes object. Three buckets per
-action: `mustSend`, `maySend`, `comesBack`. What each branch refuses is in the schema
-itself, not here — the gates are structural and bite on every action.
+action: `mustSend`, `maySend`, `comesBack`. The convention allows a fourth, `oneOf`,
+for a call that needs exactly one of several paths; neither branch here uses it, because
+both require `enrolmentId` outright. What each branch refuses is in the schema itself,
+not here — the gates are structural and bite on every action.
 
 **The provider must be named on every call that reaches a Portal.** On `support` that is
 `provider.id` inside the channel, which is why it is a `mustSend` below, and
