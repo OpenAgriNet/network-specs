@@ -336,13 +336,13 @@ components:
         cropYear:
           type: string
           pattern: "^[0-9]{4}$"
-          description: Crop year of the insurance application. Sent, never returned.
+          description: Crop year of the insurance application. Sent when filing, and returned on a status read.
           x-jsonld-id: "openagrinet:cropYear"
 
         season:
           type: string
           enum: [Kharif, Rabi, Zaid]
-          description: Crop season of the application. The adapter maps to the portal's numeric code. Sent, never returned.
+          description: Crop season of the application. The adapter maps to the portal's numeric code. Sent when filing, and returned on a status read.
           x-jsonld-id: "openagrinet:season"
 
         complaintDate:
@@ -810,7 +810,7 @@ components:
       type: object
       additionalProperties: false
       required: [code]
-      description: One entry on the complaint form. code is what you send; help is display text and never travels.
+      description: One entry on the complaint form. code is what you send back when filing; name and help are for the farmer to read.
       properties:
         code:
           type: string
