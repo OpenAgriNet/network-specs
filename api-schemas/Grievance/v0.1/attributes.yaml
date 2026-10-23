@@ -633,22 +633,16 @@ components:
                     case:
                       required: [status, filedOn]
 
-        - anyOf:
-            - required: [grievance]
-            - required: [case]
-            - required: [enrolmentId]
-            # an on_init acknowledgement
+        - oneOf:
+            # About a complaint, a case, an acknowledgement or the catalog.
+            - $ref: "#/components/schemas/PMKISANSubjectShapes"
+            # Otherwise it is an init ask, whose entire content is the
+            # registration number. Spelled out as its own arm so a caller who
+            # omits it is told the name instead of that nothing matched.
             - allOf:
-                - required: [challenge]
-                - properties:
-                    challenge:
-                      required: [issued]
-            # a catalog entry, which publishes both declarations or neither
-            - allOf:
-                - required: [challenge, grievanceOptions]
-                - properties:
-                    challenge:
-                      required: [methods]
+                - not:
+                    $ref: "#/components/schemas/PMKISANSubjectShapes"
+                - required: [enrolmentId]
 
         # A payload answering a challenge is a caller's ask, never an answer.
         # The member is absent vacuously when challenge itself is, which is
@@ -689,8 +683,9 @@ components:
 
         # ---- Completeness, per call ----------------------------------
         # Same discriminators as the PMFBY branch, different contents.
-        # An init ask needs no gate: it carries nothing but enrolmentId,
-        # so the "about something" gate above already refuses it empty.
+        # An init ask needs no gate of its own: it carries nothing but
+        # enrolmentId, and the "about something" gate above names that field
+        # directly when it is left out.
 
         # A support ask: who is asking, which registration, the category
         # this desk files under, and the OTP.
@@ -786,6 +781,27 @@ components:
           - required: [application]
 
     # Owned by the PMFBY grievance branch.
+    PMKISANSubjectShapes:
+      description: >-
+        The four shapes a PM-KISAN payload can take that are not a bare init
+        ask. Named once and used twice -- positively, and negated -- so the
+        two uses cannot drift apart.
+      anyOf:
+        - required: [grievance]
+        - required: [case]
+        # an on_init acknowledgement
+        - allOf:
+            - required: [challenge]
+            - properties:
+                challenge:
+                  required: [issued]
+        # a catalog entry, which publishes both declarations or neither
+        - allOf:
+            - required: [challenge, grievanceOptions]
+            - properties:
+                challenge:
+                  required: [methods]
+
     NoPMFBYFields:
       not:
         anyOf:
