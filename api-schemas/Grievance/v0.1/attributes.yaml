@@ -1066,7 +1066,8 @@ components:
         names the one field that makes the call impossible.
       allOf:
         - $ref: "#/components/schemas/GrievanceEnvelope"
-        - $ref: "#/components/schemas/PMKISANInit"
+        - oneOf:
+            - $ref: "#/components/schemas/PMKISANInit"
 
     GrievanceStatus:
       description: status. Reading where a standing case has got to.
