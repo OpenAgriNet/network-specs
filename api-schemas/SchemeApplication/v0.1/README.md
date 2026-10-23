@@ -320,6 +320,15 @@ naturally and does not work: this validator parses it and never evaluates it, so
 written that way looks like it holds and does not. `anyOf`, `not` and `oneOf` *are*
 evaluated.
 
+Gates 1 and 2 guard a requirement, and both are written as an exclusive `oneOf` rather than
+an `anyOf`. The two accept the same payloads but they do not fail alike: kin-openapi throws
+away the per-arm errors of a failed `anyOf`, so a caller who omitted `application` was told
+only that no arm matched. A failed `oneOf` keeps each arm's error and the missing name
+survives. The arms restate `informationMode`, which the base requires and pins to one of two
+values, so exactly one can ever match. The Grievance pack's README sets the reasoning out at
+length; the remaining gates here are refusals or real disjunctions, where `anyOf` and `not`
+stay correct and there is no name to recover.
+
 1. **A `Direct` payload carries a record.** Either `informationMode` is `OnDemand`, or
    `application` is present. An answer with nothing in it is not an answer.
 2. **And it names the farmer it is about.** The mirror of gate 1: a `Direct` payload must

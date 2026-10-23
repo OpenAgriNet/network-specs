@@ -204,20 +204,41 @@ components:
               description: What the portal holds against the application. Every member is authored by the portal.
               x-jsonld-id: "openagrinet:application"
 
+        # The two gates below guard a requirement, so both are written as an
+        # exclusive oneOf rather than an anyOf. kin-openapi throws away the
+        # per-arm errors of a failed anyOf and reports only that no arm
+        # matched, which leaves a caller who omitted one field unable to tell
+        # which one. A failed oneOf keeps each arm's error. The arms restate
+        # informationMode, which the base requires and pins to one of two
+        # values, so exactly one can match and the gate accepts what the anyOf
+        # accepted. The Grievance pack's README sets this out at length.
+
         # A Direct payload must carry the record it answers with.
-        - anyOf:
-            - properties:
-                informationMode: { enum: [OnDemand] }
-            - required: [application]
+        - oneOf:
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode: { enum: [OnDemand] }
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode: { enum: [Direct] }
+                - required: [application]
 
         # And it must name the farmer it is about. A lookup by mobile is
         # resolved upstream to a registration number, and that is what comes
         # back -- an answer with no identity in it cannot be filed against
         # anything by the caller.
-        - anyOf:
-            - properties:
-                informationMode: { enum: [OnDemand] }
-            - required: [enrolmentId]
+        - oneOf:
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode: { enum: [OnDemand] }
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode: { enum: [Direct] }
+                - required: [enrolmentId]
 
         # Identity is named, never sniffed: enrolment or applicant, never both.
         - anyOf:
