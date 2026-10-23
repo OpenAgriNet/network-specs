@@ -1,0 +1,453 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Scheme Application API Attributes
+  version: 0.1.0
+  description: >
+    Read where a farmer's application to a government scheme stands: how many
+    instalments have been paid, whether eKYC is done, and what is holding the
+    money up. One scheme is covered today, PM-KISAN, named by scheme.code.
+
+    Not a grievance. A grievance is a complaint the farmer writes and the
+    portal works through a lifecycle; this is a read of a record the portal
+    already holds. Separate capability, separate catalog, separate pack.
+
+    Composes SchemeServiceBase from api-schemas/Grievance/v0.1, which owns the
+    scheme, the enrolment and the challenge object. Three calls: discover
+    publishes the desk, init asks for the OTP, status reads the record.
+
+    Reasoning and worked examples are in README.md.
+
+
+components:
+  schemas:
+
+    # ---------------------------------------------------------------
+    # Everything that holds whatever scheme the payload is about: the
+    # service base, the JSON-LD envelope, the lookup key, and the bands
+    # this capability refuses outright.
+    # ---------------------------------------------------------------
+    SchemeApplicationEnvelope:
+      type: object
+      allOf:
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/SchemeServiceBase"
+
+        - type: object
+          required: ["@context", "@type"]
+          properties:
+            "@context":
+              oneOf:
+                - type: string
+                  const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                  not:
+                    items:
+                      not:
+                        const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+                  items:
+                    type: string
+                    minLength: 1
+            "@type":
+              oneOf:
+                - type: string
+                  const: "openagrinet:SchemeApplication"
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: "openagrinet:SchemeApplication"
+                  not:
+                    items:
+                      not:
+                        const: "openagrinet:SchemeApplication"
+                  items:
+                    oneOf:
+                      - const: "openagrinet:SchemeApplication"
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+            applicant:
+              type: object
+              additionalProperties: false
+              required: [mobile]
+              properties:
+                mobile:
+                  type: string
+                  pattern: "^[6-9][0-9]{9}$"
+                  x-oan-pii:
+                    class: contact
+                    handling: [no-log, no-trace, no-echo]
+                    note: A contact detail and a lookup key at once -- it is also where the OTP is sent.
+                  x-jsonld-id: "openagrinet:applicantMobile"
+              description: >-
+                Who the lookup is for, when it is not by enrolment. A mobile number is the
+                only alternative key this capability takes. Kept as an object rather than a
+                flat applicantMobile, which the PM-KISAN grievance branch refuses.
+              x-jsonld-id: "openagrinet:applicant"
+
+        # Identity is named, never sniffed: enrolment or applicant, never both.
+        - anyOf:
+            - not: { required: [applicant] }
+            - not: { required: [enrolmentId] }
+
+        # The grievance bands are not this capability's. None is inherited any
+        # more, but the composed root is open, so leaving them undeclared does
+        # not keep them out. The list is shared with the Grievance pack rather
+        # than restated, so neither side can drift.
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoGrievanceBands"
+
+        # Nor are PMFBY's. A mobile number belongs in applicant here, and
+        # a bare applicantMobile would be a second way to send one.
+        - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoPMFBYFields"
+
+        # provider is refused separately: it belongs on a support call and
+        # this capability has none. Routing is unaffected -- every init and
+        # status still carries commitments[0].offer.provider.id, which is what
+        # resolves the Portal and its base URL in the registry.
+        - properties:
+            provider:
+              $ref: "#/components/schemas/FieldNotAllowed"
+
+    # ---------------------------------------------------------------
+    # The published type.
+    # ---------------------------------------------------------------
+    SchemeApplication:
+      type: object
+      x-beckn-container: commitmentAttributes
+      x-beckn-container-by-action:
+        discover: resourceAttributes
+        init: commitmentAttributes
+        status: commitmentAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+        "@type": "openagrinet:SchemeApplication"
+      # Which schema each call is validated against. @type names the entity;
+      # this names the call made on it, so a payload is checked against the
+      # one shape that call has rather than against the union of all of them.
+      # A validator that does not read this key falls back to the oneOf below,
+      # which accepts and refuses exactly the same payloads -- it is the error
+      # messages that differ, not the verdict.
+      x-oan-schema-by-action:
+        discover: SchemeApplicationCatalog
+        init: SchemeApplicationInit
+        status: SchemeApplicationStatus
+      allOf:
+        - $ref: "#/components/schemas/SchemeApplicationEnvelope"
+
+        # One branch per scheme, as the Grievance pack does it. Each pins
+        # scheme.code to a different const, so exactly one can ever match.
+        # A second scheme is one more arm here, one more branch below, and
+        # one more arm in each per-call schema; nothing else moves.
+        - oneOf:
+            - $ref: "#/components/schemas/PMKISANApplication"
+
+    # ---------------------------------------------------------------
+    # PM-KISAN branch. The only scheme offering this capability today.
+    # ---------------------------------------------------------------
+    PMKISANApplication:
+      x-oan-fields-by-action:
+        discover:
+          comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
+        init:
+          # informationMode and scheme.code are in mustSend because the base
+          # requires both outright and scheme.code picks the branch.
+          # oneOf reads as JSON Schema's does: exactly one of these, never
+          # both and never neither. It is its own bucket because mustSend
+          # names a single path and cannot say "either of these two".
+          mustSend: [informationMode, scheme.code]
+          oneOf: [enrolmentId, applicant.mobile]
+          maySend: [scheme.name]
+          comesBack:
+            - informationMode
+            - scheme.code
+            - scheme.name
+            - challenge.issued.method
+            - challenge.issued.length
+            - challenge.issued.valueType
+            - challenge.issued.expiresAt
+        status:
+          mustSend: [informationMode, scheme.code,
+                     challenge.response.method, challenge.response.value]
+          oneOf: [enrolmentId, applicant.mobile]
+          maySend: [scheme.name]
+          comesBack:
+            - informationMode
+            - scheme.code
+            - scheme.name
+            - enrolmentId
+            - application.registeredOn
+            - application.latestInstalmentPaid
+            - application.ekyc.code
+            - application.blockers
+      allOf:
+        # Restated here rather than left to PMKISANApplicationFields below,
+        # because a validator runs a schema object's set operations before
+        # its properties and stops at the first failure: when a gate below
+        # fails, properties is never reached and nothing in the error says
+        # which branch the payload was about.
+        - properties:
+            scheme:
+              properties:
+                code:
+                  const: PM-KISAN
+
+        - $ref: "#/components/schemas/PMKISANApplicationFields"
+
+        # Every payload must be about something. The on_init acknowledgement
+        # and the catalog entry both start at challenge, so they are told
+        # apart by which member is present.
+        - anyOf:
+            - required: [applicant]
+            - required: [enrolmentId]
+            - required: [application]
+            - allOf:
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [issued]
+            - allOf:
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [methods]
+
+        # A catalog declaration is published and never sent. Carrying one
+        # makes the payload a catalog entry, which names no farmer.
+        - anyOf:
+            - properties:
+                challenge:
+                  not: { required: [methods] }
+            - properties:
+                enrolmentId:
+                  $ref: "#/components/schemas/FieldNotAllowed"
+                applicant:
+                  $ref: "#/components/schemas/FieldNotAllowed"
+                application:
+                  $ref: "#/components/schemas/FieldNotAllowed"
+
+    # Every refusal in this pack bans its field one property at a time rather
+    # than with a single not/required, and that is about what the caller is
+    # told. The validator anchors a property failure at the property, so the
+    # refusal names the field; an object-level not carries no pointer at all
+    # and the caller reads "doesn't match all schemas" with nothing to act on.
+    FieldNotAllowed:
+      description: >-
+        No value at all. The five types are the whole of JSON, so any value is
+        refused; null is refused as not nullable.
+      not:
+        anyOf:
+          - type: object
+          - type: array
+          - type: string
+          - type: number
+          - type: boolean
+
+    # What a catalog entry declares. No other call carries it: the base
+    # already refuses a declaration beside a farmer, and this names the field,
+    # which an arm of that anyOf cannot.
+    NoCatalogDeclaration:
+      properties:
+        challenge:
+          properties:
+            methods:
+              $ref: "#/components/schemas/FieldNotAllowed"
+
+    # The shapes this scheme's fields take. A second scheme declares its
+    # own; nothing here is shared by assumption.
+    PMKISANApplicationFields:
+      type: object
+      properties:
+        scheme:
+          allOf:
+            - type: object
+              properties:
+                code:
+                  const: PM-KISAN
+          description: PM-KISAN is the only scheme offering this capability today. A second scheme adds a branch beside this one, each pinning its own code.
+        challenge:
+          description: As the base defines it, narrowed to what PM-KISAN runs -- a four-digit numeric code by SMS. The narrowing is shared with the grievance desk on the same portal.
+          allOf:
+            - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/SMSOTPChallenge"
+        enrolmentId:
+          allOf:
+            - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANEnrolmentId"
+          description: >-
+            The PM-KISAN registration number. Twelve bare digits are refused -- an
+            Aadhaar number is not a lookup key on this capability and must not be
+            smuggled into the registration slot.
+        application:
+          type: object
+          required: [latestInstalmentPaid]
+          additionalProperties: false
+          properties:
+            registeredOn:
+              allOf:
+                - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/Instant"
+              description: When the farmer was registered, from DateOfRegistration. The offset is the adapter's, not the portal's -- see README.
+              x-jsonld-id: "openagrinet:registeredOn"
+            latestInstalmentPaid:
+              type: integer
+              minimum: 0
+              description: Count of instalments credited so far. Zero means none.
+              x-jsonld-id: "openagrinet:latestInstalmentPaid"
+            ekyc:
+              allOf:
+                - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                # Refuses longDesc, shortDesc and the rest alongside name:
+                # the portal's phrase has more than one door into these.
+                - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoDescriptorExtras"
+                - type: object
+                  required: [code]
+                  properties:
+                    # The portal's own phrase does not travel.
+                    name:
+                      $ref: "#/components/schemas/FieldNotAllowed"
+                    code:
+                      type: string
+                      enum: [Done, Pending]
+              description: Whether the farmer's eKYC is complete. Pending is a blocker in its own right, and often the only one.
+              x-jsonld-id: "openagrinet:ekycStatus"
+            blockers:
+              type: array
+              uniqueItems: true
+              items:
+                allOf:
+                  - $ref: "https://schema.beckn.io/Descriptor/v2.1/attributes.yaml#/components/schemas/Descriptor"
+                  - $ref: "../../Grievance/v0.1/attributes.yaml#/components/schemas/NoDescriptorExtras"
+                  - type: object
+                    required: [code, name]
+                    properties:
+                      code:
+                        type: string
+                        enum: [IncomeTaxPayee, LandSeedingPending, Other]
+                      name:
+                        type: string
+                        minLength: 1
+                        maxLength: 500
+                        x-oan-pii:
+                          class: freetext
+                          handling: [no-log, no-trace]
+                          note: The portal's own phrase about a named farmer. The one place a portal phrase is returned, and deliberate -- see README.
+              description: What is holding the money up. Absent means the check did not run; empty means it ran and found nothing.
+              x-jsonld-id: "openagrinet:applicationBlockers"
+          description: What the portal holds against the application. Every member is authored by the portal.
+          x-jsonld-id: "openagrinet:application"
+
+    # ===============================================================
+    # Per-call schemas, nominated by x-oan-schema-by-action above.
+    #
+    # SchemeApplication is the union of every shape this capability
+    # has, and a union can only tell its members apart by which fields
+    # a payload happens to carry. The keyword that does that -- anyOf
+    # -- is the one whose per-arm errors the validator in use discards,
+    # so a caller who omitted a single field is told that nothing
+    # matched rather than which field it was.
+    #
+    # The action is known before validation starts, so naming a schema
+    # for each one removes the guess. Each composes the scheme branch
+    # unchanged and adds what that one call must carry. The verdict is
+    # the union's; only the wording of a refusal differs.
+    # ===============================================================
+
+    SchemeApplicationCatalog:
+      description: discover. What the desk publishes about itself.
+      allOf:
+        - $ref: "#/components/schemas/SchemeApplicationEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMKISANApplicationCatalog"
+
+    SchemeApplicationInit:
+      description: init. Asking for the OTP, and the acknowledgement that it was sent.
+      allOf:
+        - $ref: "#/components/schemas/SchemeApplicationEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMKISANApplicationInit"
+
+    SchemeApplicationStatus:
+      description: status. Reading where the farmer's application stands.
+      allOf:
+        - $ref: "#/components/schemas/SchemeApplicationEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMKISANApplicationStatus"
+
+    # ---- PM-KISAN, per call ---------------------------------------
+
+    PMKISANApplicationCatalog:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANApplication"
+        - required: [challenge]
+        - properties:
+            challenge:
+              # What the desk will accept, never an answer to it.
+              required: [methods]
+              properties:
+                response:
+                  $ref: "#/components/schemas/FieldNotAllowed"
+        # A catalog entry is published, not sent. It names no farmer.
+        - properties:
+            enrolmentId:
+              $ref: "#/components/schemas/FieldNotAllowed"
+            applicant:
+              $ref: "#/components/schemas/FieldNotAllowed"
+            application:
+              $ref: "#/components/schemas/FieldNotAllowed"
+
+    PMKISANApplicationInit:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANApplication"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # Told apart by the challenge: the ask carries none, the
+        # acknowledgement is one.
+        - oneOf:
+            # The ask. Its whole content is the key to look the farmer up
+            # by, and the pack takes one of two.
+            - allOf:
+                - properties:
+                    challenge:
+                      $ref: "#/components/schemas/FieldNotAllowed"
+                - oneOf:
+                    - required: [enrolmentId]
+                    - required: [applicant]
+            # The acknowledgement: what the portal says it sent. It names
+            # no farmer and carries no answer to the challenge.
+            - allOf:
+                - required: [challenge]
+                - properties:
+                    applicant:
+                      $ref: "#/components/schemas/FieldNotAllowed"
+                    challenge:
+                      required: [issued]
+                      properties:
+                        response:
+                          $ref: "#/components/schemas/FieldNotAllowed"
+
+    PMKISANApplicationStatus:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANApplication"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # Told apart by the record: only an answer carries one.
+        - oneOf:
+            # The ask: the OTP, and the key to look the farmer up by.
+            - allOf:
+                - properties:
+                    application:
+                      $ref: "#/components/schemas/FieldNotAllowed"
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [response]
+                - oneOf:
+                    - required: [enrolmentId]
+                    - required: [applicant]
+            # The answer: what the portal holds, keyed by the enrolment it
+            # resolved. The mobile it was given is no-echo, so the answer
+            # never carries applicant back.
+            - allOf:
+                - required: [application, enrolmentId]
+                - properties:
+                    applicant:
+                      $ref: "#/components/schemas/FieldNotAllowed"

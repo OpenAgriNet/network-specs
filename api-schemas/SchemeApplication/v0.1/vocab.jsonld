@@ -1,0 +1,134 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:SchemeApplication",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Scheme Application",
+      "rdfs:comment": "A farmer's application to a government scheme, read for where it stands: instalments paid, eKYC, and what is holding the money up."
+    },
+    {
+      "@id": "openagrinet:informationMode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "information mode",
+      "rdfs:comment": "Where the answer comes from. OnDemand is its only value: the portal answers, so the caller makes the call that follows discovery."
+    },
+    {
+      "@id": "openagrinet:provider",
+      "@type": "rdfs:Property",
+      "rdfs:label": "provider",
+      "rdfs:comment": "The portal the payload came from. Declared for the shared vocabulary but refused by this capability, which has no support call; its two actions carry the provider at commitments[].offer.provider."
+    },
+    {
+      "@id": "openagrinet:scheme",
+      "@type": "rdfs:Property",
+      "rdfs:label": "scheme",
+      "rdfs:comment": "The government scheme the grievance is raised against. Present on every payload in both directions."
+    },
+    {
+      "@id": "openagrinet:enrolmentId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "enrolment id",
+      "rdfs:comment": "The enrolment the grievance is about, as the scheme numbers it: a crop insurance application number for PMFBY, a registration number or exchanged token for PM-KISAN."
+    },
+    {
+      "@id": "openagrinet:challenge",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge",
+      "rdfs:comment": "Challenging on this desk, gathered in one place: what it accepts, what it sent, what the caller answered. Absent altogether on a desk that challenges nothing."
+    },
+    {
+      "@id": "openagrinet:challengeMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge methods",
+      "rdfs:comment": "What this desk challenges with before a guarded call. Catalog only."
+    },
+    {
+      "@id": "openagrinet:challengeIssued",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge issued",
+      "rdfs:comment": "The portal's acknowledgement that it sent a challenge, and what shape the answer must take."
+    },
+    {
+      "@id": "openagrinet:challengeResponse",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge response",
+      "rdfs:comment": "The caller's answer to a challenge, presented on a guarded call."
+    },
+    {
+      "@id": "openagrinet:challengeMethod",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge method",
+      "rdfs:comment": "The mechanism, naming delivery channel and secret kind together: SMS_OTP is a one-time code sent by SMS."
+    },
+    {
+      "@id": "openagrinet:challengeLength",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge length",
+      "rdfs:comment": "Number of characters in the issued code."
+    },
+    {
+      "@id": "openagrinet:challengeValueType",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value type",
+      "rdfs:comment": "What the code is made of: NUMERIC or ALPHANUMERIC."
+    },
+    {
+      "@id": "openagrinet:challengeValue",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge value",
+      "rdfs:comment": "The one-time code the caller presents. Never logged, traced, echoed or forwarded."
+    },
+    {
+      "@id": "openagrinet:challengeExpiresAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "challenge expires at",
+      "rdfs:comment": "The instant the issued code stops being accepted."
+    },
+    {
+      "@id": "openagrinet:applicant",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant",
+      "rdfs:comment": "Who the lookup is for, when it is not made by enrolment. Carries a mobile number, the only alternative lookup key this capability takes."
+    },
+    {
+      "@id": "openagrinet:applicantMobile",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicant mobile",
+      "rdfs:comment": "Ten-digit Indian mobile number of the farmer. Sent inbound only and never returned."
+    },
+    {
+      "@id": "openagrinet:application",
+      "@type": "rdfs:Property",
+      "rdfs:label": "application",
+      "rdfs:comment": "What the portal holds against the application. Every member is authored by the portal."
+    },
+    {
+      "@id": "openagrinet:registeredOn",
+      "@type": "rdfs:Property",
+      "rdfs:label": "registered on",
+      "rdfs:comment": "The instant the application was registered with the scheme."
+    },
+    {
+      "@id": "openagrinet:latestInstalmentPaid",
+      "@type": "rdfs:Property",
+      "rdfs:label": "latest instalment paid",
+      "rdfs:comment": "Count of instalments credited so far. Zero means none."
+    },
+    {
+      "@id": "openagrinet:ekycStatus",
+      "@type": "rdfs:Property",
+      "rdfs:label": "eKYC status",
+      "rdfs:comment": "Whether eKYC is done or still pending, as a code. The portal's own phrase does not travel."
+    },
+    {
+      "@id": "openagrinet:applicationBlockers",
+      "@type": "rdfs:Property",
+      "rdfs:label": "application blockers",
+      "rdfs:comment": "What is holding the money up, each as a code with the portal's own phrase. Absent means nothing is."
+    }
+  ]
+}

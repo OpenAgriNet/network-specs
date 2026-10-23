@@ -6,7 +6,9 @@ require "pathname"
 require "yaml"
 
 ROOT = Pathname.new(__dir__).join("..").expand_path
-SCHEMA_ROOT = ROOT.join("schema")
+# Domain packs live under schema/, provider-API packs under api-schemas/. Both are
+# generated the same way; the directory only decides where the page is served from.
+SCHEMA_ROOTS = [ROOT.join("schema"), ROOT.join("api-schemas")].freeze
 DATA_FILE = ROOT.join("_data", "schema_packs.json")
 
 class SchemaResolver
@@ -52,7 +54,14 @@ class SchemaResolver
     merged = resolved.reject { |key, _| key == "allOf" }
     Array(resolved["allOf"]).each do |member|
       expanded, = expand(member, resolved_path, seen + [fingerprint])
-      merged = deep_merge(merged, expanded)
+      own_description = merged["description"]
+      merged = deep_merge(merged, join_restatements(merged, expanded))
+      # A description reached through a $ref describes a shape reused all over
+      # the network -- a Beckn location, a source reference -- so it must not
+      # displace what this field already says about itself. An inline member is
+      # the author narrowing this field right here, and its description does
+      # replace.
+      merged["description"] = own_description if own_description && member.is_a?(Hash) && member.key?("$ref")
     end
     [merged, resolved_path, nil]
   end
@@ -84,6 +93,30 @@ class SchemaResolver
     else
       value
     end
+  end
+
+  # A pack that extends a base restates an inherited field with a description
+  # and nothing else, to say how its own portal fills it. Both sentences belong
+  # on the page: the base says what the field means, the pack says where the
+  # value comes from. A restatement that also narrows the field -- an enum, a
+  # pattern, a nested allOf -- is an override rather than a note, so its
+  # description replaces the base's, as every description always has.
+  def join_restatements(base, member)
+    base_properties = base["properties"]
+    member_properties = member["properties"]
+    return member unless base_properties.is_a?(Hash) && member_properties.is_a?(Hash)
+
+    joined = member_properties.each_with_object({}) do |(name, schema), result|
+      inherited = base_properties[name]
+      note = schema.is_a?(Hash) && schema.keys == ["description"] ? schema["description"] : nil
+      meaning = inherited.is_a?(Hash) ? inherited["description"] : nil
+      result[name] = if note.is_a?(String) && meaning.is_a?(String) && meaning.strip != note.strip
+                       { "description" => "#{meaning.strip}\n\n#{note.strip}" }
+                     else
+                       schema
+                     end
+    end
+    member.merge("properties" => joined)
   end
 
   def deep_merge(left, right)
@@ -183,6 +216,10 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   expanded, expanded_path, = resolver.expand(schema, source_path)
   properties = expanded.fetch("properties", {})
   required = Array(expanded["required"])
+  # A narrowing may refuse a property the shared definition offers, via
+  # `not: { required: [name] }`. The page must say so, or it advertises a
+  # field the validator rejects.
+  refused = Array(expanded.dig("not", "required"))
   conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
@@ -194,7 +231,9 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
     origin = inherited_origin || root_origins[name] || expanded_path.dirname.parent.basename.to_s
     property, property_path, property_external_ref = resolver.expand(raw_property, expanded_path)
     field_path = path + [name]
-    requirement = if required.include?(name)
+    requirement = if refused.include?(name)
+                    "Not accepted"
+                  elsif required.include?(name)
                     ancestor_condition || "Always"
                   elsif conditional[name]&.any?
                     conditional[name].join(" or ")
@@ -244,6 +283,9 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
                else
                  []
                end
+    beckn_path = raw_property["x-beckn-path"] || property["x-beckn-path"]
+    row["beckn_path"] = beckn_path if beckn_path
+
     [row] + children
   end
 end
@@ -258,9 +300,10 @@ end
 resolver = SchemaResolver.new
 packs = {}
 
-Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file|
+SCHEMA_ROOTS.flat_map { |root| Dir.glob(root.join("*", "v*", "profile.json")).sort }.each do |profile_file|
   profile_path = Pathname.new(profile_file)
   pack_dir = profile_path.dirname
+  source_dir = pack_dir.parent.parent.basename.to_s
   pack_name = pack_dir.parent.basename.to_s
   version_dir = pack_dir.basename.to_s
   profile = JSON.parse(profile_path.read)
@@ -293,9 +336,13 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
       "role" => "Shared fields"
     }
   end
-  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name }
+  # ||=, not =. A pack that extends a base restates an inherited field to say
+  # how its own portal fills it. The field still belongs to the base, and the
+  # page must keep saying so -- otherwise adding a one-line note silently
+  # reattributes the field to the pack.
+  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name }
   Array(root_schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }.each do |member|
-    member.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name } if member.is_a?(Hash)
+    member.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name } if member.is_a?(Hash)
   end
   composition = referenced_components + [{
     "name" => "#{pack_name} fields and rules",
@@ -318,16 +365,20 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     field["requirement"] = effective_requirements.fetch(field["path"], field["requirement"])
   end
 
+  by_action = root_schema["x-beckn-container-by-action"]
+
   packs[key] = {
     "key" => key,
     "name" => pack_name,
     "display_name" => profile["name"].to_s.sub(/ Attributes\z/, ""),
     "version" => profile["version"],
     "version_dir" => version_dir,
+    "source_dir" => source_dir,
     "protocol_version" => profile["protocol_version"],
     "interaction_type" => profile["interaction_type"],
     "description" => attributes.dig("info", "description").to_s.strip.gsub(/\s+/, " "),
     "canonical_type" => root_schema.dig("x-jsonld", "@type"),
+    "beckn_container" => root_schema["x-beckn-container"],
     "schema_name" => schema_name,
     "composition" => composition,
     "pack_fields" => pack_fields,
@@ -336,13 +387,14 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "examples" => examples.map { |example| example.reject { |key_name, _| key_name == "data" } },
     "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]
   }
+  packs[key]["beckn_container_by_action"] = by_action if by_action
 
   pack_dir.join("index.md").write(<<~MARKDOWN)
     ---
     layout: schema-pack
     schema_key: #{key}
     title: #{pack_name}
-    permalink: /schema/#{pack_name}/#{version_dir}/
+    permalink: /#{source_dir}/#{pack_name}/#{version_dir}/
     ---
     <!-- Generated by scripts/generate-schema-pages.rb. Edit the schema artifacts, profile, or examples instead. -->
   MARKDOWN

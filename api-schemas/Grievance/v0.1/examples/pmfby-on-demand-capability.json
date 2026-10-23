@@ -1,0 +1,25 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "informationMode": "OnDemand",
+  "scheme": {
+    "code": "PMFBY",
+    "name": "Pradhan Mantri Fasal Bima Yojana"
+  },
+  "grievanceOptions": {
+    "categories": [
+      {
+        "code": "3",
+        "name": "Enrollment / Portal Issues",
+        "help": "Something about your enrolment, or about the portal itself, is not working."
+      }
+    ],
+    "subCategories": [
+      {
+        "code": "10",
+        "name": "Login",
+        "help": "You cannot sign in to the portal to see your enrolment."
+      }
+    ]
+  }
+}
