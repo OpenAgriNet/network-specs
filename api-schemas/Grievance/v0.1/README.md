@@ -48,9 +48,31 @@ nothing else moves.
 holds and does not. `oneOf`, `anyOf` and `not` *are* evaluated. Every guard in this pack
 is written in those three, and every one of them is tested against the real validator.
 
-The cost is error messages: a failing payload is reported as "no branch matched", not as
-a named field. Pinning `scheme.code` per branch is what makes it obvious which branch was
+**Why `oneOf` and not `anyOf` for the guarded gates.** The two read alike, but they do not
+fail alike. kin-openapi throws away the per-arm errors of a failed `anyOf` and reports only
+"doesn't match any schema from anyOf", so a payload that forgot one field is reported no
+differently from one that got everything wrong -- the name of the missing field is destroyed
+inside the validator and no amount of care in the adapter can recover it. A failed `oneOf`
+keeps each arm's error, so `property "applicantMobile" is missing` survives to the caller.
+
+Every gate that guards a requirement is therefore an exclusive `oneOf`: each arm restates
+the guard the others are keyed on -- usually `informationMode`, which the base requires and
+pins to one of two values -- so exactly one arm can ever match and `oneOf` accepts the same
+set `anyOf` would. The gates are longer to read for it. The trade is a caller who is told
+which field they left out.
+
+Two costs remain, and both are the adapter's to absorb. A failing payload is still validated
+against both scheme branches, so the losing branch's errors ride along; an adapter that
+selects the branch on `scheme.code` before validating never sees them. And the guard arms
+report their own `enum` mismatch on `informationMode`, which is noise to be filtered, not a
+fault to be fixed. Pinning `scheme.code` per branch is what makes it obvious which branch was
 intended.
+
+A refusal -- any gate written as a bare `not` -- is the one case that cannot be improved.
+kin-openapi reports `Doesn't match schema "not"` with nothing underneath, so a payload that
+smuggles `applicantMobile` onto a `Direct` answer is told that it broke a rule but not which
+field broke it. The schema dump beside the error names the field; the structured error does
+not.
 
 ## Attachment point
 
@@ -229,8 +251,11 @@ container it rides in: a `no-echo` field is still `no-echo` inside `Support.chan
 ## The gates
 
 Every gate is an `anyOf`, a `not` or a `oneOf`, and every one is tested against the real
-validator. Some are stated once on a shared layer and hold for both desks; the rest are
-stated on the branch they belong to, and each is marked below.
+validator. A gate that guards a requirement is always an exclusive `oneOf`, for the error
+message reason given above; `anyOf` is left only where the rule really is a disjunction with
+no single right answer, such as "a payload must be about one of a grievance, a case or a
+published catalog". Some are stated once on a shared layer and hold for both desks; the rest
+are stated on the branch they belong to, and each is marked below.
 
 **A `Direct` payload must carry a case.** A response with no case standing is not an
 answer. PMFBY requires `ticketNo`, `status` and `filedOn`; PM-KISAN requires `status` and

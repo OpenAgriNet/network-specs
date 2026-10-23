@@ -415,12 +415,36 @@ components:
         - not:
             required: [challenge]
 
+        # ---- How the guarded gates below are written -------------------
+        # Every gate that guards a requirement is an exclusive oneOf, not an
+        # anyOf, and that is a deliberate choice about error messages rather
+        # than about meaning. The validator in use discards the per-arm
+        # errors of a failed anyOf: it reports "doesn't match any schema
+        # from anyOf" and hands back nothing underneath, so a payload that
+        # merely forgot applicantMobile is indistinguishable from one that
+        # got every field wrong. A failed oneOf keeps each arm's error, so
+        # the missing name survives to the caller.
+        #
+        # The arms are made mutually exclusive by restating the guard that
+        # the other arms are keyed on -- usually informationMode, which the
+        # base requires and pins to one of two values, and which is restated
+        # as required inside each arm so neither can hold vacuously. Exactly
+        # one arm can match any payload, which makes oneOf and anyOf accept
+        # the same set. The gates are longer to read for it; the trade is a
+        # caller who is told which field they left out.
+
         # A Direct payload is an answer and must carry a standing case.
-        - anyOf:
-            - properties:
-                informationMode:
-                  enum: [OnDemand]
+        - oneOf:
             - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
                 - required: [case]
                 - properties:
                     case:
@@ -475,22 +499,35 @@ components:
         # band is already required by the band.
 
         # A support ask: who is asking, which enrolment, which season.
-        - anyOf:
+        - oneOf:
             - not:
                 required: [grievance]
-            - properties:
-                informationMode:
-                  enum: [Direct]
-            - required: [provider, enrolmentId, applicantMobile, cropYear, season]
+            - allOf:
+                - required: [grievance, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
+            - allOf:
+                - required: [grievance, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
+                - required: [provider, enrolmentId, applicantMobile, cropYear, season]
 
         # A status ask: the mobile the portal keys on, and the ticket.
-        - anyOf:
+        - oneOf:
             - not:
                 required: [case]
-            - properties:
-                informationMode:
-                  enum: [Direct]
             - allOf:
+                - required: [case, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
+            - allOf:
+                - required: [case, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
                 - required: [applicantMobile]
                 - properties:
                     case:
@@ -576,11 +613,21 @@ components:
                   enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
 
       allOf:
-        - anyOf:
-            - properties:
-                informationMode:
-                  enum: [OnDemand]
+        # Exclusive oneOf rather than anyOf, for the reason set out on the
+        # PMFBY branch: a failed anyOf arrives at the caller with its arms'
+        # errors thrown away. Every guarded gate on this branch is written
+        # the same way.
+        - oneOf:
             - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
+            - allOf:
+                - required: [informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
                 - required: [case]
                 - properties:
                     case:
@@ -647,13 +694,19 @@ components:
 
         # A support ask: who is asking, which registration, the category
         # this desk files under, and the OTP.
-        - anyOf:
+        - oneOf:
             - not:
                 required: [grievance]
-            - properties:
-                informationMode:
-                  enum: [Direct]
             - allOf:
+                - required: [grievance, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
+            - allOf:
+                - required: [grievance, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
                 - required: [provider, enrolmentId, challenge]
                 - properties:
                     grievance:
@@ -667,13 +720,19 @@ components:
         # goes missing -- and dropping case.filedOn leaves case empty, so a
         # gate keyed on case alone stops firing exactly when the payload
         # stops being complete.
-        - anyOf:
+        - oneOf:
             - not:
                 required: [case]
-            - properties:
-                informationMode:
-                  enum: [Direct]
             - allOf:
+                - required: [case, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [Direct]
+            - allOf:
+                - required: [case, informationMode]
+                - properties:
+                    informationMode:
+                      enum: [OnDemand]
                 - required: [enrolmentId, challenge]
                 - properties:
                     case:
@@ -683,13 +742,25 @@ components:
 
         # An OTP with no complaint beside it is a case read, and a case read
         # names the registration and the date.
-        - anyOf:
+        # Keyed on the OTP rather than on informationMode, so that is the
+        # guard the arms restate to stay exclusive.
+        - oneOf:
             - properties:
                 challenge:
                   not:
                     required: [response]
-            - required: [grievance]
             - allOf:
+                - required: [challenge, grievance]
+                - properties:
+                    challenge:
+                      required: [response]
+            - allOf:
+                - required: [challenge]
+                - not:
+                    required: [grievance]
+                - properties:
+                    challenge:
+                      required: [response]
                 - required: [enrolmentId, case]
                 - properties:
                     case:
