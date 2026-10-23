@@ -57,12 +57,11 @@ The artifacts are identical. The scope differs, and `profile.json` records that 
 
 ## Information modes
 
-Direction is carried by `informationMode`, exactly as in the domain packs, and no pack names a Beckn action.
+`informationMode` says where the answer comes from, and no pack names a Beckn action.
 
 | Mode | Meaning |
 |---|---|
-| `OnDemand` | The ask — what a caller sends to obtain a result |
-| `Direct` | An answer carrying a real result |
+| `OnDemand` | The external system answers. The caller makes the `init`, `status` or `support` call that follows discovery. The only value |
 
 What a *particular* action must carry is enforced by that action's mapping guard in the adapter, not by the pack. A pack that required the fields of one action would reject a legitimate payload of another.
 

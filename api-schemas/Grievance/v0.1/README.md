@@ -55,9 +55,8 @@ differently from one that got everything wrong -- the name of the missing field 
 inside the validator and no amount of care in the adapter can recover it. A failed `oneOf`
 keeps each arm's error, so `property "applicantMobile" is missing` survives to the caller.
 
-Every gate that guards a requirement is therefore an exclusive `oneOf`: each arm restates
-the guard the others are keyed on -- usually `informationMode`, which the base requires and
-pins to one of two values -- so exactly one arm can ever match and `oneOf` accepts the same
+Every gate that guards a requirement is therefore an exclusive `oneOf`: one arm bans the
+field the other arm requires, so exactly one arm can ever match and `oneOf` accepts the same
 set `anyOf` would. The gates are longer to read for it. The trade is a caller who is told
 which field they left out.
 
@@ -68,11 +67,12 @@ report their own `enum` mismatch on `informationMode`, which is noise to be filt
 fault to be fixed. Pinning `scheme.code` per branch is what makes it obvious which branch was
 intended.
 
-A refusal -- any gate written as a bare `not` -- is the one case that cannot be improved.
-kin-openapi reports `Doesn't match schema "not"` with nothing underneath, so a payload that
-smuggles `applicantMobile` onto a `Direct` answer is told that it broke a rule but not which
-field broke it. The schema dump beside the error names the field; the structured error does
-not.
+A refusal names its field too, and that is why none of them is written as a bare `not`.
+An object-level `not` reports `Doesn't match schema "not"` with no pointer underneath, so a
+payload smuggling `applicantMobile` onto a PM-KISAN payload was told it broke a rule but not
+which field broke it. Each refusal is a property ban instead — the field is declared with
+`FieldNotAllowed`, which admits no value of any type — and the validator anchors the failure
+at the property: `value is not allowed here @ applicantMobile`.
 
 ## Attachment point
 
@@ -109,8 +109,8 @@ case itself sits beside it on the commitment, and `commitmentAttributes` is the 
 thing that differs from one response to the next.
 
 This holds wherever a `Commitment` carries the payload. On `support` there is no
-commitment — the payload attaches through `Support.channels` instead. See "Direction, not
-action" below.
+commitment — the payload attaches through `Support.channels` instead. See "Where the
+answer comes from" below.
 
 The spec puts no `minItems` on `Commitment.resources`, so an empty array is legal. This
 pack never sends one — see "Nothing on file".
@@ -142,9 +142,9 @@ acknowledgement reports, an ask answers, and no payload does two of those at onc
 **Three of the five PMFBY-only top-level fields travel inbound and never come back.**
 `applicantMobile` is personal data the network does not echo. `complaintDate` is the
 farmer's own stated date, where `case.filedOn` is the portal's. `receiptSourceId` names
-our channel and has no consumer. A `Direct` PMFBY payload carrying any of the three is
-refused, which is the mirror of the case rule below — one band is the portal's and may
-not ride on an ask, these three are the caller's and may not ride on an answer.
+our channel and has no consumer. None appears in any `comesBack` list, so none is
+returned; with a single information mode the pack can no longer tell an ask from an
+answer by a field value, so this is a mapping rule rather than a schema gate.
 
 `cropYear` and `season` are not among them. The portal reports both back, as
 `RequestYear` and `RequestSeason`, so they travel in both directions.
@@ -188,11 +188,12 @@ any string at all. The join was lossy too — PMFBY's own category name contains
 separator the names were joined on (`Enrollment / Portal Issues` + `Login`), so no split
 could recover the pair. As fields inside `grievance` each one has bounds the pack holds.
 
-## Direction, not action
+## Where the answer comes from
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the
-ask; `Direct` is an answer carrying a real case. The same attributes therefore serve
-`init`, `support` and `status` without change.
+`informationMode` says where the answer comes from, never which Beckn action is in play.
+`OnDemand` is its only value: the Portal answers, so the caller makes the `init`,
+`support` or `status` call that follows discovery. The same attributes serve `init`,
+`support` and `status` without change.
 
 One action is an exception, and the pack names it. On `support` the payload has no
 `Commitment` to sit on, so it attaches through `Support.channels` instead.
@@ -257,13 +258,13 @@ no single right answer, such as "a payload must be about one of a grievance, a c
 published catalog". Some are stated once on a shared layer and hold for both desks; the rest
 are stated on the branch they belong to, and each is marked below.
 
-**A `Direct` payload must carry a case.** A response with no case standing is not an
-answer. PMFBY requires `ticketNo`, `status` and `filedOn`; PM-KISAN requires `status` and
-`filedOn` only. The difference is real: PMFBY's read is keyed on the ticket, so the
-number is always in hand and echoed back, while PM-KISAN's status call is not documented
-to repeat the handle per record, so a case read there may carry none. `provider` is not
-in either list: on `init` and `status` the same fact lives in `commitments[].offer.provider`,
-outside these attributes, where a guard on the attributes object cannot reach it.
+**What an answer must carry is no longer a schema gate.** With one information mode there
+is nothing left to key it on: an ask and an answer are both `OnDemand` and look alike to
+the schema. The `comesBack`
+lists still say what each call returns, and the mapping guard enforces it. `provider` was
+never in those lists either: on `init` and `status` the same fact lives in
+`commitments[].offer.provider`, outside these attributes, where a guard on the attributes
+object cannot reach it.
 
 **Every payload must be about something** — a `grievance`, a `case`, or the declarations
 a catalog entry carries. The same `@type` serves filing, reading and discovery, and
@@ -296,11 +297,6 @@ every payload: PMFBY filing sends the mobile, the enrolment, the season and the
 complaint; reading a case sends the mobile and the ticket; the catalog entry sends none
 of them. What each action must carry is enforced by that action's mapping guard.
 
-**An answer may not carry `challenge.response`** (PM-KISAN). The code is sent, never
-returned: a payload carrying it must have `informationMode` other than `Direct`. The
-secret could otherwise have been echoed back and still validated. `x-oan-pii` marks the
-value `no-echo`, but that binds the mapping; this is the structural half of the same rule.
-
 **Exactly one member of `challenge`.** The container closes with a `oneOf` over
 `required: [methods]`, `required: [issued]` and `required: [response]`. Two members match
 two branches and fail; none matches zero and fails. This is what stops a catalog entry —
@@ -311,15 +307,10 @@ code beside the declaration, and it is why the rule above no longer has to menti
 **A catalog declaration makes the payload a catalog entry.** `grievanceOptions` and
 `challenge.methods` are published and never sent, so a payload carrying either must be
 `OnDemand`, must bring no `enrolmentId`, no `grievance` and no `case`, and must hold no
-`challenge.issued` or `challenge.response`. An earlier revision only kept them off a
-`Direct` answer, which left the larger hole open: a farmer's filing could carry the
-desk's own published form alongside the complaint, and a catalog entry could carry an
-enrolment number. Stated once in `GrievanceBase`, so it holds on both branches.
-
-**Three PMFBY-only top-level fields may not ride on an answer.** `applicantMobile`,
-`complaintDate` and `receiptSourceId` appear in no `comesBack` list; the gate refuses
-them on a `Direct` payload. Until that gate existed a PMFBY answer could echo the
-farmer's mobile number back out over the network.
+`challenge.issued` or `challenge.response`. An earlier revision kept them off an answer
+only, which left the larger hole open: a farmer's filing could carry the desk's own
+published form alongside the complaint, and a catalog entry could carry an enrolment
+number. Stated once in `GrievanceBase`, so it holds on both branches.
 
 **Nothing but `code` and `name` travels in a `Descriptor`.** Beckn's `Descriptor` carries
 five more members — `longDesc`, `shortDesc`, `thumbnailImage`, `docs`, `mediaFile` — and
@@ -359,7 +350,7 @@ past that refusal. The refusal is `NoApplicationBands`, composed on `GrievanceBa
 binds both desks, and the mirror of it — `NoGrievanceBands` — is what the other pack
 `$ref`s back.
 
-**PMFBY refuses `challenge`** with a single `not`/`required`. See "PMFBY issues no
+**PMFBY refuses `challenge`** with a single property ban. See "PMFBY issues no
 challenge".
 
 **A reply date needs a reply.** `case.repliedOn` without `case.reply` is refused on both
@@ -380,8 +371,7 @@ catalog entry, `init`, `support` and `status`, and every ask carries
 `informationMode: OnDemand`. So each gate reads the call off the payload's own shape --
 a `grievance` band means a support ask, a `case` band means a status ask,
 `grievanceOptions` means a catalog entry, a `challenge.issued` means an `init` answer,
-and `enrolmentId` alone means an `init` ask. Every gate is guarded on `OnDemand`, because
-those same bands on a `Direct` payload are the Portal's answer rather than a request.
+and `enrolmentId` alone means an `init` ask.
 
 PM-KISAN's status gate is stated twice over, keyed on the `case` band and again on the
 OTP, because either can be the member that goes missing — and dropping `case.filedOn`
@@ -423,8 +413,8 @@ sibling `allOf` member, so adding it takes every example from valid to invalid. 
 off deliberately, and the consequence is worth stating plainly: **an unknown top-level
 key is accepted.**
 
-Two things follow. A field that must not appear has to be **refused by name** with a
-`not`/`required` — which is what every refusal in this pack is, and why the PM-KISAN
+Two things follow. A field that must not appear has to be **refused by name**, declared
+with `FieldNotAllowed` — which is what every refusal in this pack is, and why the PM-KISAN
 branch names the PMFBY-only fields rather than relying on not declaring them. And the
 "response mapping is an allow-list, not a passthrough" rule in "Privacy" is, *at the root
 only*, a rule the adapter keeps rather than one the schema enforces.
@@ -669,15 +659,15 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 |---|---|---|
 | `@context` | Always | The JSON-LD context these terms resolve against. Pinned to this pack's own; an array when a Provider publishes extra `@type` values |
 | `@type` | Always | Identifies the commitment as `openagrinet:Grievance` |
-| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real case |
+| `informationMode` | Always | Where the answer comes from. `OnDemand` — the Portal answers — is the only value this version |
 | `scheme` | Always | Scheme the grievance is raised against; present in both directions. `code` is the branch selector — `PMFBY` or `PM-KISAN` |
 | `provider` | `support` only | Beckn `Provider` reference — `id` routes the request, `descriptor.name` makes the payload readable. The adapter composes no `Contract` for `support`, so it has nowhere else to read the provider from |
-| `enrolmentId` | Ask, when filing; also returned in `Direct` | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every call, `support` included |
+| `enrolmentId` | Ask, when filing; also returned | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every call, `support` included |
 | `grievance.category` | Ask, optional when filing; sometimes returned | The portal's own classification, as a `code`, a `name`, or both |
-| `grievance.description` | Ask, when filing; also returned in `Direct` | The farmer's account of the problem, minimum ten characters |
-| `case.ticketNo` | PMFBY `Direct`; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
-| `case.status` | `Direct` | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
-| `case.filedOn` | `Direct` | Date the grievance was filed, as an IST calendar date |
+| `grievance.description` | Ask, when filing; also returned | The farmer's account of the problem, minimum ten characters |
+| `case.ticketNo` | Returned on PMFBY; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
+| `case.status` | Returned | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
+| `case.filedOn` | Returned | Date the grievance was filed, as an IST calendar date |
 | `challenge.methods` | The catalog entry only | What this desk challenges with before it will act. Never sent on a transaction |
 | `grievanceOptions` | The catalog entry only | The categories, and where the desk has them the sub-categories, this desk accepts. Never sent on a transaction |
 
@@ -690,7 +680,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `complaintDate` | Optional | The filing date, where a caller holds one — a replayed offline submission, say. Defaults to the current IST date at lodge time |
 | `receiptSourceId` | Optional | The integrating channel a ticket arrived through. Names the channel, not the farmer. Defaults to the channel id the adapter is configured with |
 | `grievance.subCategory` | Ask, optional when filing; returned on a read | The second classification level. PMFBY numbers two; PM-KISAN refuses this field |
-| `case.cropName` | Optional in `Direct` | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on |
+| `case.cropName` | Optional, returned | The insured crop the ticket was raised against, as the portal names it. Free text, shown to the farmer, never branched on |
 
 PMFBY's category and sub-category codes are digit strings. The portal publishes no
 enumeration, so the pack constrains only "digits" — see "Non-goals".
@@ -701,7 +691,7 @@ enumeration, so the pack constrains only "digits" — see "Non-goals".
 |---|---|---|
 | `challenge.response` | `support` and `status` | `method: SMS_OTP` and a four-digit `value`. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
 | `challenge.issued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
-| `case.reply`, `case.repliedOn` | Optional in `Direct` | Absent rather than null while nothing has been recorded. `reply` is bounded at 2000 characters, and `repliedOn` without it is refused |
+| `case.reply`, `case.repliedOn` | Optional, returned | Absent rather than null while nothing has been recorded. `reply` is bounded at 2000 characters, and `repliedOn` without it is refused |
 
 PM-KISAN's `grievance.category.code` is closed to `G001`–`G010`, and `enrolmentId` must
 be ASCII alphanumeric and is refused if it is a bare twelve-digit Aadhaar number.
@@ -762,11 +752,12 @@ with.
 
 ## PMFBY issues no challenge
 
-The whole `challenge` object is refused on the PMFBY branch, in one line:
+The whole `challenge` object is refused on the PMFBY branch, in one member:
 
 ```yaml
-- not:
-    required: [challenge]
+- properties:
+    challenge:
+      $ref: "#/components/schemas/FieldNotAllowed"
 ```
 
 One refusal takes out the declaration, the acknowledgement and the answer together,
@@ -904,7 +895,7 @@ adds `aadhaar` and `no-store` for a field this pack does not carry.
 
 The marking is inert — the validator ignores `x-` keys. It exists so the rule can be read
 by a tool rather than only by a person: a CI check can assert that no property marked
-`no-echo` appears in any `Direct` example, which is the class of mistake the v1
+`no-echo` appears in any answer example, which is the class of mistake the v1
 `identity-no` echo was.
 
 **Neither `writeOnly` nor `readOnly` appears in this pack**, and that is deliberate. The

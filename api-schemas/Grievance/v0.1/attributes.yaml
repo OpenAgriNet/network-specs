@@ -26,12 +26,13 @@ components:
       properties:
         informationMode:
           type: string
-          enum: [OnDemand, Direct]
+          enum: [OnDemand]
+          default: OnDemand
           description: >-
-            Direct means the payload carries the record itself -- a case here, an
-            application on SchemeApplication. OnDemand is everything else -- a catalog
-            entry, an ask, and an OTP acknowledgement, all of which stay OnDemand even
-            when they are answers. Direction never comes from the Beckn action.
+            Every call in this version is fetched on demand from the portal, so
+            OnDemand is the only value. A catalog entry, an ask, an OTP
+            acknowledgement and an answer are all OnDemand alike -- direction
+            never comes from the Beckn action, and never from this field.
           x-jsonld-id: "openagrinet:informationMode"
 
         provider:
@@ -205,21 +206,13 @@ components:
                           - required: [response]
 
     # ---------------------------------------------------------------
-    # The published type.
+    # What every Grievance payload carries, whichever call it is for:
+    # the complaint bands and the two JSON-LD keys. Factored out of
+    # Grievance so each per-action schema below starts from it rather
+    # than restating it.
     # ---------------------------------------------------------------
-    Grievance:
+    GrievanceEnvelope:
       type: object
-      x-beckn-container: commitmentAttributes
-      # Union across both branches. PMFBY uses no init; its branch says so
-      # in x-oan-fields-by-action.
-      x-beckn-container-by-action:
-        discover: resourceAttributes
-        init: commitmentAttributes
-        status: commitmentAttributes
-        support: channels
-      x-jsonld:
-        "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld"
-        "@type": openagrinet:Grievance
       allOf:
         - $ref: "#/components/schemas/GrievanceBase"
         - type: object
@@ -266,6 +259,36 @@ components:
                         not:
                           pattern: "^openagrinet:"
               description: Canonical OAN type, optionally beside Provider-defined types.
+
+    # ---------------------------------------------------------------
+    # The published type.
+    # ---------------------------------------------------------------
+    Grievance:
+      type: object
+      x-beckn-container: commitmentAttributes
+      # Union across both branches. PMFBY uses no init; its branch says so
+      # in x-oan-fields-by-action.
+      x-beckn-container-by-action:
+        discover: resourceAttributes
+        init: commitmentAttributes
+        status: commitmentAttributes
+        support: channels
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld"
+        "@type": openagrinet:Grievance
+      # Which schema each call is validated against. @type names the entity;
+      # this names the call made on it, so a payload is checked against the
+      # one shape that call has rather than against the union of all of them.
+      # A validator that does not read this key falls back to the oneOf below,
+      # which still accepts and refuses exactly the same payloads -- it is the
+      # error messages that differ, not the verdict.
+      x-oan-schema-by-action:
+        discover: GrievanceCatalog
+        init: GrievanceInit
+        status: GrievanceStatus
+        support: GrievanceSupport
+      allOf:
+        - $ref: "#/components/schemas/GrievanceEnvelope"
 
         # One branch per scheme. Each pins scheme.code to a different const,
         # so exactly one can ever match.
@@ -317,103 +340,29 @@ components:
                       grievance.description,
                       case.ticketNo, case.status.code, case.filedOn,
                       case.reply, case.cropName]
-      properties:
-        scheme:
-          properties:
-            code:
-              const: PMFBY
-
-        applicantMobile:
-          type: string
-          pattern: "^[6-9][0-9]{9}$"
-          x-oan-pii:
-            class: contact
-            handling: [no-log, no-trace, no-echo]
-            note: Sent upstream as requestorMobileNo. Never returned, so nothing to mask.
-          description: Mobile number of the farmer raising the grievance. Unverified - PMFBY asks for no OTP.
-          x-jsonld-id: "openagrinet:applicantMobile"
-
-        cropYear:
-          type: string
-          pattern: "^[0-9]{4}$"
-          description: Crop year of the insurance application. Sent when filing, and returned on a status read.
-          x-jsonld-id: "openagrinet:cropYear"
-
-        season:
-          type: string
-          enum: [Kharif, Rabi, Zaid]
-          description: Crop season of the application. The adapter maps to the portal's numeric code. Sent when filing, and returned on a status read.
-          x-jsonld-id: "openagrinet:season"
-
-        complaintDate:
-          allOf:
-            - $ref: "#/components/schemas/CalendarDate"
-          description: Filing date. Omit and the adapter stamps today. Comes back as case.filedOn, not here.
-          x-jsonld-id: "openagrinet:complaintDate"
-
-        receiptSourceId:
-          type: string
-          pattern: "^[0-9]+$"
-          maxLength: 16
-          description: The channel the ticket arrived through. Omit and the adapter sends its own. Names the channel, not the farmer.
-          x-jsonld-id: "openagrinet:receiptSourceId"
-
-        grievanceOptions:
-          type: object
-          required: [categories, subCategories]
-          properties:
-            categories:
-              type: array
-              items:
-                type: object
-                properties:
-                  code:
-                    pattern: "^[0-9]+$"
-            subCategories:
-              type: array
-              items:
-                type: object
-                properties:
-                  code:
-                    pattern: "^[0-9]+$"
-          description: Both levels published. PMFBY numbers two and a caller sends both. Not pinned to an enum - the portal publishes no list.
-
-        enrolmentId:
-          allOf:
-            - type: string
-              minLength: 10
-              maxLength: 30
-            - $ref: "#/components/schemas/NotBareAadhaar"
-          description: The crop insurance application number. Bounds are a sanity range; PMFBY documents no format. Twelve bare digits are refused on the assumption no state issues one -- every number seen carries a state prefix.
-
-        grievance:
-          properties:
-            category:
-              properties:
-                code:
-                  type: string
-                  pattern: "^[0-9]+$"
-            subCategory:
-              properties:
-                code:
-                  type: string
-                  pattern: "^[0-9]+$"
-
-        case:
-          # The reply comes from latestRemark; no date comes with it.
-          not:
-            required: [repliedOn]
-          properties:
-            ticketNo:
-              type: string
-              pattern: "^[0-9]+$"
-              maxLength: 32
-
       allOf:
-        # PMFBY's grievance service has no OTP endpoint. One refusal now takes
-        # out the declaration, the acknowledgement and the answer together.
-        - not:
-            required: [challenge]
+        # ---- The branch discriminator, restated ------------------------
+        # scheme.code is pinned under properties above, which is where a
+        # reader looks for it. It is restated here because a validator runs
+        # a schema object's set operations BEFORE its properties and stops
+        # at the first failure: when a gate below fails, properties is never
+        # reached, so nothing in the error says this branch was ruled out.
+        # A caller sending PMFBY then reads PM-KISAN's complaints alongside
+        # their own. As an allOf member it is evaluated with the gates, so
+        # the branch the payload is not about is recognisable as such.
+        - properties:
+            scheme:
+              properties:
+                code:
+                  const: PMFBY
+
+        - $ref: "#/components/schemas/PMFBYFields"
+
+        # PMFBY's grievance service has no OTP endpoint. One refusal takes out
+        # the declaration, the acknowledgement and the answer together.
+        - properties:
+            challenge:
+              $ref: "#/components/schemas/FieldNotAllowed"
 
         # ---- How the guarded gates below are written -------------------
         # Every gate that guards a requirement is an exclusive oneOf, not an
@@ -425,30 +374,11 @@ components:
         # got every field wrong. A failed oneOf keeps each arm's error, so
         # the missing name survives to the caller.
         #
-        # The arms are made mutually exclusive by restating the guard that
-        # the other arms are keyed on -- usually informationMode, which the
-        # base requires and pins to one of two values, and which is restated
-        # as required inside each arm so neither can hold vacuously. Exactly
-        # one arm can match any payload, which makes oneOf and anyOf accept
-        # the same set. The gates are longer to read for it; the trade is a
-        # caller who is told which field they left out.
-
-        # A Direct payload is an answer and must carry a standing case.
-        - oneOf:
-            - allOf:
-                - required: [informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-            - allOf:
-                - required: [informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-                - required: [case]
-                - properties:
-                    case:
-                      required: [ticketNo, status, filedOn]
+        # The arms are made mutually exclusive by having one ban the field
+        # the other requires, so exactly one arm can match any payload and
+        # oneOf accepts the same set anyOf would. The gates are longer to
+        # read for it; the trade is a caller who is told which field they
+        # left out.
 
         # Every payload must be about something, and on this desk that is
         # narrower than on PM-KISAN: an enrolment on its own is an init ask,
@@ -459,42 +389,11 @@ components:
             - required: [case]
             - required: [grievanceOptions]
 
-        # Three of the caller's inputs that never ride on an answer.
-        # cropYear and season are not among them: the portal does report those
-        # back, as RequestYear and RequestSeason.
-        - anyOf:
-            - properties:
-                informationMode:
-                  enum: [OnDemand]
-            - not:
-                anyOf:
-                  - required: [applicantMobile]
-                  - required: [complaintDate]
-                  - required: [receiptSourceId]
-
-        # The case band is the portal's, with one exception: the selector the
-        # caller reads with. Here that is the ticket number. Nothing else of
-        # the portal's record may ride on an ask.
-        - anyOf:
-            - properties:
-                informationMode:
-                  enum: [Direct]
-            - properties:
-                case:
-                  not:
-                    anyOf:
-                      - required: [status]
-                      - required: [filedOn]
-                      - required: [cropName]
-                      - required: [reply]
-
         # ---- Completeness, per call ----------------------------------
         # The three asks are told apart by shape: a support ask carries
         # grievance, a status ask carries case, a catalog entry carries
         # grievanceOptions. Each gate names what that call cannot go
         # without, and the names are exactly the mustSend list above.
-        # Every gate is guarded on OnDemand, because the same bands on a
-        # Direct payload are the portal's answer, not an ask.
         # Only containers and bare fields are named: what sits inside a
         # band is already required by the band.
 
@@ -502,33 +401,15 @@ components:
         - oneOf:
             - not:
                 required: [grievance]
-            - allOf:
-                - required: [grievance, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-            - allOf:
-                - required: [grievance, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-                - required: [provider, enrolmentId, applicantMobile, cropYear, season]
+            - required: [grievance, provider, enrolmentId,
+                         applicantMobile, cropYear, season]
 
         # A status ask: the mobile the portal keys on, and the ticket.
         - oneOf:
             - not:
                 required: [case]
             - allOf:
-                - required: [case, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-            - allOf:
-                - required: [case, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-                - required: [applicantMobile]
+                - required: [case, applicantMobile]
                 - properties:
                     case:
                       required: [ticketNo]
@@ -569,69 +450,23 @@ components:
                       grievance.description,
                       case.status.code, case.filedOn,
                       case.reply, case.repliedOn]
-      properties:
-        scheme:
-          properties:
-            code:
-              const: PM-KISAN
-
-        challenge:
-          $ref: "#/components/schemas/SMSOTPChallenge"
-
-        grievanceOptions:
-          not:
-            required: [subCategories]
-          properties:
-            categories:
-              type: array
-              items:
-                type: object
-                properties:
-                  code:
-                    enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
-          description: One level only. A closed list of ten.
-
-        enrolmentId:
-          allOf:
-            - $ref: "#/components/schemas/PMKISANEnrolmentId"
-          description: The PM-KISAN registration number, or the token exchanged for an Aadhaar.
-
-        grievance:
-          not:
-            required: [subCategory]
-          properties:
-            category:
-              # Complaint takes a code or a name, which is right for PMFBY --
-              # its case read answers with a name and no id. This desk files
-              # under a code from a closed list of ten and the portal takes
-              # nothing else, so a category named and not coded is one the
-              # adapter cannot forward.
-              required: [code]
+      allOf:
+        # ---- The branch discriminator, restated ------------------------
+        # scheme.code is pinned under properties above, which is where a
+        # reader looks for it. It is restated here because a validator runs
+        # a schema object's set operations BEFORE its properties and stops
+        # at the first failure: when a gate below fails, properties is never
+        # reached, so nothing in the error says this branch was ruled out.
+        # A caller sending PMFBY then reads PM-KISAN's complaints alongside
+        # their own. As an allOf member it is evaluated with the gates, so
+        # the branch the payload is not about is recognisable as such.
+        - properties:
+            scheme:
               properties:
                 code:
-                  type: string
-                  enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+                  const: PM-KISAN
 
-      allOf:
-        # Exclusive oneOf rather than anyOf, for the reason set out on the
-        # PMFBY branch: a failed anyOf arrives at the caller with its arms'
-        # errors thrown away. Every guarded gate on this branch is written
-        # the same way.
-        - oneOf:
-            - allOf:
-                - required: [informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-            - allOf:
-                - required: [informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-                - required: [case]
-                - properties:
-                    case:
-                      required: [status, filedOn]
+        - $ref: "#/components/schemas/PMKISANFields"
 
         - oneOf:
             # About a complaint, a case, an acknowledgement or the catalog.
@@ -644,18 +479,6 @@ components:
                     $ref: "#/components/schemas/PMKISANSubjectShapes"
                 - required: [enrolmentId]
 
-        # A payload answering a challenge is a caller's ask, never an answer.
-        # The member is absent vacuously when challenge itself is, which is
-        # what makes this hold. The container's oneOf does the rest: an
-        # acknowledgement and an answer cannot ride together either.
-        - anyOf:
-            - properties:
-                challenge:
-                  not:
-                    required: [response]
-            - properties:
-                informationMode:
-                  enum: [OnDemand]
 
         # The five fields PMFBY numbers and this desk does not. Declaring them
         # inside the other branch does not keep them out of this one.
@@ -665,21 +488,6 @@ components:
             case:
               not:
                 required: [cropName]
-
-        # Same rule, different selector: this desk reads by filing date,
-        # because the portal answers with every case on the registration.
-        - anyOf:
-            - properties:
-                informationMode:
-                  enum: [Direct]
-            - properties:
-                case:
-                  not:
-                    anyOf:
-                      - required: [ticketNo]
-                      - required: [status]
-                      - required: [reply]
-                      - required: [repliedOn]
 
         # ---- Completeness, per call ----------------------------------
         # Same discriminators as the PMFBY branch, different contents.
@@ -693,16 +501,7 @@ components:
             - not:
                 required: [grievance]
             - allOf:
-                - required: [grievance, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-            - allOf:
-                - required: [grievance, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-                - required: [provider, enrolmentId, challenge]
+                - required: [grievance, provider, enrolmentId, challenge]
                 - properties:
                     grievance:
                       required: [category]
@@ -719,16 +518,7 @@ components:
             - not:
                 required: [case]
             - allOf:
-                - required: [case, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [Direct]
-            - allOf:
-                - required: [case, informationMode]
-                - properties:
-                    informationMode:
-                      enum: [OnDemand]
-                - required: [enrolmentId, challenge]
+                - required: [case, enrolmentId, challenge]
                 - properties:
                     case:
                       required: [filedOn]
@@ -771,14 +561,32 @@ components:
     # Stated once here and referenced from both packs, because a per-pack list
     # catches only what its author happened to think of.
 
+    # Every list below bans its fields one property at a time rather than with
+    # a single not/required, and that is about what the caller is told. The
+    # validator anchors a property failure at the property, so the refusal
+    # names the field; an object-level not carries no pointer at all and the
+    # caller reads "doesn't match all schemas" with nothing to act on.
+    FieldNotAllowed:
+      description: >-
+        No value at all. The five types are the whole of JSON, so any value is
+        refused; null is refused as not nullable.
+      not:
+        anyOf:
+          - type: object
+          - type: array
+          - type: string
+          - type: number
+          - type: boolean
+
     # Owned by SchemeApplication. applicant is the one that matters: the
     # PM-KISAN grievance branch refuses applicantMobile, and applicant.mobile
     # would otherwise walk the same number straight past that refusal.
     NoApplicationBands:
-      not:
-        anyOf:
-          - required: [applicant]
-          - required: [application]
+      properties:
+        applicant:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        application:
+          $ref: "#/components/schemas/FieldNotAllowed"
 
     # Owned by the PMFBY grievance branch.
     PMKISANSubjectShapes:
@@ -803,34 +611,56 @@ components:
                   required: [methods]
 
     NoPMFBYFields:
-      not:
-        anyOf:
-          - required: [applicantMobile]
-          - required: [cropYear]
-          - required: [season]
-          - required: [complaintDate]
-          - required: [receiptSourceId]
+      properties:
+        applicantMobile:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        cropYear:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        season:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        complaintDate:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        receiptSourceId:
+          $ref: "#/components/schemas/FieldNotAllowed"
 
     # Owned by the Grievance capability.
     NoGrievanceBands:
-      not:
-        anyOf:
-          - required: [grievance]
-          - required: [case]
-          - required: [grievanceOptions]
+      properties:
+        grievance:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        case:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        grievanceOptions:
+          $ref: "#/components/schemas/FieldNotAllowed"
+
+    # What a catalog entry declares. No other call carries it: the base
+    # already refuses a declaration beside a farmer, and this names the field,
+    # which an arm of that anyOf cannot.
+    NoCatalogDeclaration:
+      properties:
+        grievanceOptions:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        challenge:
+          properties:
+            methods:
+              $ref: "#/components/schemas/FieldNotAllowed"
 
     # A Beckn Descriptor carries five members beyond code and name. None is
     # modelled here, and two of them are free text, so every Descriptor slot
     # in this pack refuses them by name rather than leaving them to the
     # allow-list in x-oan-fields-by-action.
     NoDescriptorExtras:
-      not:
-        anyOf:
-          - required: [longDesc]
-          - required: [shortDesc]
-          - required: [thumbnailImage]
-          - required: [docs]
-          - required: [mediaFile]
+      properties:
+        longDesc:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        shortDesc:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        thumbnailImage:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        docs:
+          $ref: "#/components/schemas/FieldNotAllowed"
+        mediaFile:
+          $ref: "#/components/schemas/FieldNotAllowed"
 
     # Twelve bare digits are an Aadhaar number. No enrolment slot in either
     # pack carries one: what travels is a registration or application number,
@@ -973,10 +803,10 @@ components:
             - $ref: "#/components/schemas/NoDescriptorExtras"
             - type: object
               required: [code]
-              # The portal's own status phrase does not travel.
-              not:
-                required: [name]
               properties:
+                # The portal's own status phrase does not travel.
+                name:
+                  $ref: "#/components/schemas/FieldNotAllowed"
                 code:
                   $ref: "#/components/schemas/CaseStatusCode"
           description: Where the case stands, as a CaseStatusCode and nothing else.
@@ -1051,3 +881,288 @@ components:
                       type: string
                       minLength: 1
                       maxLength: 200
+
+    # ---------------------------------------------------------------
+    # PMFBY: no challenge, two category levels, crop fields.
+    # Field definitions only -- no gates. The per-action schemas below
+    # each compose these and then state the rules for their own call.
+    # ---------------------------------------------------------------
+    PMFBYFields:
+      type: object
+      properties:
+        scheme:
+          properties:
+            code:
+              const: PMFBY
+
+        applicantMobile:
+          type: string
+          pattern: "^[6-9][0-9]{9}$"
+          x-oan-pii:
+            class: contact
+            handling: [no-log, no-trace, no-echo]
+            note: Sent upstream as requestorMobileNo. Never returned, so nothing to mask.
+          description: Mobile number of the farmer raising the grievance. Unverified - PMFBY asks for no OTP.
+          x-jsonld-id: "openagrinet:applicantMobile"
+
+        cropYear:
+          type: string
+          pattern: "^[0-9]{4}$"
+          description: Crop year of the insurance application. Sent when filing, and returned on a status read.
+          x-jsonld-id: "openagrinet:cropYear"
+
+        season:
+          type: string
+          enum: [Kharif, Rabi, Zaid]
+          description: Crop season of the application. The adapter maps to the portal's numeric code. Sent when filing, and returned on a status read.
+          x-jsonld-id: "openagrinet:season"
+
+        complaintDate:
+          allOf:
+            - $ref: "#/components/schemas/CalendarDate"
+          description: Filing date. Omit and the adapter stamps today. Comes back as case.filedOn, not here.
+          x-jsonld-id: "openagrinet:complaintDate"
+
+        receiptSourceId:
+          type: string
+          pattern: "^[0-9]+$"
+          maxLength: 16
+          description: The channel the ticket arrived through. Omit and the adapter sends its own. Names the channel, not the farmer.
+          x-jsonld-id: "openagrinet:receiptSourceId"
+
+        grievanceOptions:
+          type: object
+          required: [categories, subCategories]
+          properties:
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    pattern: "^[0-9]+$"
+            subCategories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    pattern: "^[0-9]+$"
+          description: Both levels published. PMFBY numbers two and a caller sends both. Not pinned to an enum - the portal publishes no list.
+
+        enrolmentId:
+          allOf:
+            - type: string
+              minLength: 10
+              maxLength: 30
+            - $ref: "#/components/schemas/NotBareAadhaar"
+          description: The crop insurance application number. Bounds are a sanity range; PMFBY documents no format. Twelve bare digits are refused on the assumption no state issues one -- every number seen carries a state prefix.
+
+        grievance:
+          properties:
+            category:
+              properties:
+                code:
+                  type: string
+                  pattern: "^[0-9]+$"
+            subCategory:
+              properties:
+                code:
+                  type: string
+                  pattern: "^[0-9]+$"
+
+        case:
+          properties:
+            # The reply comes from latestRemark; no date comes with it.
+            repliedOn:
+              $ref: "#/components/schemas/FieldNotAllowed"
+            ticketNo:
+              type: string
+              pattern: "^[0-9]+$"
+              maxLength: 32
+
+    # ---------------------------------------------------------------
+    # PM-KISAN: OTP on both guarded calls, one category level.
+    # Field definitions only -- no gates. The per-action schemas below
+    # each compose these and then state the rules for their own call.
+    # ---------------------------------------------------------------
+    PMKISANFields:
+      type: object
+      properties:
+        scheme:
+          properties:
+            code:
+              const: PM-KISAN
+
+        challenge:
+          $ref: "#/components/schemas/SMSOTPChallenge"
+
+        grievanceOptions:
+          properties:
+            subCategories:
+              $ref: "#/components/schemas/FieldNotAllowed"
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  code:
+                    enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+          description: One level only. A closed list of ten.
+
+        enrolmentId:
+          allOf:
+            - $ref: "#/components/schemas/PMKISANEnrolmentId"
+          description: The PM-KISAN registration number, or the token exchanged for an Aadhaar.
+
+        grievance:
+          properties:
+            subCategory:
+              $ref: "#/components/schemas/FieldNotAllowed"
+            category:
+              # Complaint takes a code or a name, which is right for PMFBY --
+              # its case read answers with a name and no id. This desk files
+              # under a code from a closed list of ten and the portal takes
+              # nothing else, so a category named and not coded is one the
+              # adapter cannot forward.
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  enum: [G001, G002, G003, G004, G005, G006, G007, G008, G009, G010]
+
+    # ===============================================================
+    # One schema per call.
+    #
+    # Grievance above is the union of every shape this capability has,
+    # and a union can only tell its members apart by which fields a
+    # payload happens to carry. The keyword that does that -- anyOf --
+    # is the one whose per-arm errors the validator in use discards, so
+    # a caller who omitted a single field is told that nothing matched,
+    # and a PMFBY payload draws PM-KISAN's complaints beside its own.
+    #
+    # The action is known before validation starts. Naming a schema for
+    # each one, through x-oan-schema-by-action on Grievance, removes the
+    # guess: a status call is checked against the status shape, so every
+    # name in the error belongs to the call that was made.
+    #
+    # Each composes its scheme branch unchanged and adds what that one
+    # call must carry. The verdict is the union's; only the wording of
+    # a refusal differs.
+    # ===============================================================
+
+    GrievanceCatalog:
+      description: discover. What the desk publishes about itself.
+      allOf:
+        - $ref: "#/components/schemas/GrievanceEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMFBYCatalog"
+            - $ref: "#/components/schemas/PMKISANCatalog"
+
+    GrievanceInit:
+      description: >-
+        init. Only PM-KISAN serves it: init exists to issue a challenge and
+        PMFBY issues none. A PMFBY payload is refused on scheme.code, which
+        names the one field that makes the call impossible.
+      allOf:
+        - $ref: "#/components/schemas/GrievanceEnvelope"
+        - $ref: "#/components/schemas/PMKISANInit"
+
+    GrievanceStatus:
+      description: status. Reading where a standing case has got to.
+      allOf:
+        - $ref: "#/components/schemas/GrievanceEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMFBYStatus"
+            - $ref: "#/components/schemas/PMKISANStatus"
+
+    GrievanceSupport:
+      description: support. Filing the complaint, and the ticket that comes back.
+      allOf:
+        - $ref: "#/components/schemas/GrievanceEnvelope"
+        - oneOf:
+            - $ref: "#/components/schemas/PMFBYSupport"
+            - $ref: "#/components/schemas/PMKISANSupport"
+
+    # ---- PMFBY, per call ------------------------------------------
+
+    PMFBYCatalog:
+      allOf:
+        - $ref: "#/components/schemas/PMFBYGrievance"
+        - required: [grievanceOptions]
+
+    PMFBYStatus:
+      allOf:
+        - $ref: "#/components/schemas/PMFBYGrievance"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # The mobile the portal keys on, and the ticket to read.
+        - required: [case, applicantMobile]
+        - properties:
+            case:
+              required: [ticketNo]
+
+    PMFBYSupport:
+      allOf:
+        - $ref: "#/components/schemas/PMFBYGrievance"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # Who is asking, which enrolment, which season.
+        - required: [grievance, provider, enrolmentId,
+                     applicantMobile, cropYear, season]
+        - properties:
+            grievance:
+              required: [description]
+
+    # ---- PM-KISAN, per call ---------------------------------------
+
+    PMKISANCatalog:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANGrievance"
+        - required: [grievanceOptions, challenge]
+        - properties:
+            challenge:
+              required: [methods]
+
+    PMKISANInit:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANGrievance"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # Told apart by the challenge. The ask is the registration number
+        # alone; the acknowledgement is what the portal says it sent, and
+        # names no farmer.
+        - oneOf:
+            - allOf:
+                - required: [enrolmentId]
+                - not:
+                    required: [challenge]
+            - allOf:
+                - required: [challenge]
+                - properties:
+                    challenge:
+                      required: [issued]
+
+    PMKISANStatus:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANGrievance"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        - required: [case]
+        # The registration, the filing date that halves the selector,
+        # and the OTP.
+        - required: [enrolmentId, challenge]
+        - properties:
+            case:
+              required: [filedOn]
+            challenge:
+              required: [response]
+
+    PMKISANSupport:
+      allOf:
+        - $ref: "#/components/schemas/PMKISANGrievance"
+        - $ref: "#/components/schemas/NoCatalogDeclaration"
+        # Who is asking, which registration, the category this desk
+        # files under, and the OTP.
+        - required: [grievance, provider, enrolmentId, challenge]
+        - properties:
+            grievance:
+              required: [category, description]
+            challenge:
+              required: [response]

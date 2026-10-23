@@ -8,7 +8,7 @@ Where a pack attaches is its own to say. The domain packs sit on Beckn `Resource
 
 ## No pack names a Beckn action
 
-Direction is carried by `informationMode`, exactly as in the domain packs. `OnDemand` is the ask; `Direct` is an answer carrying a real result. The same attributes therefore serve `init`, `confirm`, `select`, `status`, or any later action without change.
+`informationMode` says where the answer comes from. `OnDemand` is its only value: the external system answers, so the caller makes the `init`, `status` and `support` calls that follow discovery. The same attributes serve `init`, `confirm`, `select`, `status`, or any later action without change.
 
 What a *particular* action must carry is enforced by that action's mapping guard in the adapter, not by the pack. A pack that required the fields of one action would reject a legitimate payload of another.
 
@@ -60,7 +60,7 @@ Packs reuse a term's IRI when the term means the same thing everywhere — `info
 
 Where two desks classify differently, the difference is carried by the value space, not by a second term. `grievance.category` is one property, `openagrinet:grievanceCategory`, and each branch pins the codes its own portal issues.
 
-A branch or a pack may refuse an inherited term outright, with `not`/`required`, rather than leave it defined and never filled. The PM-KISAN branch refuses `grievance.subCategory`, because it classifies at one level. The PMFBY branch refuses `case.repliedOn`, because its reply arrives as `latestRemark` with no date beside it, and it refuses the whole `challenge` band outright, because its desk asks for no OTP. Each is one member to delete if the portal changes.
+A branch or a pack may refuse an inherited term outright, declaring it with `FieldNotAllowed` so the refusal names the field, rather than leave it defined and never filled. The PM-KISAN branch refuses `grievance.subCategory`, because it classifies at one level. The PMFBY branch refuses `case.repliedOn`, because its reply arrives as `latestRemark` with no date beside it, and it refuses the whole `challenge` band outright, because its desk asks for no OTP. Each is one member to delete if the portal changes.
 
 ## Packs
 

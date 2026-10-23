@@ -65,9 +65,10 @@ farmer: a registration number must not end up in a public, cacheable identifier.
 | `challenge.response` | the OTP presented on the read | the caller |
 | `challenge.issued` | acknowledgement that one was sent | the portal |
 
-`applicant` and `application` are each enforced one-way, not merely described that
-way: `applicant` may not ride on a `Direct` payload and `application` may not ride on an
-`OnDemand` one. `enrolmentId` is the exception and travels in both directions. A caller who holds the registration number
+`applicant` is the caller's lookup key and `application` is the portal's record. With one
+information mode the schema can no longer tell an ask from an answer, so the one-way rule
+is carried by `x-oan-pii` and the mapping rather than by a gate. `enrolmentId` travels in
+both directions. A caller who holds the registration number
 sends it; a caller who holds only a mobile number sends `applicant` instead,
 and the portal resolves it and returns the registration number under `enrolmentId`. The
 two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
@@ -83,11 +84,11 @@ code beside the declaration it publishes.
 `challenge.methods` sits in no band. It is published on the catalog entry and never sent
 on a payload.
 
-## Direction, not action
+## Where the answer comes from
 
-Direction is carried by `informationMode`, never by the Beckn action. `OnDemand` is the
-ask; `Direct` is an answer carrying a real record. The same attributes serve both `init`
-and `status`.
+`informationMode` says where the answer comes from, never which Beckn action is in play.
+`OnDemand` is its only value: the Portal answers, so the caller makes the `init` and
+`status` calls below. The same attributes serve both `init` and `status`.
 
 The sequence is two calls:
 
@@ -96,10 +97,8 @@ The sequence is two calls:
 | 1 | `init` | `enrolmentId` **or** `applicant` | `challenge.issued` — an OTP has gone to the number the application is held under |
 | 2 | `status` | the same identifier + `challenge.response` | `enrolmentId` + `application` |
 
-The OTP acknowledgement is `OnDemand`, not `Direct`, even though it comes back from the
-portal. It carries no record — it says a challenge was sent and nothing else — and `Direct`
-is reserved for the payload carrying the application itself. The grievance pack does the
-same.
+Every payload in the sequence is `OnDemand`: the ask, the OTP acknowledgement and the
+answer carrying the application alike. The grievance pack does the same.
 
 `init` exists here and not on PM-KISAN's grievance desk for the same reason it exists at
 all: this read is gated and lodging a grievance is not. The OTP is the same OTP — the same
@@ -153,7 +152,8 @@ rules, and give each a stable IRI rather than one whose meaning depends on a sib
 `applicant` requires `mobile` and `additionalProperties: false` closes off anything else,
 so the object cannot carry a second identifier. `enrolmentId` and `applicant` are held
 apart by a top-level gate — an
-`anyOf` of two `not`/`required` members — and a further gate requires that every payload
+`anyOf` of two `not`/`required` members, the one gate where the condition is which other
+field is present — and a further gate requires that every payload
 carry at least one of the slots that makes it about something.
 
 **Aadhaar is not a lookup key on this capability.** There is no slot for one, and
@@ -260,16 +260,16 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 |---|---|---|
 | `@context` | Always | The JSON-LD context these terms resolve against. Pinned to this pack's own; an array when a Provider publishes extra `@type` values |
 | `@type` | Always | Identifies the commitment as `openagrinet:SchemeApplication` |
-| `informationMode` | Always | `OnDemand` is the ask; `Direct` carries a real record |
+| `informationMode` | Always | Where the answer comes from. `OnDemand` — the Portal answers — is the only value this version |
 | `scheme` | Always | Pinned to `PM-KISAN` |
 | `enrolmentId` | An ask by registration, and every answer | The PM-KISAN registration number. Mutually exclusive with `applicant`; returned as the portal's resolution of a mobile lookup |
 | `applicant` | An ask by mobile, both calls | Which farmer to look up when the caller has no registration number. Carries `mobile`, and the slot names the kind. Never echoed |
 | `challenge.response.method`, `challenge.response.value` | The `status` ask | The four-digit OTP issued by `init`. A credential, not an attribute |
-| `challenge.issued` | `Direct` on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
-| `application.latestInstalmentPaid` | `Direct` on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
-| `application.blockers` | Optional in `Direct` | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above. `name` is the portal's own phrase and is marked `freetext` / `no-log` / `no-trace` |
-| `application.registeredOn` | Optional in `Direct` | When the farmer was registered under the scheme. An instant, not a date — see below |
-| `application.ekyc` | Optional in `Direct` | `Done` or `Pending` |
+| `challenge.issued` | Returned on `init` | Acknowledgement that an OTP was sent: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
+| `application.latestInstalmentPaid` | Returned on `status` | How many instalments have been paid. A count, not an instalment number; `0` is an answer, not a missing value |
+| `application.blockers` | Optional, returned | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above. `name` is the portal's own phrase and is marked `freetext` / `no-log` / `no-trace` |
+| `application.registeredOn` | Optional, returned | When the farmer was registered under the scheme. An instant, not a date — see below |
+| `application.ekyc` | Optional, returned | `Done` or `Pending` |
 | `challenge.methods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
 
 `application.registeredOn` is the one timestamp here, and the offset in it is ours.
@@ -313,56 +313,68 @@ It is an allow-list. A path not named above is not used by this capability. `enr
 comes back on `status` even when the ask was by mobile — it is the portal's own `Reg_No`,
 not an echo — and `applicant` never comes back at all.
 
+## How the pack is laid out
+
+The same three layers the Grievance pack uses, for the same reason: a second scheme
+should be an addition, never an edit.
+
+| layer | schema | holds |
+|---|---|---|
+| envelope | `SchemeApplicationEnvelope` | what holds whatever scheme the payload is about — the service base, the JSON-LD envelope, `applicant`, and the bands this capability refuses |
+| branch | `PMKISANApplication` | one per scheme. Pins `scheme.code` to a `const` and composes that scheme's field shapes (`PMKISANApplicationFields`) |
+| per call | `PMKISANApplicationCatalog`, `…Init`, `…Status` | what one call must carry on that scheme |
+
+`SchemeApplication` is the published union: the envelope plus a `oneOf` over the scheme
+branches. There is one arm today. A second scheme is one more arm there, one more branch,
+one more set of per-call schemas — and nothing else moves.
+
+`oneOf`, not `anyOf`. Each branch pins `scheme.code` to a different `const`, so exactly
+one can ever match and the two accept the same set. They do not *fail* alike: kin-openapi
+throws away the per-arm errors of a failed `anyOf`, so a PMFBY payload sent here would be
+told only that no arm matched instead of which field was wrong.
+
+`x-oan-schema-by-action` names the schema each call is validated against:
+
+| action | schema |
+|---|---|
+| `discover` | `SchemeApplicationCatalog` |
+| `init` | `SchemeApplicationInit` |
+| `status` | `SchemeApplicationStatus` |
+
+A validator that does not read that key falls back to the union, which accepts and refuses
+exactly the same payloads — it is the error messages that differ, not the verdict. Against
+the union a caller who omitted one field is told that no arm matched; against the per-call
+schema they are told the field's name.
+
 ## The gates
 
-Nine top-level gates, all tested against the real validator. `if`/`then` would read more
-naturally and does not work: this validator parses it and never evaluates it, so a guard
-written that way looks like it holds and does not. `anyOf`, `not` and `oneOf` *are*
-evaluated.
+Four gates hold whatever call the payload is for. All are tested against the real
+validator. `if`/`then` would read more naturally and does not work: this validator parses
+it and never evaluates it, so a guard written that way looks like it holds and does not.
+`anyOf`, `not` and `oneOf` *are* evaluated.
 
-Gates 1 and 2 guard a requirement, and both are written as an exclusive `oneOf` rather than
-an `anyOf`. The two accept the same payloads but they do not fail alike: kin-openapi throws
-away the per-arm errors of a failed `anyOf`, so a caller who omitted `application` was told
-only that no arm matched. A failed `oneOf` keeps each arm's error and the missing name
-survives. The arms restate `informationMode`, which the base requires and pins to one of two
-values, so exactly one can ever match. The Grievance pack's README sets the reasoning out at
-length; the remaining gates here are refusals or real disjunctions, where `anyOf` and `not`
-stay correct and there is no name to recover.
+Where a gate guards a requirement it is written as an exclusive `oneOf` rather than an
+`anyOf`, for the reason above. The rest are refusals, and they name their field for the
+same reason: a refused field is declared with `FieldNotAllowed`, which admits no value of
+any type, so the validator anchors the failure at the property — `value is not allowed
+here @ provider` — instead of the `doesn't match all schemas` an object-level `not` would
+have produced with no pointer at all.
 
-1. **A `Direct` payload carries a record.** Either `informationMode` is `OnDemand`, or
-   `application` is present. An answer with nothing in it is not an answer.
-2. **And it names the farmer it is about.** The mirror of gate 1: a `Direct` payload must
-   also carry `enrolmentId`. A lookup by `mobile` is resolved upstream to a registration
-   number, and that number is what comes back, so an answer with no identity in it cannot
-   be filed against anything by the caller. Gate 7 keeps `applicant` out of the answer,
-   which leaves `enrolmentId` as the only identifier an answer can carry.
-3. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
-   — an `anyOf` of two `not`/`required` members. Both at once names the same farmer twice
+1. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
+   — an `anyOf` of two `not`/`required` members, because the ban is conditional on the
+   other field rather than outright. Both at once names the same farmer twice
    with no rule for which wins, and it is also the shape a response would take if it
    leaked the lookup key back beside the registration it resolved to.
-4. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
+2. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
    `challenge` carrying `issued` or `methods`. This is what stops a payload that is a
    scheme name and nothing else. The `on_init` acknowledgement and the catalog entry both
    start at `challenge`, so they are told apart by which member is present: `issued` on
    the acknowledgement, `methods` on the entry. A bare `challenge` with neither is about
    nothing and is refused.
-5. **An answer may not carry `challenge.response`.** The OTP is sent, never returned: a
-   payload carrying it must have `informationMode` other than `Direct`. The member is
-   absent vacuously when `challenge` itself is, which is what lets the gate be written
-   against the container. `x-oan-pii` marks the value `no-echo`, but that binds the
-   mapping; this is the structural half of the same rule.
-6. **A catalog declaration makes the payload a catalog entry.** Carrying
-   `challenge.methods` is not merely incompatible with `Direct`: an entry names no
-   farmer, so the gate also requires `OnDemand` and the absence of `enrolmentId`,
+3. **A catalog declaration makes the payload a catalog entry.** An entry names no farmer,
+   so carrying `challenge.methods` also requires the absence of `enrolmentId`,
    `applicant` and `application`. A declaration cannot ride alongside a real lookup.
-7. **The `application` band may not ride on an ask.** Everything in it is the portal's,
-   and unlike a grievance case there is no selector inside it — a read is keyed on
-   `enrolmentId` or `applicant` — so nothing in the band is the caller's to send.
-8. **The `applicant` band may not ride on an answer.** The mirror of gate 7. It is the
-   caller's lookup key and `mobile` is `no-echo`; where the portal resolves a lookup it
-   answers with `enrolmentId`, never with the key it was given. Together with gate 3 this
-   makes echoing the key back unrepresentable rather than merely forbidden.
-9. **The other capability's fields are refused by name** — the grievance bands
+4. **The other capability's fields are refused by name** — the grievance bands
    (`grievance`, `case`, `grievanceOptions`) and PMFBY's five (`applicantMobile`,
    `cropYear`, `season`, `complaintDate`, `receiptSourceId`), both by `$ref` to the
    shared lists `NoGrievanceBands` and `NoPMFBYFields` in the grievance pack, so neither
@@ -370,6 +382,22 @@ stay correct and there is no name to recover.
    `applicant` here, and a bare `applicantMobile` would be a second way to send one past
    the rules that govern the first. `provider` is refused separately — it belongs on a
    `support` channel and this capability has none. See "The composed root is open".
+
+Each call then adds what it alone must carry, and this is where the rules that used to be
+keyed on `informationMode` now live — an answer must carry a record, an answer must name
+the farmer, `application` may not ride on an ask, `applicant` may not ride on an answer.
+With one information mode there is nothing left to key them on; told apart by shape, they
+hold again.
+
+5. **`discover` publishes and names nobody.** A catalog entry carries `challenge.methods`
+   and no answer to the challenge, no `enrolmentId`, no `applicant` and no `application`.
+6. **`init` is an ask or an acknowledgement.** The ask carries exactly one identifier and
+   no `challenge`. The acknowledgement carries `challenge.issued`, no answer to it, and
+   does not echo `applicant` — the mobile it was sent to is `no-echo`.
+7. **`status` is an ask or an answer, told apart by the record.** The ask carries
+   `challenge.response`, exactly one identifier, and no `application`. The answer carries
+   `application` and the `enrolmentId` the portal resolved, and never the `applicant` it
+   was given.
 
 Two further refusals sit below the root. **Nothing but `code` and `name` travels in a
 `Descriptor`:** `application.ekyc` and each entry in `application.blockers` compose
@@ -380,7 +408,7 @@ quietly widening what travels. And **`enrolmentId` has a floor**: six characters
 one, alongside the twenty-character ceiling. A single-character registration number is
 not a registration number.
 
-Exactly one member of `challenge` is a seventh rule, and it comes from
+Exactly one member of `challenge` is a further rule, and it comes from
 `SchemeServiceBase` rather than from here: the container closes with a `oneOf` over the
 three members, so a catalog entry cannot carry a live code, an acknowledgement cannot
 ride with an answer, and a bare `challenge: {}` is about nothing and refused.
@@ -422,8 +450,8 @@ them **are** closed: `applicant` and `application` carry `additionalProperties: 
 so an unknown key inside either is rejected. So the gap is exactly one level wide — a
 stray top-level key is accepted, a stray key anywhere beneath one is not.
 
-Within that one level, a field that must not appear is refused by name with a
-`not`/`required`. Not declaring it is not a refusal. And the "response mapping is an
+Within that one level, a field that must not appear is refused by name: it is declared
+with `FieldNotAllowed`, which admits no value. Not declaring it is not a refusal. And the "response mapping is an
 allow-list, not a passthrough" rule under "Privacy" is one the adapter keeps, not one the
 schema can enforce.
 
@@ -434,11 +462,10 @@ Every identifier here — `enrolmentId` and whichever member `applicant` carries
 bearer key as much as an identifier: anyone holding one can read the record.
 
 `mobile` is never echoed in a response, and that is structural rather than only a mapping
-rule: the whole `applicant` band is refused on a `Direct` payload, so it cannot be
-returned. `enrolmentId` is the single deliberate exception: it goes back to the caller who
-sent it, or comes back as the portal's resolution of a mobile lookup. Between that refusal
-and the exclusivity gate, an answer carrying both the key and the registration it resolved
-to is unrepresentable rather than merely discouraged.
+rule in part: `x-oan-pii` marks it `no-echo`, and the exclusivity gate makes an answer
+carrying both the key and the registration it resolved to unrepresentable. `enrolmentId`
+is the single deliberate exception: it goes back to the caller who sent it, or comes back
+as the portal's resolution of a mobile lookup.
 
 **No Aadhaar number enters this capability.** There is no slot for one, and `enrolmentId`
 refuses twelve bare digits, so the question of logging or retaining one does not arise.

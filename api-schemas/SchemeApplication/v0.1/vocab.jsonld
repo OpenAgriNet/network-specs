@@ -14,7 +14,7 @@
       "@id": "openagrinet:informationMode",
       "@type": "rdfs:Property",
       "rdfs:label": "information mode",
-      "rdfs:comment": "Direction of the payload: OnDemand is the ask, Direct is an answer carrying a real case."
+      "rdfs:comment": "Where the answer comes from. OnDemand is its only value: the portal answers, so the caller makes the call that follows discovery."
     },
     {
       "@id": "openagrinet:provider",
