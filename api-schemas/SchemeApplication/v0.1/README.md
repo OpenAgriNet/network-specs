@@ -16,26 +16,26 @@ Describes what a government scheme's application-status API accepts and what it 
 how far a farmer's application has got, how many instalments have been paid, whether eKYC
 is done, and what is holding payment up.
 
-One scheme is covered today — **PM-KISAN** — named by `scheme.code`. The pack is named for
-the capability rather than the scheme so a second scheme is a widened enum rather than a
-second pack.
+One scheme is covered today — **PM-KISAN** — named by `scheme.code`. The pack is named
+for the capability rather than the scheme so a second scheme is a few more schemas in
+this file rather than a second pack.
 
 This is an API schema, not a domain schema. It says what a named Provider's API will take
 and give back.
 
 **It is not a grievance.** Nothing is filed, nothing has a lifecycle, and nothing comes
 back with a case number. That is why it is a pack of its own rather than a mode of
-[Grievance](../../Grievance/v0.1/README.md) — the two share a desk, an OTP service and a
-base schema, and share no subject.
+[Grievance](../../Grievance/v0.1/README.md) — the two share a desk and an OTP service,
+and share no subject and, since this revision, no schema either.
 
-**Filing an application is not implemented.** When it is, it is another pack over the same
-`SchemeServiceBase`, not a change to this one.
+**Filing an application is not implemented.** When it is, it is one more leaf in this
+file beside the three that are here, and nothing already written moves.
 
 ## Attachment point
 
 | what | where | on which call |
 |---|---|---|
-| the **declaration** — this desk exists, here is what it accepts | `resourceAttributes` of a catalog `Resource` | `catalog/publish`, `discover`, `on_discover` |
+| the **declaration** — this desk exists, here is what it accepts | `resourceAttributes` of a catalog `Resource` | `catalog/publish` |
 | one farmer's **application record** | `commitmentAttributes` of a `Commitment` | `init`, `status` |
 
 The declaration is catalogable: `informationMode`, `scheme` and the challenge methods
@@ -45,8 +45,8 @@ application, so it sits on `commitmentAttributes`.
 
 Unlike the grievance pack there is **no `support` call**: nothing is being filed, so no
 `Support` channel is ever composed and no field moves out of the attributes object.
-`x-beckn-container-by-action` therefore lists `discover`, `init` and `status`, and no
-`channels`. No field in this family carries an `x-beckn-path` at all, so there is nothing
+`x-beckn-container-by-action` therefore lists `catalog/publish`, `init` and `status`,
+and no `channels`. No field in this family carries an `x-beckn-path` at all, so there is nothing
 to fire: every field is read at the same path on both calls.
 
 `Commitment.resources` carries one thin pointer to the catalog entry
@@ -66,9 +66,9 @@ farmer: a registration number must not end up in a public, cacheable identifier.
 | `challenge.issued` | acknowledgement that one was sent | the portal |
 
 `applicant` is the caller's lookup key and `application` is the portal's record. With one
-information mode the schema can no longer tell an ask from an answer, so the one-way rule
-is carried by `x-oan-pii` and the mapping rather than by a gate. `enrolmentId` travels in
-both directions. A caller who holds the registration number
+information mode the schema cannot tell an ask from an answer by `informationMode`, so it
+tells them apart by shape instead: each call's schema carries a gate whose answer arm
+refuses `applicant` outright. `enrolmentId` travels in both directions. A caller who holds the registration number
 sends it; a caller who holds only a mobile number sends `applicant` instead,
 and the portal resolves it and returns the registration number under `enrolmentId`. The
 two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
@@ -78,8 +78,9 @@ Everything about challenging this desk lives under one `challenge` object, which
 the last two bands are nested rather than top level. The container itself carries no
 authorship marking — `methods` is published in the catalog, `issued` is the portal's and
 `response` is the caller's, so each member is marked on its own. Exactly one of the three
-is present on any payload; the base enforces it, so a catalog entry cannot carry a live
-code beside the declaration it publishes.
+can be present on any payload, and no gate is needed to say so: each call's schema
+declares only the member that call uses and is closed, so a catalog entry has no slot for
+a live code and an acknowledgement has no slot for an answer.
 
 `challenge.methods` sits in no band. It is published on the catalog entry and never sent
 on a payload.
@@ -121,7 +122,7 @@ the named type rather than letting the portal guess:
 
 | slot | shape the pack enforces | sent upstream as |
 |---|---|---|
-| `enrolmentId` | ASCII alphanumeric, up to 20; twelve bare digits refused | `Ben_id` |
+| `enrolmentId` | ASCII alphanumeric, 6 to 20 characters; twelve bare digits refused | `Ben_id` |
 | `applicant.mobile` | `^[6-9][0-9]{9}$` | `Mobile` |
 
 A registration number is `enrolmentId` — the same field under the same name as on the
@@ -133,10 +134,11 @@ mobile number as a registration, and a registration that happens to be ten digit
 exactly the case this slot exists to carry safely. It does refuse twelve bare digits:
 that is an Aadhaar number's shape, and this capability takes no Aadhaar lookup, so the
 refusal keeps one out of the registration slot rather than redirecting it elsewhere.
-Both the registration rule and that refusal are `$ref`s into the Grievance pack —
-`PMKISANEnrolmentId` over `NotBareAadhaar` — because the grievance desk reads the same
-registration on the same portal, and two copies of a rule are two chances to lose one.
-The `challenge` narrowing to a four-digit numeric code by SMS is shared the same way.
+Both rules live in this pack's own `PMKISANEnrolmentId`, and the four-digit SMS challenge
+in its own `PMKISANChallengeResponse`. The grievance desk reads the same registration on
+the same portal and states the same rules in its own file. Two copies are two chances to
+lose one — but a `$ref` across packs is one chance to break both at once, and keeping the
+two capabilities independent is worth more here. See "Composition".
 
 The observed form is two letters and nine digits — `BR295454592` is the value v1's own
 test fixtures use — and v1 validates it as `/^[A-Z0-9]+$/i`, which is the pattern pinned
@@ -151,10 +153,9 @@ rules, and give each a stable IRI rather than one whose meaning depends on a sib
 
 `applicant` requires `mobile` and `additionalProperties: false` closes off anything else,
 so the object cannot carry a second identifier. `enrolmentId` and `applicant` are held
-apart by a top-level gate — an
-`anyOf` of two `not`/`required` members, the one gate where the condition is which other
-field is present — and a further gate requires that every payload
-carry at least one of the slots that makes it about something.
+apart by each call's own gate: the ask arm is a `oneOf` over the two slots, which says
+never both and never neither in one clause. The answer arms refuse `applicant` outright,
+so a response cannot leak the lookup key back beside the registration it resolved to.
 
 **Aadhaar is not a lookup key on this capability.** There is no slot for one, and
 `enrolmentId` refuses twelve bare digits so one cannot be sent in the registration slot
@@ -163,9 +164,9 @@ the registration number or the mobile number the portal holds.
 
 `applicant.mobile` resolves to `openagrinet:applicantMobile`, the same term PMFBY's
 top-level `applicantMobile` uses. It stays an object rather than a flat `applicantMobile`
-because the PM-KISAN grievance branch refuses that name outright, and one term that is
-required on one capability and refused on its sibling would read as a contradiction. One
-term, two placements.
+because no PM-KISAN grievance leaf declares that name, and those leaves are closed — one
+term that is required on one capability and rejected on its sibling would read as a
+contradiction. One term, two placements.
 
 ## Blockers
 
@@ -215,41 +216,49 @@ any wording here would be ours presented as the portal's.
 
 ## Composition
 
-The pack composes **`SchemeServiceBase`** from
-[`../../Grievance/v0.1/attributes.yaml`](../../Grievance/v0.1/attributes.yaml), which is
-where `informationMode`, `provider`, `scheme`, `enrolmentId` and the whole `challenge`
-object come from, with their privacy markings already attached.
+**This pack stands alone.** It has no cross-pack `$ref` and no remote one. Every schema
+it needs is declared in its own `attributes.yaml`, including the ones that read like
+another pack's: `PMKISANEnrolmentId`, `PMKISANChallengeResponse`, `Instant`, `Context`
+and `Type`.
 
-That base is the scheme-service layer: what any desk needs whether or not it handles
-grievances. The grievance bands — `grievance`, `case`, `grievanceOptions` — sit one layer
-up, in `GrievanceBase`, which this pack does not touch. They are not in this pack's
-vocabulary, and they are refused by name all the same: the composed root is open, so
-not declaring a field is not the same as keeping it out.
+It used to compose `SchemeServiceBase` out of the Grievance pack, and that is gone.
+Checking an application and lodging a grievance are two capabilities; sharing a base
+meant a rule written for one silently governed the other, and adding a scheme to one
+risked the other. The duplication is a handful of value types, and it buys the property
+that matters: **changing the Grievance pack changes nothing here.**
 
-`ekyc` and each entry in `blockers` compose Beckn's `Descriptor`, which is the established
-idiom for a governed `code` paired with a display `name`. `blockers` uses both: the portal
-sends real text and the `code` classifies it. Both also compose `NoDescriptorExtras` from
-the grievance pack, which refuses the five `Descriptor` members this network does not
-model — see "The gates".
+Beckn's `Descriptor` is gone too. `application.ekyc` and each entry in
+`application.blockers` are now local closed objects — `ekyc` carries `code` alone,
+`blockers` carries `code` and `name` — so the five `Descriptor` members this network does
+not model are absent rather than refused by name. That is strictly tighter than the
+`NoDescriptorExtras` refusal it replaces, and it is one less file to keep in step.
 
-On top of the base this pack:
+| schema | holds | published |
+|---|---|---|
+| `SchemeApplication` | the root: `x-oan-schema-by-action`, `x-beckn-container-by-action`, `x-jsonld`, and a `oneOf` over all three leaves | **yes** |
+| `SchemeApplicationCatalog`, `SchemeApplicationInit`, `SchemeApplicationStatus` | one per call, each a `oneOf` over the leaves that serve it | no |
+| `IsPMKISAN` | the scheme guard: `scheme.code` pinned to `PM-KISAN`, nothing else | no |
+| `PMKISANApplicationCatalog`, `PMKISANApplicationInit`, `PMKISANApplicationStatus` | one complete payload shape each, closed, with no `$ref` to another leaf | no |
+| `Applicant`, `PMKISANEnrolmentId`, `PMKISANChallengeResponse`, `Instant`, `Context`, `Type` | the value types | no |
 
-- adds `applicant` and `application`;
+Only `SchemeApplication` is sent. Nothing ever carries
+`@type: openagrinet:PMKISANApplicationStatus`; the leaf names exist so that a reader, and
+an error message, can say which shape was meant.
+
+What each leaf does on top of the guard:
+
 - pins `scheme.code` to `PM-KISAN`, the only scheme offering this capability today;
 - pins `challenge.response.method` and `challenge.methods[].method` to `SMS_OTP`, and
-  `challenge.response.value` to **four digits** — the base allows four to eight, so each
-  desk pins its own;
+  `challenge.response.value` to **four digits**;
 - pins `challenge.methods[].length` and `challenge.issued.length` to the same four, and
-  both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value itself
-  cannot drift apart;
-- refuses the grievance bands, PMFBY's five fields and `provider` by name, because none
-  belongs to this capability and an undeclared field on an open root is accepted, not
-  rejected;
+  both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value
+  itself cannot drift apart;
 - narrows `enrolmentId` to ASCII alphanumeric, between six and twenty characters, and
   refuses twelve bare digits, so an Aadhaar number cannot be sent in the registration
   slot — this capability takes no Aadhaar lookup at all;
-- holds `enrolmentId` and `applicant` mutually exclusive, and requires that every payload
-  carry at least one slot that says what it is about.
+- closes the leaf with `additionalProperties: false` and declares only the fields the
+  call uses, which is how the grievance bands, PMFBY's five fields and `provider` are
+  kept out now — by not existing rather than by being named.
 
 ## Fields
 
@@ -279,35 +288,43 @@ practice midnight. The adapter reads it as IST and emits a fully-qualified insta
 read that as IST". `Instant` refuses a naked local timestamp precisely so that this
 conversion has to happen somewhere nameable rather than being left to the reader.
 
-Where each field is used, by action and by direction, lives in `x-oan-fields-by-action`,
-with paths relative to the attributes object. Four buckets per action: `mustSend`,
-`oneOf`, `maySend`, `comesBack`. `oneOf` reads as JSON Schema's does — exactly one of
-the paths named, never both and never neither. What this pack refuses is in the schema
-itself, not here — the gates are structural and bite on every action.
+Where each field is used, by direction, lives in `x-oan-fields` **on each leaf**, with
+paths relative to the attributes object. The leaf already says which call it serves, so
+the key needs no action index under it. Four buckets: `mustSend`, `oneOf`, `maySend`,
+`comesBack`. `oneOf` reads as JSON Schema's does — exactly one of the paths named, never
+both and never neither.
+
+**No validator reads `x-oan-fields`.** It is documentation, kept in the schema file so the
+two cannot drift. The only extension of this family that code reads is
+`x-oan-schema-by-action` on the root. What this pack refuses is in the schema itself, not
+here: each leaf is closed and declares only the fields its call uses, so refusal is the
+absence of a declaration.
 
 `commitments[0].offer.provider` is required on both `init` and `status`, both its `id`
 and the `descriptor.name` beside it — a provider carrying only an `id` is refused. It
 sits outside the attributes object, so it cannot appear in the table, but the `id` is
 what resolves the Portal and its base URL in the registry and a call without it cannot
-be routed. The `provider` member *inside* the attributes object is a different thing and
-is refused here, because this capability has no `support` channel to name a desk on.
+be routed. No leaf declares a `provider` member *inside* the attributes object, and all
+three are closed, so one sent there is refused: this capability has no `support` channel
+to name a desk on, and the provider is already carried in
+`commitments[].offer.provider`.
 
-| action | mustSend | oneOf | maySend | comesBack |
-|---|---|---|---|---|
-| `discover` | — | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
-| `init` | `informationMode`, `scheme.code` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
-| `status` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
+| action | leaf | mustSend | oneOf | maySend | comesBack |
+|---|---|---|---|---|---|
+| `catalog/publish` | `PMKISANApplicationCatalog` | — | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
+| `init` | `PMKISANApplicationInit` | `informationMode`, `scheme.code` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
+| `status` | `PMKISANApplicationStatus` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-`informationMode` and `scheme.code` lead both `mustSend` lists because the base requires
-both outright and `scheme.code` is what picks the branch; `scheme.name` is genuinely
-optional and stays in `maySend`.
+`informationMode` and `scheme.code` lead both `mustSend` lists because every leaf
+requires both outright and `scheme.code` is what picks the leaf; `scheme.name` is
+genuinely optional and stays in `maySend`.
 
 Identity is why `oneOf` exists. Both calls need `enrolmentId` or `applicant.mobile` —
 one of them, and not the other beside it. A `mustSend` list is flat and all-of, so
 naming either there would be false for the other kind of caller, and leaving both in
 `maySend` would let a request builder generated from the lists send no identifier at
-all. Two gates enforce it: one refuses a payload that is about nothing, the other
-refuses a payload carrying both.
+all. The ask arm of each leaf's gate enforces it, as a `oneOf` over the two slots: never
+both, never neither.
 
 It is an allow-list. A path not named above is not used by this capability. `enrolmentId`
 comes back on `status` even when the ask was by mobile — it is the portal's own `Reg_No`,
@@ -315,145 +332,117 @@ not an echo — and `applicant` never comes back at all.
 
 ## How the pack is laid out
 
-The same three layers the Grievance pack uses, for the same reason: a second scheme
-should be an addition, never an edit.
+The same shape the Grievance pack uses, for the same reason: a second scheme should be
+an addition, never an edit.
 
 | layer | schema | holds |
 |---|---|---|
-| envelope | `SchemeApplicationEnvelope` | what holds whatever scheme the payload is about — the service base, the JSON-LD envelope, `applicant`, and the bands this capability refuses |
-| branch | `PMKISANApplication` | one per scheme. Pins `scheme.code` to a `const` and composes that scheme's field shapes (`PMKISANApplicationFields`) |
-| per call | `PMKISANApplicationCatalog`, `…Init`, `…Status` | what one call must carry on that scheme |
+| root | `SchemeApplication` | the published union. A `oneOf` over every leaf, plus the three `x-` keys |
+| per call | `SchemeApplicationCatalog`, `SchemeApplicationInit`, `SchemeApplicationStatus` | a `oneOf` over the leaves that serve that call |
+| leaf | `PMKISANApplicationCatalog`, `…Init`, `…Status` | one complete payload shape: every field the call uses, closed, and the gate that holds it |
 
-`SchemeApplication` is the published union: the envelope plus a `oneOf` over the scheme
-branches. There is one arm today. A second scheme is one more arm there, one more branch,
-one more set of per-call schemas — and nothing else moves.
+There is no envelope and no per-scheme branch. A leaf restates its own `@context`,
+`@type`, `informationMode` and `scheme` rather than inheriting them, which is three lines
+repeated three times and the reason **adding a scheme touches one file and edits
+nothing**: a new scheme is three or four new leaves, their names added to the per-call
+`oneOf`s and to the root, and that is all.
 
-`oneOf`, not `anyOf`. Each branch pins `scheme.code` to a different `const`, so exactly
-one can ever match and the two accept the same set. They do not *fail* alike: kin-openapi
-throws away the per-arm errors of a failed `anyOf`, so a PMFBY payload sent here would be
-told only that no arm matched instead of which field was wrong.
+`oneOf`, not `anyOf`. Each leaf pins `scheme.code` to a different value, so at most one
+can ever match and the two accept the same payloads. They do not *fail* alike:
+kin-openapi throws away the per-arm errors of a failed `anyOf`, so a PMFBY payload sent
+here would be told only that no arm matched instead of which field was wrong.
+
+**Each leaf opens with a scheme guard.** `IsPMKISAN` is a separate `allOf` conjunct
+rather than a property inside the body, and that placement is load-bearing. kin-openapi
+collects exactly **one** error per failing `oneOf` arm but **all** of them per failing
+`allOf`. With the guard as its own conjunct, a payload for the wrong scheme always
+produces its pinned-value error, which is what lets the validator discard that leaf's
+other complaints and report only the fault the caller actually made.
+
+### How the three layers resolve
+
+| what arrives | what it is validated against | what a caller is told |
+|---|---|---|
+| `init`, named in `x-oan-schema-by-action` | `SchemeApplicationInit` → `PMKISANApplicationInit` | the field's own name |
+| an action the key does not name | the root `SchemeApplication` | that no leaf matched, plus the ranked faults |
+| anything, through a validator that ignores the key | the root `SchemeApplication` | the same verdict, weaker message |
 
 `x-oan-schema-by-action` names the schema each call is validated against:
 
 | action | schema |
 |---|---|
-| `discover` | `SchemeApplicationCatalog` |
+| `catalog/publish` | `SchemeApplicationCatalog` |
 | `init` | `SchemeApplicationInit` |
 | `status` | `SchemeApplicationStatus` |
 
-A validator that does not read that key falls back to the union, which accepts and refuses
-exactly the same payloads — it is the error messages that differ, not the verdict. Against
-the union a caller who omitted one field is told that no arm matched; against the per-call
-schema they are told the field's name.
+The catalog is listed against `catalog/publish` rather than `discover` because a
+`discover` request carries an intent and no attributes at all — the catalog this pack
+describes travels on the publish call.
+
+**The key narrows and never restricts.** An action it does not name falls back to the
+root union, which accepts and refuses the same payloads; it is the error messages that
+differ, not the verdict. Against the union a caller who omitted one field is told that no
+leaf matched; against the per-call schema they are told the field's name.
 
 ## The gates
 
-Four gates hold whatever call the payload is for. All are tested against the real
-validator. `if`/`then` would read more naturally and does not work: this validator parses
-it and never evaluates it, so a guard written that way looks like it holds and does not.
-`anyOf`, `not` and `oneOf` *are* evaluated.
+Each leaf carries one gate, as a third `allOf` conjunct beside the guard and the body.
+All are tested against the real validator. `if`/`then` would read more naturally and does
+not work: this validator parses it and never evaluates it, so a guard written that way
+looks like it holds and does not. `anyOf`, `not` and `oneOf` *are* evaluated.
 
 Where a gate guards a requirement it is written as an exclusive `oneOf` rather than an
-`anyOf`, for the reason above. The rest are refusals, and they name their field for the
-same reason: a refused field is declared with `FieldNotAllowed`, which admits no value of
-any type, so the validator anchors the failure at the property — `value is not allowed
-here @ provider` — instead of the `doesn't match all schemas` an object-level `not` would
-have produced with no pointer at all.
+`anyOf`, for the reason above: kin-openapi discards an `anyOf`'s per-arm errors, so the
+caller would be told only that nothing matched.
 
-1. **One identifier slot, not two.** `enrolmentId` and `applicant` are mutually exclusive
-   — an `anyOf` of two `not`/`required` members, because the ban is conditional on the
-   other field rather than outright. Both at once names the same farmer twice
-   with no rule for which wins, and it is also the shape a response would take if it
-   leaked the lookup key back beside the registration it resolved to.
-2. **Every payload is about something** — `enrolmentId`, `applicant`, `application`, or a
-   `challenge` carrying `issued` or `methods`. This is what stops a payload that is a
-   scheme name and nothing else. The `on_init` acknowledgement and the catalog entry both
-   start at `challenge`, so they are told apart by which member is present: `issued` on
-   the acknowledgement, `methods` on the entry. A bare `challenge` with neither is about
-   nothing and is refused.
-3. **A catalog declaration makes the payload a catalog entry.** An entry names no farmer,
-   so carrying `challenge.methods` also requires the absence of `enrolmentId`,
-   `applicant` and `application`. A declaration cannot ride alongside a real lookup.
-4. **The other capability's fields are refused by name** — the grievance bands
-   (`grievance`, `case`, `grievanceOptions`) and PMFBY's five (`applicantMobile`,
-   `cropYear`, `season`, `complaintDate`, `receiptSourceId`), both by `$ref` to the
-   shared lists `NoGrievanceBands` and `NoPMFBYFields` in the grievance pack, so neither
-   side can drift. `applicantMobile` matters most: a mobile number belongs in
-   `applicant` here, and a bare `applicantMobile` would be a second way to send one past
-   the rules that govern the first. `provider` is refused separately — it belongs on a
-   `support` channel and this capability has none. See "The composed root is open".
+1. **`init` is an ask or an acknowledgement.** The ask carries exactly one identifier —
+   `enrolmentId` **or** `applicant`, by `oneOf`, never both and never neither — and no
+   `challenge`. The acknowledgement carries `challenge.issued` and does not echo
+   `applicant`: the mobile it was sent to is `no-echo`.
+2. **`status` is an ask or an answer, told apart by the record.** The ask carries
+   `challenge.response`, exactly one identifier by the same `oneOf`, and no
+   `application`. The answer carries `application` and the `enrolmentId` the portal
+   resolved, and never the `applicant` it was given.
+3. **The catalog entry needs no gate.** `PMKISANApplicationCatalog` declares
+   `informationMode`, `scheme` and `challenge.methods`, and nothing else. An entry names
+   no farmer because there is no slot to name one in — not because a rule forbids it.
 
-Each call then adds what it alone must carry, and this is where the rules that used to be
-keyed on `informationMode` now live — an answer must carry a record, an answer must name
-the farmer, `application` may not ride on an ask, `applicant` may not ride on an answer.
-With one information mode there is nothing left to key them on; told apart by shape, they
-hold again.
+Everything else that used to be a gate is now a shape.
 
-5. **`discover` publishes and names nobody.** A catalog entry carries `challenge.methods`
-   and no answer to the challenge, no `enrolmentId`, no `applicant` and no `application`.
-6. **`init` is an ask or an acknowledgement.** The ask carries exactly one identifier and
-   no `challenge`. The acknowledgement carries `challenge.issued`, no answer to it, and
-   does not echo `applicant` — the mobile it was sent to is `no-echo`.
-7. **`status` is an ask or an answer, told apart by the record.** The ask carries
-   `challenge.response`, exactly one identifier, and no `application`. The answer carries
-   `application` and the `enrolmentId` the portal resolved, and never the `applicant` it
-   was given.
+| the old gate | what holds it now |
+|---|---|
+| one identifier slot, not two | the `oneOf` in each ask arm; the answer arms refuse `applicant` outright |
+| every payload is about something | each leaf's own `required` list plus its gate — there is no shape left that is a scheme name and nothing else |
+| a catalog declaration cannot ride with a real lookup | `PMKISANApplicationCatalog` is its own leaf and declares neither |
+| the grievance bands and PMFBY's five fields refused by name | `additionalProperties: false` on every leaf — they are not declared, so they are not accepted |
+| `provider` refused by name | likewise: no leaf declares it |
+| nothing but `code` and `name` in a `Descriptor` | `ekyc` and `blockers` are local closed objects with exactly those members |
+| exactly one member of `challenge` | each leaf declares only the member its call uses, and `challenge` is closed |
 
-Two further refusals sit below the root. **Nothing but `code` and `name` travels in a
-`Descriptor`:** `application.ekyc` and each entry in `application.blockers` compose
-`NoDescriptorExtras`, which refuses `longDesc`, `shortDesc`, `thumbnailImage`, `docs` and
-`mediaFile` by name. Two of the five are free text and none is modelled here, so an
-adapter that passed a portal's `Descriptor` through wholesale is rejected rather than
-quietly widening what travels. And **`enrolmentId` has a floor**: six characters, not
-one, alongside the twenty-character ceiling. A single-character registration number is
-not a registration number.
+One rule is unchanged and still lives in a value type: **`enrolmentId` has a floor** —
+six characters, not one, alongside the twenty-character ceiling. A single-character
+registration number is not a registration number.
 
-Exactly one member of `challenge` is a further rule, and it comes from
-`SchemeServiceBase` rather than from here: the container closes with a `oneOf` over the
-three members, so a catalog entry cannot carry a live code, an acknowledgement cannot
-ride with an answer, and a bare `challenge: {}` is about nothing and refused.
+There used to be one more gate: a check of a declared identifier type against the value
+beside it. The named slots removed the need, because there is no pair left to disagree.
 
-There used to be one more: a check of a declared identifier type against the value beside
-it. The named slots removed the need, because there is no pair left to disagree.
+## The pack is closed at every level
 
-The refusal of the three grievance bands **came back**. Rebasing on `SchemeServiceBase`
-took them out of this pack's vocabulary, and an earlier revision of this file read that
-as having removed the need for the refusal. It had not: the composed root is open, so a
-field this pack never declares is accepted rather than rejected, and `grievance` and
-`case` validated here for as long as the refusal was gone. They are refused by name
-again — and by `$ref` to `NoGrievanceBands` in the grievance pack rather than by a copy,
-because the copy is what went stale the first time.
+Every leaf carries `additionalProperties: false`, and so does every object beneath it —
+`scheme`, `applicant`, `application`, `ekyc`, each `blockers` entry, `challenge` and each
+member under it. **An unknown key is rejected wherever it appears, top level included.**
 
-PMFBY's five top-level fields are refused the same way, through `NoPMFBYFields`. They
-were never declared here either, and the consequence was the same: a bare
-`applicantMobile` validated against this pack, which gives a mobile number a second route
-in, beside `applicant.mobile` and outside every rule that governs it.
+This is the one change the flat layout bought outright. The old root was an `allOf` over
+a base, the JSON-LD guards and this pack's own layer, and a root composed that way
+*cannot* be closed: `additionalProperties: false` on it sees only the properties the root
+itself declares, and every real field was declared in a sibling member, so adding it
+would have rejected every valid payload. It was left off, and an unknown top-level key
+was accepted. A leaf declares all of its own fields in one object, so closing it costs
+nothing.
 
-`provider` joined them in this revision. It is declared on `SchemeServiceBase` and so
-*is* in this pack's vocabulary, but it belongs to a `support` call — where a caller names
-the desk it is addressing — and this capability has none. Both actions here ride on
-`commitmentAttributes`, where the provider is already carried in
-`commitments[].offer.provider`, so naming it a second time inside the attributes object
-gives a second place for it to disagree with the first.
-
-## The composed root is open
-
-`SchemeApplication` is an `allOf` over `SchemeServiceBase`, the JSON-LD guards and this
-pack's own layer. A root composed that way **cannot be closed**: `additionalProperties:
-false` on the root sees only the properties the root itself declares, and every real
-field is declared in a sibling `allOf` member, so adding it rejects every valid payload.
-It is left off deliberately, and the consequence is worth stating plainly: **an unknown
-top-level key is accepted.**
-
-Only at the root. The bands below it are ordinary objects, not compositions, and both of
-them **are** closed: `applicant` and `application` carry `additionalProperties: false`,
-so an unknown key inside either is rejected. So the gap is exactly one level wide — a
-stray top-level key is accepted, a stray key anywhere beneath one is not.
-
-Within that one level, a field that must not appear is refused by name: it is declared
-with `FieldNotAllowed`, which admits no value. Not declaring it is not a refusal. And the "response mapping is an
-allow-list, not a passthrough" rule under "Privacy" is one the adapter keeps, not one the
-schema can enforce.
+What the schema still cannot enforce is the direction of travel on the way back: the
+"response mapping is an allow-list, not a passthrough" rule under "Privacy" is one the
+adapter keeps. Responses are built after validation runs and are never validated.
 
 ## Privacy
 
