@@ -679,7 +679,7 @@ routed.
 
 | action | leaf | mustSend | maySend | comesBack |
 |---|---|---|---|---|
-| `catalog/publish` | `PMFBYCatalog` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` |
+| `catalog/publish` | `PMFBYCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` | — | — |
 | `support` | `PMFBYSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `scheme.name`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `PMFBYStatus` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId`, `cropYear`, `season` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
@@ -687,17 +687,20 @@ routed.
 
 | action | leaf | mustSend | maySend | comesBack |
 |---|---|---|---|---|
-| `catalog/publish` | `PMKISANCatalog` | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` |
+| `catalog/publish` | `PMKISANCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` | — | — |
 | `init` | `PMKISANInit` | `informationMode`, `scheme.code`, `enrolmentId` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `support` | `PMKISANSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
 | `status` | `PMKISANStatus` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Both are allow-lists. A path not named is not used by that call. `catalog/publish` has
-only a `comesBack` bucket, because the catalog entry is published, never asked for.
+no `comesBack` bucket, because the Portal answers it with a bare ACK: the catalog entry
+is sent, never asked for.
 `informationMode` and `scheme.code` lead every `mustSend` because every leaf requires
 both outright and `scheme.code` is what picks the leaf; listing them makes each row the
-whole of what the call must carry rather than most of it. `scheme.name` is genuinely
-optional and stays in `maySend`.
+whole of what the call must carry rather than most of it. `scheme.name` is optional on
+every call a caller makes and stays in `maySend` there; `catalog/publish` is the one
+place it is required, because a catalog entry naming a scheme only by its code gives a
+farmer's screen nothing to show.
 
 Every `mustSend` name is enforced by that leaf's own `required` list. The two lists are
 checked against each other: drop any one `mustSend` field from a complete request and

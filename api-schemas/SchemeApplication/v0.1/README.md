@@ -311,13 +311,16 @@ to name a desk on, and the provider is already carried in
 
 | action | leaf | mustSend | oneOf | maySend | comesBack |
 |---|---|---|---|---|---|
-| `catalog/publish` | `PMKISANApplicationCatalog` | — | — | — | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` |
+| `catalog/publish` | `PMKISANApplicationCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods` | — | — | — |
 | `init` | `PMKISANApplicationInit` | `informationMode`, `scheme.code` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `status` | `PMKISANApplicationStatus` | `informationMode`, `scheme.code`, `challenge.response.method`, `challenge.response.value` | `enrolmentId`, `applicant.mobile` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `application.registeredOn`, `application.latestInstalmentPaid`, `application.ekyc.code`, `application.blockers` |
 
-`informationMode` and `scheme.code` lead both `mustSend` lists because every leaf
-requires both outright and `scheme.code` is what picks the leaf; `scheme.name` is
-genuinely optional and stays in `maySend`.
+`informationMode` and `scheme.code` lead every `mustSend` list because every leaf
+requires both outright and `scheme.code` is what picks the leaf. `scheme.name` is
+optional on `init` and `status` and stays in `maySend` there; `catalog/publish` is the
+one place it is required, because a catalog entry naming a scheme only by its code gives
+a farmer's screen nothing to show. `catalog/publish` has no `comesBack` bucket: the
+Portal answers it with a bare ACK, so the entry is sent and never asked for.
 
 Identity is why `oneOf` exists. Both calls need `enrolmentId` or `applicant.mobile` —
 one of them, and not the other beside it. A `mustSend` list is flat and all-of, so

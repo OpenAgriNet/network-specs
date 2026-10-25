@@ -56,7 +56,7 @@ components:
 
     PMKISANApplicationCatalog:
       x-oan-fields:
-        comesBack: [informationMode, scheme.code, scheme.name, challenge.methods]
+        mustSend:  [informationMode, scheme.code, scheme.name, challenge.methods]
       allOf:
         - $ref: "#/components/schemas/IsPMKISAN"
         - type: object
@@ -72,7 +72,7 @@ components:
             scheme:
               type: object
               additionalProperties: false
-              required: [code]
+              required: [code, name]
               properties:
                 code: { type: string, enum: [PM-KISAN] }
                 name: { type: string, minLength: 1 }

@@ -82,7 +82,7 @@ components:
 
     PMFBYCatalog:
       x-oan-fields:
-        comesBack: [informationMode, scheme.code, scheme.name,
+        mustSend:  [informationMode, scheme.code, scheme.name,
                     grievanceOptions.categories, grievanceOptions.subCategories]
       allOf:
         - $ref: "#/components/schemas/IsPMFBY"
@@ -99,7 +99,7 @@ components:
             scheme:
               type: object
               additionalProperties: false
-              required: [code]
+              required: [code, name]
               properties:
                 code: { type: string, enum: [PMFBY] }
                 name: { type: string, minLength: 1 }
@@ -322,7 +322,7 @@ components:
 
     PMKISANCatalog:
       x-oan-fields:
-        comesBack: [informationMode, scheme.code, scheme.name,
+        mustSend:  [informationMode, scheme.code, scheme.name,
                     challenge.methods, grievanceOptions.categories]
       allOf:
         - $ref: "#/components/schemas/IsPMKISAN"
@@ -339,7 +339,7 @@ components:
             scheme:
               type: object
               additionalProperties: false
-              required: [code]
+              required: [code, name]
               properties:
                 code: { type: string, enum: [PM-KISAN] }
                 name: { type: string, minLength: 1 }
