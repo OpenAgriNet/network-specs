@@ -129,7 +129,8 @@ components:
         maySend:   [scheme.name, enrolmentId, cropYear, season]
         comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
                     cropYear, season,
-                    grievance.category.code, grievance.subCategory.code,
+                    grievance.category.code, grievance.category.name,
+                    grievance.subCategory.code, grievance.subCategory.name,
                     grievance.description,
                     case.ticketNo, case.status.code, case.filedOn,
                     case.reply, case.cropName]
@@ -444,7 +445,7 @@ components:
         maySend:   [scheme.name]
         comesBack: [informationMode, scheme.code, scheme.name,
                     grievance.description,
-                    case.ticketNo, case.status.code, case.filedOn,
+                    case.status.code, case.filedOn,
                     case.reply, case.repliedOn]
       allOf:
         - $ref: "#/components/schemas/IsPMKISAN"

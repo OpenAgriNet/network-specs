@@ -622,7 +622,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `enrolmentId` | Ask, when filing; also returned | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every call, `support` included |
 | `grievance.category` | Ask, optional when filing; sometimes returned | The portal's own classification. `code` is required when the field is sent; `name` is an optional label beside it |
 | `grievance.description` | Ask, when filing; also returned | The farmer's account of the problem, minimum ten characters |
-| `case.ticketNo` | Required on a PMFBY read, and returned; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
+| `case.ticketNo` | Required on a PMFBY read, and returned; optional on PM-KISAN, and never returned there | The handle the portal issued. A read key on PMFBY. PM-KISAN's portal answers per identity, not per ticket, so a PM-KISAN read will not repeat it -- show the farmer the one kept from `on_support` |
 | `case.status` | Returned | Where the grievance stands, as a `CaseStatus`. Branch on it and render your own label; `name` is refused |
 | `case.filedOn` | Returned | Date the grievance was filed, as an IST calendar date |
 | `challenge.methods` | The catalog entry only | What this desk challenges with before it will act. Never sent on a transaction |
@@ -689,7 +689,7 @@ routed.
 |---|---|---|---|---|
 | `catalog/publish` | `PMFBYCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` | — | — |
 | `support` | `PMFBYSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `scheme.name`, `grievance.category`, `grievance.subCategory`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `PMFBYStatus` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId`, `cropYear`, `season` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
+| `status` | `PMFBYStatus` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId`, `cropYear`, `season` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.category.name`, `grievance.subCategory.code`, `grievance.subCategory.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
 **PM-KISAN**
 
@@ -698,7 +698,7 @@ routed.
 | `catalog/publish` | `PMKISANCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` | — | — |
 | `init` | `PMKISANInit` | `informationMode`, `scheme.code`, `enrolmentId` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `support` | `PMKISANSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `PMKISANStatus` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
+| `status` | `PMKISANStatus` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Both are allow-lists. A path not named is not used by that call. `catalog/publish` has
 no `comesBack` bucket, because the Portal answers it with a bare ACK: the catalog entry
