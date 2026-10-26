@@ -129,6 +129,8 @@ components:
         maySend:   [scheme.name, enrolmentId, cropYear, season]
         comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
                     cropYear, season,
+                    grievance.category.code, grievance.subCategory.code,
+                    grievance.description,
                     case.ticketNo, case.status.code, case.filedOn,
                     case.reply, case.cropName]
       allOf:
@@ -175,6 +177,15 @@ components:
               type: string
               enum: [Kharif, Rabi, Zaid]
               x-jsonld-id: "openagrinet:season"
+            grievance:
+              type: object
+              additionalProperties: false
+              required: [description]
+              properties:
+                category: { $ref: "#/components/schemas/PMFBYSubject" }
+                subCategory: { $ref: "#/components/schemas/PMFBYSubject" }
+                description: { $ref: "#/components/schemas/Description" }
+              x-jsonld-id: "openagrinet:grievance"
             case:
               type: object
               additionalProperties: false
@@ -204,7 +215,7 @@ components:
                     enrolmentId, applicantMobile, cropYear, season,
                     grievance.description]
         maySend:   [scheme.name,
-                    grievance.category.code, grievance.subCategory.code,
+                    grievance.category, grievance.subCategory,
                     complaintDate, receiptSourceId]
         comesBack: [informationMode, provider.id, provider.descriptor.name,
                     scheme.code, scheme.name, enrolmentId,
@@ -432,6 +443,7 @@ components:
                     challenge.response.method, challenge.response.value]
         maySend:   [scheme.name]
         comesBack: [informationMode, scheme.code, scheme.name,
+                    grievance.description,
                     case.ticketNo, case.status.code, case.filedOn,
                     case.reply, case.repliedOn]
       allOf:
@@ -456,13 +468,20 @@ components:
               x-jsonld-id: "openagrinet:scheme"
             enrolmentId: { $ref: "#/components/schemas/PMKISANEnrolmentId" }
             challenge: { $ref: "#/components/schemas/PMKISANChallengeResponse" }
+            grievance:
+              type: object
+              additionalProperties: false
+              required: [description]
+              properties:
+                description: { $ref: "#/components/schemas/Description" }
+              x-jsonld-id: "openagrinet:grievance"
             case:
               type: object
               additionalProperties: false
               required: [filedOn]
-              anyOf:
+              oneOf:
                 - not: { required: [repliedOn] }
-                - required: [reply]
+                - required: [repliedOn, reply]
               properties:
                 ticketNo:
                   type: string
