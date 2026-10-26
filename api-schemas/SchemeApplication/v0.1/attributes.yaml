@@ -99,22 +99,37 @@ components:
               x-jsonld-id: "openagrinet:challenge"
             actions:
               type: array
-              items: { $ref: "#/components/schemas/PublishedAction" }
-              const:
-                - action: init
-                  description: >-
-                      Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or
-                      the registered mobile. Call before status, which requires challenge.response carrying
-                      this OTP.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit"
-                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
-                - action: status
-                  description: >-
-                      Read how far the application has got: when it was registered, the latest instalment
-                      paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init,
-                      and either the registration number or the registered mobile.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus"
-                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
+              minItems: 2
+              maxItems: 2
+              uniqueItems: true
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/PublishedAction"
+                  # One arm per call this desk serves. The arm pins the schema and
+                  # attributesAt that go with the action; the wording is the desk's
+                  # own, and `default` only records the wording this pack ships.
+                  - oneOf:
+                      - properties:
+                          action: { const: init }
+                          description:
+                            default: >-
+                                          Ask PM-KISAN to send a four-digit OTP, identified
+                                          by either the registration number or the
+                                          registered mobile. Call before status, which
+                                          requires challenge.response carrying this OTP.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
+                      - properties:
+                          action: { const: status }
+                          description:
+                            default: >-
+                                          Read how far the application has got: when it was
+                                          registered, the latest instalment paid, whether
+                                          eKYC is done, and anything blocking payment. Needs
+                                          the OTP from init, and either the registration
+                                          number or the registered mobile.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
               x-jsonld-id: "openagrinet:publishedAction"
 
     PMKISANApplicationInit:

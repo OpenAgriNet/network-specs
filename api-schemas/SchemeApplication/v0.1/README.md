@@ -92,11 +92,28 @@ duplication: the caller gets the container in the same read as the schema, rathe
 fetching the root to resolve it. Both are generated from the same table, so they cannot
 drift apart.
 
-**The whole band is pinned with `const`.** It is not a free-text hint an adapter fills in.
-The catalog leaf declares the exact list it must publish, element for element, so an
-adapter that advertises a call it cannot serve — or stops advertising one it can — fails
-validation instead of lying to every caller. Order is part of the pin, because the
-validator compares the array element by element.
+**The pointers are pinned; the wording is not.** `action`, `schema` and `attributesAt`
+are held to `const` by one `oneOf` arm per call the desk serves, so an adapter that
+advertises a call it cannot serve — or points an action at the wrong leaf — fails
+validation instead of lying to every caller. `description` is free text (1–400
+characters) and required: the desk writes its own wording, and the canonical wording
+this pack ships lives in the examples, not in the schema. Fixing a typo in a description
+is not a spec change.
+
+Pinning the triple arm-wise rather than pinning the array with one `const` is what buys
+the field-level error. A wrong pointer reports `actions/0/schema` and the value it
+should have held; a whole-array `const` can only report that the array differs, dumping
+every published description into the message. It also makes the order of the elements
+irrelevant, which a whole-array `const` could not — that comparison is element by
+element.
+
+`minItems`, `maxItems` and `uniqueItems` fix the count, so a desk can neither drop a
+call it serves nor advertise an extra one. What they cannot catch is the same action
+published twice under different wording in place of another: that needs a cross-element
+check, and `contains` — the keyword for it — is parsed but never evaluated by the
+validator in use. The consequence of that gap is an under-published catalog, not a
+caller sent to the wrong schema; every element that *is* published still has its triple
+pinned.
 
 ## The bands
 

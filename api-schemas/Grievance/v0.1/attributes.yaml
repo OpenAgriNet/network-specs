@@ -126,22 +126,39 @@ components:
               x-jsonld-id: "openagrinet:grievanceOptions"
             actions:
               type: array
-              items: { $ref: "#/components/schemas/PublishedAction" }
-              const:
-                - action: support
-                  description: >-
-                      File a new grievance. Needs the enrolment number, the applicant's mobile, the crop
-                      year, the season and a description of the problem. Returns case.ticketNo, which status
-                      requires. Needs no OTP, so it can be called without init.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport"
-                  attributesAt: "$.message.support.channels[0]"
-                - action: status
-                  description: >-
-                      Read where a filed grievance stands: its status code, the portal's reply and the crop
-                      it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's
-                      mobile. Cases cannot be listed by enrolment number, so support must come first.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus"
-                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
+              minItems: 2
+              maxItems: 2
+              uniqueItems: true
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/PublishedAction"
+                  # One arm per call this desk serves. The arm pins the schema and
+                  # attributesAt that go with the action; the wording is the desk's
+                  # own, and `default` only records the wording this pack ships.
+                  - oneOf:
+                      - properties:
+                          action: { const: support }
+                          description:
+                            default: >-
+                                          File a new grievance. Needs the enrolment number,
+                                          the applicant's mobile, the crop year, the season
+                                          and a description of the problem. Returns
+                                          case.ticketNo, which status requires. Needs no
+                                          OTP, so it can be called without init.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport" }
+                          attributesAt: { const: "$.message.support.channels[0]" }
+                      - properties:
+                          action: { const: status }
+                          description:
+                            default: >-
+                                          Read where a filed grievance stands: its status
+                                          code, the portal's reply and the crop it concerns.
+                                          Needs case.ticketNo from an earlier support call,
+                                          plus the applicant's mobile. Cases cannot be
+                                          listed by enrolment number, so support must come
+                                          first.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
               x-jsonld-id: "openagrinet:publishedAction"
 
     PMFBYStatus:
@@ -412,30 +429,50 @@ components:
               x-jsonld-id: "openagrinet:grievanceOptions"
             actions:
               type: array
-              items: { $ref: "#/components/schemas/PublishedAction" }
-              const:
-                - action: init
-                  description: >-
-                      Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment
-                      number. Needs only the enrolment number. Call before status or support: both require
-                      challenge.response carrying this OTP.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit"
-                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
-                - action: status
-                  description: >-
-                      Read a grievance already filed against this enrolment number: its status code, the
-                      officer's reply and when it was given. Needs the OTP from init and case.filedOn, the
-                      filing date support returned, which picks one case out of all those on the
-                      registration.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus"
-                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
-                - action: support
-                  description: >-
-                      File a new grievance against this enrolment number, under one of the categories
-                      published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep
-                      filedOn, because status selects a case by it.
-                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport"
-                  attributesAt: "$.message.support.channels[0]"
+              minItems: 3
+              maxItems: 3
+              uniqueItems: true
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/PublishedAction"
+                  # One arm per call this desk serves. The arm pins the schema and
+                  # attributesAt that go with the action; the wording is the desk's
+                  # own, and `default` only records the wording this pack ships.
+                  - oneOf:
+                      - properties:
+                          action: { const: init }
+                          description:
+                            default: >-
+                                          Ask PM-KISAN to send a four-digit OTP to the
+                                          mobile registered against this enrolment number.
+                                          Needs only the enrolment number. Call before
+                                          status or support: both require challenge.response
+                                          carrying this OTP.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
+                      - properties:
+                          action: { const: status }
+                          description:
+                            default: >-
+                                          Read a grievance already filed against this
+                                          enrolment number: its status code, the officer's
+                                          reply and when it was given. Needs the OTP from
+                                          init and case.filedOn, the filing date support
+                                          returned, which picks one case out of all those on
+                                          the registration.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
+                      - properties:
+                          action: { const: support }
+                          description:
+                            default: >-
+                                          File a new grievance against this enrolment
+                                          number, under one of the categories published
+                                          above. Needs the OTP from init. Returns
+                                          case.ticketNo and case.filedOn; keep filedOn,
+                                          because status selects a case by it.
+                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport" }
+                          attributesAt: { const: "$.message.support.channels[0]" }
               x-jsonld-id: "openagrinet:publishedAction"
 
     PMKISANInit:
