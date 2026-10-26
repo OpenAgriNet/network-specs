@@ -4,13 +4,64 @@ A domain schema says what a thing *is* in the agriculture domain. An API schema 
 
 Each pack carries the same seven artifacts as a domain pack. The difference is scope, not shape: a domain pack is written once for the whole network, an API pack is written for one provider.
 
-Where a pack attaches is its own to say. The domain packs sit on Beckn `Resource.resourceAttributes`, because a forecast or a mandi price genuinely is a catalogable resource. The three packs here sit on `Commitment.commitmentAttributes` instead: a grievance is a promise with a lifecycle and a registration is a standing one, not things of value in a catalog. Each pack's root schema states its container in `x-beckn-container`, and `x-beckn-container-by-action` records any action that uses a different one.
+Where a pack attaches depends on the call, not on the pack. A catalog entry rides on `Resource.resourceAttributes`, `init` and `status` ride on `Commitment.commitmentAttributes`, and `support` rides on a `Support` channel. Each root schema records the whole mapping in `x-beckn-container-by-action`, so one lookup answers "where does this payload sit" for every call the pack serves.
 
-## No pack names a Beckn action
+## Every pack names its actions
 
-`informationMode` says where the answer comes from. `OnDemand` is its only value: the external system answers, so the caller makes the `init`, `status` and `support` calls that follow discovery. The same attributes serve `init`, `confirm`, `select`, `status`, or any later action without change.
+`informationMode` says where the answer comes from. `OnDemand` is its only value: the external system answers, so the caller makes the `init`, `status` and `support` calls that follow discovery.
 
-What a *particular* action must carry is enforced by that action's mapping guard in the adapter, not by the pack. A pack that required the fields of one action would reject a legitimate payload of another.
+What a *particular* action must carry is stated by the pack, not left to the adapter. Each root schema carries `x-oan-schema-by-action`, which names one schema per action:
+
+```yaml
+x-oan-schema-by-action:
+  catalog/publish: GrievanceCatalog
+  init:            GrievanceInit
+  status:          GrievanceStatus
+  support:         GrievanceSupport
+```
+
+The validator reads the action off `context.action` and checks the payload against that schema alone. A `status` payload sent to `support` is refused, because the `support` schema is a different set of leaves with different requirements. An action the key does not name falls back to the root `oneOf`, which is the union of every leaf — a wider gate, and a vaguer refusal.
+
+## Three layers, and no more
+
+A pack is the same shape all the way down:
+
+1. **Root** — `x-oan-schema-by-action`, `x-beckn-container-by-action`, `x-jsonld`, and a `oneOf` over every leaf.
+2. **Per-call schema** — one per action, a `oneOf` over the leaves that serve it.
+3. **Leaf** — one per (scheme, call). An `allOf` of a guard, a closed flat body, and, where the call has one, a gate.
+
+The guard is a `const` on `scheme.code` in its own conjunct. It is what makes the leaves mutually exclusive, and what makes a refusal name a field: the validator rules out every arm whose guard fails, and reports against the one that remains.
+
+```yaml
+IsPMFBY:
+  type: object
+  required: [scheme]
+  properties:
+    scheme:
+      type: object
+      required: [code]
+      properties:
+        code: { const: PMFBY }
+```
+
+A guard is always `const`, never `enum` — the validator rules an arm out on `const` alone. `enum` is for stating a value space inside a body.
+
+The body is flat and closed: every field the call accepts sits at the top level or in one named band, `additionalProperties: false` throughout. Nothing is inherited, so adding a scheme is adding a leaf and a `oneOf` member, and changing one scheme cannot reach another.
+
+A gate is a `oneOf` over the combinations the portal accepts, used where "one of these two, not both" cannot be said with `required`. It is written as an exclusive `oneOf` and never as an `anyOf`: an `anyOf` swallows the reasons its members failed, so the caller gets "matches no schema" and no field name.
+
+## What a leaf tells an integrator
+
+Each leaf carries `x-oan-fields`, four lists that read as the call's contract:
+
+| list | means |
+|---|---|
+| `mustSend` | drop any one of these and the validator refuses the request |
+| `maySend` | optional on the way in; the call still passes without them |
+| `oneOf` | exactly one of these, enforced by the leaf's gate |
+| `comesBack` | what the answer carries |
+
+The lists are documentation — no code reads them — but they are kept true against the schema, and the published page is generated from the same file.
 
 ## Two profile values these packs introduce
 
@@ -21,50 +72,23 @@ Both are new with `api-schemas/`; the eight domain packs use neither.
 | `semantic_model` | `provider-api` | The domain packs are `generalised` — written once for the whole network. A provider API pack is scoped to one provider, which is the distinction this folder exists to make. |
 | `interaction_type` | `Transact` | These packs describe calls that change state upstream — a grievance is lodged, not looked up. The domain packs describe retrieval. |
 
-## A base is a schema, not a pack
-
-A pack may publish definitions for another pack to compose. They live in the pack that uses them most, and only the schema a pack names in its `profile.json` is indexed; the rest are there to be referenced. `Grievance/v0.1` is the one doing that today, in two layers:
-
-- **`SchemeServiceBase`** — what any scheme desk needs whether or not it handles grievances: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the challenge trio. `SchemeApplication` composes this one.
-- **`GrievanceBase`** — `SchemeServiceBase` plus the complaint: the `grievance` and `case` bands, and `grievanceOptions`. Only grievances compose this one.
-
-Splitting the base in two is what lets a pack that is not about a complaint inherit the desk without inheriting the complaint. An earlier revision had one base and made the application pack refuse three bands it could never fill; the split removed the need to write those refusals at all.
-
-A pack composes a base with `allOf`, then pins its own `@type` and `scheme`, and adds the fields its own portal has. The published page shows the base's meaning and the pack's note together, and says which component each field came from.
-
-What the bases own is a shape: **five bands, and the band a field sits in says who wrote it.**
-
-| band | holds | written by |
-|---|---|---|
-| top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId` | the caller |
-| `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
-| `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn` | the portal |
-| `challenge` | challenging on this desk, one member per payload: `methods` is what it accepts and is published in the catalog, `issued` is its acknowledgement that it sent one (`method`, `length`, `valueType`, `expiresAt`, and no destination), `response` is the caller's answer (`method`, `value`) and is inbound only, never echoed or forwarded | `methods` and `issued` by the portal, `response` by the caller |
-| anything a pack adds | a crop season, an applicant's mobile — sits at the top with the rest of the context | the caller |
-
-Not every pack uses every band. `SchemeApplication` swaps two of them for `applicant` and `application`, the same split by author, by composing the lower base. A desk that issues no challenge refuses the whole `challenge` band outright rather than leave it defined and unfillable. Two declarations sit in no band at all — `challenge.methods`, which describes each challenge a desk requires before it will answer, down to the length and character class of the code, and `grievanceOptions`, which says what it accepts. Both appear on a catalog entry and on no transaction payload, and carrying both is what marks a payload as a declaration rather than an ask.
-
-Before the two containers the same split lived in a prefix — `grievanceCategory` against `caseStatus` — which read the same and checked nothing: a field named either way validated either way. As containers it is enforced, and a grievance becomes all or nothing, because `required` inside a block fires whenever the block is present. What counts as a complete answer and as a meaningful ask is each pack's own statement, because it depends on what the portal issues.
-
-Nothing grievance-related is added to a domain schema under `schema/`. A grievance is a Provider's API surface, not a thing the network describes, so the shared shape belongs beside the packs that use it.
-
 ## One pack, two schemes
 
-`Grievance/v0.1` covers PMFBY and PM-KISAN in a single pack rather than one pack each. The two desks share a capability — file a grievance, read it back — and differ in what they accept, so the published type is a `oneOf` over two branches, each pinned by `scheme.code`. A caller reads one pack to learn the capability and one branch to learn the desk.
+`Grievance/v0.1` covers PMFBY and PM-KISAN in a single pack rather than one pack each. The two desks share a capability — file a grievance, read it back — and differ in what they accept, so each call's schema is a `oneOf` over one leaf per desk, pinned by `scheme.code`. A caller reads one pack to learn the capability and one leaf to learn the desk.
 
-`SchemeApplication` stays its own pack because checking where an application stands is a different capability, not a different scheme: nothing is filed, nothing has a lifecycle, and nothing comes back with a case number.
+`SchemeApplication` stays its own pack because checking where an application stands is a different capability, not a different scheme: nothing is filed, nothing has a lifecycle, and nothing comes back with a case number. It borrows nothing from `Grievance` and `Grievance` borrows nothing from it — neither pack `$ref`s across the folder boundary, so neither can break the other.
 
 ## Shared and unshared terms
 
-Packs reuse a term's IRI when the term means the same thing everywhere — `informationMode`, `provider`, `scheme`, `enrolmentId`, `grievance.description` and the whole of the `case` band are declared once in `Grievance/v0.1` and mean the same on both branches and in `SchemeApplication`. `applicantMobile` is shared across a placement difference: PMFBY carries it at the top level, `SchemeApplication` carries it as `applicant.mobile`, and both resolve to the same term.
+The packs share a vocabulary without sharing a schema. `informationMode`, `provider`, `scheme`, `enrolmentId` and `grievance.description` resolve to the same `openagrinet:` IRIs in both packs, so two payloads from different packs mean the same thing in a graph even though no file references the other. `applicantMobile` is shared across a placement difference: PMFBY's grievance desk carries it at the top level, `SchemeApplication` carries it as `applicant.mobile`, and both resolve to the same term.
 
-Where two desks classify differently, the difference is carried by the value space, not by a second term. `grievance.category` is one property, `openagrinet:grievanceCategory`, and each branch pins the codes its own portal issues.
+Where two desks classify differently, the difference is carried by the value space, not by a second term. `grievance.category` is one property in both leaves; PMFBY pins the numeric codes its portal issues, PM-KISAN pins `G001`–`G010`.
 
-A branch or a pack may refuse an inherited term outright, declaring it with `FieldNotAllowed` so the refusal names the field, rather than leave it defined and never filled. The PM-KISAN branch refuses `grievance.subCategory`, because it classifies at one level. The PMFBY branch refuses `case.repliedOn`, because its reply arrives as `latestRemark` with no date beside it, and it refuses the whole `challenge` band outright, because its desk asks for no OTP. Each is one member to delete if the portal changes.
+A leaf simply does not declare what its desk has no equivalent for. PM-KISAN's grievance leaves carry no `subCategory`, because that desk classifies at one level; PMFBY's carry no `challenge`, because that desk asks for no OTP. Because every body is closed, sending either is refused by name — there is nothing to inherit and therefore nothing to refuse explicitly.
 
 ## Packs
 
-- [Grievance](Grievance/v0.1/README.md) — lodging and reading a grievance at a scheme desk. Two branches today: PMFBY crop insurance and PM-KISAN income support. Also publishes `SchemeServiceBase` and `GrievanceBase` for other packs to compose.
+- [Grievance](Grievance/v0.1/README.md) — lodging and reading a grievance at a scheme desk. Two desks today: PMFBY crop insurance and PM-KISAN income support.
 - [Scheme Application](SchemeApplication/v0.1/README.md) — reading where a farmer's application to a scheme stands: instalments paid, eKYC standing, and what is blocking payment. PM-KISAN today.
 
 OAN terms use `openagrinet:` for `https://openagrinet.github.io/network-specs/vocab#`. Versioned artifacts are published under `https://openagrinet.github.io/network-specs/api-schemas/`.

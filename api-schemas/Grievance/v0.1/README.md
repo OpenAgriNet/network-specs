@@ -73,12 +73,19 @@ be read, changed and refused on its own.
 A validator that reads `x-oan-schema-by-action` validates a payload against the per-call
 schema for the action in flight, so a `status` payload is checked against the two status
 leaves rather than against all seven. A validator that does not read it falls back to the
-root `oneOf`. **Both accept and refuse exactly the same payloads** — the key narrows what
-a refusal has to talk about, never what is legal.
+root `oneOf`.
 
-An action the key does not name is validated against the whole type. The key is an
-optimisation, not a whitelist: which calls exist is the base spec's to say, and a pack
-that nominates a schema for four of them is not thereby refusing the other twenty-three.
+**The two do not agree, and that is the point.** The root union accepts whatever any leaf
+accepts, so a complete `status` payload passes it even when it arrives as `support`. The
+per-call schema refuses that same payload, and says why:
+`property "provider" is missing`. Reading the key is what catches a well-formed ask sent
+to the wrong call, and what makes the refusal name a field instead of saying the payload
+matched nothing. The fallback is a safety net for a validator that does not know the key,
+not an equivalent to it.
+
+An action the key does not name is validated against the whole type. Which calls exist is
+the base spec's to say, and a pack that nominates a schema for four of them is not thereby
+refusing the other twenty-three.
 
 **Why `oneOf` and not `if`/`then`.** The network's validator is kin-openapi. It parses
 `if`/`then` and never evaluates it, so a per-scheme rule written that way looks like it
@@ -154,10 +161,9 @@ and have nothing that corresponds to a case. Here only the declaration goes ther
 
 | band | holds | written by |
 |---|---|---|
-| top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller |
+| top level | who is asking and about what: `informationMode`, `provider`, `scheme`, `enrolmentId`, and the PMFBY-only `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` — three of those five inbound only, see below | the caller |
 | `grievance` | what the farmer submitted: `category`, `subCategory`, `description` | the farmer |
 | `case` | what the portal has on file, the stamps it applied included: `ticketNo`, `status`, `filedOn`, `reply`, `repliedOn`, `cropName` | the portal, except the selector — see below |
-| top level, PMFBY-only | the caller's own inputs: `applicantMobile`, `cropYear`, `season`, `complaintDate`, `receiptSourceId` | the caller; three of them inbound only — see below |
 | `challenge.response` | proof of identity, presented with the call it guards: `method`, `value`. Inbound only, never echoed, never forwarded | the caller |
 | `challenge.issued` | the portal's acknowledgement that it sent a code: `method`, `length`, `valueType`, `expiresAt` | the portal |
 
@@ -303,12 +309,14 @@ oneOf:
 ```
 
 **`PMKISANStatus.case` refuses a reply date with no reply.** `case.repliedOn` without
-`case.reply` is a date for an answer nobody wrote, which is not a fact:
+`case.reply` is a date for an answer nobody wrote, which is not a fact. Written as an
+exclusive `oneOf`, for the reason given above — an `anyOf` here would report
+"doesn't match any schema" and throw the field name away:
 
 ```yaml
-anyOf:
+oneOf:
   - not: { required: [repliedOn] }
-  - required: [reply]
+  - required: [repliedOn, reply]
 ```
 
 **Each leaf requires its own `mustSend` list outright.** `mustSend` is a published
@@ -422,7 +430,7 @@ the record. Eleven are mapped, thirty-four are dropped, and every one is listed.
 | `TicketCategoryName` | `grievance.category.name` | |
 | `TicketSubCategoryID` | `grievance.subCategory.code` | |
 | `TicketSubCategoryName` | `grievance.subCategory.name` | two levels, kept apart: the portal's own category name contains a slash, so any joined form would be lossy |
-| `TicketStatus` | `case.status.code` | mapped to a `CaseStatusCode`. The phrase itself is not forwarded — the pack refuses `name`. The only value yet observed is `Open` |
+| `TicketStatus` | `case.status.code` | mapped to a `CaseStatus`. The phrase itself is not forwarded — the pack refuses `name`. The only value yet observed is `Open` |
 | `RequestYear` | `cropYear` | |
 | `RequestSeason` | `season` | the same 1/2/3 to `Kharif`/`Rabi`/`Zaid` lookup as the lodge, read the other way |
 | `CropName` | `case.cropName` | the insured crop |
@@ -614,8 +622,8 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `enrolmentId` | Ask, when filing; also returned | The enrolment the grievance is about, as the scheme numbers it. Stays in the attributes object on every call, `support` included |
 | `grievance.category` | Ask, optional when filing; sometimes returned | The portal's own classification. `code` is required when the field is sent; `name` is an optional label beside it |
 | `grievance.description` | Ask, when filing; also returned | The farmer's account of the problem, minimum ten characters |
-| `case.ticketNo` | Returned on PMFBY; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
-| `case.status` | Returned | Where the grievance stands, as a `CaseStatusCode`. Branch on it and render your own label; `name` is refused |
+| `case.ticketNo` | Required on a PMFBY read, and returned; optional on PM-KISAN | The handle the portal issued. A read key on PMFBY, a quotable handle only on PM-KISAN |
+| `case.status` | Returned | Where the grievance stands, as a `CaseStatus`. Branch on it and render your own label; `name` is refused |
 | `case.filedOn` | Returned | Date the grievance was filed, as an IST calendar date |
 | `challenge.methods` | The catalog entry only | What this desk challenges with before it will act. Never sent on a transaction |
 | `grievanceOptions` | The catalog entry only | The categories, and where the desk has them the sub-categories, this desk accepts. Never sent on a transaction |
@@ -680,8 +688,8 @@ routed.
 | action | leaf | mustSend | maySend | comesBack |
 |---|---|---|---|---|
 | `catalog/publish` | `PMFBYCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `grievanceOptions.categories`, `grievanceOptions.subCategories` | — | — |
-| `support` | `PMFBYSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `scheme.name`, `grievance.category.code`, `grievance.subCategory.code`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `PMFBYStatus` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId`, `cropYear`, `season` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
+| `support` | `PMFBYSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `applicantMobile`, `cropYear`, `season`, `grievance.description` | `scheme.name`, `grievance.category`, `grievance.subCategory`, `complaintDate`, `receiptSourceId` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
+| `status` | `PMFBYStatus` | `informationMode`, `scheme.code`, `applicantMobile`, `case.ticketNo` | `scheme.name`, `enrolmentId`, `cropYear`, `season` | `informationMode`, `scheme.code`, `scheme.name`, `enrolmentId`, `cropYear`, `season`, `grievance.category.code`, `grievance.subCategory.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.cropName` |
 
 **PM-KISAN**
 
@@ -690,7 +698,7 @@ routed.
 | `catalog/publish` | `PMKISANCatalog` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.methods`, `grievanceOptions.categories` | — | — |
 | `init` | `PMKISANInit` | `informationMode`, `scheme.code`, `enrolmentId` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `challenge.issued.method`, `challenge.issued.length`, `challenge.issued.valueType`, `challenge.issued.expiresAt` |
 | `support` | `PMKISANSupport` | `informationMode`, `scheme.code`, `provider.id`, `provider.descriptor.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `provider.id`, `provider.descriptor.name`, `scheme.code`, `scheme.name`, `enrolmentId`, `grievance.category.code`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn` |
-| `status` | `PMKISANStatus` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
+| `status` | `PMKISANStatus` | `informationMode`, `scheme.code`, `enrolmentId`, `case.filedOn`, `challenge.response.method`, `challenge.response.value` | `scheme.name` | `informationMode`, `scheme.code`, `scheme.name`, `grievance.description`, `case.ticketNo`, `case.status.code`, `case.filedOn`, `case.reply`, `case.repliedOn` |
 
 Both are allow-lists. A path not named is not used by that call. `catalog/publish` has
 no `comesBack` bucket, because the Portal answers it with a bare ACK: the catalog entry
@@ -789,7 +797,7 @@ member, so `name` is refused for both schemes. Each portal's own status phrase p
 code and is then dropped, because no sample of either vocabulary exists and a slot
 reserved for values nobody has seen is a guess with a field around it.
 
-Where a portal publishes a status phrase, the adapter maps it to a `CaseStatusCode`. A
+Where a portal publishes a status phrase, the adapter maps it to a `CaseStatus`. A
 phrase it does not recognise maps to `UnderReview` — never to a terminal state, which
 must come from the portal — so an unknown vocabulary degrades rather than fails. If a
 portal supplies its phrase list and the list says more than the code can, `name` can be

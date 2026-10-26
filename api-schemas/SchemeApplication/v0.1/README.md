@@ -101,10 +101,11 @@ The sequence is two calls:
 Every payload in the sequence is `OnDemand`: the ask, the OTP acknowledgement and the
 answer carrying the application alike. The grievance pack does the same.
 
-`init` exists here and not on PM-KISAN's grievance desk for the same reason it exists at
-all: this read is gated and lodging a grievance is not. The OTP is the same OTP — the same
-upstream service issues it and the same four digits satisfy it — so a caller who holds one
-from a grievance flow can spend it here.
+The OTP is the same OTP as PM-KISAN's grievance desk uses — the same upstream service
+issues it and the same four digits satisfy it — so a caller who holds one from a grievance
+flow can spend it here, and the `init` leg that issues it is written the same way in both
+packs. What differs is the body around it: there the challenge guards lodging and reading
+a complaint, here it guards reading an application.
 
 ## Identity is named, not sniffed
 
@@ -382,10 +383,15 @@ The catalog is listed against `catalog/publish` rather than `discover` because a
 `discover` request carries an intent and no attributes at all — the catalog this pack
 describes travels on the publish call.
 
-**The key narrows and never restricts.** An action it does not name falls back to the
-root union, which accepts and refuses the same payloads; it is the error messages that
-differ, not the verdict. Against the union a caller who omitted one field is told that no
-leaf matched; against the per-call schema they are told the field's name.
+**The key narrows, and the narrowing is real.** The root union accepts whatever any leaf
+accepts, so a complete `init` payload passes it even when it arrives as `status` — the
+union cannot see which call is in flight. The per-call schema can, and refuses it. So the
+key changes the verdict, not only the wording: against the union a caller who omitted one
+field is told that no leaf matched, and a caller who sent a good payload to the wrong call
+is told nothing at all; against the per-call schema both are told the field's name.
+
+An action the key does not name still falls back to the union. That is a safety net for a
+validator that does not read the key, not an equivalent to reading it.
 
 ## The gates
 

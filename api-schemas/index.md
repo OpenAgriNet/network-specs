@@ -1,6 +1,6 @@
 # OpenAgriNet API Schema Packs
 
-<p class="page-intro">Browse the provider API contracts. Each pack describes what one named Provider's API accepts and returns, states where it attaches in <code>x-beckn-container</code>, and keeps its versioned artifacts together.</p>
+<p class="page-intro">Browse the provider API contracts. Each pack describes what one named Provider's API accepts and returns, states which schema serves each call in <code>x-oan-schema-by-action</code>, and keeps its versioned artifacts together.</p>
 
 Read the [API schema overview](README.md) for how these differ from the [domain schemas](../schema/).
 
@@ -41,29 +41,29 @@ The index is generated from the versioned `profile.json` files under `api-schema
 {% endfor %}
 </div>
 
-## Shared definitions
+## No pack shares a schema with another
 
-A pack may publish definitions for another pack to compose, rather than keeping a second copy in step by review. The definitions live in the pack that uses them most; only the schema a pack names in its `profile.json` is indexed, and the rest are there to be referenced.
+Each pack stands alone. Neither `$ref`s into the other, so a change to one cannot reach the other and a reviewer reading one pack has read all of it.
 
-[`Grievance/v0.1`](Grievance/v0.1/attributes.yaml) is the one doing that today. It defines `SchemeServiceBase` — what any scheme desk needs whether or not it handles grievances — which [SchemeApplication](SchemeApplication/v0.1/README.md) `allOf`-references. `GrievanceBase` sits one layer above it and stays inside the grievance pack. Nothing ever sends `"@type": openagrinet:SchemeServiceBase` or `openagrinet:GrievanceBase`.
+Inside a pack the shape is three layers. The root nominates a schema per action in `x-oan-schema-by-action`; each of those is a `oneOf` over the leaves that serve that call; each leaf is one scheme's version of one call — a guard pinning `scheme.code`, a closed flat body, and where needed a gate stating which combinations the portal accepts. Adding a scheme is adding a leaf; nothing existing is edited.
 
-The shape is five bands, and the band a field sits in says who wrote it: the context at the top (`informationMode`, `provider`, `scheme`, `enrolmentId`), what the farmer submitted under `grievance`, what the portal has on file under `case`, and the challenge under `challenge` — what the desk accepts, what it sent, and what the caller answered, one member per payload. Anything a pack adds of its own — a crop season, an applicant's mobile — sits at the top with the rest of the context. A desk that issues no challenge refuses the whole band outright. A pack that is not about a complaint takes the base one layer down: SchemeApplication composes `SchemeServiceBase`, so the `grievance` and `case` bands are never inherited, and it carries `applicant` and `application` in their place. The grievance pack also publishes `CaseStatusCode`, `CalendarDate`, `Instant`, `ProviderReference`, `ChallengeMethod` and `GrievanceOption`, so the case-status vocabulary and the two date shapes are defined once.
+What the packs do share is vocabulary. `informationMode`, `provider`, `scheme`, `enrolmentId` and `grievance.description` resolve to the same `openagrinet:` IRIs in both, so payloads from either pack line up in a graph without either file referencing the other.
 
 ## Why these are separate
 
 A domain pack is written once for the whole network and says what a thing *is*. An API pack is written for one provider and says what that provider's API will take and give back, so an experience layer can call it without reading adapter mapping files.
 
-The artifacts are identical. The scope differs, and `profile.json` records that in `semantic_model`; the attachment point may differ too, which each pack states for itself in `x-beckn-container`.
+The artifacts are identical. The scope differs, and `profile.json` records that in `semantic_model`; the attachment point differs per call, which each pack states for itself in `x-beckn-container-by-action`.
 
 ## Information modes
 
-`informationMode` says where the answer comes from, and no pack names a Beckn action.
+`informationMode` says where the answer comes from.
 
 | Mode | Meaning |
 |---|---|
 | `OnDemand` | The external system answers. The caller makes the `init`, `status` or `support` call that follows discovery. The only value |
 
-What a *particular* action must carry is enforced by that action's mapping guard in the adapter, not by the pack. A pack that required the fields of one action would reject a legitimate payload of another.
+What a *particular* action must carry is stated by the pack. `x-oan-schema-by-action` names one schema per action and the validator checks the payload against that schema alone, so a payload that is complete for one call is refused on another — by name, not by a general "matches nothing".
 
 ## Pack contents
 
