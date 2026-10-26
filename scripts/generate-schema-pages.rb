@@ -283,10 +283,71 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
                else
                  []
                end
-    beckn_path = raw_property["x-beckn-path"] || property["x-beckn-path"]
-    row["beckn_path"] = beckn_path if beckn_path
-
     [row] + children
+  end
+end
+
+# A leaf's gate is written entirely in `required`, `not`, `allOf` and `oneOf` over
+# which fields are present. Reading it is what tells an ask apart from an answer on
+# packs whose leaves share a `required` list, so the page cannot skip it. Members
+# reached through `$ref` are the scheme guards, which pin a value rather than a
+# presence and are checked separately.
+def presence_satisfied?(schema, data)
+  return true unless schema.is_a?(Hash)
+  return false unless Array(schema["required"]).all? { |name| data.key?(name) }
+  return false if schema["not"] && presence_satisfied?(schema["not"], data)
+
+  members = Array(schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }
+  return false unless members.all? { |member| presence_satisfied?(member, data) }
+
+  if schema["oneOf"]
+    matched = Array(schema["oneOf"]).count { |member| presence_satisfied?(member, data) }
+    return false unless matched == 1
+  end
+
+  true
+end
+
+# An API pack's root is a `oneOf` over leaves rather than an `allOf` over bases,
+# so a leaf owns a whole call and the examples that belong to it are the ones its
+# own shape accepts. The leaves are mutually exclusive by construction, so this
+# match is the same one the validator makes.
+def leaf_accepts?(resolver, member, source_path, expanded, declared, data)
+  return false unless data.is_a?(Hash)
+  return false unless shape_accepts?(resolver, member, source_path, data)
+  return false unless presence_satisfied?(declared, data)
+
+  code = expanded.dig("properties", "scheme", "properties", "code")
+  pinned = code && (code["const"] || Array(code["enum"]).first)
+  pinned.nil? || data.dig("scheme", "code") == pinned
+end
+
+# Every body in an API pack is closed, so which fields an object declares is
+# enough to tell two leaves apart all the way down -- a `challenge` holding
+# `methods` is a catalog entry and one holding `issued` is an acknowledgement,
+# and only the nested shape says which. Beckn-owned references are somebody
+# else's contract and are taken on trust.
+def shape_accepts?(resolver, schema, source_path, data)
+  expanded, expanded_path, external_ref = resolver.expand(schema, source_path)
+  return true if external_ref
+
+  if data.is_a?(Array)
+    items = expanded["items"]
+    return true unless items
+
+    return data.all? { |entry| shape_accepts?(resolver, items, expanded_path, entry) }
+  end
+
+  return true unless data.is_a?(Hash)
+
+  properties = expanded["properties"]
+  return true unless properties
+  return false unless (data.keys - properties.keys).empty?
+  return false unless Array(expanded["required"]).all? { |name| data.key?(name) }
+
+  data.all? do |name, value|
+    child = properties[name]
+    child.nil? || shape_accepts?(resolver, child, expanded_path, value)
   end
 end
 
@@ -355,6 +416,39 @@ SCHEMA_ROOTS.flat_map { |root| Dir.glob(root.join("*", "v*", "profile.json")).so
     end
   )
 
+  # A pack whose root is a `oneOf` publishes one leaf per (scheme, call). There is
+  # no single composed object to tabulate, so the page is a table per leaf instead.
+  root_leaves = Array(root_schema["oneOf"]).select { |member| member.is_a?(Hash) && member["$ref"] }
+  actions_for_leaf = Hash.new { |store, name| store[name] = [] }
+  (root_schema["x-oan-schema-by-action"] || {}).each do |action, call_schema_name|
+    call_schema = attributes.dig("components", "schemas", call_schema_name)
+    next unless call_schema
+
+    Array(call_schema["oneOf"]).each do |member|
+      actions_for_leaf[component_name(member["$ref"])] << action if member.is_a?(Hash) && member["$ref"]
+    end
+  end
+
+  leaves = root_leaves.map do |member|
+    leaf_name = component_name(member["$ref"])
+    expanded_leaf, = resolver.expand(member, attributes_path)
+    declared = attributes.dig("components", "schemas", leaf_name) || {}
+    leaf_examples = examples.select do |example|
+      leaf_accepts?(resolver, member, attributes_path, expanded_leaf, declared, example["data"])
+    end
+    oan_fields = declared["x-oan-fields"] || {}
+    {
+      "name" => leaf_name,
+      "actions" => actions_for_leaf[leaf_name],
+      "must_send" => Array(oan_fields["mustSend"]),
+      "may_send" => Array(oan_fields["maySend"]),
+      "one_of" => Array(oan_fields["oneOf"]),
+      "comes_back" => Array(oan_fields["comesBack"]),
+      "examples" => leaf_examples.map { |example| example["name"] },
+      "fields" => collect_fields(resolver, member, attributes_path, leaf_examples, {}, [], nil, 0, leaf_name)
+    }
+  end
+
   key = "#{pack_name}-#{version_dir}"
   effective_fields = collect_fields(resolver, root_schema, attributes_path, examples, root_origins)
   effective_requirements = effective_fields.each_with_object({}) do |field, requirements|
@@ -363,6 +457,16 @@ SCHEMA_ROOTS.flat_map { |root| Dir.glob(root.join("*", "v*", "profile.json")).so
   pack_fields = collect_fields(resolver, pack_schema, attributes_path, examples, {}, [], nil, 0, pack_name)
   pack_fields.each do |field|
     field["requirement"] = effective_requirements.fetch(field["path"], field["requirement"])
+  end
+
+  unless leaves.empty?
+    seen_paths = {}
+    effective_fields = leaves.flat_map { |leaf| leaf["fields"] }.select do |field|
+      next false if seen_paths[field["path"]]
+
+      seen_paths[field["path"]] = true
+    end
+    pack_fields = []
   end
 
   by_action = root_schema["x-beckn-container-by-action"]
@@ -388,6 +492,8 @@ SCHEMA_ROOTS.flat_map { |root| Dir.glob(root.join("*", "v*", "profile.json")).so
     "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]
   }
   packs[key]["beckn_container_by_action"] = by_action if by_action
+  packs[key]["leaves"] = leaves unless leaves.empty?
+  packs[key]["schemas_by_action"] = root_schema["x-oan-schema-by-action"] if root_schema["x-oan-schema-by-action"]
 
   pack_dir.join("index.md").write(<<~MARKDOWN)
     ---
