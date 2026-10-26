@@ -53,6 +53,51 @@ to fire: every field is read at the same path on both calls.
 (`res:pmkisan:application-status`). It is fixed for the provider and never minted per
 farmer: a registration number must not end up in a public, cacheable identifier.
 
+## What this desk publishes it can do
+
+A catalog entry says this desk exists and what it accepts. It did not, until now, say
+**which calls it serves** — a caller had to know that reading an application status means
+`init` then `status`, and that there is no `support` here at all. That knowledge lived in
+the caller, which meant every caller held its own copy and any one of them could be wrong.
+
+The `actions` band moves it into the catalog. One entry per call this desk serves:
+
+| field | holds |
+|---|---|
+| `action` | the Beckn action to call, as it appears in `context.action` |
+| `description` | what the call does, what it needs first, and what it returns that a later call consumes |
+| `schema` | a URL naming the one leaf this scheme accepts for that call |
+| `attributesAt` | a JSONPath to where that payload rides in the envelope |
+
+**A call absent from the list is a call this desk does not serve.** This pack publishes
+`init` and `status` and no `support`: an application is read, never filed through here.
+The Grievance pack is where a farmer raises a complaint, and PM-KISAN publishes both, as
+two resources on one catalog.
+
+`schema` points at the **leaf**, not the per-call schema the validator uses. A catalog
+entry is already scheme-specific — it sits on a resource whose `scheme.code` is pinned —
+so naming `SchemeApplicationStatus` would hand the caller a `oneOf` to resolve.
+`PMKISANApplicationStatus` is one closed shape. Conforming to the leaf implies conforming
+to the per-call schema, so nothing is weakened by being specific. It matters more here
+than it looks: PM-KISAN serves this pack *and* Grievance through one plugin, so a bare
+schema name would not tell a caller which of the two packs it belongs to.
+
+`description` carries what a schema cannot: ordering. `status` requires
+`challenge.response` holding an OTP that only `init` issues, so `init` must come first.
+That is not expressible as a constraint on a single payload, and it is exactly what a
+caller planning a sequence needs to know.
+
+`attributesAt` repeats `x-beckn-container-by-action` on the pack root. That is deliberate
+duplication: the caller gets the container in the same read as the schema, rather than
+fetching the root to resolve it. Both are generated from the same table, so they cannot
+drift apart.
+
+**The whole band is pinned with `const`.** It is not a free-text hint an adapter fills in.
+The catalog leaf declares the exact list it must publish, element for element, so an
+adapter that advertises a call it cannot serve — or stops advertising one it can — fails
+validation instead of lying to every caller. Order is part of the pin, because the
+validator compares the array element by element.
+
 ## The bands
 
 **The band a field sits in says who wrote it.**

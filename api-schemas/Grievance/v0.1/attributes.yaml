@@ -83,12 +83,14 @@ components:
     PMFBYCatalog:
       x-oan-fields:
         mustSend:  [informationMode, scheme.code, scheme.name,
-                    grievanceOptions.categories, grievanceOptions.subCategories]
+                    grievanceOptions.categories, grievanceOptions.subCategories,
+                    actions]
       allOf:
         - $ref: "#/components/schemas/IsPMFBY"
         - type: object
           additionalProperties: false
-          required: ["@context", "@type", informationMode, scheme, grievanceOptions]
+          required: ["@context", "@type", informationMode, scheme, grievanceOptions,
+                     actions]
           properties:
             "@context": { $ref: "#/components/schemas/Context" }
             "@type": { $ref: "#/components/schemas/Type" }
@@ -122,6 +124,25 @@ components:
                   items: { $ref: "#/components/schemas/PMFBYOption" }
                   x-jsonld-id: "openagrinet:grievanceSubCategoryOption"
               x-jsonld-id: "openagrinet:grievanceOptions"
+            actions:
+              type: array
+              items: { $ref: "#/components/schemas/PublishedAction" }
+              const:
+                - action: support
+                  description: >-
+                      File a new grievance. Needs the enrolment number, the applicant's mobile, the crop
+                      year, the season and a description of the problem. Returns case.ticketNo, which status
+                      requires. Needs no OTP, so it can be called without init.
+                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport"
+                  attributesAt: "$.message.support.channels[0]"
+                - action: status
+                  description: >-
+                      Read where a filed grievance stands: its status code, the portal's reply and the crop
+                      it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's
+                      mobile. Cases cannot be listed by enrolment number, so support must come first.
+                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus"
+                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
+              x-jsonld-id: "openagrinet:publishedAction"
 
     PMFBYStatus:
       x-oan-fields:
@@ -335,12 +356,14 @@ components:
     PMKISANCatalog:
       x-oan-fields:
         mustSend:  [informationMode, scheme.code, scheme.name,
-                    challenge.methods, grievanceOptions.categories]
+                    challenge.methods, grievanceOptions.categories,
+                    actions]
       allOf:
         - $ref: "#/components/schemas/IsPMKISAN"
         - type: object
           additionalProperties: false
-          required: ["@context", "@type", informationMode, scheme, challenge, grievanceOptions]
+          required: ["@context", "@type", informationMode, scheme, challenge, grievanceOptions,
+                     actions]
           properties:
             "@context": { $ref: "#/components/schemas/Context" }
             "@type": { $ref: "#/components/schemas/Type" }
@@ -387,6 +410,33 @@ components:
                   items: { $ref: "#/components/schemas/PMKISANOption" }
                   x-jsonld-id: "openagrinet:grievanceCategoryOption"
               x-jsonld-id: "openagrinet:grievanceOptions"
+            actions:
+              type: array
+              items: { $ref: "#/components/schemas/PublishedAction" }
+              const:
+                - action: init
+                  description: >-
+                      Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment
+                      number. Needs only the enrolment number. Call before status or support: both require
+                      challenge.response carrying this OTP.
+                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit"
+                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
+                - action: status
+                  description: >-
+                      Read a grievance already filed against this enrolment number: its status code, the
+                      officer's reply and when it was given. Needs the OTP from init and case.filedOn, the
+                      filing date support returned, which picks one case out of all those on the
+                      registration.
+                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus"
+                  attributesAt: "$.message.contract.commitments[0].commitmentAttributes"
+                - action: support
+                  description: >-
+                      File a new grievance against this enrolment number, under one of the categories
+                      published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep
+                      filedOn, because status selects a case by it.
+                  schema: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport"
+                  attributesAt: "$.message.support.channels[0]"
+              x-jsonld-id: "openagrinet:publishedAction"
 
     PMKISANInit:
       x-oan-fields:
@@ -649,6 +699,30 @@ components:
           type: string
           enum: [Registered, UnderReview, AwaitingApplicant, Replied, Resolved, Rejected, Closed]
       x-jsonld-id: "openagrinet:caseStatus"
+
+    PublishedAction:
+      type: object
+      additionalProperties: false
+      required: [action, description, schema, attributesAt]
+      properties:
+        action:
+          type: string
+          enum: [init, status, support]
+          x-jsonld-id: "openagrinet:actionName"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 400
+          x-jsonld-id: "openagrinet:actionDescription"
+        schema:
+          type: string
+          format: uri
+          pattern: "^https://openagrinet\\.github\\.io/network-specs/api-schemas/Grievance/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
+          x-jsonld-id: "openagrinet:actionSchema"
+        attributesAt:
+          type: string
+          pattern: "^\\$\\.message\\.[A-Za-z0-9.\\[\\]]+$"
+          x-jsonld-id: "openagrinet:actionAttributesAt"
 
     Provider:
       type: object

@@ -4,6 +4,15 @@
     "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
     "Grievance": "openagrinet:Grievance",
     "informationMode": "openagrinet:informationMode",
+    "actions": {
+      "@id": "openagrinet:publishedAction",
+      "@context": {
+        "action": "openagrinet:actionName",
+        "description": "openagrinet:actionDescription",
+        "schema": "openagrinet:actionSchema",
+        "attributesAt": "openagrinet:actionAttributesAt"
+      }
+    },
     "challenge": {
       "@id": "openagrinet:challenge",
       "@context": {

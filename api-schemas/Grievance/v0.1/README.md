@@ -155,6 +155,49 @@ This is where the pack parts company with the OAN domain packs. A forecast or a 
 price genuinely is a resource, so those packs carry their payload on `resourceAttributes`
 and have nothing that corresponds to a case. Here only the declaration goes there.
 
+## What each desk publishes it can do
+
+A catalog entry says this desk exists and what it accepts. It did not, until now, say
+**which calls it serves** — a caller had to know that PMFBY answers `status` and `support`
+but has no `init`, and that PM-KISAN answers all three. That knowledge lived in the
+caller, which meant every caller held its own copy and any one of them could be wrong.
+
+The `actions` band moves it into the catalog. One entry per call this desk serves:
+
+| field | holds |
+|---|---|
+| `action` | the Beckn action to call, as it appears in `context.action` |
+| `description` | what the call does, what it needs first, and what it returns that a later call consumes |
+| `schema` | a URL naming the one leaf this scheme accepts for that call |
+| `attributesAt` | a JSONPath to where that payload rides in the envelope |
+
+**A call absent from the list is a call this desk does not serve.** PMFBY publishes two
+entries and no `init`, because there is no `PMFBYInit` leaf to point at.
+
+`schema` points at the **leaf**, not the per-call schema the validator uses. A catalog
+entry is already scheme-specific — it sits on a resource whose `scheme.code` is pinned —
+so naming `GrievanceStatus` would hand the caller a `oneOf` over both schemes and make it
+re-derive which arm applies. `PMKISANStatus` is one closed shape. Conforming to the leaf
+implies conforming to the per-call schema, so nothing is weakened by being specific.
+
+`description` carries what a schema cannot: ordering. PMFBY's `status` matches on a
+`case.ticketNo` that only `support` returns, so for PMFBY `support` must come first;
+PM-KISAN's `status` matches on a `case.filedOn` that its `support` returns, and both its
+reads need an OTP from `init`. None of that is expressible as a constraint on a single
+payload, and all of it is what a caller planning a sequence needs to know. Array order
+hints at it; the text states it.
+
+`attributesAt` repeats `x-beckn-container-by-action` on the pack root. That is deliberate
+duplication: the caller gets the container in the same read as the schema, rather than
+fetching the root to resolve it. Both are generated from the same table, so they cannot
+drift apart.
+
+**The whole band is pinned with `const`.** It is not a free-text hint an adapter fills in.
+Each catalog leaf declares the exact list it must publish, element for element, so an
+adapter that advertises a call it cannot serve — or stops advertising one it can — fails
+validation instead of lying to every caller. Order is part of the pin, because the
+validator compares the array element by element.
+
 ## The five bands
 
 **The band a field sits in says who wrote it.**
@@ -210,6 +253,11 @@ carries the categories — and, where the desk classifies at two levels, the
 sub-categories — this desk accepts, so a caller chooses from the portal's vocabulary
 instead of keeping a master list of its own. PMFBY numbers two levels and publishes both.
 PM-KISAN numbers one and declares no `subCategories`.
+
+`actions` sits in no band either, and is confined the same way: it is declared on the
+catalog leaves alone, so a transaction payload carrying it is refused by closure. It
+names the calls this desk serves, so a caller reads the desk's capabilities instead of
+hard-coding them. See the section above.
 
 Before the containers the same split lived in a prefix — `grievanceCategory` against
 `caseStatus` — which read the same and checked nothing: a field named either way

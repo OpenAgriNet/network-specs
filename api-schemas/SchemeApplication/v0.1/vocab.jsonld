@@ -129,6 +129,36 @@
       "@type": "rdfs:Property",
       "rdfs:label": "application blockers",
       "rdfs:comment": "What is holding the money up, each as a code with the portal's own phrase. Absent means nothing is."
+    },
+    {
+      "@id": "openagrinet:publishedAction",
+      "@type": "rdfs:Property",
+      "rdfs:label": "published action",
+      "rdfs:comment": "The calls this catalog entry serves. One entry per call, each naming the schema to build and where that payload rides in the envelope. Published on catalog/publish only; a call absent from the list is a call this scheme does not serve."
+    },
+    {
+      "@id": "openagrinet:actionName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "action name",
+      "rdfs:comment": "The Beckn action to call, as it appears in context.action."
+    },
+    {
+      "@id": "openagrinet:actionDescription",
+      "@type": "rdfs:Property",
+      "rdfs:label": "action description",
+      "rdfs:comment": "What this call does and when to use it, in plain language. Carries ordering a schema cannot state: which call must come first, and what it returns that a later call needs."
+    },
+    {
+      "@id": "openagrinet:actionSchema",
+      "@type": "rdfs:Property",
+      "rdfs:label": "action schema",
+      "rdfs:comment": "A URL naming the one leaf schema this scheme accepts for this call. Resolves to attributes.yaml with a JSON Pointer fragment, so the caller reads a single closed shape rather than resolving a oneOf."
+    },
+    {
+      "@id": "openagrinet:actionAttributesAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "action attributes at",
+      "rdfs:comment": "A JSONPath to where the attributes object sits in that call's envelope. The same fact as x-beckn-container-by-action on the pack root, published so a caller needs one fetch rather than two."
     }
   ]
 }
