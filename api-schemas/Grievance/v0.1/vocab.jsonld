@@ -89,10 +89,16 @@
       "rdfs:comment": "The caller's answer to a challenge, presented on a guarded call."
     },
     {
+      "@id": "openagrinet:challengeChannel",
+      "@type": "rdf:Property",
+      "rdfs:label": "challenge channel",
+      "rdfs:comment": "How the challenge reaches the farmer. SMS is a text message to the registered mobile. Described where delivery is offered and confirmed; not echoed when the answer is presented."
+    },
+    {
       "@id": "openagrinet:challengeMethod",
       "@type": "rdfs:Property",
       "rdfs:label": "challenge method",
-      "rdfs:comment": "The mechanism, naming delivery channel and secret kind together: SMS_OTP is a one-time code sent by SMS."
+      "rdfs:comment": "The kind of secret demanded. OTP is a one-time code; the route it travels is challenge channel."
     },
     {
       "@id": "openagrinet:challengeLength",

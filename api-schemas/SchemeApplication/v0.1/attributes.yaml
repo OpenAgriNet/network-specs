@@ -90,9 +90,10 @@ components:
                   items:
                     type: object
                     additionalProperties: false
-                    required: [method, length, valueType]
+                    required: [method, channel, length, valueType]
                     properties:
-                      method: { type: string, enum: [SMS_OTP] }
+                      method: { type: string, enum: [OTP] }
+                      channel: { type: string, enum: [SMS] }
                       length: { type: integer, enum: [4] }
                       valueType: { type: string, enum: [NUMERIC] }
                   x-jsonld-id: "openagrinet:challengeMethods"
@@ -138,7 +139,7 @@ components:
         oneOf:     [enrolmentId, applicant.mobile]
         maySend:   [scheme.name]
         comesBack: [informationMode, scheme.code, scheme.name,
-                    challenge.issued.method, challenge.issued.length,
+                    challenge.issued.method, challenge.issued.channel, challenge.issued.length,
                     challenge.issued.valueType, challenge.issued.expiresAt]
       allOf:
         - $ref: "#/components/schemas/IsPMKISAN"
@@ -170,9 +171,10 @@ components:
                 issued:
                   type: object
                   additionalProperties: false
-                  required: [method, length, valueType, expiresAt]
+                  required: [method, channel, length, valueType, expiresAt]
                   properties:
-                    method: { type: string, enum: [SMS_OTP] }
+                    method: { type: string, enum: [OTP] }
+                    channel: { type: string, enum: [SMS] }
                     length: { type: integer, enum: [4] }
                     valueType: { type: string, enum: [NUMERIC] }
                     expiresAt: { $ref: "#/components/schemas/Instant" }
@@ -305,7 +307,7 @@ components:
           additionalProperties: false
           required: [method, value]
           properties:
-            method: { type: string, enum: [SMS_OTP] }
+            method: { type: string, enum: [OTP] }
             value:
               type: string
               pattern: "^[0-9]{4}$"

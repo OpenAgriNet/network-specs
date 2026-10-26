@@ -20,6 +20,7 @@
           "@id": "openagrinet:challengeMethods",
           "@context": {
             "method": "openagrinet:challengeMethod",
+            "channel": "openagrinet:challengeChannel",
             "length": "openagrinet:challengeLength",
             "valueType": "openagrinet:challengeValueType"
           }
@@ -28,6 +29,7 @@
           "@id": "openagrinet:challengeIssued",
           "@context": {
             "method": "openagrinet:challengeMethod",
+            "channel": "openagrinet:challengeChannel",
             "length": "openagrinet:challengeLength",
             "valueType": "openagrinet:challengeValueType",
             "expiresAt": "openagrinet:challengeExpiresAt"

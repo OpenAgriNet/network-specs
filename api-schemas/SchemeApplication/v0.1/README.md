@@ -115,6 +115,15 @@ validator in use. The consequence of that gap is an under-published catalog, not
 caller sent to the wrong schema; every element that *is* published still has its triple
 pinned.
 
+`method` and `channel` are two different questions, and the pack keeps them apart.
+`method` is the kind of secret demanded — `OTP` today, and a biometric or a face scan
+would be other values. `channel` is how that secret reaches the farmer — `SMS` today.
+Fusing them, as `SMS_OTP` once did, cannot express a method that has no delivery channel
+at all, which is exactly what a biometric check is. `channel` appears where delivery is
+being described: offered in `challenge.methods`, confirmed in `challenge.issued`. It is
+absent from `challenge.response`, because a caller presenting a code is proving identity,
+not describing a route, and the route is already settled by `issued`.
+
 ## The bands
 
 **The band a field sits in says who wrote it.**
@@ -311,7 +320,7 @@ an error message, can say which shape was meant.
 What each leaf does on top of the guard:
 
 - pins `scheme.code` to `PM-KISAN`, the only scheme offering this capability today;
-- pins `challenge.response.method` and `challenge.methods[].method` to `SMS_OTP`, and
+- pins `challenge.response.method` and `challenge.methods[].method` to `OTP`, and
   `challenge.response.value` to **four digits**;
 - pins `challenge.methods[].length` and `challenge.issued.length` to the same four, and
   both `valueType`s to `NUMERIC`, so the catalog, the acknowledgement and the value
@@ -342,7 +351,7 @@ mandatory in a Beckn `Intent` or an identifier-only protocol reference.
 | `application.blockers` | Optional, returned | Why payment is not arriving. Absent, empty and non-empty are three different answers; see above. `name` is the portal's own phrase and is marked `freetext` / `no-log` / `no-trace` |
 | `application.registeredOn` | Optional, returned | When the farmer was registered under the scheme. An instant, not a date — see below |
 | `application.ekyc` | Optional, returned | `Done` or `Pending` |
-| `challenge.methods` | The catalog entry only | One entry: `method` `SMS_OTP`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, and to size the OTP input before any transaction exists. Never sent on a transaction |
+| `challenge.methods` | The catalog entry only | One entry: `method` `OTP`, `channel` `SMS`, `length` `4`, `valueType` `NUMERIC`. A caller reads it to know this desk challenges before answering, where the code will arrive, and how to size the input before any transaction exists. Never sent on a transaction |
 
 `application.registeredOn` is the one timestamp here, and the offset in it is ours.
 Upstream `DateOfRegistration` carries a time but no offset — a bare local timestamp, in
@@ -560,7 +569,7 @@ members outright; this one keeps `name` and refuses the other five.
 "instalment". The portal's own category label `Installment not received`, quoted in the
 grievance pack, keeps the portal's spelling — that is a value, not a property name.
 
-`SMS_OTP` and `NUMERIC` break the repo's UpperCamelCase convention for governed values.
+`OTP`, `SMS` and `NUMERIC` break the repo's UpperCamelCase convention for governed values.
 They are kept as they are: read as acronyms, written that way by every integrator, and
 renaming them would churn the mapping files for no gain.
 

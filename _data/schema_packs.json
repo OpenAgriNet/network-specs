@@ -7427,7 +7427,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANCatalog",
-        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
         "enum": null,
         "enum_details": null
       },
@@ -7439,7 +7439,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "PMKISANCatalog",
-        "example": "[\n  {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -7448,12 +7448,26 @@
         "type": "string",
         "requirement": "Always",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANCatalog",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: SMS",
+        "reference": null,
+        "origin": "PMKISANCatalog",
+        "example": "\"SMS\"",
+        "enum": [
+          "SMS"
         ],
         "enum_details": null
       },
@@ -7493,7 +7507,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANInit",
-        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-09-28T11:08:00Z\"\n}",
+        "example": "{\n  \"method\": \"OTP\",\n  \"channel\": \"SMS\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-09-28T11:08:00Z\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -7502,12 +7516,26 @@
         "type": "string",
         "requirement": "When challenge is supplied",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANInit",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge.issued.channel",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "No description supplied.",
+        "constraints": "enum: SMS",
+        "reference": null,
+        "origin": "PMKISANInit",
+        "example": "\"SMS\"",
+        "enum": [
+          "SMS"
         ],
         "enum_details": null
       },
@@ -7559,7 +7587,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANStatus",
-        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"7390\"\n}",
+        "example": "{\n  \"method\": \"OTP\",\n  \"value\": \"7390\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -7568,12 +7596,12 @@
         "type": "string",
         "requirement": "Always",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANStatus",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
         ],
         "enum_details": null
       },
@@ -7628,25 +7656,25 @@
         "name": "Pmkisan On Demand Capability",
         "file": "examples/pmkisan-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"SMS_OTP\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    }\n  ]\n}"
       },
       {
         "name": "Pmkisan On Demand Challenge Issued",
         "file": "examples/pmkisan-on-demand-challenge-issued.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"issued\": {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\",\n      \"expiresAt\": \"2026-09-28T11:08:00Z\"\n    }\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"issued\": {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\",\n      \"expiresAt\": \"2026-09-28T11:08:00Z\"\n    }\n  }\n}"
       },
       {
         "name": "Pmkisan On Demand Lodge Grievance",
         "file": "examples/pmkisan-on-demand-lodge-grievance.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"provider\": {\n    \"id\": \"pmkisan\",\n    \"descriptor\": {\n      \"name\": \"PM-KISAN Portal\"\n    }\n  },\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"SMS_OTP\",\n      \"value\": \"4821\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"grievance\": {\n    \"category\": {\n      \"code\": \"G003\"\n    },\n    \"description\": \"Third instalment for 2026 has not been credited.\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"provider\": {\n    \"id\": \"pmkisan\",\n    \"descriptor\": {\n      \"name\": \"PM-KISAN Portal\"\n    }\n  },\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"4821\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"grievance\": {\n    \"category\": {\n      \"code\": \"G003\"\n    },\n    \"description\": \"Third instalment for 2026 has not been credited.\"\n  }\n}"
       },
       {
         "name": "Pmkisan On Demand Read Cases",
         "file": "examples/pmkisan-on-demand-read-cases.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"SMS_OTP\",\n      \"value\": \"7390\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"case\": {\n    \"filedOn\": \"2026-09-28\"\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"7390\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"case\": {\n    \"filedOn\": \"2026-09-28\"\n  }\n}"
       },
       {
         "name": "Pmkisan On Demand Request Otp",
@@ -8825,7 +8853,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANCatalog",
-            "example": "{\n  \"methods\": [\n    {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+            "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
             "enum": null,
             "enum_details": null
           },
@@ -8837,7 +8865,7 @@
             "constraints": "minItems: 1 · uniqueItems: true",
             "reference": null,
             "origin": "PMKISANCatalog",
-            "example": "[\n  {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+            "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
             "enum": null,
             "enum_details": null
           },
@@ -8846,12 +8874,26 @@
             "type": "string",
             "requirement": "Always",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANCatalog",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
+            ],
+            "enum_details": null
+          },
+          {
+            "path": "challenge.methods[].channel",
+            "type": "string",
+            "requirement": "Always",
+            "description": "No description supplied.",
+            "constraints": "enum: SMS",
+            "reference": null,
+            "origin": "PMKISANCatalog",
+            "example": "\"SMS\"",
+            "enum": [
+              "SMS"
             ],
             "enum_details": null
           },
@@ -9041,6 +9083,7 @@
           "scheme.code",
           "scheme.name",
           "challenge.issued.method",
+          "challenge.issued.channel",
           "challenge.issued.length",
           "challenge.issued.valueType",
           "challenge.issued.expiresAt"
@@ -9146,7 +9189,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANInit",
-            "example": "{\n  \"issued\": {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\",\n    \"expiresAt\": \"2026-09-28T11:08:00Z\"\n  }\n}",
+            "example": "{\n  \"issued\": {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\",\n    \"expiresAt\": \"2026-09-28T11:08:00Z\"\n  }\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9158,7 +9201,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANInit",
-            "example": "{\n  \"method\": \"SMS_OTP\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-09-28T11:08:00Z\"\n}",
+            "example": "{\n  \"method\": \"OTP\",\n  \"channel\": \"SMS\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-09-28T11:08:00Z\"\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9167,12 +9210,26 @@
             "type": "string",
             "requirement": "When challenge is supplied",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANInit",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
+            ],
+            "enum_details": null
+          },
+          {
+            "path": "challenge.issued.channel",
+            "type": "string",
+            "requirement": "When challenge is supplied",
+            "description": "No description supplied.",
+            "constraints": "enum: SMS",
+            "reference": null,
+            "origin": "PMKISANInit",
+            "example": "\"SMS\"",
+            "enum": [
+              "SMS"
             ],
             "enum_details": null
           },
@@ -9347,7 +9404,7 @@
             "constraints": "additionalProperties: false",
             "reference": "api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANChallengeResponse",
             "origin": "PMKISANStatus",
-            "example": "{\n  \"response\": {\n    \"method\": \"SMS_OTP\",\n    \"value\": \"7390\"\n  }\n}",
+            "example": "{\n  \"response\": {\n    \"method\": \"OTP\",\n    \"value\": \"7390\"\n  }\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9359,7 +9416,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANStatus",
-            "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"7390\"\n}",
+            "example": "{\n  \"method\": \"OTP\",\n  \"value\": \"7390\"\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9368,12 +9425,12 @@
             "type": "string",
             "requirement": "Always",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANStatus",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
             ],
             "enum_details": null
           },
@@ -9690,7 +9747,7 @@
             "constraints": "additionalProperties: false",
             "reference": "api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANChallengeResponse",
             "origin": "PMKISANSupport",
-            "example": "{\n  \"response\": {\n    \"method\": \"SMS_OTP\",\n    \"value\": \"4821\"\n  }\n}",
+            "example": "{\n  \"response\": {\n    \"method\": \"OTP\",\n    \"value\": \"4821\"\n  }\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9702,7 +9759,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANSupport",
-            "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"4821\"\n}",
+            "example": "{\n  \"method\": \"OTP\",\n  \"value\": \"4821\"\n}",
             "enum": null,
             "enum_details": null
           },
@@ -9711,12 +9768,12 @@
             "type": "string",
             "requirement": "Always",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANSupport",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
             ],
             "enum_details": null
           },
@@ -9989,7 +10046,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANApplicationCatalog",
-        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
         "enum": null,
         "enum_details": null
       },
@@ -10001,7 +10058,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "PMKISANApplicationCatalog",
-        "example": "[\n  {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -10010,12 +10067,26 @@
         "type": "string",
         "requirement": "Always",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANApplicationCatalog",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Always",
+        "description": "No description supplied.",
+        "constraints": "enum: SMS",
+        "reference": null,
+        "origin": "PMKISANApplicationCatalog",
+        "example": "\"SMS\"",
+        "enum": [
+          "SMS"
         ],
         "enum_details": null
       },
@@ -10154,7 +10225,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANApplicationInit",
-        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-10-07T11:08:00Z\"\n}",
+        "example": "{\n  \"method\": \"OTP\",\n  \"channel\": \"SMS\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-10-07T11:08:00Z\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -10163,12 +10234,26 @@
         "type": "string",
         "requirement": "When challenge is supplied",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANApplicationInit",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge.issued.channel",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "No description supplied.",
+        "constraints": "enum: SMS",
+        "reference": null,
+        "origin": "PMKISANApplicationInit",
+        "example": "\"SMS\"",
+        "enum": [
+          "SMS"
         ],
         "enum_details": null
       },
@@ -10220,7 +10305,7 @@
         "constraints": "additionalProperties: false",
         "reference": null,
         "origin": "PMKISANApplicationStatus",
-        "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"4821\"\n}",
+        "example": "{\n  \"method\": \"OTP\",\n  \"value\": \"4821\"\n}",
         "enum": null,
         "enum_details": null
       },
@@ -10229,12 +10314,12 @@
         "type": "string",
         "requirement": "When challenge is supplied",
         "description": "No description supplied.",
-        "constraints": "enum: SMS_OTP",
+        "constraints": "enum: OTP",
         "reference": null,
         "origin": "PMKISANApplicationStatus",
-        "example": "\"SMS_OTP\"",
+        "example": "\"OTP\"",
         "enum": [
-          "SMS_OTP"
+          "OTP"
         ],
         "enum_details": null
       },
@@ -10362,19 +10447,19 @@
         "name": "On Demand Capability",
         "file": "examples/on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"SMS_OTP\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    }\n  ]\n}"
       },
       {
         "name": "On Demand Challenge Issued",
         "file": "examples/on-demand-challenge-issued.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"issued\": {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\",\n      \"expiresAt\": \"2026-10-07T11:08:00Z\"\n    }\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"issued\": {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\",\n      \"expiresAt\": \"2026-10-07T11:08:00Z\"\n    }\n  }\n}"
       },
       {
         "name": "On Demand Read Status",
         "file": "examples/on-demand-read-status.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicant\": {\n    \"mobile\": \"9876543210\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"SMS_OTP\",\n      \"value\": \"4821\"\n    }\n  }\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicant\": {\n    \"mobile\": \"9876543210\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"4821\"\n    }\n  }\n}"
       },
       {
         "name": "On Demand Request Otp",
@@ -10505,7 +10590,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANApplicationCatalog",
-            "example": "{\n  \"methods\": [\n    {\n      \"method\": \"SMS_OTP\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+            "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
             "enum": null,
             "enum_details": null
           },
@@ -10517,7 +10602,7 @@
             "constraints": "minItems: 1 · uniqueItems: true",
             "reference": null,
             "origin": "PMKISANApplicationCatalog",
-            "example": "[\n  {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+            "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
             "enum": null,
             "enum_details": null
           },
@@ -10526,12 +10611,26 @@
             "type": "string",
             "requirement": "Always",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANApplicationCatalog",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
+            ],
+            "enum_details": null
+          },
+          {
+            "path": "challenge.methods[].channel",
+            "type": "string",
+            "requirement": "Always",
+            "description": "No description supplied.",
+            "constraints": "enum: SMS",
+            "reference": null,
+            "origin": "PMKISANApplicationCatalog",
+            "example": "\"SMS\"",
+            "enum": [
+              "SMS"
             ],
             "enum_details": null
           },
@@ -10649,6 +10748,7 @@
           "scheme.code",
           "scheme.name",
           "challenge.issued.method",
+          "challenge.issued.channel",
           "challenge.issued.length",
           "challenge.issued.valueType",
           "challenge.issued.expiresAt"
@@ -10778,7 +10878,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANApplicationInit",
-            "example": "{\n  \"issued\": {\n    \"method\": \"SMS_OTP\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\",\n    \"expiresAt\": \"2026-10-07T11:08:00Z\"\n  }\n}",
+            "example": "{\n  \"issued\": {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\",\n    \"expiresAt\": \"2026-10-07T11:08:00Z\"\n  }\n}",
             "enum": null,
             "enum_details": null
           },
@@ -10790,7 +10890,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANApplicationInit",
-            "example": "{\n  \"method\": \"SMS_OTP\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-10-07T11:08:00Z\"\n}",
+            "example": "{\n  \"method\": \"OTP\",\n  \"channel\": \"SMS\",\n  \"length\": 4,\n  \"valueType\": \"NUMERIC\",\n  \"expiresAt\": \"2026-10-07T11:08:00Z\"\n}",
             "enum": null,
             "enum_details": null
           },
@@ -10799,12 +10899,26 @@
             "type": "string",
             "requirement": "When challenge is supplied",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANApplicationInit",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
+            ],
+            "enum_details": null
+          },
+          {
+            "path": "challenge.issued.channel",
+            "type": "string",
+            "requirement": "When challenge is supplied",
+            "description": "No description supplied.",
+            "constraints": "enum: SMS",
+            "reference": null,
+            "origin": "PMKISANApplicationInit",
+            "example": "\"SMS\"",
+            "enum": [
+              "SMS"
             ],
             "enum_details": null
           },
@@ -11002,7 +11116,7 @@
             "constraints": "additionalProperties: false",
             "reference": "api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANChallengeResponse",
             "origin": "PMKISANApplicationStatus",
-            "example": "{\n  \"response\": {\n    \"method\": \"SMS_OTP\",\n    \"value\": \"4821\"\n  }\n}",
+            "example": "{\n  \"response\": {\n    \"method\": \"OTP\",\n    \"value\": \"4821\"\n  }\n}",
             "enum": null,
             "enum_details": null
           },
@@ -11014,7 +11128,7 @@
             "constraints": "additionalProperties: false",
             "reference": null,
             "origin": "PMKISANApplicationStatus",
-            "example": "{\n  \"method\": \"SMS_OTP\",\n  \"value\": \"4821\"\n}",
+            "example": "{\n  \"method\": \"OTP\",\n  \"value\": \"4821\"\n}",
             "enum": null,
             "enum_details": null
           },
@@ -11023,12 +11137,12 @@
             "type": "string",
             "requirement": "When challenge is supplied",
             "description": "No description supplied.",
-            "constraints": "enum: SMS_OTP",
+            "constraints": "enum: OTP",
             "reference": null,
             "origin": "PMKISANApplicationStatus",
-            "example": "\"SMS_OTP\"",
+            "example": "\"OTP\"",
             "enum": [
-              "SMS_OTP"
+              "OTP"
             ],
             "enum_details": null
           },

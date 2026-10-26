@@ -215,6 +215,15 @@ validator in use. The consequence of that gap is an under-published catalog, not
 caller sent to the wrong schema; every element that *is* published still has its triple
 pinned.
 
+`method` and `channel` are two different questions, and the pack keeps them apart.
+`method` is the kind of secret demanded — `OTP` today, and a biometric or a face scan
+would be other values. `channel` is how that secret reaches the farmer — `SMS` today.
+Fusing them, as `SMS_OTP` once did, cannot express a method that has no delivery channel
+at all, which is exactly what a biometric check is. `channel` appears where delivery is
+being described: offered in `challenge.methods`, confirmed in `challenge.issued`. It is
+absent from `challenge.response`, because a caller presenting a code is proving identity,
+not describing a route, and the route is already settled by `issued`.
+
 ## The five bands
 
 **The band a field sits in says who wrote it.**
@@ -711,7 +720,7 @@ enumeration, so the pack constrains only "digits" — see "Non-goals".
 
 | Field | Required when | Meaning |
 |---|---|---|
-| `challenge.response` | `support` and `status` | `method: SMS_OTP` and a four-digit `value`. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
+| `challenge.response` | `support` and `status` | `method: OTP` and a four-digit `value`. No `channel`: the route the code travelled is already known from `issued`, and repeating it proves nothing. Inbound only. Never logged, traced, echoed or forwarded to the lodge call |
 | `challenge.issued` | `init` response | The portal's acknowledgement: `method`, `length`, `valueType`, `expiresAt`. Carries no secret and no destination |
 | `case.reply`, `case.repliedOn` | Optional, returned | Absent rather than null while nothing has been recorded. `reply` is bounded at 2000 characters, and `repliedOn` without it is refused |
 
@@ -1012,7 +1021,7 @@ Two places the pack is deliberately *not* stricter:
 
 ## Naming
 
-`SMS_OTP`, `NUMERIC` and `ALPHANUMERIC` break the repo's UpperCamelCase convention for
+`OTP`, `SMS`, `NUMERIC` and `ALPHANUMERIC` break the repo's UpperCamelCase convention for
 governed values. They are kept as they are, deliberately: they are read as acronyms, they
 match how every integrator writes them, and renaming them would churn the mapping files
 for no gain. Recorded here so a later reviewer does not "fix" them.

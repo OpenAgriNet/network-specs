@@ -11,7 +11,7 @@
   },
   "challenge": {
     "response": {
-      "method": "SMS_OTP",
+      "method": "OTP",
       "value": "4821"
     }
   }

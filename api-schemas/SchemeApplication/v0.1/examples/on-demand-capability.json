@@ -9,7 +9,8 @@
   "challenge": {
     "methods": [
       {
-        "method": "SMS_OTP",
+        "method": "OTP",
+        "channel": "SMS",
         "length": 4,
         "valueType": "NUMERIC"
       }
