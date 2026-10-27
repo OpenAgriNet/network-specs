@@ -26,7 +26,8 @@
     "beckn:commitmentAttributes.enrolmentId",
     "beckn:commitmentAttributes.application.ekyc.code",
     "beckn:commitmentAttributes.application.blockers[].code",
-    "beckn:commitmentAttributes.application.registeredOn"
+    "beckn:commitmentAttributes.application.registeredOn",
+    "beckn:commitmentAttributes.application.latestInstalmentPaid"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -35,7 +36,8 @@
     "beckn:commitmentAttributes.informationMode",
     "beckn:commitmentAttributes.scheme.code",
     "beckn:commitmentAttributes.application.ekyc.code",
-    "beckn:commitmentAttributes.application.blockers[].code"
+    "beckn:commitmentAttributes.application.blockers[].code",
+    "beckn:commitmentAttributes.application.registeredOn"
   ],
   "sortable_paths": [
     "beckn:commitmentAttributes.application.registeredOn",

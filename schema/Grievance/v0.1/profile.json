@@ -41,7 +41,8 @@
     "beckn:commitmentAttributes.grievance.subCategory.code",
     "beckn:support.channels[0].grievance.subCategory.code",
     "beckn:commitmentAttributes.case.filedOn",
-    "beckn:support.channels[0].case.filedOn"
+    "beckn:support.channels[0].case.filedOn",
+    "beckn:commitmentAttributes.case.repliedOn"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -60,7 +61,8 @@
     "beckn:commitmentAttributes.grievance.subCategory.code",
     "beckn:support.channels[0].grievance.subCategory.code",
     "beckn:commitmentAttributes.case.filedOn",
-    "beckn:support.channels[0].case.filedOn"
+    "beckn:support.channels[0].case.filedOn",
+    "beckn:commitmentAttributes.case.repliedOn"
   ],
   "sortable_paths": [
     "beckn:commitmentAttributes.case.filedOn",
