@@ -28,23 +28,45 @@
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.name",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas[].codeScheme",
+    "beckn:resourceAttributes.coverageAreas[].areaCode",
+    "beckn:resourceAttributes.coverageAreas[].areaLevel",
+    "beckn:resourceAttributes.coverageAreas[].type",
+    "beckn:resourceAttributes.coverageAreas[].bbox",
+    "beckn:resourceAttributes.coverageAreas[].coordinates",
     "beckn:resourceAttributes.supportedFacilityTypes",
     "beckn:resourceAttributes.facilityType",
     "beckn:resourceAttributes.location.geo",
     "beckn:resourceAttributes.address.addressLocality",
     "beckn:resourceAttributes.address.addressRegion",
     "beckn:resourceAttributes.address.postalCode",
-    "beckn:resourceAttributes.services[].code"
+    "beckn:resourceAttributes.services[].code",
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.lastUpdatedAt"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.subjectCategories",
+    "beckn:resourceAttributes.agricultureSubjects[].subjectId",
+    "beckn:resourceAttributes.agricultureSubjects[].descriptor.code",
+    "beckn:resourceAttributes.languages",
+    "beckn:resourceAttributes.coverageAreas[].codeScheme",
+    "beckn:resourceAttributes.coverageAreas[].areaCode",
+    "beckn:resourceAttributes.coverageAreas[].areaLevel",
+    "beckn:resourceAttributes.coverageAreas[].type",
     "beckn:resourceAttributes.supportedFacilityTypes",
     "beckn:resourceAttributes.facilityType",
+    "beckn:resourceAttributes.location.geo",
     "beckn:resourceAttributes.address.addressLocality",
     "beckn:resourceAttributes.address.addressRegion",
     "beckn:resourceAttributes.address.postalCode",
-    "beckn:resourceAttributes.services[].code"
+    "beckn:resourceAttributes.services[].code",
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.lastUpdatedAt"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.lastUpdatedAt"

@@ -33,7 +33,7 @@ The schema is applied to `resourceAttributes` of a Beckn `Resource`. Beckn owns 
 | `subjectCategories` | Always | Broad discovery classification required by the composed Agriculture Resource field set |
 | `agricultureSubjects` | Optional | Governed subjects such as a crop, livestock species, pest, or scheme |
 | `languages` | Both modes | Supported or available BCP 47 languages |
-| `coverageAreas` | Optional | Geographic applicability or supported coverage |
+| `coverageAreas` | Optional | Geographic applicability inherited from [Agriculture Resource](../../AgricultureResource/v0.1/README.md#coverage-areas); each item is an administrative reference or direct GeoJSON geometry, not a Beckn Location |
 | `topics` | Both modes | Knowledge topics used for discovery and matching |
 | `supportedKnowledgeTypes` | `OnDemand` | Semantic knowledge kinds available on demand |
 | `supportedMediaTypes` | Optional | Media formats the Provider supports |

@@ -42,7 +42,7 @@ This pack declares the shared agriculture field set. Other selected contracts re
 | `subjectCategories` | Always | Classifies the Resource for discovery using one or more broad categories such as crop, weather, market, practice, or facility |
 | `agricultureSubjects` | Optional | Identifies governed subjects such as Cotton, Rice, or a commodity; absence means broad applicability within the declared categories |
 | `languages` | Optional here; refined by selected packs | Declares supported or available BCP 47 languages |
-| `coverageAreas` | Optional | Declares geographic applicability using an administrative area reference or a Beckn GeoJSON geometry |
+| `coverageAreas` | Optional | Declares geographic applicability using an administrative area reference or a Beckn GeoJSON geometry supplied directly, not a Beckn Location |
 
 `subjectCategories` is required in the shared field set so downstream systems can apply a consistent discovery filter. A concrete pack may also require a particular value, such as `Weather`, `Market`, or `Facility`.
 
@@ -90,6 +90,40 @@ The `languages` field uses BCP 47 tags. Examples include `en` for English, `hi` 
 
 ### Coverage areas
 
+`coverageAreas` describes where a Resource applies. It does not describe a resolved physical place. Each array item is either an administrative area reference or a GeoJSON geometry supplied directly. Do not wrap the geometry in a `geo` property.
+
+```json
+{
+  "coverageAreas": [
+    {
+      "type": "Point",
+      "coordinates": [73.86850558, 18.49089838]
+    },
+    {
+      "codeScheme": "ISO-3166-2",
+      "areaCode": "IN-MH",
+      "areaLevel": "State",
+      "areaName": "Maharashtra"
+    }
+  ]
+}
+```
+
+A pack-specific field named `location` describes a resolved place. It uses Beckn `Location`, so its geometry appears under `geo`:
+
+```json
+{
+  "location": {
+    "geo": {
+      "type": "Point",
+      "coordinates": [73.86850558, 18.49089838]
+    }
+  }
+}
+```
+
+Use `location` for the place represented by a specific facility, observation, market, or advisory. Use `coverageAreas` for the geographic applicability or supported coverage of a Resource.
+
 An administrative area reference carries a code system such as ISO 3166, LGD, or PIN and the corresponding code. Use it when a governed area identifier is sufficient.
 
 | Field | Required | Meaning | Example |
@@ -113,7 +147,7 @@ A GeoJSON geometry carries a Point, Polygon, MultiPolygon, or another geometry s
 
 | Geometry | Required member | Example use |
 |---|---|---|
-| `Point` | `coordinates` | Facility or observation point |
+| `Point` | `coordinates` | Coverage limited to one coordinate |
 | `LineString` | `coordinates` | Route or linear feature |
 | `Polygon` | `coordinates` | Service boundary or farm area |
 | `MultiPoint` | `coordinates` | Related observation points |
