@@ -138,8 +138,9 @@ not describing a route, and the route is already settled by `issued`.
 
 `applicant` is the caller's lookup key and `application` is the portal's record. With one
 information mode the schema cannot tell an ask from an answer by `informationMode`, so it
-tells them apart by shape instead: each call's schema carries a gate whose answer arm
-refuses `applicant` outright. `enrolmentId` travels in both directions. A caller who holds the registration number
+tells them apart by shape instead: `init`'s gate carries an acknowledgement arm that
+refuses `applicant` outright. `status` has no answer arm at all -- see "The gates".
+`enrolmentId` travels in both directions. A caller who holds the registration number
 sends it; a caller who holds only a mobile number sends `applicant` instead,
 and the portal resolves it and returns the registration number under `enrolmentId`. The
 two slots are mutually exclusive — exactly one, never both. See "Identity is named, not
@@ -225,9 +226,11 @@ rules, and give each a stable IRI rather than one whose meaning depends on a sib
 
 `applicant` requires `mobile` and `additionalProperties: false` closes off anything else,
 so the object cannot carry a second identifier. `enrolmentId` and `applicant` are held
-apart by each call's own gate: the ask arm is a `oneOf` over the two slots, which says
-never both and never neither in one clause. The answer arms refuse `applicant` outright,
-so a response cannot leak the lookup key back beside the registration it resolved to.
+apart by each call's own gate: a `oneOf` over the two slots, which says never both and
+never neither in one clause. On `init` the acknowledgement arm refuses `applicant`
+outright, so an acknowledgement cannot carry the lookup key back beside the registration
+it resolved to. On `status` the gate describes the ask only, and keeping `applicant` out
+of the answer rests on the response mapping, which is an allow-list.
 
 **Aadhaar is not a lookup key on this capability.** There is no slot for one, and
 `enrolmentId` refuses twelve bare digits so one cannot be sent in the registration slot
@@ -398,8 +401,8 @@ Identity is why `oneOf` exists. Both calls need `enrolmentId` or `applicant.mobi
 one of them, and not the other beside it. A `mustSend` list is flat and all-of, so
 naming either there would be false for the other kind of caller, and leaving both in
 `maySend` would let a request builder generated from the lists send no identifier at
-all. The ask arm of each leaf's gate enforces it, as a `oneOf` over the two slots: never
-both, never neither.
+all. Each leaf's gate enforces it, as a `oneOf` over the two slots: never both, never
+neither.
 
 It is an allow-list. A path not named above is not used by this capability. `enrolmentId`
 comes back on `status` even when the ask was by mobile — it is the portal's own `Reg_No`,
@@ -479,10 +482,15 @@ caller would be told only that nothing matched.
    `enrolmentId` **or** `applicant`, by `oneOf`, never both and never neither — and no
    `challenge`. The acknowledgement carries `challenge.issued` and does not echo
    `applicant`: the mobile it was sent to is `no-echo`.
-2. **`status` is an ask or an answer, told apart by the record.** The ask carries
-   `challenge.response`, exactly one identifier by the same `oneOf`, and no
-   `application`. The answer carries `application` and the `enrolmentId` the portal
-   resolved, and never the `applicant` it was given.
+2. **`status` is an ask.** It carries `challenge.response` -- required unconditionally,
+   not by an arm -- and exactly one identifier by the same `oneOf`. The answer shape,
+   `application` plus the `enrolmentId` the portal resolved, is declared on the leaf and
+   named in `comesBack`, but it is deliberately not a second arm. A schema that accepted
+   the answer shape would also accept an *ask* written in that shape, and such an ask
+   carries no OTP: adding `application` to a request was enough to walk past the
+   challenge requirement entirely. The grievance pack's `PMKISANStatus` requires its
+   `challenge` the same way, for the same reason. Nothing validates a response, so the
+   leaf loses no coverage by describing only the direction that is checked.
 3. **The catalog entry needs no gate.** `PMKISANApplicationCatalog` declares
    `informationMode`, `scheme` and `challenge.methods`, and nothing else. An entry names
    no farmer because there is no slot to name one in — not because a rule forbids it.
@@ -491,7 +499,7 @@ Everything else that used to be a gate is now a shape.
 
 | the old gate | what holds it now |
 |---|---|
-| one identifier slot, not two | the `oneOf` in each ask arm; the answer arms refuse `applicant` outright |
+| one identifier slot, not two | the `oneOf` in each leaf's gate; on `status` each arm refuses the other slot by name, so a payload sending both is told which one to drop |
 | every payload is about something | each leaf's own `required` list plus its gate — there is no shape left that is a scheme name and nothing else |
 | a catalog declaration cannot ride with a real lookup | `PMKISANApplicationCatalog` is its own leaf and declares neither |
 | the grievance bands and PMFBY's five fields refused by name | `additionalProperties: false` on every leaf — they are not declared, so they are not accepted |
@@ -531,8 +539,10 @@ Every identifier here — `enrolmentId` and whichever member `applicant` carries
 bearer key as much as an identifier: anyone holding one can read the record.
 
 `mobile` is never echoed in a response, and that is structural rather than only a mapping
-rule in part: `x-oan-pii` marks it `no-echo`, and the exclusivity gate makes an answer
-carrying both the key and the registration it resolved to unrepresentable. `enrolmentId`
+rule in part: `x-oan-pii` marks it `no-echo`, and on `init` the acknowledgement arm makes
+an answer carrying both the key and the registration it resolved to unrepresentable. On
+`status`, where the gate describes the ask alone, that rule rests on the response mapping
+and its allow-list. `enrolmentId`
 is the single deliberate exception: it goes back to the caller who sent it, or comes back
 as the portal's resolution of a mobile lookup.
 

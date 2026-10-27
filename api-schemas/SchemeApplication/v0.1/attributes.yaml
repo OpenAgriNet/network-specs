@@ -202,7 +202,7 @@ components:
         - $ref: "#/components/schemas/IsPMKISAN"
         - type: object
           additionalProperties: false
-          required: ["@context", "@type", informationMode, scheme]
+          required: ["@context", "@type", informationMode, scheme, challenge]
           properties:
             "@context": { $ref: "#/components/schemas/Context" }
             "@type": { $ref: "#/components/schemas/Type" }
@@ -261,14 +261,10 @@ components:
                   x-jsonld-id: "openagrinet:applicationBlockers"
               x-jsonld-id: "openagrinet:application"
         - oneOf:
-            - allOf:
-                - required: [challenge]
-                - not: { required: [application] }
-                - oneOf:
-                    - required: [enrolmentId]
-                    - required: [applicant]
-            - required: [application, enrolmentId]
+            - required: [enrolmentId]
               properties: { applicant: { not: { type: object } } }
+            - required: [applicant]
+              properties: { enrolmentId: { not: { type: string } } }
 
     Applicant:
       type: object

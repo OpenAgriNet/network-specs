@@ -10300,7 +10300,7 @@
       {
         "path": "challenge.response",
         "type": "object",
-        "requirement": "When challenge is supplied",
+        "requirement": "Always",
         "description": "No description supplied.",
         "constraints": "additionalProperties: false",
         "reference": null,
@@ -10312,7 +10312,7 @@
       {
         "path": "challenge.response.method",
         "type": "string",
-        "requirement": "When challenge is supplied",
+        "requirement": "Always",
         "description": "No description supplied.",
         "constraints": "enum: OTP",
         "reference": null,
@@ -10326,7 +10326,7 @@
       {
         "path": "challenge.response.value",
         "type": "string",
-        "requirement": "When challenge is supplied",
+        "requirement": "Always",
         "description": "No description supplied.",
         "constraints": "pattern: \"^[0-9]{4}$\"",
         "reference": null,
@@ -11111,7 +11111,7 @@
           {
             "path": "challenge",
             "type": "object",
-            "requirement": "Optional",
+            "requirement": "Always",
             "description": "No description supplied.",
             "constraints": "additionalProperties: false",
             "reference": "api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANChallengeResponse",
@@ -11123,7 +11123,7 @@
           {
             "path": "challenge.response",
             "type": "object",
-            "requirement": "When challenge is supplied",
+            "requirement": "Always",
             "description": "No description supplied.",
             "constraints": "additionalProperties: false",
             "reference": null,
@@ -11135,7 +11135,7 @@
           {
             "path": "challenge.response.method",
             "type": "string",
-            "requirement": "When challenge is supplied",
+            "requirement": "Always",
             "description": "No description supplied.",
             "constraints": "enum: OTP",
             "reference": null,
@@ -11149,7 +11149,7 @@
           {
             "path": "challenge.response.value",
             "type": "string",
-            "requirement": "When challenge is supplied",
+            "requirement": "Always",
             "description": "No description supplied.",
             "constraints": "pattern: \"^[0-9]{4}$\"",
             "reference": null,
