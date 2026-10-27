@@ -1,5 +1,5 @@
 {
-  "id": "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1",
+  "id": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1",
   "name": "Scheme Application API Attributes",
   "version": "0.1.0",
   "protocol_version": "2.0",

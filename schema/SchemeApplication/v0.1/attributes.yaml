@@ -21,7 +21,7 @@ components:
         init: commitmentAttributes
         status: commitmentAttributes
       x-jsonld:
-        "@context": "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld"
+        "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld"
         "@type": openagrinet:SchemeApplication
       x-oan-schema-by-action:
         catalog/publish: SchemeApplicationCatalog
@@ -118,7 +118,7 @@ components:
                                           by either the registration number or the
                                           registered mobile. Call before status, which
                                           requires challenge.response carrying this OTP.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit" }
                           attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
                       - properties:
                           action: { const: status }
@@ -129,7 +129,7 @@ components:
                                           eKYC is done, and anything blocking payment. Needs
                                           the OTP from init, and either the registration
                                           number or the registered mobile.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus" }
                           attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
               x-jsonld-id: "openagrinet:publishedAction"
 
@@ -329,7 +329,7 @@ components:
         schema:
           type: string
           format: uri
-          pattern: "^https://openagrinet\\.github\\.io/network-specs/api-schemas/SchemeApplication/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
+          pattern: "^https://openagrinet\\.github\\.io/network-specs/schema/SchemeApplication/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
           x-jsonld-id: "openagrinet:actionSchema"
         attributesAt:
           type: string
@@ -344,13 +344,13 @@ components:
     Context:
       oneOf:
         - type: string
-          const: https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld
+          const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
         - type: array
           minItems: 2
           uniqueItems: true
           items: { type: string, minLength: 1 }
           contains:
-            const: https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld
+            const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
 
     Type:
       oneOf:

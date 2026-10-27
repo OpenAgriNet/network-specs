@@ -1,5 +1,5 @@
 {
-  "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld",
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld",
   "@type": "openagrinet:Grievance",
   "informationMode": "OnDemand",
   "scheme": {
@@ -74,19 +74,19 @@
     {
       "action": "init",
       "description": "Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.",
-      "schema": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit",
+      "schema": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit",
       "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
     },
     {
       "action": "status",
       "description": "Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.",
-      "schema": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus",
+      "schema": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus",
       "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
     },
     {
       "action": "support",
       "description": "File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.",
-      "schema": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport",
+      "schema": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport",
       "attributesAt": "$.message.support.channels[0]"
     }
   ]

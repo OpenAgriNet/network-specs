@@ -1,5 +1,5 @@
 {
-  "@context": "https://openagrinet.github.io/network-specs/api-schemas/SchemeApplication/v0.1/context.jsonld",
+  "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld",
   "@type": "openagrinet:SchemeApplication",
   "informationMode": "OnDemand",
   "scheme": {
@@ -8,5 +8,11 @@
   },
   "applicant": {
     "mobile": "9876543210"
+  },
+  "challenge": {
+    "response": {
+      "method": "OTP",
+      "value": "4821"
+    }
   }
 }

@@ -21,7 +21,7 @@ components:
         status: commitmentAttributes
         support: channels
       x-jsonld:
-        "@context": "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld"
+        "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld"
         "@type": openagrinet:Grievance
       x-oan-schema-by-action:
         catalog/publish: GrievanceCatalog
@@ -145,7 +145,7 @@ components:
                                           and a description of the problem. Returns
                                           case.ticketNo, which status requires. Needs no
                                           OTP, so it can be called without init.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport" }
                           attributesAt: { const: "$.message.support.channels[0]" }
                       - properties:
                           action: { const: status }
@@ -157,7 +157,7 @@ components:
                                           plus the applicant's mobile. Cases cannot be
                                           listed by enrolment number, so support must come
                                           first.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus" }
                           attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
               x-jsonld-id: "openagrinet:publishedAction"
 
@@ -449,7 +449,7 @@ components:
                                           Needs only the enrolment number. Call before
                                           status or support: both require challenge.response
                                           carrying this OTP.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit" }
                           attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
                       - properties:
                           action: { const: status }
@@ -461,7 +461,7 @@ components:
                                           init and case.filedOn, the filing date support
                                           returned, which picks one case out of all those on
                                           the registration.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus" }
                           attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
                       - properties:
                           action: { const: support }
@@ -472,7 +472,7 @@ components:
                                           above. Needs the OTP from init. Returns
                                           case.ticketNo and case.filedOn; keep filedOn,
                                           because status selects a case by it.
-                          schema: { const: "https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport" }
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport" }
                           attributesAt: { const: "$.message.support.channels[0]" }
               x-jsonld-id: "openagrinet:publishedAction"
 
@@ -756,7 +756,7 @@ components:
         schema:
           type: string
           format: uri
-          pattern: "^https://openagrinet\\.github\\.io/network-specs/api-schemas/Grievance/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
+          pattern: "^https://openagrinet\\.github\\.io/network-specs/schema/Grievance/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
           x-jsonld-id: "openagrinet:actionSchema"
         attributesAt:
           type: string
@@ -792,13 +792,13 @@ components:
     Context:
       oneOf:
         - type: string
-          const: https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld
+          const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld
         - type: array
           minItems: 2
           uniqueItems: true
           items: { type: string, minLength: 1 }
           contains:
-            const: https://openagrinet.github.io/network-specs/api-schemas/Grievance/v0.1/context.jsonld
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld
 
     Type:
       oneOf:

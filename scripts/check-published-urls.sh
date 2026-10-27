@@ -11,7 +11,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 fail=0
-FILES=$(find api-schemas -type f \( -name '*.yaml' -o -name '*.json' -o -name '*.jsonld' \) \
+FILES=$(find schema -type f \( -name '*.yaml' -o -name '*.json' -o -name '*.jsonld' \) \
         ! -name '*postman*')
 
 # ---------------------------------------------------- fragments, checked locally
@@ -23,15 +23,15 @@ for f in $FILES; do
   while read -r pointer; do
     [ -z "$pointer" ] && continue
     found=1
-    pack=$(printf '%s' "$pointer" | sed -E 's#.*/api-schemas/([^/]+)/.*#\1#')
+    pack=$(printf '%s' "$pointer" | sed -E 's#.*/schema/([^/]+)/.*#\1#')
     name=${pointer##*/}
-    if grep -q "^    ${name}:$" "api-schemas/${pack}/v0.1/attributes.yaml" 2>/dev/null; then
-      printf '  ok    %-26s in %s\n' "$name" "${f#api-schemas/}"
+    if grep -q "^    ${name}:$" "schema/${pack}/v0.1/attributes.yaml" 2>/dev/null; then
+      printf '  ok    %-26s in %s\n' "$name" "${f#schema/}"
     else
       printf '  BAD   %-26s names no component in %s (from %s)\n' "$name" "$pack" "$f"
       fail=1
     fi
-  done < <(grep -o 'https://openagrinet\.github\.io/network-specs/api-schemas/[A-Za-z0-9/.]*#/components/schemas/[A-Za-z]*' "$f" | sort -u)
+  done < <(grep -o 'https://openagrinet\.github\.io/network-specs/schema/[A-Za-z0-9/.]*#/components/schemas/[A-Za-z]*' "$f" | sort -u)
 done
 [ "$found" -eq 0 ] && echo "  (none found)"
 
@@ -55,7 +55,7 @@ if [ "$fail" -eq 0 ]; then
   echo "All published URLs resolve and all schema pointers name real components."
 else
   echo "FAILED — see the lines marked BAD or with a non-200 code above."
-  echo "Note: /api-schemas/ goes live only once this branch merges into the Pages"
-  echo "source branch, so a sweep of 404s there is expected until then."
+  echo "Note: the Grievance and SchemeApplication packs go live only once this branch"
+  echo "merges into the Pages source branch, so 404s on those two are expected."
 fi
 exit "$fail"
