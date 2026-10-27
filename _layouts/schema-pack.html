@@ -33,10 +33,12 @@ layout: default
     </thead>
     <tbody>
       {% for entry in pack.schemas_by_action %}
+        {% assign action = entry[0] %}
+        {% assign container = pack.beckn_container_by_action[action] %}
         <tr>
-          <td><code>{{ entry[0] }}</code></td>
+          <td><code>{{ action }}</code></td>
           <td><code>{{ entry[1] }}</code></td>
-          <td>{% assign container = pack.beckn_container_by_action[entry[0]] %}{% if container %}<code>{{ container }}</code>{% else %}&mdash;{% endif %}</td>
+          <td>{% if container %}<code>{{ container }}</code>{% else %}&mdash;{% endif %}</td>
         </tr>
       {% endfor %}
     </tbody>
