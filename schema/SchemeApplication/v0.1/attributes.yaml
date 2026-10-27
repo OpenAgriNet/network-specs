@@ -69,33 +69,55 @@ components:
             informationMode:
               type: string
               enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
               x-jsonld-id: "openagrinet:informationMode"
             scheme:
               type: object
               additionalProperties: false
               required: [code, name]
+              description: The government scheme this payload is about.
               properties:
-                code: { type: string, enum: [PM-KISAN] }
-                name: { type: string, minLength: 1 }
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
               x-jsonld-id: "openagrinet:scheme"
             challenge:
               type: object
               additionalProperties: false
               required: [methods]
+              description: The verification this desk requires before it answers.
               properties:
                 methods:
                   type: array
                   minItems: 1
                   uniqueItems: true
+                  description: Verification methods this desk accepts.
                   items:
                     type: object
                     additionalProperties: false
                     required: [method, channel, length, valueType]
                     properties:
-                      method: { type: string, enum: [OTP] }
-                      channel: { type: string, enum: [SMS] }
-                      length: { type: integer, enum: [4] }
-                      valueType: { type: string, enum: [NUMERIC] }
+                      method:
+                        type: string
+                        enum: [OTP]
+                        description: The kind of verification.
+                      channel:
+                        type: string
+                        enum: [SMS]
+                        description: How the OTP reaches the applicant.
+                      length:
+                        type: integer
+                        enum: [4]
+                        description: How many digits the OTP has.
+                      valueType:
+                        type: string
+                        enum: [NUMERIC]
+                        description: What the OTP is made of.
                   x-jsonld-id: "openagrinet:challengeMethods"
               x-jsonld-id: "openagrinet:challenge"
             actions:
@@ -103,6 +125,7 @@ components:
               minItems: 2
               maxItems: 2
               uniqueItems: true
+              description: Every call this desk serves.
               items:
                 allOf:
                   - $ref: "#/components/schemas/PublishedAction"
@@ -152,14 +175,22 @@ components:
             informationMode:
               type: string
               enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
               x-jsonld-id: "openagrinet:informationMode"
             scheme:
               type: object
               additionalProperties: false
               required: [code]
+              description: The government scheme this payload is about.
               properties:
-                code: { type: string, enum: [PM-KISAN] }
-                name: { type: string, minLength: 1 }
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
               x-jsonld-id: "openagrinet:scheme"
             enrolmentId: { $ref: "#/components/schemas/PMKISANEnrolmentId" }
             applicant: { $ref: "#/components/schemas/Applicant" }
@@ -167,17 +198,33 @@ components:
               type: object
               additionalProperties: false
               required: [issued]
+              description: The portal's acknowledgement of the code it sent. Comes back in the reply, never in the request.
               properties:
                 issued:
                   type: object
                   additionalProperties: false
                   required: [method, channel, length, valueType, expiresAt]
+                  description: The portal's acknowledgement that it sent a code. Carries no secret and no destination.
                   properties:
-                    method: { type: string, enum: [OTP] }
-                    channel: { type: string, enum: [SMS] }
-                    length: { type: integer, enum: [4] }
-                    valueType: { type: string, enum: [NUMERIC] }
-                    expiresAt: { $ref: "#/components/schemas/Instant" }
+                    method:
+                      type: string
+                      enum: [OTP]
+                      description: The kind of verification.
+                    channel:
+                      type: string
+                      enum: [SMS]
+                      description: How the OTP reaches the applicant.
+                    length:
+                      type: integer
+                      enum: [4]
+                      description: How many digits the OTP has.
+                    valueType:
+                      type: string
+                      enum: [NUMERIC]
+                      description: What the OTP is made of.
+                    expiresAt:
+                      allOf: [{ $ref: "#/components/schemas/Instant" }]
+                      description: When the OTP stops working.
                   x-jsonld-id: "openagrinet:challengeIssued"
               x-jsonld-id: "openagrinet:challenge"
         - oneOf:
@@ -209,14 +256,22 @@ components:
             informationMode:
               type: string
               enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
               x-jsonld-id: "openagrinet:informationMode"
             scheme:
               type: object
               additionalProperties: false
               required: [code]
+              description: The government scheme this payload is about.
               properties:
-                code: { type: string, enum: [PM-KISAN] }
-                name: { type: string, minLength: 1 }
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
               x-jsonld-id: "openagrinet:scheme"
             enrolmentId: { $ref: "#/components/schemas/PMKISANEnrolmentId" }
             applicant: { $ref: "#/components/schemas/Applicant" }
@@ -225,24 +280,32 @@ components:
               type: object
               additionalProperties: false
               required: [latestInstalmentPaid]
+              description: Where the farmer's application currently stands.
               properties:
                 registeredOn:
                   allOf: [{ $ref: "#/components/schemas/Instant" }]
+                  description: When the farmer was registered under the scheme.
                   x-jsonld-id: "openagrinet:registeredOn"
                 latestInstalmentPaid:
                   type: integer
                   minimum: 0
+                  description: How many instalments have been paid. A count, not an instalment number.
                   x-jsonld-id: "openagrinet:latestInstalmentPaid"
                 ekyc:
                   type: object
                   additionalProperties: false
                   required: [code]
+                  description: Whether the applicant's eKYC is complete.
                   properties:
-                    code: { type: string, enum: [Done, Pending] }
+                    code:
+                      type: string
+                      enum: [Done, Pending]
+                      description: Done once eKYC is complete, Pending until then.
                   x-jsonld-id: "openagrinet:ekycStatus"
                 blockers:
                   type: array
                   uniqueItems: true
+                  description: Why payment is not arriving. Absent, empty and non-empty are three different answers.
                   items:
                     type: object
                     additionalProperties: false
@@ -251,10 +314,12 @@ components:
                       code:
                         type: string
                         enum: [IncomeTaxPayee, LandSeedingPending, Other]
+                        description: The kind of blocker.
                       name:
                         type: string
                         minLength: 1
                         maxLength: 500
+                        description: The blocker as the scheme describes it.
                         x-oan-pii:
                           class: freetext
                           handling: [no-log, no-trace]
@@ -270,10 +335,12 @@ components:
       type: object
       additionalProperties: false
       required: [mobile]
+      description: The farmer, identified by registered mobile.
       properties:
         mobile:
           type: string
           pattern: "^[6-9][0-9]{9}$"
+          description: Mobile registered against the application. The OTP is sent here.
           x-oan-pii:
             class: contact
             handling: [no-log, no-trace, no-echo]
@@ -286,6 +353,7 @@ components:
       minLength: 6
       maxLength: 20
       not: { pattern: "^[0-9]{12}$" }
+      description: The farmer's PM-KISAN registration number. Never an Aadhaar number.
       x-oan-pii:
         class: identifier
         handling: [no-log, no-trace]
@@ -295,16 +363,22 @@ components:
       type: object
       additionalProperties: false
       required: [response]
+      description: The OTP sent back to prove the request is the applicant's.
       properties:
         response:
           type: object
           additionalProperties: false
           required: [method, value]
+          description: The OTP as the applicant entered it.
           properties:
-            method: { type: string, enum: [OTP] }
+            method:
+              type: string
+              enum: [OTP]
+              description: The kind of verification.
             value:
               type: string
               pattern: "^[0-9]{4}$"
+              description: The OTP issued by init. A credential, not an attribute.
               x-oan-pii:
                 class: credential
                 handling: [no-log, no-trace, no-echo, no-forward]
@@ -320,20 +394,24 @@ components:
         action:
           type: string
           enum: [init, status]
+          description: The Beckn action this entry describes.
           x-jsonld-id: "openagrinet:actionName"
         description:
           type: string
           minLength: 1
           maxLength: 400
+          description: What the call does, in the desk's own words.
           x-jsonld-id: "openagrinet:actionDescription"
         schema:
           type: string
           format: uri
           pattern: "^https://openagrinet\\.github\\.io/network-specs/schema/SchemeApplication/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
+          description: The schema in this pack the call's attributes must match.
           x-jsonld-id: "openagrinet:actionSchema"
         attributesAt:
           type: string
           pattern: "^\\$\\.message\\.[A-Za-z0-9.\\[\\]]+$"
+          description: Where the call's attributes sit in the Beckn payload.
           x-jsonld-id: "openagrinet:actionAttributesAt"
 
     Instant:
@@ -342,6 +420,7 @@ components:
       pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
 
     Context:
+      description: This pack's JSON-LD context, alone or inside a larger context array.
       oneOf:
         - type: string
           const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
@@ -353,6 +432,7 @@ components:
             const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
 
     Type:
+      description: This pack's OAN type, alone or alongside the Provider's own types.
       oneOf:
         - type: string
           const: openagrinet:SchemeApplication
