@@ -186,9 +186,8 @@ components:
                     - required: [enrolmentId]
                     - required: [applicant]
                 - not: { required: [challenge] }
-            - allOf:
-                - required: [challenge]
-                - not: { required: [applicant] }
+            - required: [challenge]
+              properties: { applicant: { not: { type: object } } }
 
     PMKISANApplicationStatus:
       x-oan-fields:
@@ -268,9 +267,8 @@ components:
                 - oneOf:
                     - required: [enrolmentId]
                     - required: [applicant]
-            - allOf:
-                - required: [application, enrolmentId]
-                - not: { required: [applicant] }
+            - required: [application, enrolmentId]
+              properties: { applicant: { not: { type: object } } }
 
     Applicant:
       type: object
