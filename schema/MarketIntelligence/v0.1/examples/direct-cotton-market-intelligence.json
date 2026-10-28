@@ -1,0 +1,80 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.1/context.jsonld",
+  "@type": "openagrinet:MarketIntelligence",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Market"
+  ],
+  "supportedCommodities": [
+    {
+      "code": "COTTON",
+      "name": "Cotton"
+    }
+  ],
+  "generatedAt": "2026-08-26T09:00:00Z",
+  "validity": {
+    "startsAt": "2026-08-26T09:00:00Z",
+    "endsAt": "2026-09-09T09:00:00Z"
+  },
+  "insights": [
+    {
+      "insightType": "PriceTrend",
+      "summary": "Cotton modal prices increased across the selected Telangana markets during the last 30 days.",
+      "period": {
+        "startsAt": "2026-07-27T00:00:00Z",
+        "endsAt": "2026-08-26T00:00:00Z"
+      },
+      "indicator": {
+        "indicatorValue": 4.8,
+        "indicatorUnit": "percent",
+        "indicatorName": "modalPriceChange"
+      },
+      "supportingResourceIds": [
+        "resource:mandi-price:telangana:cotton:2026-07-27",
+        "resource:mandi-price:telangana:cotton:2026-08-26"
+      ]
+    },
+    {
+      "insightType": "DemandForecast",
+      "summary": "The Provider forecasts strong cotton demand over the next 14 days.",
+      "period": {
+        "startsAt": "2026-08-26T00:00:00Z",
+        "endsAt": "2026-09-09T00:00:00Z"
+      },
+      "indicator": {
+        "indicatorValue": "High",
+        "indicatorName": "demandClass"
+      }
+    },
+    {
+      "insightType": "MarketOpportunity",
+      "summary": "Adilabad Mandi is an active nearby market for cotton in the requested area.",
+      "market": {
+        "marketCode": "TS-ADILABAD",
+        "marketName": "Adilabad Mandi",
+        "district": "Adilabad",
+        "state": "Telangana",
+        "location": {
+          "geo": {
+            "type": "Point",
+            "coordinates": [
+              78.532,
+              19.6641
+            ]
+          }
+        }
+      },
+      "distance": {
+        "value": 42,
+        "unit": "km"
+      },
+      "supportingResourceIds": [
+        "resource:mandi-price:adilabad:cotton:2026-08-26"
+      ]
+    }
+  ],
+  "source": {
+    "sourceId": "participant:market-intelligence-provider",
+    "sourceName": "Market Intelligence Provider"
+  }
+}

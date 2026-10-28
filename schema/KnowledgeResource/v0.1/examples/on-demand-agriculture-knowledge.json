@@ -1,0 +1,44 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeResource",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Crop"
+  ],
+  "agricultureSubjects": [
+    {
+      "subjectId": "https://taxonomy.openagrinet.global/crops/cotton",
+      "descriptor": {
+        "code": "COTTON",
+        "name": "Cotton"
+      }
+    }
+  ],
+  "topics": [
+    "Crop management",
+    "Pest management",
+    "Nutrient management"
+  ],
+  "languages": [
+    "en",
+    "hi",
+    "te"
+  ],
+  "supportedKnowledgeTypes": [
+    "Article",
+    "FAQ",
+    "Guide"
+  ],
+  "supportedMediaTypes": [
+    "application/json",
+    "text/plain"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country",
+      "areaName": "India"
+    }
+  ]
+}
