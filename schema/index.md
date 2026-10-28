@@ -1,14 +1,15 @@
 # OpenAgriNet Schema Pack
 
-<p class="page-intro">Browse the shared agriculture field set and the active OpenAgriNet domain contracts. Each domain pack applies to Beckn <code>Resource.resourceAttributes</code> and keeps its versioned artifacts together.</p>
+<p class="page-intro">Browse the shared agriculture field set, the active OpenAgriNet domain contracts, and the provider API contracts. Each pack keeps its versioned artifacts together.</p>
 
-Read the [Complete Examples](examples/) to see these packs composed inside Beckn Catalog, Provider, and Resource objects.
+Read the [Complete Examples](examples/) to see the domain packs composed inside Beckn Catalog, Provider, and Resource objects.
 
 ## Schema Packs
 
-The index is generated from the versioned `profile.json` files. Adding a schema directory with a profile makes it appear here automatically.
+The index is generated from the versioned `profile.json` files under `schema/`. Adding a pack directory with a profile makes it appear here automatically. Domain packs and provider API packs are listed together; `profile.json` records which kind a pack is in `semantic_model`.
 
-{% assign profile_files = site.static_files | where: "name", "profile.json" | sort: "path" %}
+{% assign all_profiles = site.static_files | where: "name", "profile.json" | sort: "path" %}
+{% assign profile_files = all_profiles | where_exp: "p", "p.path contains '/schema/'" %}
 <div class="schema-grid">
 {% for profile in profile_files %}
   {% assign path_parts = profile.path | split: "/" %}
@@ -60,6 +61,8 @@ Every domain pack supports two information modes:
 An `OnDemand` Resource advertises what a Provider can supply without introducing a separate capability schema. It may also include current, representative, or precomputed information; the mode still indicates that a Provider invocation is required to fulfil a specific request. A Provider invocation normally returns a `Direct` Resource of the same `@type`. Direct information may also be published to Discovery without a preceding invocation. These modes define minimum requirements and do not prohibit additional fields.
 
 The schemas formerly named `AgricultureCapability`, `AdvisoryCapability`, and `WeatherAdvisoryCapability` are retired. Their capability declarations are represented by the corresponding active pack in `OnDemand` mode.
+
+A provider API pack is `OnDemand` only: the named Provider answers. What a particular call must carry is stated by the pack in `x-oan-schema-by-action`, which names one schema per action, and `x-beckn-container-by-action`, which names where that payload attaches.
 
 ## Pack contents
 

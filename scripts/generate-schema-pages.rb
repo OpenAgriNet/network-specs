@@ -52,7 +52,14 @@ class SchemaResolver
     merged = resolved.reject { |key, _| key == "allOf" }
     Array(resolved["allOf"]).each do |member|
       expanded, = expand(member, resolved_path, seen + [fingerprint])
-      merged = deep_merge(merged, expanded)
+      own_description = merged["description"]
+      merged = deep_merge(merged, join_restatements(merged, expanded))
+      # A description reached through a $ref describes a shape reused all over
+      # the network -- a Beckn location, a source reference -- so it must not
+      # displace what this field already says about itself. An inline member is
+      # the author narrowing this field right here, and its description does
+      # replace.
+      merged["description"] = own_description if own_description && member.is_a?(Hash) && member.key?("$ref")
     end
     [merged, resolved_path, nil]
   end
@@ -84,6 +91,30 @@ class SchemaResolver
     else
       value
     end
+  end
+
+  # A pack that extends a base restates an inherited field with a description
+  # and nothing else, to say how its own portal fills it. Both sentences belong
+  # on the page: the base says what the field means, the pack says where the
+  # value comes from. A restatement that also narrows the field -- an enum, a
+  # pattern, a nested allOf -- is an override rather than a note, so its
+  # description replaces the base's, as every description always has.
+  def join_restatements(base, member)
+    base_properties = base["properties"]
+    member_properties = member["properties"]
+    return member unless base_properties.is_a?(Hash) && member_properties.is_a?(Hash)
+
+    joined = member_properties.each_with_object({}) do |(name, schema), result|
+      inherited = base_properties[name]
+      note = schema.is_a?(Hash) && schema.keys == ["description"] ? schema["description"] : nil
+      meaning = inherited.is_a?(Hash) ? inherited["description"] : nil
+      result[name] = if note.is_a?(String) && meaning.is_a?(String) && meaning.strip != note.strip
+                       { "description" => "#{meaning.strip}\n\n#{note.strip}" }
+                     else
+                       schema
+                     end
+    end
+    member.merge("properties" => joined)
   end
 
   def deep_merge(left, right)
@@ -183,6 +214,10 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   expanded, expanded_path, = resolver.expand(schema, source_path)
   properties = expanded.fetch("properties", {})
   required = Array(expanded["required"])
+  # A narrowing may refuse a property the shared definition offers, via
+  # `not: { required: [name] }`. The page must say so, or it advertises a
+  # field the validator rejects.
+  refused = Array(expanded.dig("not", "required"))
   conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
@@ -194,7 +229,9 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
     origin = inherited_origin || root_origins[name] || expanded_path.dirname.parent.basename.to_s
     property, property_path, property_external_ref = resolver.expand(raw_property, expanded_path)
     field_path = path + [name]
-    requirement = if required.include?(name)
+    requirement = if refused.include?(name)
+                    "Not accepted"
+                  elsif required.include?(name)
                     ancestor_condition || "Always"
                   elsif conditional[name]&.any?
                     conditional[name].join(" or ")
@@ -248,6 +285,70 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   end
 end
 
+# A leaf's gate is written entirely in `required`, `not`, `allOf` and `oneOf` over
+# which fields are present. Reading it is what tells an ask apart from an answer on
+# packs whose leaves share a `required` list, so the page cannot skip it. Members
+# reached through `$ref` are the scheme guards, which pin a value rather than a
+# presence and are checked separately.
+def presence_satisfied?(schema, data)
+  return true unless schema.is_a?(Hash)
+  return false unless Array(schema["required"]).all? { |name| data.key?(name) }
+  return false if schema["not"] && presence_satisfied?(schema["not"], data)
+
+  members = Array(schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }
+  return false unless members.all? { |member| presence_satisfied?(member, data) }
+
+  if schema["oneOf"]
+    matched = Array(schema["oneOf"]).count { |member| presence_satisfied?(member, data) }
+    return false unless matched == 1
+  end
+
+  true
+end
+
+# An API pack's root is a `oneOf` over leaves rather than an `allOf` over bases,
+# so a leaf owns a whole call and the examples that belong to it are the ones its
+# own shape accepts. The leaves are mutually exclusive by construction, so this
+# match is the same one the validator makes.
+def leaf_accepts?(resolver, member, source_path, expanded, declared, data)
+  return false unless data.is_a?(Hash)
+  return false unless shape_accepts?(resolver, member, source_path, data)
+  return false unless presence_satisfied?(declared, data)
+
+  code = expanded.dig("properties", "scheme", "properties", "code")
+  pinned = code && (code["const"] || Array(code["enum"]).first)
+  pinned.nil? || data.dig("scheme", "code") == pinned
+end
+
+# Every body in an API pack is closed, so which fields an object declares is
+# enough to tell two leaves apart all the way down -- a `challenge` holding
+# `methods` is a catalog entry and one holding `issued` is an acknowledgement,
+# and only the nested shape says which. Beckn-owned references are somebody
+# else's contract and are taken on trust.
+def shape_accepts?(resolver, schema, source_path, data)
+  expanded, expanded_path, external_ref = resolver.expand(schema, source_path)
+  return true if external_ref
+
+  if data.is_a?(Array)
+    items = expanded["items"]
+    return true unless items
+
+    return data.all? { |entry| shape_accepts?(resolver, items, expanded_path, entry) }
+  end
+
+  return true unless data.is_a?(Hash)
+
+  properties = expanded["properties"]
+  return true unless properties
+  return false unless (data.keys - properties.keys).empty?
+  return false unless Array(expanded["required"]).all? { |name| data.key?(name) }
+
+  data.all? do |name, value|
+    child = properties[name]
+    child.nil? || shape_accepts?(resolver, child, expanded_path, value)
+  end
+end
+
 def component_name(reference)
   return "Pack-specific constraints" unless reference
 
@@ -293,9 +394,13 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
       "role" => "Shared fields"
     }
   end
-  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name }
+  # ||=, not =. A pack that extends a base restates an inherited field to say
+  # how its own portal fills it. The field still belongs to the base, and the
+  # page must keep saying so -- otherwise adding a one-line note silently
+  # reattributes the field to the pack.
+  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name }
   Array(root_schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }.each do |member|
-    member.fetch("properties", {}).each_key { |field| root_origins[field] = pack_name } if member.is_a?(Hash)
+    member.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name } if member.is_a?(Hash)
   end
   composition = referenced_components + [{
     "name" => "#{pack_name} fields and rules",
@@ -308,6 +413,39 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     end
   )
 
+  # A pack whose root is a `oneOf` publishes one leaf per (scheme, call). There is
+  # no single composed object to tabulate, so the page is a table per leaf instead.
+  root_leaves = Array(root_schema["oneOf"]).select { |member| member.is_a?(Hash) && member["$ref"] }
+  actions_for_leaf = Hash.new { |store, name| store[name] = [] }
+  (root_schema["x-oan-schema-by-action"] || {}).each do |action, call_schema_name|
+    call_schema = attributes.dig("components", "schemas", call_schema_name)
+    next unless call_schema
+
+    Array(call_schema["oneOf"]).each do |member|
+      actions_for_leaf[component_name(member["$ref"])] << action if member.is_a?(Hash) && member["$ref"]
+    end
+  end
+
+  leaves = root_leaves.map do |member|
+    leaf_name = component_name(member["$ref"])
+    expanded_leaf, = resolver.expand(member, attributes_path)
+    declared = attributes.dig("components", "schemas", leaf_name) || {}
+    leaf_examples = examples.select do |example|
+      leaf_accepts?(resolver, member, attributes_path, expanded_leaf, declared, example["data"])
+    end
+    oan_fields = declared["x-oan-fields"] || {}
+    {
+      "name" => leaf_name,
+      "actions" => actions_for_leaf[leaf_name],
+      "must_send" => Array(oan_fields["mustSend"]),
+      "may_send" => Array(oan_fields["maySend"]),
+      "one_of" => Array(oan_fields["oneOf"]),
+      "comes_back" => Array(oan_fields["comesBack"]),
+      "examples" => leaf_examples.map { |example| example["name"] },
+      "fields" => collect_fields(resolver, member, attributes_path, leaf_examples, {}, [], nil, 0, leaf_name)
+    }
+  end
+
   key = "#{pack_name}-#{version_dir}"
   effective_fields = collect_fields(resolver, root_schema, attributes_path, examples, root_origins)
   effective_requirements = effective_fields.each_with_object({}) do |field, requirements|
@@ -317,6 +455,18 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   pack_fields.each do |field|
     field["requirement"] = effective_requirements.fetch(field["path"], field["requirement"])
   end
+
+  unless leaves.empty?
+    seen_paths = {}
+    effective_fields = leaves.flat_map { |leaf| leaf["fields"] }.select do |field|
+      next false if seen_paths[field["path"]]
+
+      seen_paths[field["path"]] = true
+    end
+    pack_fields = []
+  end
+
+  by_action = root_schema["x-beckn-container-by-action"]
 
   packs[key] = {
     "key" => key,
@@ -328,6 +478,7 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "interaction_type" => profile["interaction_type"],
     "description" => attributes.dig("info", "description").to_s.strip.gsub(/\s+/, " "),
     "canonical_type" => root_schema.dig("x-jsonld", "@type"),
+    "beckn_container" => root_schema["x-beckn-container"],
     "schema_name" => schema_name,
     "composition" => composition,
     "pack_fields" => pack_fields,
@@ -336,6 +487,9 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "examples" => examples.map { |example| example.reject { |key_name, _| key_name == "data" } },
     "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]
   }
+  packs[key]["beckn_container_by_action"] = by_action if by_action
+  packs[key]["leaves"] = leaves unless leaves.empty?
+  packs[key]["schemas_by_action"] = root_schema["x-oan-schema-by-action"] if root_schema["x-oan-schema-by-action"]
 
   pack_dir.join("index.md").write(<<~MARKDOWN)
     ---
