@@ -24,9 +24,7 @@
     "beckn:resourceAttributes.coverageAreas[].codeScheme",
     "beckn:resourceAttributes.coverageAreas[].areaCode",
     "beckn:resourceAttributes.coverageAreas[].areaLevel",
-    "beckn:resourceAttributes.coverageAreas[].type",
-    "beckn:resourceAttributes.coverageAreas[].bbox",
-    "beckn:resourceAttributes.coverageAreas[].coordinates"
+    "beckn:resourceAttributes.coverageAreas"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -37,7 +35,7 @@
     "beckn:resourceAttributes.coverageAreas[].codeScheme",
     "beckn:resourceAttributes.coverageAreas[].areaCode",
     "beckn:resourceAttributes.coverageAreas[].areaLevel",
-    "beckn:resourceAttributes.coverageAreas[].type"
+    "beckn:resourceAttributes.coverageAreas"
   ],
   "sortable_paths": [],
   "privacy_notes": [],
