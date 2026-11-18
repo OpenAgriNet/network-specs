@@ -28,4 +28,4 @@ The complete Resource keeps its identity and API-document link in the Beckn wrap
 
 ## Validation
 
-Validate catalog attributes against Grievance. It applies GrievanceFields without a Provider allow-list. The linked API contracts retain their own fixed codes and requirements. Validate operation inputs and outcomes against those separate request and response components. Historical named payload components remain compatibility references, not branches of the generic catalog contract.
+Validate catalog attributes against Grievance. It applies GrievanceFields without a Provider allow-list. The linked API contracts retain their own fixed codes and requirements. Validate operation inputs and outcomes against those separate request and response components.

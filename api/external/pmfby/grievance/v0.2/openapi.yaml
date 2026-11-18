@@ -911,7 +911,7 @@ components:
                 type: string
                 format: uri
                 description: Request attributes schema in the external API contract.
-                  Earlier mixed-schema URLs remain accepted for compatibility. Response
+                  Only request schemas in this API contract are advertised. Response
                   schemas are defined in the API document.
                 x-jsonld-id: openagrinet:actionSchema
               attributesAt:
@@ -931,7 +931,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest
-                  - https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/PMFBYSupport
                 attributesAt:
                   const: $.message.support.channels[0]
             - properties:
@@ -945,7 +944,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest
-                  - https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/PMFBYStatus
                 attributesAt:
                   const: $.message.contract.commitments[0].commitmentAttributes
           x-jsonld-id: openagrinet:publishedAction

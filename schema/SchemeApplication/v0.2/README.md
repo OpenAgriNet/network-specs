@@ -25,4 +25,4 @@ The complete Resource keeps its identity and API-document link in the Beckn wrap
 
 ## Validation
 
-Validate catalog attributes against SchemeApplication. It applies SchemeApplicationFields without a Provider allow-list. Validate operation inputs and outcomes against the separate request and response components in the linked API contract. A syntactically valid URI does not prove that the target exists or is the correct request contract. Historical named payload components remain compatibility references, not branches of the generic catalog contract.
+Validate catalog attributes against SchemeApplication. It applies SchemeApplicationFields without a Provider allow-list. Validate operation inputs and outcomes against the separate request and response components in the linked API contract. A syntactically valid URI does not prove that the target exists or is the correct request contract.

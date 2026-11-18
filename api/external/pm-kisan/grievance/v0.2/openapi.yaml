@@ -1102,7 +1102,7 @@ components:
                 type: string
                 format: uri
                 description: Request attributes schema in the external API contract.
-                  Earlier mixed-schema URLs remain accepted for compatibility. Response
+                  Only request schemas in this API contract are advertised. Response
                   schemas are defined in the API document.
                 x-jsonld-id: openagrinet:actionSchema
               attributesAt:
@@ -1122,7 +1122,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest
-                  - https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/PMKISANInit
                 attributesAt:
                   const: $.message.contract.commitments[0].commitmentAttributes
             - properties:
@@ -1137,7 +1136,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest
-                  - https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/PMKISANStatus
                 attributesAt:
                   const: $.message.contract.commitments[0].commitmentAttributes
             - properties:
@@ -1151,7 +1149,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest
-                  - https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/PMKISANSupport
                 attributesAt:
                   const: $.message.support.channels[0]
           x-jsonld-id: openagrinet:publishedAction

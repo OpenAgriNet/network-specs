@@ -60,7 +60,7 @@ def refs(node):
         for value in node:
             yield from refs(value)
 
-for path in list((ROOT/'api').rglob('*.yaml')) + list((ROOT/'api-specs').rglob('*.yaml')):
+for path in list((ROOT/'api').rglob('*.yaml')) + list((ROOT/'schema').glob('*/v0.2/attributes.yaml')):
     document = yaml.safe_load(path.read_text())
     for ref in refs(document):
         if ref.startswith(('http:', 'https:')):
@@ -71,13 +71,6 @@ for path in list((ROOT/'api').rglob('*.yaml')) + list((ROOT/'api-specs').rglob('
             target = target[part.replace('~1', '/').replace('~0', '~')]
         checks += 1
 
-for pack in ('Grievance', 'SchemeApplication'):
-    old = yaml.safe_load((ROOT/'api-specs'/pack/'v0.2/openapi.yaml').read_text())
-    assert not old['paths'], 'Compatibility file must not advertise duplicate operations'
-    for name, schema in old['components']['schemas'].items():
-        if name in {operation + direction for operation in operation_ids for direction in ('Request', 'Response')}:
-            assert '/api/external/' in schema['$ref'], name
-            checks += 1
 origin = 'https://openagrinet.github.io/network-specs/'
 
 def local_document(url):
@@ -127,12 +120,6 @@ for pack in ('Grievance', 'SchemeApplication'):
     for example in examples:
         errors = list(validator.iter_errors(example))
         assert not errors, f'{pack}: catalog example does not validate'
-        checks += 1
-        legacy = copy.deepcopy(example)
-        for action in legacy['actions']:
-            name = action['schema'].rsplit('/', 1)[-1].removesuffix('Request')
-            action['schema'] = f'{origin}schema/{pack}/v0.2/attributes.yaml#/components/schemas/{name}'
-        assert validator.is_valid(legacy), 'Earlier catalog references must remain valid'
         checks += 1
         for action in example['actions']:
             url = action['schema']

@@ -703,7 +703,7 @@ components:
                 type: string
                 format: uri
                 description: Request attributes schema in the external API contract.
-                  Earlier mixed-schema URLs remain accepted for compatibility. Response
+                  Only request schemas in this API contract are advertised. Response
                   schemas are defined in the API document.
                 x-jsonld-id: openagrinet:actionSchema
               attributesAt:
@@ -722,7 +722,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest
-                  - https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/attributes.yaml#/components/schemas/PMKISANApplicationInit
                 attributesAt:
                   const: $.message.contract.commitments[0].commitmentAttributes
             - properties:
@@ -736,7 +735,6 @@ components:
                 schema:
                   enum:
                   - https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest
-                  - https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/attributes.yaml#/components/schemas/PMKISANApplicationStatus
                 attributesAt:
                   const: $.message.contract.commitments[0].commitmentAttributes
           x-jsonld-id: openagrinet:publishedAction

@@ -24,7 +24,6 @@ Published `v0.1` contracts remain unchanged. Grievance, SchemeApplication and th
 |---|---|
 | [`schema/`](schema/) | Versioned Resource schema packs and examples |
 | [`api/external/`](api/external/) | Provider-grouped integration contracts and request/response examples |
-| [`api-specs/`](api-specs/) | Compatibility references for earlier contract URLs |
 
 Each versioned schema pack contains:
 

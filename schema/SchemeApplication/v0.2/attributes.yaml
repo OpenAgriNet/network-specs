@@ -22,58 +22,6 @@ components:
     PMKISANApplicationCatalog:
       $ref: ../../../api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
       description: Compatibility reference to the external service catalog definition.
-    SchemeApplicationCatalog:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/SchemeApplicationCatalog
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    SchemeApplicationInit:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/SchemeApplicationInit
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    SchemeApplicationStatus:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/SchemeApplicationStatus
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    IsPMKISAN:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/IsPMKISAN
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    PMKISANApplicationInit:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInit
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    PMKISANApplicationStatus:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatus
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    Applicant:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/Applicant
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    PMKISANEnrolmentId:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/PMKISANEnrolmentId
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    PMKISANChallengeResponse:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/PMKISANChallengeResponse
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    PublishedAction:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/PublishedAction
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    Instant:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/Instant
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    Context:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/Context
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
-    Type:
-      $ref: ../../../api-specs/SchemeApplication/v0.2/openapi.yaml#/components/schemas/Type
-      deprecated: true
-      description: Compatibility alias. Use directional operation schemas in api-specs.
     SchemeApplicationFields:
       type: object
       required:
