@@ -1,0 +1,10 @@
+<nav class="schema-versions" aria-label="{{ include.pack.name | escape }} versions">
+  <span class="schema-versions__label">Versions</span>
+  {% assign version_limit = include.limit | default: include.pack.versions.size %}
+  {% for version in include.pack.versions limit:version_limit %}
+    <a href="{{ version.url | relative_url }}"{% if include.current == version.label %} aria-current="page"{% endif %}>{{ version.label }}</a>
+  {% endfor %}
+  {% if include.limit and include.pack.versions.size > include.limit %}
+    <a href="{{ include.pack.versions.first.url | relative_url }}#versions">All versions</a>
+  {% endif %}
+</nav>

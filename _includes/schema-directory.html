@@ -1,0 +1,25 @@
+<div class="schema-search" hidden>
+  <label for="schema-search">Find a schema</label>
+  <input id="schema-search" type="search" placeholder="Search schemas" aria-controls="schema-directory" autocomplete="off">
+</div>
+<div class="schema-directory" id="schema-directory">
+{% for entry in site.data.schema_packs %}
+  {% assign pack = entry[1] %}
+  {% if pack.directory_entry %}
+  <article class="schema-directory__entry">
+    <div>
+      <h3><a href="{{ pack.versions.first.url | relative_url }}">{{ pack.display_name }}</a></h3>
+      <p>{{ pack.summary | escape }}</p>
+    </div>
+    {% include schema-versions.html pack=pack limit=5 %}
+  </article>
+  {% endif %}
+{% endfor %}
+</div>
+<p class="schema-empty" hidden>No schemas match your search. Try a different name or keyword.</p>
+<nav class="schema-pagination" aria-label="Schema directory pages" hidden>
+  <button type="button" data-page="previous" aria-controls="schema-directory">Previous</button>
+  <span role="status" aria-live="polite"></span>
+  <button type="button" data-page="next" aria-controls="schema-directory">Next</button>
+</nav>
+<script src="{{ '/assets/js/schema-directory.js' | relative_url }}" defer></script>

@@ -1,0 +1,321 @@
+openapi: 3.1.1
+info:
+  title: Grievance catalog attributes
+  version: 0.2.0
+  description: Public catalog metadata for grievance services, with Provider-defined schemes, complaint
+    options and operation links.
+externalDocs:
+  description: External service API specifications
+  url: https://openagrinet.github.io/network-specs/api/external/
+components:
+  schemas:
+    Grievance:
+      description: Reusable public catalog metadata. Provider-specific request and response validation
+        belongs to the linked API contract, not a closed list of catalog variants.
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        '@context': https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type': openagrinet:Grievance
+      allOf:
+      - $ref: '#/components/schemas/GrievanceFields'
+      unevaluatedProperties: false
+    PMFBYCatalog:
+      $ref: ../../../api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYCatalog
+      description: Compatibility reference to the external service catalog definition.
+    PMKISANCatalog:
+      $ref: ../../../api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANCatalog
+      description: Compatibility reference to the external service catalog definition.
+    GrievanceCatalog:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/GrievanceCatalog
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    GrievanceInit:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/GrievanceInit
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    GrievanceStatus:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/GrievanceStatus
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    GrievanceSupport:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/GrievanceSupport
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    IsPMFBY:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/IsPMFBY
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    IsPMKISAN:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/IsPMKISAN
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMFBYStatus:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatus
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMFBYSupport:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupport
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMFBYOption:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMFBYOption
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMFBYSubject:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSubject
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANInit:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInit
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANStatus:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatus
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANSupport:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupport
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANEnrolmentId:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANEnrolmentId
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANChallengeResponse:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANChallengeResponse
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANOption:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANOption
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PMKISANSubject:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSubject
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Description:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Description
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Reply:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Reply
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    CaseStatus:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/CaseStatus
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    PublishedAction:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/PublishedAction
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Provider:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Provider
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    CalendarDate:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/CalendarDate
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Instant:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Instant
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Context:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Context
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    Type:
+      $ref: ../../../api-specs/Grievance/v0.2/openapi.yaml#/components/schemas/Type
+      deprecated: true
+      description: Compatibility alias. Use directional operation schemas in api-specs.
+    GrievanceFields:
+      type: object
+      required:
+      - scheme
+      - '@context'
+      - '@type'
+      - informationMode
+      - grievanceOptions
+      - actions
+      properties:
+        scheme:
+          type: object
+          required:
+          - code
+          - name
+          properties:
+            code:
+              type: string
+              minLength: 1
+              description: Provider-defined scheme code, for example PMFBY or PM-KISAN. Other non-empty
+                codes are accepted.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+          additionalProperties: false
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme on demand.
+          x-jsonld-id: openagrinet:informationMode
+        grievanceOptions:
+          type: object
+          additionalProperties: false
+          required:
+          - categories
+          description: Provider-published complaint categories and optional sub-categories. Codes are
+            data, not a fixed schema enumeration.
+          properties:
+            categories:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Available complaint categories.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - code
+                properties:
+                  code:
+                    type: string
+                    minLength: 1
+                    description: Provider-defined option code. Read the advertised options; there is no
+                      centrally fixed code list.
+                  name:
+                    type: string
+                    minLength: 1
+                    description: Display label for this option.
+                  help:
+                    type: string
+                    minLength: 1
+                    description: When to select this option.
+            subCategories:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Additional complaint sub-categories, when published.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - code
+                properties:
+                  code:
+                    type: string
+                    minLength: 1
+                    description: Provider-defined option code. Read the advertised options; there is no
+                      centrally fixed code list.
+                  name:
+                    type: string
+                    minLength: 1
+                    description: Display label for this option.
+                  help:
+                    type: string
+                    minLength: 1
+                    description: When to select this option.
+        actions:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          description: Advertised operations and their request-schema links. API contracts define operation-specific
+            restrictions.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - action
+            - description
+            - schema
+            - attributesAt
+            properties:
+              action:
+                type: string
+                minLength: 1
+                description: Beckn action advertised by this Provider. The linked operation contract defines
+                  its semantics.
+              description:
+                type: string
+                minLength: 1
+                description: What the operation does.
+              schema:
+                type: string
+                format: uri
+                description: URI of the request schema in the Provider API contract. Resolve that contract
+                  to validate operation inputs; this URI is not an allow-list.
+              attributesAt:
+                type: string
+                pattern: ^\$\.message\.[A-Za-z0-9.\[\]]+$
+                description: Path to operation attributes in the Beckn message.
+        challenge:
+          type: object
+          additionalProperties: false
+          required:
+          - methods
+          description: Optional public verification requirements. Do not put issued challenges, destinations
+            or secret responses in catalog metadata. The API contract defines when verification is required.
+          properties:
+            methods:
+              type: array
+              description: Public verification methods advertised by the Provider.
+              minItems: 1
+              uniqueItems: true
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - method
+                properties:
+                  method:
+                    type: string
+                    minLength: 1
+                    description: Provider-defined verification method, for example OTP.
+                  channel:
+                    type: string
+                    minLength: 1
+                    description: Delivery channel when applicable, for example SMS or EMAIL.
+                  length:
+                    type: integer
+                    minimum: 1
+                    description: Expected code length when the method uses a fixed-length code.
+                  valueType:
+                    type: string
+                    minLength: 1
+                    description: Expected code representation when applicable, for example NUMERIC.
+      description: Public catalog fields shared by any Provider. Codes are Provider-defined non-empty
+        strings.

@@ -35,7 +35,7 @@ def sample(schema):
     return 'EXAMPLE'
 
 
-for directory in sorted((ROOT/'api/external').glob('*/*/v0.1')):
+for directory in sorted((ROOT/'api/external').glob('*/*/v0.2')):
     spec = yaml.safe_load((directory/'openapi.yaml').read_text())
     schemas = spec['components']['schemas']
     title = spec['info']['title']
@@ -79,6 +79,6 @@ for pack, links in {
 }.items():
     lines = ['---', 'layout: default', f'title: {pack} API specifications', '---',
              f'# {pack} API specifications', '', 'Contracts are grouped by provider.', '']
-    lines += [f'- [{label}](../../../api/external/{path}/v0.1/)' for label, path in links]
+    lines += [f'- [{label}](../../../api/external/{path}/v0.2/)' for label, path in links]
     lines += ['', '[Earlier schema component references](openapi.yaml) remain available for compatibility.', '']
-    (ROOT/'api-specs'/pack/'v0.1/index.md').write_text('\n'.join(lines))
+    (ROOT/'api-specs'/pack/'v0.2/index.md').write_text('\n'.join(lines))

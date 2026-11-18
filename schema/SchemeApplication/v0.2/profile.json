@@ -1,0 +1,47 @@
+{
+  "id": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2",
+  "name": "SchemeApplication catalog attributes",
+  "version": "0.2.0",
+  "protocol_version": "2.0",
+  "semantic_model": "resource",
+  "included_schemas": [
+    "SchemeApplication"
+  ],
+  "discovery_fields": [
+    "informationMode",
+    "scheme",
+    "challenge.methods"
+  ],
+  "result_fields": [
+    "informationMode",
+    "scheme",
+    "challenge.methods"
+  ],
+  "indexable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.challenge.methods[].method"
+  ],
+  "filterable_paths": [
+    "beckn:resourceAttributes.informationMode",
+    "beckn:resourceAttributes.scheme.code",
+    "beckn:resourceAttributes.challenge.methods[].method"
+  ],
+  "sortable_paths": [],
+  "privacy_notes": [
+    "Discovery contains public service metadata only. Do not publish applicant identifiers, contact details, issued challenges, OTP responses or case records in resourceAttributes.",
+    "Verification methods describe public requirements, not evidence that a caller has completed verification. The linked Provider API contract defines private inputs, authorization, responses and redaction rules.",
+    "Scheme and option codes are Provider-defined. Catalog validation verifies structure, not Provider authenticity, endpoint availability or permission to invoke an operation. Resolve request-schema links only through the consumer's trusted schema-resolution policy."
+  ],
+  "beckn_dependencies": {
+    "Attributes": "2.0",
+    "Catalog": "2.2",
+    "Commitment": "2.0",
+    "Contract": "2.0",
+    "Descriptor": "2.1",
+    "Provider": "2.1",
+    "Resource": "2.0"
+  },
+  "interaction_type": "Transact",
+  "outcome_type": "openagrinet:SchemeApplication"
+}

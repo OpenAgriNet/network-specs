@@ -4,46 +4,11 @@
 
 Read the [Complete Examples](examples/) to see the domain packs composed inside Beckn Catalog, Provider, and Resource objects.
 
-## API specifications
-
-[API specifications](../api/external/) describe operation inputs, outputs and examples by provider. Grievance and SchemeApplication below describe the public catalog metadata.
-
 ## Schema Packs
 
-The index is generated from versioned `profile.json` files under `schema/`. Operation contracts are listed separately under `api/external/`.
+Choose a schema, then a version. Schema names open the newest available version; version numbers link to that exact contract. API operation contracts are listed separately below.
 
-{% assign all_profiles = site.static_files | where: "name", "profile.json" | sort: "path" %}
-{% assign profile_files = all_profiles | where_exp: "p", "p.path contains '/schema/'" %}
-<div class="schema-grid">
-{% for profile in profile_files %}
-  {% assign path_parts = profile.path | split: "/" %}
-  {% assign schema_name = path_parts[2] %}
-  {% assign schema_version = path_parts[3] %}
-  {% assign pack_root = profile.path | remove: "/profile.json" %}
-  {% assign pack_index_path = pack_root | remove_first: "/" | append: "/index.md" %}
-  {% assign pack_index = site.pages | where: "path", pack_index_path | first %}
-  <article class="schema-card">
-    <span class="schema-card__meta">{{ schema_version }}</span>
-    {% if pack_index %}
-      <h3><a class="schema-card__title" href="{{ pack_root | append: '/' | relative_url }}">{{ schema_name }}</a></h3>
-    {% else %}
-      <h3><a class="schema-card__title" href="{{ pack_root | append: '/README.md' | relative_url }}">{{ schema_name }}</a></h3>
-    {% endif %}
-    <nav class="schema-card__links" aria-label="{{ schema_name }} artifacts">
-      <a href="{{ pack_root | append: '/vocab.jsonld' | relative_url }}">Vocabulary</a>
-      <a href="{{ pack_root | append: '/context.jsonld' | relative_url }}">Context</a>
-      <a href="{{ pack_root | append: '/attributes.yaml' | relative_url }}">Attributes</a>
-      <a href="{{ profile.path | relative_url }}">Profile</a>
-      <a href="{{ pack_root | append: '/renderer.json' | relative_url }}">Renderer</a>
-      {% if pack_index %}
-        <a href="{{ pack_root | append: '/#examples' | relative_url }}">Examples</a>
-      {% else %}
-        <a href="{{ pack_root | append: '/examples/' | relative_url }}">Examples</a>
-      {% endif %}
-    </nav>
-  </article>
-{% endfor %}
-</div>
+{% include schema-directory.html %}
 
 ## How composition works
 
@@ -66,7 +31,7 @@ An `OnDemand` Resource advertises what a Provider can supply without introducing
 
 The schemas formerly named `AgricultureCapability`, `AdvisoryCapability`, and `WeatherAdvisoryCapability` are retired. Their capability declarations are represented by the corresponding active pack in `OnDemand` mode.
 
-A provider API pack is `OnDemand` only: the named Provider answers. What a particular call must carry is stated by the pack in `x-oan-schema-by-action`, which names one schema per action, and `x-beckn-container-by-action`, which names where that payload attaches.
+Grievance and SchemeApplication advertise `OnDemand` services. Their public catalog attributes are separate from the operation request and response contracts.
 
 ## Pack contents
 
@@ -101,6 +66,10 @@ The packs reuse Beckn-owned definitions rather than copying them:
 | Consumer | [Beckn Consumer](https://github.com/beckn/schemas/tree/draft/schema/Consumer) | Consumer data when required by an interaction |
 
 `coverageAreas[]` contains an administrative area reference or a Beckn `GeoJSONGeometry` directly. It does not contain Beckn `Location` objects. A pack-specific field named `location` uses Beckn `Location`, with the geometry under `location.geo` and an optional address alongside it.
+
+## API Schema
+
+[External API specifications](../api/external/) describe operation inputs, outputs and examples by provider. Grievance and SchemeApplication describe public catalog metadata and link to the respective API contracts.
 
 ## Namespace
 

@@ -3,12 +3,12 @@ layout: default
 ---
 {% assign pack = site.data.schema_packs[page.schema_key] %}
 <article class="schema-pack-page">
-  <p class="schema-pack-page__eyebrow">OpenAgriNet Schema</p>
   <h1>{{ pack.display_name }}</h1>
+  <div id="versions">{% include schema-versions.html pack=pack current=pack.version_dir %}</div>
+  <script src="{{ '/assets/js/schema-version.js' | relative_url }}" defer></script>
   <p class="page-intro">{{ pack.description }}</p>
 
   <div class="schema-tags" aria-label="Schema metadata">
-    <span>{{ pack.version_dir }}</span>
     <span>Beckn {{ pack.protocol_version }}</span>
     {% if pack.interaction_type %}<span>{{ pack.interaction_type }}</span>{% endif %}
     <span><code>{{ pack.canonical_type }}</code></span>
@@ -20,8 +20,39 @@ layout: default
     {% endfor %}
   </nav>
 
-  {% if pack.leaves %}
-  <h2>How this schema is composed</h2>
+  <details class="schema-composition-details">
+  <summary>How this schema is composed</summary>
+  {% if pack.generic_catalog %}
+  <p><code>{{ pack.schema_name }}Fields</code> defines one reusable public catalog contract. Scheme and option codes are Provider-defined values, not a fixed list. Linked API contracts validate operation requests and responses separately; they are not combined into this catalog schema.</p>
+  {% elsif pack.catalog_composition %}
+  <p><code>allOf</code> combines shared catalog fields with the selected API catalog definition. <code>oneOf</code> selects that definition by <code>scheme.code</code>. Both apply to the same flat <code>Resource.resourceAttributes</code> object. API request and response payloads remain separate.</p>
+  <div class="composition-expansion">
+    {% if pack.catalog_fields %}
+      <section>
+        <span class="schema-card__meta">Shared fields</span>
+        <h3>{{ pack.catalog_fields.name }}</h3>
+        <p><code>{{ pack.catalog_fields.reference }}</code></p>
+      </section>
+      <span class="composition-operator" aria-hidden="true">+</span>
+    {% endif %}
+    <section>
+      <span class="schema-card__meta">Provider catalog constraints</span>
+      <h3>API Schema</h3>
+    {% for component in pack.catalog_sources %}
+      {% unless forloop.first %}<p>OR</p>{% endunless %}
+      <p><code>{{ component.name }}</code></p>
+      <p><code>{{ component.reference }}</code></p>
+    {% endfor %}
+    </section>
+    <span class="composition-operator" aria-hidden="true">=</span>
+    <section class="composition-result">
+      <span class="schema-card__meta">Effective contract</span>
+      <h3>{{ pack.schema_name }}</h3>
+      <p>{{ pack.fields | size }} field rows after references are expanded, including scheme-specific constraints.</p>
+    </section>
+  </div>
+  {% elsif pack.leaves %}
+  {% if pack.has_directional_fields %}
   <p>This pack is three layers. <code>{{ pack.schema_name }}</code> is the published <code>@type</code> and a <code>oneOf</code> over every leaf below. <code>x-oan-schema-by-action</code> names one schema per call, each a <code>oneOf</code> over the leaves that serve it. A leaf is one scheme's version of one call: a guard pinning <code>scheme.code</code>, a closed flat body, and where the call needs one a gate. Nothing is inherited, so a leaf can be read on its own.</p>
   <table class="pack-field-table">
     <thead>
@@ -44,7 +75,9 @@ layout: default
     </tbody>
   </table>
   {% else %}
-  <h2>How this schema is composed</h2>
+  <p><code>{{ pack.schema_name }}</code> uses <code>oneOf</code> to select one catalog variant by <code>scheme.code</code>. Each variant describes public <code>Resource.resourceAttributes</code>. Its linked API specification defines operation requests and responses separately.</p>
+  {% endif %}
+  {% else %}
   <p><code>allOf</code> applies every component below to the same <code>resourceAttributes</code> object. It is composition, not inheritance or nesting.</p>
   <div class="composition-expansion">
     {% for component in pack.composition %}
@@ -63,15 +96,25 @@ layout: default
     </section>
   </div>
   {% endif %}
+  </details>
 
   <div class="schema-note">
     <strong>Required means required in a conforming Resource.</strong>
+    {% if pack.generic_catalog %}
+    This contract contains public catalog metadata only. Private operation inputs and responses must validate against the linked API contract.
+    {% else %}
     Protocol filters, partial Intent objects, and Provider-specific inputs are separate contracts. <code>OnDemand</code> and <code>Direct</code> set minimum requirements; neither mode forbids additional fields.
+    {% endif %}
   </div>
 
   {% unless pack.leaves %}
-  <h2 id="pack-fields">Fields defined by this schema pack</h2>
+  <details class="schema-field-summary" id="pack-fields">
+  <summary>Top-level fields at a glance</summary>
+  {% if pack.catalog_composition %}
+  <p>Top-level fields of the referenced catalog definitions. No additional nesting is introduced.</p>
+  {% else %}
   <p>This compact view excludes fields composed from other schema packs.</p>
+  {% endif %}
   <table class="pack-field-table">
     <thead>
       <tr>
@@ -83,7 +126,7 @@ layout: default
     <tbody>
       {% for field in pack.pack_fields %}
         <tr>
-          <td><code>{{ field.path }}</code></td>
+          <td><code>{{ field.path }}</code>{% if field.applicability %}<p>{{ field.applicability | escape }}</p>{% endif %}</td>
           <td>{{ field.type | escape }}</td>
           <td>
             {% if field.requirement == "Optional" %}
@@ -99,9 +142,16 @@ layout: default
       {% endfor %}
     </tbody>
   </table>
+  </details>
 
   <h2 id="effective-fields">Complete composed field view</h2>
+  {% if pack.generic_catalog %}
+  <p>Each field appears once. Codes shown in examples are illustrative, not an allowed-value list. Verification requirements and API request bodies are defined by the Provider's linked contract.</p>
+  {% elsif pack.catalog_composition %}
+  <p>This table expands the referenced catalog definitions. A field with different constraints for each scheme has a separate labelled row. Required and optional apply within the indicated scheme.</p>
+  {% else %}
   <p>This table combines the shared Agriculture Resource fields with this pack's fields. Nested paths are expanded where their definitions are local; Beckn-owned objects remain linked references.</p>
+  {% endif %}
   <div class="schema-table-wrap">
     <table class="effective-schema-table">
       <thead>
@@ -116,7 +166,7 @@ layout: default
       <tbody>
         {% for field in pack.fields %}
           <tr>
-            <td><code>{{ field.path }}</code></td>
+            <td><code>{{ field.path }}</code>{% if field.applicability %}<p>{{ field.applicability | escape }}</p>{% endif %}</td>
             <td>
               <strong>{{ field.type | escape }}</strong>
               <p class="field-origin">Defined by {{ field.origin }}</p>
@@ -148,25 +198,43 @@ layout: default
   {% endunless %}
 
   {% if pack.leaves %}
+  {% if pack.has_directional_fields %}
   <h2 id="leaves">What each call takes and gives back</h2>
   <p>One section per leaf. <strong>Must send</strong> is enforced: drop any one of those fields and the validator refuses the request. <strong>May send</strong> is optional on the way in. <strong>Comes back</strong> is what the answer carries.</p>
+  {% else %}
+  <h2 id="leaves">Catalog variants</h2>
+  <p>These fields describe the public catalog Resource. Operation requests and responses are defined in the linked API specifications.</p>
+  {% endif %}
   {% for leaf in pack.leaves %}
     <h3 id="leaf-{{ leaf.name }}"><code>{{ leaf.name }}</code></h3>
+    {% if leaf.external_docs.url %}
+    {% assign api_document_url = leaf.external_docs.url | replace: "https://openagrinet.github.io/network-specs/", "/" %}
+    {% unless api_document_url contains "://" %}{% assign api_document_url = api_document_url | relative_url %}{% endunless %}
+    <p><a href="{{ api_document_url | escape }}">{{ leaf.external_docs.description | default: "API specification" | escape }}</a></p>
+    {% endif %}
     <div class="schema-tags" aria-label="{{ leaf.name }} actions">
       {% for action in leaf.actions %}<span><code>{{ action }}</code></span>{% endfor %}
     </div>
+    {% if leaf.has_directional_fields %}
     <dl class="leaf-contract">
+      {% if leaf.must_send.size > 0 %}
       <dt>Must send</dt>
       <dd>{% if leaf.must_send.size > 0 %}{% for path in leaf.must_send %}<code>{{ path }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}&mdash;{% endif %}</dd>
+      {% endif %}
       {% if leaf.one_of.size > 0 %}
         <dt>Exactly one of</dt>
         <dd>{% for path in leaf.one_of %}<code>{{ path }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}</dd>
       {% endif %}
+      {% if leaf.may_send.size > 0 %}
       <dt>May send</dt>
       <dd>{% if leaf.may_send.size > 0 %}{% for path in leaf.may_send %}<code>{{ path }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}&mdash;{% endif %}</dd>
+      {% endif %}
+      {% if leaf.comes_back.size > 0 %}
       <dt>Comes back</dt>
-      <dd>{% if leaf.comes_back.size > 0 %}{% for path in leaf.comes_back %}<code>{{ path }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}{% else %}&mdash; a bare acknowledgement{% endif %}</dd>
+      <dd>{% for path in leaf.comes_back %}<code>{{ path }}</code>{% unless forloop.last %}, {% endunless %}{% endfor %}</dd>
+      {% endif %}
     </dl>
+    {% endif %}
     <div class="schema-table-wrap">
       <table class="effective-schema-table">
         <thead>
@@ -239,8 +307,20 @@ layout: default
     {% endfor %}
   {% endif %}
 
+  {% if pack.api_docs.size > 0 %}
+  <h2 id="api-references">API references</h2>
+  {% if pack.generic_catalog %}<p>API contracts used by the examples below. Other Providers can advertise their own request-schema URIs without changing this catalog schema.</p>{% endif %}
+  <ul>
+    {% for doc in pack.api_docs %}
+    {% assign api_document_url = doc.url | replace: "https://openagrinet.github.io/network-specs/", "/" %}
+    {% unless api_document_url contains "://" %}{% assign api_document_url = api_document_url | relative_url %}{% endunless %}
+    <li><a href="{{ api_document_url | escape }}">{{ doc.description | default: "API specification" | escape }}</a></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
   <h2 id="examples">Complete examples</h2>
-  {% if pack.leaves %}
+  {% if pack.has_directional_fields %}
   <p>Each example is a complete attributes object for one call, rather than a fragment of only the pack-specific fields. Which container it rides in is in the table above.</p>
   {% else %}
   <p>Each example is a complete <code>resourceAttributes</code> object for this schema pack, rather than a fragment of only the pack-specific fields.</p>

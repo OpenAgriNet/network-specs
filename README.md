@@ -16,7 +16,7 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 
 ## Active version
 
-The current version line is `v0.1`; pack metadata uses semantic version `0.1.0`. Resource schemas live under `schema/`; external service integration contracts live under `api/external/`. These proposed contracts do not replace the providers' own API specifications.
+Published `v0.1` contracts remain unchanged. Grievance, SchemeApplication and their external integration contracts have a separate `v0.2` definition. Resource schemas live under `schema/`; external service integration contracts live under `api/external/`. These proposed contracts do not replace the providers' own API specifications.
 
 ## Repository layout
 
