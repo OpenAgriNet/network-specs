@@ -167,7 +167,9 @@ Example: [PMKISANApplicationStatus-response.json](examples/PMKISANApplicationSta
 {
   "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld",
   "@type": "openagrinet:SchemeApplication",
-  "application": {},
+  "application": {
+    "registeredOn": "2026-11-18T06:05:00Z"
+  },
   "informationMode": "OnDemand",
   "scheme": {
     "code": "PM-KISAN"

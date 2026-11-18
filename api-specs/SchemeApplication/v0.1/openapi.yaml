@@ -452,6 +452,7 @@ components:
                   pattern: '^openagrinet:'
         application:
           type: object
+          minProperties: 1
           additionalProperties: false
           description: Where the farmer's application currently stands.
           x-jsonld-id: openagrinet:application

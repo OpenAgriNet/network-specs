@@ -103,6 +103,8 @@ def migrate(pack):
         else:
             response_required += ['application']
         response = project(flat, response_paths, response_required)
+        if name == 'PMKISANApplicationStatus':
+            response['properties']['application']['minProperties'] = 1
         api_schemas[name+'Request'] = request
         api_schemas[name+'Response'] = response
         action = next(action for action in ('Init', 'Status', 'Support') if name.endswith(action))
