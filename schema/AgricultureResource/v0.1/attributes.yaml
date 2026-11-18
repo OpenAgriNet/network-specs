@@ -84,6 +84,10 @@ components:
           items:
             $ref: "#/components/schemas/AgricultureSubjectReference"
           x-jsonld-id: "openagrinet:agricultureSubjects"
+        applicability:
+          $ref: "#/components/schemas/AgriculturalApplicability"
+          description: Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.
+          x-jsonld-id: "openagrinet:applicability"
         languages:
           type: array
           minItems: 1
@@ -103,6 +107,96 @@ components:
               - $ref: "#/components/schemas/AdministrativeAreaReference"
               - $ref: "#/components/schemas/CompleteGeoJSONGeometry"
           x-jsonld-id: "openagrinet:coverageAreas"
+
+    AgriculturalApplicability:
+      type: array
+      minItems: 1
+      description: Alternative sets of agricultural applicability conditions. A recommendation-level set further narrows the resource-level set; both must match. Validity remains a separate absolute interval.
+      items:
+        $ref: "#/components/schemas/ApplicabilityCondition"
+
+    ApplicabilityCondition:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      description: Conditions that must hold together. Values within each list are alternatives. Do not independently flatten subjects and seasons across condition objects.
+      properties:
+        subjectIds:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, format: uri}
+          description: Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.
+        seasons:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/AgronomicCode"}
+          description: Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.
+        growthStages:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/AgronomicCode"}
+          description: Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.
+        relativeTiming:
+          $ref: "#/components/schemas/RelativeTiming"
+        establishmentMethods:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, enum: [DirectSeeded, Transplanted]}
+          description: How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.
+        waterRegimes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, enum: [Rainfed, Irrigated]}
+          description: Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.
+        extensions:
+          type: object
+          minProperties: 1
+          propertyNames: {type: string, format: uri, pattern: '^https?://'}
+          additionalProperties: true
+          description: Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.
+
+    AgronomicCode:
+      type: object
+      additionalProperties: false
+      required: [codeSystem, code]
+      properties:
+        codeSystem:
+          type: string
+          format: uri
+          description: URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.
+        code:
+          type: string
+          minLength: 1
+          description: Exact code within the stated vocabulary. Preserve leading zeros.
+        label:
+          type: string
+          minLength: 1
+          description: Human-readable label; identity is the codeSystem and code pair.
+
+    RelativeTiming:
+      type: object
+      additionalProperties: false
+      required: [event]
+      anyOf:
+        - required: [fromDays]
+        - required: [toDays]
+      description: Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.
+      properties:
+        event:
+          type: string
+          enum: [Sowing, Transplanting, Emergence, Pruning, Harvest]
+          description: Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.
+        fromDays:
+          type: integer
+          minimum: 0
+          description: Inclusive lower bound. For example 20 means day 20 or later after the named event.
+        toDays:
+          type: integer
+          minimum: 0
+          description: Inclusive upper bound. For example 30 means up to and including day 30 after the named event.
 
     AdministrativeAreaReference:
       type: object

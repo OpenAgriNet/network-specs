@@ -6,6 +6,8 @@ Read the [Complete Examples](examples/) to see the domain packs composed inside 
 
 ## API separation preview
 
+[Review agricultural applicability and search filters](applicability-review.html). This branch adds optional season, stage, relative timing and provider-extension conditions on top of the API separation.
+
 [Review the separate API specifications](../api-specs/). Grievance and SchemeApplication below now describe public catalog metadata. Their private requests and responses have separate OpenAPI contracts. This branch is for consumer feedback, not production migration.
 
 ## Schema Packs

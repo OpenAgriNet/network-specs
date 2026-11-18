@@ -26,7 +26,17 @@
     "beckn:resourceAttributes.coverageAreas[].areaLevel",
     "beckn:resourceAttributes.coverageAreas[].type",
     "beckn:resourceAttributes.coverageAreas[].bbox",
-    "beckn:resourceAttributes.coverageAreas[].coordinates"
+    "beckn:resourceAttributes.coverageAreas[].coordinates",
+    "beckn:resourceAttributes.applicability[].subjectIds[]",
+    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.applicability[].seasons[].code",
+    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.applicability[].growthStages[].code",
+    "beckn:resourceAttributes.applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.applicability[].waterRegimes[]"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -37,7 +47,17 @@
     "beckn:resourceAttributes.coverageAreas[].codeScheme",
     "beckn:resourceAttributes.coverageAreas[].areaCode",
     "beckn:resourceAttributes.coverageAreas[].areaLevel",
-    "beckn:resourceAttributes.coverageAreas[].type"
+    "beckn:resourceAttributes.coverageAreas[].type",
+    "beckn:resourceAttributes.applicability[].subjectIds[]",
+    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.applicability[].seasons[].code",
+    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.applicability[].growthStages[].code",
+    "beckn:resourceAttributes.applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.applicability[].waterRegimes[]"
   ],
   "sortable_paths": [],
   "privacy_notes": [],
@@ -47,5 +67,12 @@
     "Resource": "2.0",
     "Attributes": "2.0",
     "Descriptor": "2.1"
+  },
+  "applicability_filtering": {
+    "status": "consumer-review",
+    "correlation": "Predicates must match within one applicability entry.",
+    "relative_timing": "Matching event AND fromDays <= age AND toDays >= age; absent bound is unbounded.",
+    "unknown": "Missing facts or unsupported extension conditions are unknown, not true.",
+    "extensions": "Not automatically indexed; agree provider schemas and evaluators."
   }
 }

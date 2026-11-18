@@ -28,8 +28,16 @@
       "rdfs:label": "Agriculture Subject Reference",
       "rdfs:comment": "Stable reference to a governed agriculture subject and its Beckn descriptor."
     },
-    { "@id": "openagrinet:agricultureSubjects", "@type": "rdfs:Property", "rdfs:label": "agriculture subjects" },
-    { "@id": "openagrinet:subjectId", "@type": "rdfs:Property", "rdfs:label": "subject identifier" },
+    {
+      "@id": "openagrinet:agricultureSubjects",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agriculture subjects"
+    },
+    {
+      "@id": "openagrinet:subjectId",
+      "@type": "rdfs:Property",
+      "rdfs:label": "subject identifier"
+    },
     {
       "@id": "openagrinet:languages",
       "@type": "rdfs:Property",
@@ -42,11 +50,31 @@
       "rdfs:label": "coverage areas",
       "rdfs:comment": "Geographic areas within which a Resource applies, represented by an administrative area reference or a Beckn GeoJSON geometry."
     },
-    { "@id": "openagrinet:AdministrativeAreaReference", "@type": "rdfs:Class", "rdfs:label": "Administrative Area Reference" },
-    { "@id": "openagrinet:areaCodeScheme", "@type": "rdfs:Property", "rdfs:label": "area code scheme" },
-    { "@id": "openagrinet:areaCode", "@type": "rdfs:Property", "rdfs:label": "area code" },
-    { "@id": "openagrinet:areaLevel", "@type": "rdfs:Property", "rdfs:label": "area level" },
-    { "@id": "openagrinet:areaName", "@type": "rdfs:Property", "rdfs:label": "area name" },
+    {
+      "@id": "openagrinet:AdministrativeAreaReference",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Administrative Area Reference"
+    },
+    {
+      "@id": "openagrinet:areaCodeScheme",
+      "@type": "rdfs:Property",
+      "rdfs:label": "area code scheme"
+    },
+    {
+      "@id": "openagrinet:areaCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "area code"
+    },
+    {
+      "@id": "openagrinet:areaLevel",
+      "@type": "rdfs:Property",
+      "rdfs:label": "area level"
+    },
+    {
+      "@id": "openagrinet:areaName",
+      "@type": "rdfs:Property",
+      "rdfs:label": "area name"
+    },
     {
       "@id": "openagrinet:sourceId",
       "@type": "rdfs:Property",
@@ -71,6 +99,90 @@
       "@id": "openagrinet:endsAt",
       "@type": "rdfs:Property",
       "rdfs:label": "ends at"
+    },
+    {
+      "@id": "openagrinet:applicability",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicability",
+      "rdfs:comment": "Alternative condition sets; fields within one set apply together."
+    },
+    {
+      "@id": "openagrinet:subjectIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "subjectIds",
+      "rdfs:comment": "Governed subjects for one condition."
+    },
+    {
+      "@id": "openagrinet:seasons",
+      "@type": "rdfs:Property",
+      "rdfs:label": "seasons",
+      "rdfs:comment": "Regional season references."
+    },
+    {
+      "@id": "openagrinet:growthStages",
+      "@type": "rdfs:Property",
+      "rdfs:label": "growthStages",
+      "rdfs:comment": "Observed developmental stage references."
+    },
+    {
+      "@id": "openagrinet:relativeTiming",
+      "@type": "rdfs:Property",
+      "rdfs:label": "relativeTiming",
+      "rdfs:comment": "Inclusive days since a named event."
+    },
+    {
+      "@id": "openagrinet:event",
+      "@type": "rdfs:Property",
+      "rdfs:label": "event",
+      "rdfs:comment": "Event used as day zero."
+    },
+    {
+      "@id": "openagrinet:fromDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "fromDays",
+      "rdfs:comment": "Inclusive lower day bound."
+    },
+    {
+      "@id": "openagrinet:toDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "toDays",
+      "rdfs:comment": "Inclusive upper day bound."
+    },
+    {
+      "@id": "openagrinet:establishmentMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "establishmentMethods",
+      "rdfs:comment": "Direct seeding or transplanting."
+    },
+    {
+      "@id": "openagrinet:waterRegimes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "waterRegimes",
+      "rdfs:comment": "Rainfed or irrigated."
+    },
+    {
+      "@id": "openagrinet:extensions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "extensions",
+      "rdfs:comment": "Provider-owned restrictions; unknown qualifiers cannot be ignored."
+    },
+    {
+      "@id": "openagrinet:codeSystem",
+      "@type": "rdfs:Property",
+      "rdfs:label": "codeSystem",
+      "rdfs:comment": "Versioned vocabulary URI."
+    },
+    {
+      "@id": "openagrinet:agronomicCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicCode",
+      "rdfs:comment": "Code within a vocabulary."
+    },
+    {
+      "@id": "openagrinet:agronomicLabel",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicLabel",
+      "rdfs:comment": "Display label."
     }
   ]
 }

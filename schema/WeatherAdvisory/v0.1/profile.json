@@ -54,7 +54,27 @@
     "beckn:resourceAttributes.recommendations[].language",
     "beckn:resourceAttributes.recommendations[].severity",
     "beckn:resourceAttributes.weatherBasis.parameters",
-    "beckn:resourceAttributes.source.sourceId"
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.applicability[].subjectIds[]",
+    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.applicability[].seasons[].code",
+    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.applicability[].growthStages[].code",
+    "beckn:resourceAttributes.applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.applicability[].waterRegimes[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].subjectIds[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.recommendations[].applicability[].seasons[].code",
+    "beckn:resourceAttributes.recommendations[].applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.recommendations[].applicability[].growthStages[].code",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.recommendations[].applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].waterRegimes[]"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -78,7 +98,27 @@
     "beckn:resourceAttributes.recommendations[].language",
     "beckn:resourceAttributes.recommendations[].severity",
     "beckn:resourceAttributes.weatherBasis.parameters",
-    "beckn:resourceAttributes.source.sourceId"
+    "beckn:resourceAttributes.source.sourceId",
+    "beckn:resourceAttributes.applicability[].subjectIds[]",
+    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.applicability[].seasons[].code",
+    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.applicability[].growthStages[].code",
+    "beckn:resourceAttributes.applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.applicability[].waterRegimes[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].subjectIds[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].seasons[].codeSystem",
+    "beckn:resourceAttributes.recommendations[].applicability[].seasons[].code",
+    "beckn:resourceAttributes.recommendations[].applicability[].growthStages[].codeSystem",
+    "beckn:resourceAttributes.recommendations[].applicability[].growthStages[].code",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.event",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.fromDays",
+    "beckn:resourceAttributes.recommendations[].applicability[].relativeTiming.toDays",
+    "beckn:resourceAttributes.recommendations[].applicability[].establishmentMethods[]",
+    "beckn:resourceAttributes.recommendations[].applicability[].waterRegimes[]"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.issuedAt"
@@ -95,5 +135,12 @@
     "Address": "2.0"
   },
   "interaction_type": "Advise",
-  "outcome_type": "openagrinet:WeatherAdvisory"
+  "outcome_type": "openagrinet:WeatherAdvisory",
+  "applicability_filtering": {
+    "status": "consumer-review",
+    "correlation": "Predicates must match within one applicability entry.",
+    "relative_timing": "Matching event AND fromDays <= age AND toDays >= age; absent bound is unbounded.",
+    "unknown": "Missing facts or unsupported extension conditions are unknown, not true.",
+    "extensions": "Not automatically indexed; agree provider schemas and evaluators."
+  }
 }

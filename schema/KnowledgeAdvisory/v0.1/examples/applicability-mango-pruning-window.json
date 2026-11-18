@@ -1,0 +1,38 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeAdvisory/v0.1/context.jsonld",
+  "@type": "openagrinet:KnowledgeAdvisory",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Crop"
+  ],
+  "languages": [
+    "en"
+  ],
+  "topics": [
+    "Applicability modelling review"
+  ],
+  "issuedAt": "2026-06-20T05:30:00Z",
+  "recommendations": [
+    {
+      "message": "Illustrative scope only. Consult a reviewed source before acting.",
+      "language": "en"
+    }
+  ],
+  "rationale": "Synthetic schema-review fixture, not agricultural advice.",
+  "source": {
+    "sourceId": "example:applicability-review",
+    "sourceName": "Synthetic review fixture"
+  },
+  "applicability": [
+    {
+      "subjectIds": [
+        "https://example.org/crops/mango"
+      ],
+      "relativeTiming": {
+        "event": "Pruning",
+        "fromDays": 14,
+        "toDays": 21
+      }
+    }
+  ]
+}
