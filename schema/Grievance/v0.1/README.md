@@ -1,5 +1,11 @@
 # Grievance
 
+## API separation preview
+
+The root schema now describes public catalog metadata only. Private operation contracts have moved to [Grievance API specifications](../../../api-specs/Grievance/v0.1/). Request and response schemas are separate. Old named components remain compatibility aliases, but private payloads no longer validate against the public Grievance root. Consumers must review this change before a production version is chosen.
+
+The sections below preserve the earlier bundled contract discussion for comparison. Its operation-level requiredness and file paths are historical; the linked API specification is the proposed directional contract.
+
 <nav class="artifact-links" aria-label="Schema artifacts">
   <a href="../../README.md">All API schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>

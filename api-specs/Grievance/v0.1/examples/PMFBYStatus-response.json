@@ -1,0 +1,13 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "case": {
+    "status": {
+      "code": "Registered"
+    }
+  },
+  "informationMode": "OnDemand",
+  "scheme": {
+    "code": "PMFBY"
+  }
+}

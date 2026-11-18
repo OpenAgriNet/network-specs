@@ -1,9 +1,9 @@
 {
   "id": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.1",
-  "name": "Grievance API Attributes",
+  "name": "Grievance catalog attributes",
   "version": "0.1.0",
   "protocol_version": "2.0",
-  "semantic_model": "provider-api",
+  "semantic_model": "resource",
   "included_schemas": [
     "Grievance"
   ],
@@ -14,61 +14,26 @@
     "grievanceOptions"
   ],
   "result_fields": [
-    "provider",
+    "informationMode",
     "scheme",
-    "enrolmentId",
-    "grievance",
-    "case"
+    "challenge.methods",
+    "grievanceOptions"
   ],
   "indexable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.scheme.code",
     "beckn:resourceAttributes.grievanceOptions.categories[].code",
     "beckn:resourceAttributes.grievanceOptions.subCategories[].code",
-    "beckn:resourceAttributes.challenge.methods[].method",
-    "beckn:commitmentAttributes.informationMode",
-    "beckn:support.channels[0].informationMode",
-    "beckn:commitmentAttributes.scheme.code",
-    "beckn:support.channels[0].scheme.code",
-    "beckn:commitmentAttributes.enrolmentId",
-    "beckn:support.channels[0].enrolmentId",
-    "beckn:commitmentAttributes.case.ticketNo",
-    "beckn:support.channels[0].case.ticketNo",
-    "beckn:commitmentAttributes.case.status.code",
-    "beckn:support.channels[0].case.status.code",
-    "beckn:commitmentAttributes.grievance.category.code",
-    "beckn:support.channels[0].grievance.category.code",
-    "beckn:commitmentAttributes.grievance.subCategory.code",
-    "beckn:support.channels[0].grievance.subCategory.code",
-    "beckn:commitmentAttributes.case.filedOn",
-    "beckn:support.channels[0].case.filedOn",
-    "beckn:commitmentAttributes.case.repliedOn"
+    "beckn:resourceAttributes.challenge.methods[].method"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
     "beckn:resourceAttributes.scheme.code",
     "beckn:resourceAttributes.grievanceOptions.categories[].code",
     "beckn:resourceAttributes.grievanceOptions.subCategories[].code",
-    "beckn:resourceAttributes.challenge.methods[].method",
-    "beckn:commitmentAttributes.informationMode",
-    "beckn:support.channels[0].informationMode",
-    "beckn:commitmentAttributes.scheme.code",
-    "beckn:support.channels[0].scheme.code",
-    "beckn:commitmentAttributes.case.status.code",
-    "beckn:support.channels[0].case.status.code",
-    "beckn:commitmentAttributes.grievance.category.code",
-    "beckn:support.channels[0].grievance.category.code",
-    "beckn:commitmentAttributes.grievance.subCategory.code",
-    "beckn:support.channels[0].grievance.subCategory.code",
-    "beckn:commitmentAttributes.case.filedOn",
-    "beckn:support.channels[0].case.filedOn",
-    "beckn:commitmentAttributes.case.repliedOn"
+    "beckn:resourceAttributes.challenge.methods[].method"
   ],
-  "sortable_paths": [
-    "beckn:commitmentAttributes.case.filedOn",
-    "beckn:support.channels[0].case.filedOn",
-    "beckn:commitmentAttributes.case.repliedOn"
-  ],
+  "sortable_paths": [],
   "privacy_notes": [
     "applicantMobile is personal data. It travels inbound only: the PM-KISAN branch refuses it outright. Nothing proves the caller holds the number -- it is a contact number the portal files on the ticket, not a verified one. complaintDate and receiptSourceId are inbound only for the same reason: they are what the caller said when filing, and the portal keeps its own record of both. cropYear and season are not in that group -- they are sent on a PMFBY case read and come back on the answer.",
     "challenge.response.value is a one-time code. It is never logged, traced, echoed in a response, or forwarded to the lodge call. No desk in this pack reports where it sent a code, so no destination -- masked or otherwise -- appears in any payload. PMFBY's grievance desk issues no challenge at all: the schema refuses the whole challenge object on that branch, so a payload carrying any part of it is rejected rather than quietly ignored. Filing against PMFBY is therefore unauthenticated -- anyone holding an application number can lodge a grievance against it. That is the portal's posture, not one this network introduces.",
