@@ -11,7 +11,8 @@ on:
 permissions: {}
 
 concurrency:
-  group: pages
+  # Ignored PR completions must not replace a queued push deployment.
+  group: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event != 'push' && format('pages-ignored-{0}', github.run_id) || 'pages' }}
   cancel-in-progress: false
 
 jobs:
