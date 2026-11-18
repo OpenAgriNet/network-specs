@@ -20,7 +20,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '/network-specs'
 ORIGIN = 'https://openagrinet.github.io'
-DATA_ROOTS = ('schema', 'api-schemas', 'api-specs')
+DATA_ROOTS = ('schema', 'api-schemas', 'api-specs', 'api')
 TEXT_SUFFIXES = {'.json', '.jsonld', '.yaml', '.yml', '.md', '.html', '.txt'}
 
 
@@ -85,10 +85,12 @@ def build(branch, revision, destination, preview):
         if not (destination / 'schema/index.html').is_file():
             raise RuntimeError(f'Missing schema index for {branch}')
         if preview:
+            api_link = (f' · <a href="{base}/api/">API specifications</a>'
+                        if (destination / 'api/index.html').is_file() else '')
             banner = (f'<aside style="padding:12px;background:#fff3cd;color:#222">'
                       f'Preview: {html.escape(branch)} · {revision[:12]} · '
                       f'<a href="{BASE}/">Production</a> · '
-                      f'<a href="{BASE}/previews/">All previews</a></aside>')
+                      f'<a href="{BASE}/previews/">All previews</a>{api_link}</aside>')
             for path in destination.rglob('*'):
                 if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
                     text = rewrite_artifact_urls(path.read_text(), base)

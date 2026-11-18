@@ -44,7 +44,7 @@ For immediate automatic dev URLs, open a draft PR after pushing the branch. Fork
 
 ### Preview safety and limitations
 
-The production workflow checks out main and uses main's dependencies, schema generator, layouts and configuration. It imports only ordinary JSON, JSON-LD, YAML, Markdown, HTML and text files from branch schema/, api-schemas/ and api-specs/ directories. It never runs a branch's scripts, Gemfile, custom plugins or workflow. Jekyll runs in safe mode. The build job has read-only repository access; only the separate deployment job receives Pages publication permissions.
+The production workflow checks out main and uses main's dependencies, schema generator, layouts and configuration. It imports only ordinary JSON, JSON-LD, YAML, Markdown, HTML and text files from branch schema/, api/, api-schemas/ and api-specs/ directories. It never runs a branch's scripts, Gemfile, custom plugins or workflow. Jekyll runs in safe mode. The build job has read-only repository access; only the separate deployment job receives Pages publication permissions.
 
 This is a schema-content preview, not an arbitrary application deployment. Changes to site templates or generator code need the Check Pages build workflow and local review before merging. Preview artifact URLs are rewritten to their preview paths; vocabulary identifiers remain canonical. Treat preview files as experimental, and verify all external references before using them for dev validation.
 
