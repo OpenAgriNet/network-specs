@@ -1,0 +1,46 @@
+{
+  "id": "resource:example:schemeapplication",
+  "descriptor": {
+    "name": "Scheme application status",
+    "docs": [
+      {
+        "label": "SchemeApplication API specification",
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      }
+    ]
+  },
+  "resourceAttributes": {
+    "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+    "@type": "openagrinet:SchemeApplication",
+    "informationMode": "OnDemand",
+    "scheme": {
+      "code": "PM-KISAN",
+      "name": "Pradhan Mantri Kisan Samman Nidhi"
+    },
+    "challenge": {
+      "methods": [
+        {
+          "method": "OTP",
+          "channel": "SMS",
+          "length": 4,
+          "valueType": "NUMERIC"
+        }
+      ]
+    },
+    "actions": [
+      {
+        "action": "init",
+        "description": "Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.",
+        "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest",
+        "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
+      },
+      {
+        "action": "status",
+        "description": "Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.",
+        "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest",
+        "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
+      }
+    ]
+  }
+}

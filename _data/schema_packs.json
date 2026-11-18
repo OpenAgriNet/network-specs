@@ -732,7 +732,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Agricultural facilities that may be discovered through a Provider or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/AgricultureFacility/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "AgricultureResource-v0.1": {
     "key": "AgricultureResource-v0.1",
@@ -1071,7 +1082,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Shared agriculture attributes for information published on OpenAgriNet.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/AgricultureResource/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "Grievance-v0.1": {
     "key": "Grievance-v0.1",
@@ -1872,49 +1894,49 @@
     ],
     "examples": [
       {
-        "name": "Pmfby On Demand Capability",
+        "name": "PMFBY On Demand Capability",
         "file": "examples/pmfby-on-demand-capability.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYSupport\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMFBYStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    }\n  ]\n}"
       },
       {
-        "name": "Pmfby On Demand File Grievance",
+        "name": "PMFBY On Demand File Grievance",
         "file": "examples/pmfby-on-demand-file-grievance.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"provider\": {\n    \"id\": \"pmfby\",\n    \"descriptor\": {\n      \"name\": \"PMFBY Grievance Portal\"\n    }\n  },\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"enrolmentId\": \"KA2026KH00123456\",\n  \"applicantMobile\": \"9876543210\",\n  \"cropYear\": \"2026\",\n  \"season\": \"Kharif\",\n  \"complaintDate\": \"2026-09-28\",\n  \"receiptSourceId\": \"4\",\n  \"grievance\": {\n    \"category\": {\n      \"code\": \"3\"\n    },\n    \"subCategory\": {\n      \"code\": \"10\"\n    },\n    \"description\": \"Cannot log in to the PMFBY portal to view my Kharif 2026 enrolment.\"\n  }\n}"
       },
       {
-        "name": "Pmfby On Demand Read Case",
+        "name": "PMFBY On Demand Read Case",
         "file": "examples/pmfby-on-demand-read-case.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"applicantMobile\": \"9876543210\",\n  \"case\": {\n    \"ticketNo\": \"100626000099001\"\n  }\n}"
       },
       {
-        "name": "Pmkisan On Demand Capability",
+        "name": "PM-KISAN On Demand Capability",
         "file": "examples/pmkisan-on-demand-capability.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANInit\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANStatus\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/attributes.yaml#/components/schemas/PMKISANSupport\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    }\n  ]\n}"
       },
       {
-        "name": "Pmkisan On Demand Challenge Issued",
+        "name": "PM-KISAN On Demand Challenge Issued",
         "file": "examples/pmkisan-on-demand-challenge-issued.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"issued\": {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\",\n      \"expiresAt\": \"2026-09-28T11:08:00Z\"\n    }\n  }\n}"
       },
       {
-        "name": "Pmkisan On Demand Lodge Grievance",
+        "name": "PM-KISAN On Demand Lodge Grievance",
         "file": "examples/pmkisan-on-demand-lodge-grievance.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"provider\": {\n    \"id\": \"pmkisan\",\n    \"descriptor\": {\n      \"name\": \"PM-KISAN Portal\"\n    }\n  },\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"4821\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"grievance\": {\n    \"category\": {\n      \"code\": \"G003\"\n    },\n    \"description\": \"Third instalment for 2026 has not been credited.\"\n  }\n}"
       },
       {
-        "name": "Pmkisan On Demand Read Cases",
+        "name": "PM-KISAN On Demand Read Cases",
         "file": "examples/pmkisan-on-demand-read-cases.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"7390\"\n    }\n  },\n  \"enrolmentId\": \"UP12345678A\",\n  \"case\": {\n    \"filedOn\": \"2026-09-28\"\n  }\n}"
       },
       {
-        "name": "Pmkisan On Demand Request Otp",
+        "name": "PM-KISAN On Demand Request OTP",
         "file": "examples/pmkisan-on-demand-request-otp.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"enrolmentId\": \"UP12345678A\"\n}"
@@ -1933,9 +1955,14 @@
       "status": "commitmentAttributes",
       "support": "channels"
     },
+    "catalog_composition": false,
     "leaves": [
       {
         "name": "PMFBYCatalog",
+        "reference": "#/components/schemas/PMFBYCatalog",
+        "scheme": "PMFBY",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "catalog/publish"
         ],
@@ -1957,7 +1984,7 @@
 
         ],
         "examples": [
-          "Pmfby On Demand Capability"
+          "PMFBY On Demand Capability"
         ],
         "fields": [
           {
@@ -2212,6 +2239,10 @@
       },
       {
         "name": "PMFBYStatus",
+        "reference": "#/components/schemas/PMFBYStatus",
+        "scheme": "PMFBY",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "status"
         ],
@@ -2249,7 +2280,7 @@
           "case.cropName"
         ],
         "examples": [
-          "Pmfby On Demand Read Case"
+          "PMFBY On Demand Read Case"
         ],
         "fields": [
           {
@@ -2572,6 +2603,10 @@
       },
       {
         "name": "PMFBYSupport",
+        "reference": "#/components/schemas/PMFBYSupport",
+        "scheme": "PMFBY",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "support"
         ],
@@ -2611,7 +2646,7 @@
           "case.filedOn"
         ],
         "examples": [
-          "Pmfby On Demand File Grievance"
+          "PMFBY On Demand File Grievance"
         ],
         "fields": [
           {
@@ -2982,6 +3017,10 @@
       },
       {
         "name": "PMKISANCatalog",
+        "reference": "#/components/schemas/PMKISANCatalog",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "catalog/publish"
         ],
@@ -3003,7 +3042,7 @@
 
         ],
         "examples": [
-          "Pmkisan On Demand Capability"
+          "PM-KISAN On Demand Capability"
         ],
         "fields": [
           {
@@ -3301,6 +3340,10 @@
       },
       {
         "name": "PMKISANInit",
+        "reference": "#/components/schemas/PMKISANInit",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "init"
         ],
@@ -3326,8 +3369,8 @@
           "challenge.issued.expiresAt"
         ],
         "examples": [
-          "Pmkisan On Demand Challenge Issued",
-          "Pmkisan On Demand Request Otp"
+          "PM-KISAN On Demand Challenge Issued",
+          "PM-KISAN On Demand Request OTP"
         ],
         "fields": [
           {
@@ -3514,6 +3557,10 @@
       },
       {
         "name": "PMKISANStatus",
+        "reference": "#/components/schemas/PMKISANStatus",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "status"
         ],
@@ -3542,7 +3589,7 @@
           "case.repliedOn"
         ],
         "examples": [
-          "Pmkisan On Demand Read Cases"
+          "PM-KISAN On Demand Read Cases"
         ],
         "fields": [
           {
@@ -3803,6 +3850,10 @@
       },
       {
         "name": "PMKISANSupport",
+        "reference": "#/components/schemas/PMKISANSupport",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "support"
         ],
@@ -3837,7 +3888,7 @@
           "case.filedOn"
         ],
         "examples": [
-          "Pmkisan On Demand Lodge Grievance"
+          "PM-KISAN On Demand Lodge Grievance"
         ],
         "fields": [
           {
@@ -4168,12 +4219,732 @@
         ]
       }
     ],
+    "has_directional_fields": true,
+    "generic_catalog": false,
+    "summary": "File a grievance against a government scheme and check where it stands.",
     "schemas_by_action": {
       "catalog/publish": "GrievanceCatalog",
       "init": "GrievanceInit",
       "status": "GrievanceStatus",
       "support": "GrievanceSupport"
-    }
+    },
+    "versions": [
+      {
+        "label": "v0.2",
+        "url": "/schema/Grievance/v0.2/"
+      },
+      {
+        "label": "v0.1",
+        "url": "/schema/Grievance/v0.1/"
+      }
+    ],
+    "directory_entry": false
+  },
+  "Grievance-v0.2": {
+    "key": "Grievance-v0.2",
+    "name": "Grievance",
+    "display_name": "Grievance",
+    "version": "0.2.0",
+    "version_dir": "v0.2",
+    "protocol_version": "2.0",
+    "interaction_type": "Transact",
+    "description": "Public catalog metadata for grievance services, with Provider-defined schemes, complaint options and operation links.",
+    "canonical_type": "openagrinet:Grievance",
+    "beckn_container": "resourceAttributes",
+    "schema_name": "Grievance",
+    "composition": [
+      {
+        "name": "GrievanceFields",
+        "reference": "#/components/schemas/GrievanceFields",
+        "role": "Shared fields"
+      },
+      {
+        "name": "Grievance fields and rules",
+        "reference": null,
+        "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "The government scheme this payload is about.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"code\": \"PMFBY\",\n  \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined scheme code, for example PMFBY or PM-KISAN. Other non-empty codes are accepted.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"PMFBY\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.name",
+        "type": "string",
+        "requirement": "Always",
+        "description": "The scheme's full name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Pradhan Mantri Fasal Bima Yojana\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@context",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's JSON-LD context, alone or inside a larger context array.",
+        "constraints": "",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's OAN type, alone or alongside the Provider's own types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"openagrinet:Grievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "How this information is obtained. Always fetched from the scheme on demand.",
+        "constraints": "enum: OnDemand",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"OnDemand\"",
+        "enum": [
+          "OnDemand"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions",
+        "type": "object",
+        "requirement": "Always",
+        "description": "Provider-published complaint categories and optional sub-categories. Codes are data, not a fixed schema enumeration.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"categories\": [\n    {\n      \"code\": \"3\",\n      \"name\": \"Enrollment / Portal Issues\",\n      \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n    }\n  ],\n  \"subCategories\": [\n    {\n      \"code\": \"10\",\n      \"name\": \"Login\",\n      \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Available complaint categories.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"code\": \"3\",\n    \"name\": \"Enrollment / Portal Issues\",\n    \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined option code. Read the advertised options; there is no centrally fixed code list.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"3\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].name",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Display label for this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Enrollment / Portal Issues\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].help",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When to select this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Something about your enrolment, or about the portal itself, is not working.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Additional complaint sub-categories, when published.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"code\": \"10\",\n    \"name\": \"Login\",\n    \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].code",
+        "type": "string",
+        "requirement": "When grievanceOptions.subCategories is supplied",
+        "description": "Provider-defined option code. Read the advertised options; there is no centrally fixed code list.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].name",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Display label for this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Login\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].help",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When to select this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"You cannot sign in to the portal to see your enrolment.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Advertised operations and their request-schema links. API contracts define operation-specific restrictions.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppo...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].action",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Beckn action advertised by this Provider. The linked operation contract defines its semantics.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"support\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].description",
+        "type": "string",
+        "requirement": "Always",
+        "description": "What the operation does.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].schema",
+        "type": "string",
+        "requirement": "Always",
+        "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].attributesAt",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Path to operation attributes in the Beckn message.",
+        "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"$.message.support.channels[0]\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional public verification requirements. Do not put issued challenges, destinations or secret responses in catalog metadata. The API contract defines when verification is required.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods",
+        "type": "array<object>",
+        "requirement": "When challenge is supplied",
+        "description": "Public verification methods advertised by the Provider.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Provider-defined verification method, for example OTP.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"OTP\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Delivery channel when applicable, for example SMS or EMAIL.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"SMS\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].length",
+        "type": "integer",
+        "requirement": "Optional",
+        "description": "Expected code length when the method uses a fixed-length code.",
+        "constraints": "minimum: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "4",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].valueType",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected code representation when applicable, for example NUMERIC.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"NUMERIC\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "fields": [
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "The government scheme this payload is about.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"code\": \"PMFBY\",\n  \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined scheme code, for example PMFBY or PM-KISAN. Other non-empty codes are accepted.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"PMFBY\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.name",
+        "type": "string",
+        "requirement": "Always",
+        "description": "The scheme's full name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Pradhan Mantri Fasal Bima Yojana\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@context",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's JSON-LD context, alone or inside a larger context array.",
+        "constraints": "",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's OAN type, alone or alongside the Provider's own types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"openagrinet:Grievance\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "How this information is obtained. Always fetched from the scheme on demand.",
+        "constraints": "enum: OnDemand",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"OnDemand\"",
+        "enum": [
+          "OnDemand"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions",
+        "type": "object",
+        "requirement": "Always",
+        "description": "Provider-published complaint categories and optional sub-categories. Codes are data, not a fixed schema enumeration.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"categories\": [\n    {\n      \"code\": \"3\",\n      \"name\": \"Enrollment / Portal Issues\",\n      \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n    }\n  ],\n  \"subCategories\": [\n    {\n      \"code\": \"10\",\n      \"name\": \"Login\",\n      \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Available complaint categories.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"code\": \"3\",\n    \"name\": \"Enrollment / Portal Issues\",\n    \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined option code. Read the advertised options; there is no centrally fixed code list.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"3\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].name",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Display label for this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Enrollment / Portal Issues\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.categories[].help",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When to select this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Something about your enrolment, or about the portal itself, is not working.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Additional complaint sub-categories, when published.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"code\": \"10\",\n    \"name\": \"Login\",\n    \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].code",
+        "type": "string",
+        "requirement": "When grievanceOptions.subCategories is supplied",
+        "description": "Provider-defined option code. Read the advertised options; there is no centrally fixed code list.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"10\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].name",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Display label for this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"Login\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "grievanceOptions.subCategories[].help",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "When to select this option.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"You cannot sign in to the portal to see your enrolment.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Advertised operations and their request-schema links. API contracts define operation-specific restrictions.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppo...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].action",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Beckn action advertised by this Provider. The linked operation contract defines its semantics.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"support\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].description",
+        "type": "string",
+        "requirement": "Always",
+        "description": "What the operation does.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].schema",
+        "type": "string",
+        "requirement": "Always",
+        "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].attributesAt",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Path to operation attributes in the Beckn message.",
+        "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"$.message.support.channels[0]\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional public verification requirements. Do not put issued challenges, destinations or secret responses in catalog metadata. The API contract defines when verification is required.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods",
+        "type": "array<object>",
+        "requirement": "When challenge is supplied",
+        "description": "Public verification methods advertised by the Provider.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Provider-defined verification method, for example OTP.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"OTP\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Delivery channel when applicable, for example SMS or EMAIL.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"SMS\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].length",
+        "type": "integer",
+        "requirement": "Optional",
+        "description": "Expected code length when the method uses a fixed-length code.",
+        "constraints": "minimum: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "4",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].valueType",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected code representation when applicable, for example NUMERIC.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "Grievance",
+        "example": "\"NUMERIC\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "conditions": [
+
+    ],
+    "examples": [
+      {
+        "name": "PMFBY On Demand Capability",
+        "file": "examples/pmfby-on-demand-capability.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    }\n  ]\n}"
+      },
+      {
+        "name": "PM-KISAN On Demand Capability",
+        "file": "examples/pmkisan-on-demand-capability.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\"\n    }\n  ]\n}"
+      }
+    ],
+    "artifacts": [
+      "vocab.jsonld",
+      "context.jsonld",
+      "attributes.yaml",
+      "profile.json",
+      "renderer.json"
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": true,
+    "api_docs": [
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
+        "description": "PMFBY grievance integration contract"
+      },
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
+        "description": "PM-KISAN grievance integration contract"
+      }
+    ],
+    "summary": "Public catalog metadata for grievance services, with Provider-defined schemes, complaint options and operation links.",
+    "versions": [
+      {
+        "label": "v0.2",
+        "url": "/schema/Grievance/v0.2/"
+      },
+      {
+        "label": "v0.1",
+        "url": "/schema/Grievance/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "KnowledgeAdvisory-v0.1": {
     "key": "KnowledgeAdvisory-v0.1",
@@ -4798,7 +5569,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Actionable agricultural guidance based on knowledge that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/KnowledgeAdvisory/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "KnowledgeResource-v0.1": {
     "key": "KnowledgeResource-v0.1",
@@ -5735,7 +6517,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Attributes for agricultural knowledge that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/KnowledgeResource/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "MandiPrice-v0.1": {
     "key": "MandiPrice-v0.1",
@@ -6782,7 +7575,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Attributes for mandi prices that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/MandiPrice/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "MarketIntelligence-v0.1": {
     "key": "MarketIntelligence-v0.1",
@@ -7897,7 +8701,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Price trends, demand forecasts, and nearby market opportunities that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/MarketIntelligence/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "SchemeApplication-v0.1": {
     "key": "SchemeApplication-v0.1",
@@ -8422,7 +9237,7 @@
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicant\": {\n    \"mobile\": \"9876543210\"\n  },\n  \"challenge\": {\n    \"response\": {\n      \"method\": \"OTP\",\n      \"value\": \"4821\"\n    }\n  }\n}"
       },
       {
-        "name": "On Demand Request Otp",
+        "name": "On Demand Request OTP",
         "file": "examples/on-demand-request-otp.json",
         "mode": "OnDemand",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"applicant\": {\n    \"mobile\": \"9876543210\"\n  }\n}"
@@ -8440,9 +9255,14 @@
       "init": "commitmentAttributes",
       "status": "commitmentAttributes"
     },
+    "catalog_composition": false,
     "leaves": [
       {
         "name": "PMKISANApplicationCatalog",
+        "reference": "#/components/schemas/PMKISANApplicationCatalog",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "catalog/publish"
         ],
@@ -8689,6 +9509,10 @@
       },
       {
         "name": "PMKISANApplicationInit",
+        "reference": "#/components/schemas/PMKISANApplicationInit",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "init"
         ],
@@ -8715,7 +9539,7 @@
         ],
         "examples": [
           "On Demand Challenge Issued",
-          "On Demand Request Otp"
+          "On Demand Request OTP"
         ],
         "fields": [
           {
@@ -8926,6 +9750,10 @@
       },
       {
         "name": "PMKISANApplicationStatus",
+        "reference": "#/components/schemas/PMKISANApplicationStatus",
+        "scheme": "PM-KISAN",
+        "external_docs": null,
+        "has_directional_fields": true,
         "actions": [
           "status"
         ],
@@ -9224,11 +10052,505 @@
         ]
       }
     ],
+    "has_directional_fields": true,
+    "generic_catalog": false,
+    "summary": "Read where a farmer's application to a government scheme stands: how many instalments have been paid, whether eKYC is done, and what is holding the money up.",
     "schemas_by_action": {
       "catalog/publish": "SchemeApplicationCatalog",
       "init": "SchemeApplicationInit",
       "status": "SchemeApplicationStatus"
-    }
+    },
+    "versions": [
+      {
+        "label": "v0.2",
+        "url": "/schema/SchemeApplication/v0.2/"
+      },
+      {
+        "label": "v0.1",
+        "url": "/schema/SchemeApplication/v0.1/"
+      }
+    ],
+    "directory_entry": false
+  },
+  "SchemeApplication-v0.2": {
+    "key": "SchemeApplication-v0.2",
+    "name": "SchemeApplication",
+    "display_name": "Scheme Application",
+    "version": "0.2.0",
+    "version_dir": "v0.2",
+    "protocol_version": "2.0",
+    "interaction_type": "Transact",
+    "description": "Public catalog metadata for scheme application services, with Provider-defined schemes and operation links.",
+    "canonical_type": "openagrinet:SchemeApplication",
+    "beckn_container": "resourceAttributes",
+    "schema_name": "SchemeApplication",
+    "composition": [
+      {
+        "name": "SchemeApplicationFields",
+        "reference": "#/components/schemas/SchemeApplicationFields",
+        "role": "Shared fields"
+      },
+      {
+        "name": "SchemeApplication fields and rules",
+        "reference": null,
+        "role": "Pack-specific constraints"
+      }
+    ],
+    "pack_fields": [
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "The government scheme this payload is about.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "{\n  \"code\": \"PM-KISAN\",\n  \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined scheme code, for example PMFBY or PM-KISAN. Other non-empty codes are accepted.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"PM-KISAN\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.name",
+        "type": "string",
+        "requirement": "Always",
+        "description": "The scheme's full name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"Pradhan Mantri Kisan Samman Nidhi\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@context",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's JSON-LD context, alone or inside a larger context array.",
+        "constraints": "",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's OAN type, alone or alongside the Provider's own types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"openagrinet:SchemeApplication\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "How this information is obtained. Always fetched from the scheme on demand.",
+        "constraints": "enum: OnDemand",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"OnDemand\"",
+        "enum": [
+          "OnDemand"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional public verification requirements. Do not put issued challenges, destinations or secret responses in catalog metadata. The API contract defines when verification is required.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods",
+        "type": "array<object>",
+        "requirement": "When challenge is supplied",
+        "description": "Public verification methods advertised by the Provider.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Provider-defined verification method, for example OTP.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"OTP\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Delivery channel when applicable, for example SMS or EMAIL.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"SMS\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].length",
+        "type": "integer",
+        "requirement": "Optional",
+        "description": "Expected code length when the method uses a fixed-length code.",
+        "constraints": "minimum: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "4",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].valueType",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected code representation when applicable, for example NUMERIC.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"NUMERIC\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Advertised operations and their request-schema links. API contracts define operation-specific restrictions.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].action",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Beckn action advertised by this Provider. The linked operation contract defines its semantics.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"init\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].description",
+        "type": "string",
+        "requirement": "Always",
+        "description": "What the operation does.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].schema",
+        "type": "string",
+        "requirement": "Always",
+        "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].attributesAt",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Path to operation attributes in the Beckn message.",
+        "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"$.message.contract.commitments[0].commitmentAttributes\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "fields": [
+      {
+        "path": "scheme",
+        "type": "object",
+        "requirement": "Always",
+        "description": "The government scheme this payload is about.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "{\n  \"code\": \"PM-KISAN\",\n  \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.code",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Provider-defined scheme code, for example PMFBY or PM-KISAN. Other non-empty codes are accepted.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"PM-KISAN\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "scheme.name",
+        "type": "string",
+        "requirement": "Always",
+        "description": "The scheme's full name.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"Pradhan Mantri Kisan Samman Nidhi\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@context",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's JSON-LD context, alone or inside a larger context array.",
+        "constraints": "",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "@type",
+        "type": "choice",
+        "requirement": "Always",
+        "description": "This pack's OAN type, alone or alongside the Provider's own types.",
+        "constraints": "",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"openagrinet:SchemeApplication\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "informationMode",
+        "type": "string",
+        "requirement": "Always",
+        "description": "How this information is obtained. Always fetched from the scheme on demand.",
+        "constraints": "enum: OnDemand",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"OnDemand\"",
+        "enum": [
+          "OnDemand"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "challenge",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Optional public verification requirements. Do not put issued challenges, destinations or secret responses in catalog metadata. The API contract defines when verification is required.",
+        "constraints": "additionalProperties: false",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "{\n  \"methods\": [\n    {\n      \"method\": \"OTP\",\n      \"channel\": \"SMS\",\n      \"length\": 4,\n      \"valueType\": \"NUMERIC\"\n    }\n  ]\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods",
+        "type": "array<object>",
+        "requirement": "When challenge is supplied",
+        "description": "Public verification methods advertised by the Provider.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "[\n  {\n    \"method\": \"OTP\",\n    \"channel\": \"SMS\",\n    \"length\": 4,\n    \"valueType\": \"NUMERIC\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].method",
+        "type": "string",
+        "requirement": "When challenge is supplied",
+        "description": "Provider-defined verification method, for example OTP.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"OTP\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].channel",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Delivery channel when applicable, for example SMS or EMAIL.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"SMS\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].length",
+        "type": "integer",
+        "requirement": "Optional",
+        "description": "Expected code length when the method uses a fixed-length code.",
+        "constraints": "minimum: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "4",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "challenge.methods[].valueType",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Expected code representation when applicable, for example NUMERIC.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"NUMERIC\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions",
+        "type": "array<object>",
+        "requirement": "Always",
+        "description": "Advertised operations and their request-schema links. API contracts define operation-specific restrictions.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].action",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Beckn action advertised by this Provider. The linked operation contract defines its semantics.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"init\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].description",
+        "type": "string",
+        "requirement": "Always",
+        "description": "What the operation does.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].schema",
+        "type": "string",
+        "requirement": "Always",
+        "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "actions[].attributesAt",
+        "type": "string",
+        "requirement": "Always",
+        "description": "Path to operation attributes in the Beckn message.",
+        "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
+        "reference": null,
+        "origin": "SchemeApplication",
+        "example": "\"$.message.contract.commitments[0].commitmentAttributes\"",
+        "enum": null,
+        "enum_details": null
+      }
+    ],
+    "conditions": [
+
+    ],
+    "examples": [
+      {
+        "name": "On Demand Capability",
+        "file": "examples/on-demand-capability.json",
+        "mode": "OnDemand",
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\"\n    }\n  ]\n}"
+      }
+    ],
+    "artifacts": [
+      "vocab.jsonld",
+      "context.jsonld",
+      "attributes.yaml",
+      "profile.json",
+      "renderer.json"
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": true,
+    "api_docs": [
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml",
+        "description": "PM-KISAN application integration contract"
+      }
+    ],
+    "summary": "Public catalog metadata for scheme application services, with Provider-defined schemes and operation links.",
+    "versions": [
+      {
+        "label": "v0.2",
+        "url": "/schema/SchemeApplication/v0.2/"
+      },
+      {
+        "label": "v0.1",
+        "url": "/schema/SchemeApplication/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "WeatherAdvisory-v0.1": {
     "key": "WeatherAdvisory-v0.1",
@@ -10199,7 +11521,18 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Weather-informed agricultural guidance that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/WeatherAdvisory/v0.1/"
+      }
+    ],
+    "directory_entry": true
   },
   "WeatherObservation-v0.1": {
     "key": "WeatherObservation-v0.1",
@@ -11258,6 +12591,17 @@
       "attributes.yaml",
       "profile.json",
       "renderer.json"
-    ]
+    ],
+    "catalog_composition": false,
+    "has_directional_fields": false,
+    "generic_catalog": false,
+    "summary": "Attributes for weather information that may be obtained on demand or supplied directly.",
+    "versions": [
+      {
+        "label": "v0.1",
+        "url": "/schema/WeatherObservation/v0.1/"
+      }
+    ],
+    "directory_entry": true
   }
 }

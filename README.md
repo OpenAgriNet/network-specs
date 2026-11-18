@@ -11,17 +11,19 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 | Entry point | Use it for |
 |---|---|
 | [Schema Pack](schema/) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
+| [API specifications](api/) | External service integration contracts and examples |
 | [Complete Examples](schema/examples/) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
 
 ## Active version
 
-The current version line is `v0.1`; pack metadata uses semantic version `0.1.0`. The singular `schema/` directory is authoritative for both kinds of pack; `profile.json` records which kind a pack is, in `semantic_model`.
+Published `v0.1` contracts remain unchanged. Grievance, SchemeApplication and their external integration contracts have a separate `v0.2` definition. Resource schemas live under `schema/`; external service integration contracts live under `api/external/`. These proposed contracts do not replace the providers' own API specifications.
 
 ## Repository layout
 
 | Path | Contents |
 |---|---|
-| [`schema/`](schema/) | Versioned schema packs, domain and provider API alike, with examples that validate directly against each pack |
+| [`schema/`](schema/) | Versioned Resource schema packs and examples |
+| [`api/external/`](api/external/) | Provider-grouped integration contracts and request/response examples |
 
 Each versioned schema pack contains:
 
@@ -53,7 +55,7 @@ OAN does not redefine the Beckn objects that carry its domain attributes. The li
 
 ## Composition model
 
-The domain schema packs are composable field sets. A selected contract uses JSON Schema `allOf` to validate one `resourceAttributes` object against every referenced field set. Pack relationships are composition-only. A provider API pack composes differently: its root is a `oneOf` over one leaf per scheme and call, and `x-oan-schema-by-action` names the schema that serves each action.
+The domain schema packs are composable field sets. A selected contract uses JSON Schema `allOf` to validate one `resourceAttributes` object against every referenced field set. Pack relationships are composition-only. API specifications describe operation requests and responses separately.
 
 For example, the effective `WeatherAdvisory` contract combines the shared Agriculture Resource fields with Weather Advisory fields. This composition does not make one runtime object a child of another, and it does not require an intermediate Domain payload.
 
