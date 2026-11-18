@@ -18,21 +18,23 @@ class PreviewTests(unittest.TestCase):
 
     def test_rewrite_preserves_vocabulary(self):
         prefix = pages.ORIGIN + pages.BASE
-        text = prefix + '/schema/A/attributes.yaml ' + prefix + '/vocab#Thing'
+        text = prefix + '/schema/A/attributes.yaml ' + prefix + '/vocab#Thing ' + prefix + '/api/external/pmfby/openapi.yaml'
         result = pages.rewrite_artifact_urls(text, '/network-specs/previews/test')
         self.assertIn('/previews/test/schema/A/attributes.yaml', result)
         self.assertIn(prefix + '/vocab#Thing', result)
+        self.assertIn('/previews/test/api/external/pmfby/openapi.yaml', result)
 
     def test_only_data_is_extracted(self):
         buffer = io.BytesIO()
         with tarfile.open(fileobj=buffer, mode='w') as tar:
-            for name in ['schema/A/profile.json', '_plugins/evil.rb', 'scripts/evil.py']:
+            for name in ['schema/A/profile.json', 'api/external/pmfby/openapi.yaml', '_plugins/evil.rb', 'scripts/evil.py']:
                 info = tarfile.TarInfo(name)
                 info.size = 2
                 tar.addfile(info, io.BytesIO(b'{}'))
         with tempfile.TemporaryDirectory() as directory:
             pages.extract_data(buffer.getvalue(), Path(directory))
             self.assertTrue((Path(directory) / 'schema/A/profile.json').exists())
+            self.assertTrue((Path(directory) / 'api/external/pmfby/openapi.yaml').exists())
             self.assertFalse((Path(directory) / '_plugins').exists())
             self.assertFalse((Path(directory) / 'scripts').exists())
 
