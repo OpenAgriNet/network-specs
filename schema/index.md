@@ -4,13 +4,13 @@
 
 Read the [Complete Examples](examples/) to see the domain packs composed inside Beckn Catalog, Provider, and Resource objects.
 
-## API separation preview
+## API specifications
 
-[Review the separate API specifications](../api-specs/). Grievance and SchemeApplication below now describe public catalog metadata. Their private requests and responses have separate OpenAPI contracts. This branch is for consumer feedback, not production migration.
+[API specifications](../api/external/) describe operation inputs, outputs and examples by provider. Grievance and SchemeApplication below describe the public catalog metadata.
 
 ## Schema Packs
 
-The index is generated from versioned `profile.json` files under `schema/`. Operation contracts are listed separately under `api-specs/`.
+The index is generated from versioned `profile.json` files under `schema/`. Operation contracts are listed separately under `api/external/`.
 
 {% assign all_profiles = site.static_files | where: "name", "profile.json" | sort: "path" %}
 {% assign profile_files = all_profiles | where_exp: "p", "p.path contains '/schema/'" %}
