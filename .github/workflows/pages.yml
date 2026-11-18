@@ -2,14 +2,14 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches:
-      - schema-packs-v0.1
+    branches: [main]
+  pull_request_target:
+    types: [opened, synchronize, reopened, closed]
+  schedule:
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+permissions: {}
 
 concurrency:
   group: pages
@@ -17,27 +17,40 @@ concurrency:
 
 jobs:
   build:
+    # Never execute PR code. Only main's scripts, dependencies and layouts run.
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      - name: Generate schema pages
-        run: ruby scripts/generate-schema-pages.rb
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
-          destination: ./_site
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler: '2.5.23'
+
+      - name: Install trusted main dependencies
+        run: bundle install
+
+      - name: Test preview builder
+        run: python3 -m unittest discover -s scripts -p 'test_pages*.py'
+
+      - name: Build production and branch previews
+        run: python3 scripts/build-pages.py --output _site
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
 
   deploy:
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
