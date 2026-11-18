@@ -11,10 +11,15 @@ spec.loader.exec_module(pages)
 
 
 class PreviewTests(unittest.TestCase):
-    def test_slug_is_stable_and_collision_resistant(self):
+    def test_branch_paths_are_stable_and_distinct(self):
         self.assertEqual(pages.slug('a/b'), pages.slug('a/b'))
         self.assertNotEqual(pages.slug('a/b'), pages.slug('a-b'))
-        self.assertNotIn('/', pages.slug('a/b'))
+        self.assertEqual(pages.slug('a/b'), 'a/b')
+        self.assertEqual(pages.slug('schema-packs-api-driven'), 'schema-packs-api-driven')
+        self.assertEqual(pages.legacy_slug('schema-packs-api-driven'), 'schema-packs-api-driven-dd73de2c')
+        for name in ('../escape', '/absolute', 'a/../b', 'a//b', 'a\\b'):
+            with self.assertRaises(ValueError):
+                pages.slug(name)
 
     def test_rewrite_preserves_vocabulary(self):
         prefix = pages.ORIGIN + pages.BASE
