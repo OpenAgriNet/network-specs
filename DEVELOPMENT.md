@@ -44,9 +44,19 @@ Branches must contain the push-enabled Check Pages build workflow, usually by me
 
 ### Preview safety and limitations
 
-The production workflow checks out main and uses main's dependencies, schema generator, layouts and configuration. It imports only ordinary JSON, JSON-LD, YAML, Markdown, HTML and text files from branch schema/, api/, api-schemas/ and api-specs/ directories. The legacy directories remain supported for older branches. The schema index always comes from main, paired with main's includes. Deployment never executes branch scripts, dependencies or downloaded check artifacts. Jekyll runs in safe mode. The push check itself runs without deployment permissions; only the separate trusted deployment job receives Pages publication permissions. The workflow_run gate requires a successful same-repository push check and rejects PR events.
+Main's workflow pins every branch to an exact commit before building. Each matrix job runs on a separate GitHub-hosted runner with read-only repository access, no persisted checkout credentials, no environment secrets and no Pages or OIDC permissions. It installs that branch's dependencies and builds its own generator, templates, styles and scripts with Jekyll safe mode. Do not add secrets, shared caches or self-hosted runners to these jobs.
 
-This is a schema-content preview, not an arbitrary application deployment. Changes to site templates or generator code need the Check Pages build workflow and local review before merging. Preview artifact URLs are rewritten to their preview paths; vocabulary identifiers remain canonical. Treat preview files as experimental, and verify all external references before using them for dev validation.
+A fresh assembly job checks out the pinned main revision and downloads static build artifacts from the same workflow run. It never executes downloaded files. The trusted plan determines every destination: main at the root and each branch under its own preview path. Assembly rejects symlinks, hidden files and nested previews. Only the final deployment job receives Pages and OIDC permissions. No artifacts from the triggering PR or push check are reused.
+
+```mermaid
+flowchart LR
+  P["Successful branch push check"] --> T["Main pins branch commits"]
+  T --> B["Isolated read-only builds"]
+  B --> A["Trusted job assembles static files"]
+  A --> D["Separate job publishes Pages"]
+```
+
+Preview layouts now match the branch, including unmerged CSS and JavaScript. These pages share the production site's origin, so only trusted same-repository contributors may publish previews. This is not suitable for untrusted fork code. Artifact retrieval URLs are rewritten to preview paths; vocabulary identifiers remain canonical. Verify external references before using preview contracts for dev validation.
 
 ### Setup and recovery
 
@@ -54,4 +64,4 @@ Keep Settings → Pages → Source set to GitHub Actions. The github-pages envir
 
 The last successful site remains online if a new build fails. To republish a known-good renderer, revert the faulty workflow or builder change through a PR, then run Deploy GitHub Pages on main. Do not use Unpublish site. The research stash is independent of this deployment configuration.
 
-Run the dependency-free builder checks with `python3 -m unittest discover -s scripts -p 'test_pages*.py'`. With the Ruby bundle installed, validate an unmerged renderer using `python3 scripts/build-pages.py --output /absolute/path/to/a/new-build-directory --test-revision`. Never deploy that test output. Normal publication refuses to run from a revision other than fetched origin/main.
+Run the dependency-free checks with `python3 -m unittest discover -s scripts -p 'test_pages*.py'`. With the Ruby bundle installed, run `ruby scripts/generate-schema-pages.rb` and `bundle exec jekyll build --safe --destination /absolute/path/to/a/new-build-directory` to check the current branch. The older `build-pages.py` remains a data-only local diagnostic, not the publication entry point. Publication uses `assemble-pages.py` and the isolated matrix builds in `pages.yml`.
