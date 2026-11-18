@@ -20,4 +20,5 @@ jobs:
           bundler: '2.5.23'
       - run: bundle install
       - run: python3 -m unittest discover -s scripts -p 'test_pages*.py'
-      - run: python3 scripts/build-pages.py --output _site --test-revision
+      - run: ruby scripts/generate-schema-pages.rb
+      - run: bundle exec jekyll build --safe --destination _site
