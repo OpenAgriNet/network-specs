@@ -1,0 +1,8 @@
+.bundle/
+_site/
+.DS_Store
+
+# Test tooling stays local: Postman collections and fuzz harnesses are run
+# against the validation adapter, not published with the specs.
+*.postman_collection.json
+*.postman_environment.json

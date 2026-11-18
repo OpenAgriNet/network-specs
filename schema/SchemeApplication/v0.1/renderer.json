@@ -1,0 +1,8 @@
+{
+  "schema": "SchemeApplication",
+  "version": "0.1.0",
+  "card_template": "{{informationMode}} | {{scheme.name}} | {{application.latestInstalmentPaid}} instalments paid | eKYC {{application.ekyc.code}}",
+  "detail_template": "Mode: {{informationMode}}\nScheme: {{scheme.name}}\nRegistration: {{enrolmentId}}\nRegistered on: {{application.registeredOn}}\nInstalments paid: {{application.latestInstalmentPaid}}\neKYC: {{application.ekyc.code}}\nBlockers: {{application.blockers}}",
+  "html": "<div class=\"oan-scheme-application\"><strong>{{informationMode}}</strong><span>{{scheme.name}} · {{application.latestInstalmentPaid}} paid · eKYC {{application.ekyc.code}}</span></div>",
+  "html_detail": "<div class=\"oan-scheme-application-detail\"><p><strong>Registration:</strong> {{enrolmentId}}</p><p><strong>Instalments paid:</strong> {{application.latestInstalmentPaid}}</p><p><strong>eKYC:</strong> {{application.ekyc.code}}</p><p><strong>Blockers:</strong> {{application.blockers}}</p></div>"
+}

@@ -1,0 +1,449 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Scheme Application API Attributes
+  version: 0.1.0
+  description: >
+    Read where a farmer's application to a government scheme stands: how many
+    instalments have been paid, whether eKYC is done, and what is holding the
+    money up. One scheme per payload, named by scheme.code. Each scheme defines
+    one flat schema per call it serves and nothing else, so a new scheme or a
+    new call is an addition and never an edit. This pack stands alone: it
+    borrows nothing from another capability. Per-call shapes, worked examples
+    and the reasoning behind every constraint are in README.md.
+
+
+components:
+  schemas:
+
+    SchemeApplication:
+      x-beckn-container-by-action:
+        catalog/publish: resourceAttributes
+        init: commitmentAttributes
+        status: commitmentAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld"
+        "@type": openagrinet:SchemeApplication
+      x-oan-schema-by-action:
+        catalog/publish: SchemeApplicationCatalog
+        init: SchemeApplicationInit
+        status: SchemeApplicationStatus
+      oneOf:
+        - $ref: "#/components/schemas/PMKISANApplicationCatalog"
+        - $ref: "#/components/schemas/PMKISANApplicationInit"
+        - $ref: "#/components/schemas/PMKISANApplicationStatus"
+
+    SchemeApplicationCatalog:
+      oneOf:
+        - $ref: "#/components/schemas/PMKISANApplicationCatalog"
+
+    SchemeApplicationInit:
+      oneOf:
+        - $ref: "#/components/schemas/PMKISANApplicationInit"
+
+    SchemeApplicationStatus:
+      oneOf:
+        - $ref: "#/components/schemas/PMKISANApplicationStatus"
+
+    IsPMKISAN:
+      type: object
+      required: [scheme]
+      properties:
+        scheme:
+          type: object
+          required: [code]
+          properties:
+            code: { const: PM-KISAN }
+
+    PMKISANApplicationCatalog:
+      x-oan-fields:
+        mustSend:  [informationMode, scheme.code, scheme.name, challenge.methods,
+                    actions]
+      allOf:
+        - $ref: "#/components/schemas/IsPMKISAN"
+        - type: object
+          additionalProperties: false
+          required: ["@context", "@type", informationMode, scheme, challenge, actions]
+          properties:
+            "@context": { $ref: "#/components/schemas/Context" }
+            "@type": { $ref: "#/components/schemas/Type" }
+            informationMode:
+              type: string
+              enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
+              x-jsonld-id: "openagrinet:informationMode"
+            scheme:
+              type: object
+              additionalProperties: false
+              required: [code, name]
+              description: The government scheme this payload is about.
+              properties:
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
+              x-jsonld-id: "openagrinet:scheme"
+            challenge:
+              type: object
+              additionalProperties: false
+              required: [methods]
+              description: The verification this desk requires before it answers.
+              properties:
+                methods:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Verification methods this desk accepts.
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [method, channel, length, valueType]
+                    properties:
+                      method:
+                        type: string
+                        enum: [OTP]
+                        description: The kind of verification.
+                      channel:
+                        type: string
+                        enum: [SMS]
+                        description: How the OTP reaches the applicant.
+                      length:
+                        type: integer
+                        enum: [4]
+                        description: How many digits the OTP has.
+                      valueType:
+                        type: string
+                        enum: [NUMERIC]
+                        description: What the OTP is made of.
+                  x-jsonld-id: "openagrinet:challengeMethods"
+              x-jsonld-id: "openagrinet:challenge"
+            actions:
+              type: array
+              minItems: 2
+              maxItems: 2
+              uniqueItems: true
+              description: Every call this desk serves.
+              items:
+                allOf:
+                  - $ref: "#/components/schemas/PublishedAction"
+                  # One arm per call this desk serves. The arm pins the schema and
+                  # attributesAt that go with the action; the wording is the desk's
+                  # own, and `default` only records the wording this pack ships.
+                  - oneOf:
+                      - properties:
+                          action: { const: init }
+                          description:
+                            default: >-
+                                          Ask PM-KISAN to send a four-digit OTP, identified
+                                          by either the registration number or the
+                                          registered mobile. Call before status, which
+                                          requires challenge.response carrying this OTP.
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationInit" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
+                      - properties:
+                          action: { const: status }
+                          description:
+                            default: >-
+                                          Read how far the application has got: when it was
+                                          registered, the latest instalment paid, whether
+                                          eKYC is done, and anything blocking payment. Needs
+                                          the OTP from init, and either the registration
+                                          number or the registered mobile.
+                          schema: { const: "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/attributes.yaml#/components/schemas/PMKISANApplicationStatus" }
+                          attributesAt: { const: "$.message.contract.commitments[0].commitmentAttributes" }
+              x-jsonld-id: "openagrinet:publishedAction"
+
+    PMKISANApplicationInit:
+      x-oan-fields:
+        mustSend:  [informationMode, scheme.code]
+        oneOf:     [enrolmentId, applicant.mobile]
+        maySend:   [scheme.name]
+        comesBack: [informationMode, scheme.code, scheme.name,
+                    challenge.issued.method, challenge.issued.channel, challenge.issued.length,
+                    challenge.issued.valueType, challenge.issued.expiresAt]
+      allOf:
+        - $ref: "#/components/schemas/IsPMKISAN"
+        - type: object
+          additionalProperties: false
+          required: ["@context", "@type", informationMode, scheme]
+          properties:
+            "@context": { $ref: "#/components/schemas/Context" }
+            "@type": { $ref: "#/components/schemas/Type" }
+            informationMode:
+              type: string
+              enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
+              x-jsonld-id: "openagrinet:informationMode"
+            scheme:
+              type: object
+              additionalProperties: false
+              required: [code]
+              description: The government scheme this payload is about.
+              properties:
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
+              x-jsonld-id: "openagrinet:scheme"
+            enrolmentId: { $ref: "#/components/schemas/PMKISANEnrolmentId" }
+            applicant: { $ref: "#/components/schemas/Applicant" }
+            challenge:
+              type: object
+              additionalProperties: false
+              required: [issued]
+              description: The portal's acknowledgement of the code it sent. Comes back in the reply, never in the request.
+              properties:
+                issued:
+                  type: object
+                  additionalProperties: false
+                  required: [method, channel, length, valueType, expiresAt]
+                  description: The portal's acknowledgement that it sent a code. Carries no secret and no destination.
+                  properties:
+                    method:
+                      type: string
+                      enum: [OTP]
+                      description: The kind of verification.
+                    channel:
+                      type: string
+                      enum: [SMS]
+                      description: How the OTP reaches the applicant.
+                    length:
+                      type: integer
+                      enum: [4]
+                      description: How many digits the OTP has.
+                    valueType:
+                      type: string
+                      enum: [NUMERIC]
+                      description: What the OTP is made of.
+                    expiresAt:
+                      allOf: [{ $ref: "#/components/schemas/Instant" }]
+                      description: When the OTP stops working.
+                  x-jsonld-id: "openagrinet:challengeIssued"
+              x-jsonld-id: "openagrinet:challenge"
+        - oneOf:
+            - allOf:
+                - oneOf:
+                    - required: [enrolmentId]
+                    - required: [applicant]
+                - not: { required: [challenge] }
+            - required: [challenge]
+              properties: { applicant: { not: { type: object } } }
+
+    PMKISANApplicationStatus:
+      x-oan-fields:
+        mustSend:  [informationMode, scheme.code,
+                    challenge.response.method, challenge.response.value]
+        oneOf:     [enrolmentId, applicant.mobile]
+        maySend:   [scheme.name]
+        comesBack: [informationMode, scheme.code, scheme.name, enrolmentId,
+                    application.registeredOn, application.latestInstalmentPaid,
+                    application.ekyc.code, application.blockers]
+      allOf:
+        - $ref: "#/components/schemas/IsPMKISAN"
+        - type: object
+          additionalProperties: false
+          required: ["@context", "@type", informationMode, scheme, challenge]
+          properties:
+            "@context": { $ref: "#/components/schemas/Context" }
+            "@type": { $ref: "#/components/schemas/Type" }
+            informationMode:
+              type: string
+              enum: [OnDemand]
+              description: How this information is obtained. Always fetched from the scheme on demand.
+              x-jsonld-id: "openagrinet:informationMode"
+            scheme:
+              type: object
+              additionalProperties: false
+              required: [code]
+              description: The government scheme this payload is about.
+              properties:
+                code:
+                  type: string
+                  enum: [PM-KISAN]
+                  description: Short code naming the scheme.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The scheme's full name.
+              x-jsonld-id: "openagrinet:scheme"
+            enrolmentId: { $ref: "#/components/schemas/PMKISANEnrolmentId" }
+            applicant: { $ref: "#/components/schemas/Applicant" }
+            challenge: { $ref: "#/components/schemas/PMKISANChallengeResponse" }
+            application:
+              type: object
+              additionalProperties: false
+              required: [latestInstalmentPaid]
+              description: Where the farmer's application currently stands.
+              properties:
+                registeredOn:
+                  allOf: [{ $ref: "#/components/schemas/Instant" }]
+                  description: When the farmer was registered under the scheme.
+                  x-jsonld-id: "openagrinet:registeredOn"
+                latestInstalmentPaid:
+                  type: integer
+                  minimum: 0
+                  description: How many instalments have been paid. A count, not an instalment number.
+                  x-jsonld-id: "openagrinet:latestInstalmentPaid"
+                ekyc:
+                  type: object
+                  additionalProperties: false
+                  required: [code]
+                  description: Whether the applicant's eKYC is complete.
+                  properties:
+                    code:
+                      type: string
+                      enum: [Done, Pending]
+                      description: Done once eKYC is complete, Pending until then.
+                  x-jsonld-id: "openagrinet:ekycStatus"
+                blockers:
+                  type: array
+                  uniqueItems: true
+                  description: Why payment is not arriving. Absent, empty and non-empty are three different answers.
+                  items:
+                    type: object
+                    additionalProperties: false
+                    required: [code, name]
+                    properties:
+                      code:
+                        type: string
+                        enum: [IncomeTaxPayee, LandSeedingPending, Other]
+                        description: The kind of blocker.
+                      name:
+                        type: string
+                        minLength: 1
+                        maxLength: 500
+                        description: The blocker as the scheme describes it.
+                        x-oan-pii:
+                          class: freetext
+                          handling: [no-log, no-trace]
+                  x-jsonld-id: "openagrinet:applicationBlockers"
+              x-jsonld-id: "openagrinet:application"
+        - oneOf:
+            - required: [enrolmentId]
+              properties: { applicant: { not: { type: object } } }
+            - required: [applicant]
+              properties: { enrolmentId: { not: { type: string } } }
+
+    Applicant:
+      type: object
+      additionalProperties: false
+      required: [mobile]
+      description: The farmer, identified by registered mobile.
+      properties:
+        mobile:
+          type: string
+          pattern: "^[6-9][0-9]{9}$"
+          description: Mobile registered against the application. The OTP is sent here.
+          x-oan-pii:
+            class: contact
+            handling: [no-log, no-trace, no-echo]
+          x-jsonld-id: "openagrinet:applicantMobile"
+      x-jsonld-id: "openagrinet:applicant"
+
+    PMKISANEnrolmentId:
+      type: string
+      pattern: "^[A-Za-z0-9]+$"
+      minLength: 6
+      maxLength: 20
+      not: { pattern: "^[0-9]{12}$" }
+      description: The farmer's PM-KISAN registration number. Never an Aadhaar number.
+      x-oan-pii:
+        class: identifier
+        handling: [no-log, no-trace]
+      x-jsonld-id: "openagrinet:enrolmentId"
+
+    PMKISANChallengeResponse:
+      type: object
+      additionalProperties: false
+      required: [response]
+      description: The OTP sent back to prove the request is the applicant's.
+      properties:
+        response:
+          type: object
+          additionalProperties: false
+          required: [method, value]
+          description: The OTP as the applicant entered it.
+          properties:
+            method:
+              type: string
+              enum: [OTP]
+              description: The kind of verification.
+            value:
+              type: string
+              pattern: "^[0-9]{4}$"
+              description: The OTP issued by init. A credential, not an attribute.
+              x-oan-pii:
+                class: credential
+                handling: [no-log, no-trace, no-echo, no-forward]
+              x-jsonld-id: "openagrinet:challengeValue"
+          x-jsonld-id: "openagrinet:challengeResponse"
+      x-jsonld-id: "openagrinet:challenge"
+
+    PublishedAction:
+      type: object
+      additionalProperties: false
+      required: [action, description, schema, attributesAt]
+      properties:
+        action:
+          type: string
+          enum: [init, status]
+          description: The Beckn action this entry describes.
+          x-jsonld-id: "openagrinet:actionName"
+        description:
+          type: string
+          minLength: 1
+          maxLength: 400
+          description: What the call does, in the desk's own words.
+          x-jsonld-id: "openagrinet:actionDescription"
+        schema:
+          type: string
+          format: uri
+          pattern: "^https://openagrinet\\.github\\.io/network-specs/schema/SchemeApplication/v0\\.1/attributes\\.yaml#/components/schemas/[A-Za-z]+$"
+          description: The schema in this pack the call's attributes must match.
+          x-jsonld-id: "openagrinet:actionSchema"
+        attributesAt:
+          type: string
+          pattern: "^\\$\\.message\\.[A-Za-z0-9.\\[\\]]+$"
+          description: Where the call's attributes sit in the Beckn payload.
+          x-jsonld-id: "openagrinet:actionAttributesAt"
+
+    Instant:
+      type: string
+      format: date-time
+      pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$"
+
+    Context:
+      description: This pack's JSON-LD context, alone or inside a larger context array.
+      oneOf:
+        - type: string
+          const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
+        - type: array
+          minItems: 2
+          uniqueItems: true
+          items: { type: string, minLength: 1 }
+          contains:
+            const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.1/context.jsonld
+
+    Type:
+      description: This pack's OAN type, alone or alongside the Provider's own types.
+      oneOf:
+        - type: string
+          const: openagrinet:SchemeApplication
+        - type: array
+          minItems: 2
+          uniqueItems: true
+          contains:
+            const: openagrinet:SchemeApplication
+          items:
+            oneOf:
+              - const: openagrinet:SchemeApplication
+              - type: string
+                minLength: 1
+                not: { pattern: "^openagrinet:" }

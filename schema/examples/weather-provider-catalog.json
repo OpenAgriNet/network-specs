@@ -1,0 +1,130 @@
+{
+  "id": "catalog:weather-services:2026-08",
+  "bppId": "weather-services.example.org",
+  "bppUri": "https://weather-services.example.org/beckn",
+  "descriptor": {
+    "code": "WEATHER_SERVICES",
+    "name": "Agricultural weather services",
+    "shortDesc": "Live weather observations, forecasts, and weather-informed agricultural advisories.",
+    "longDesc": "This catalog advertises weather information available OnDemand. Requested coordinates, observation times, forecasts, measured values, and advice are returned as Direct Resources after Provider invocation."
+  },
+  "isActive": true,
+  "provider": {
+    "id": "provider:weather-services",
+    "descriptor": {
+      "code": "WSP-01",
+      "name": "Weather Services Provider",
+      "shortDesc": "Provider of weather observations, forecasts, and agricultural advisories.",
+      "longDesc": "The Provider combines station observations and forecast models to serve agricultural weather use cases."
+    },
+    "url": "https://weather-services.example.org/beckn",
+    "availableAt": [
+      {
+        "geo": {
+          "type": "Point",
+          "coordinates": [
+            72.8777,
+            19.076
+          ]
+        }
+      }
+    ]
+  },
+  "resources": [
+    {
+      "id": "capability:weather-services:observation",
+      "descriptor": {
+        "code": "WEATHER_OBSERVATION",
+        "name": "Live weather observation and forecast",
+        "shortDesc": "Returns location-specific measured or forecast weather parameters.",
+        "longDesc": "The catalog advertises the supported subject, languages, coverage, and Observe interaction. The response supplies the requested geometry, applicable time, provenance, and parameter values."
+      },
+      "resourceAttributes": {
+        "@context": "https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.1/context.jsonld",
+        "@type": "openagrinet:WeatherObservation",
+        "informationMode": "OnDemand",
+        "subjectCategories": [
+          "Weather"
+        ],
+        "languages": [
+          "en",
+          "hi",
+          "mr"
+        ],
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
+        ],
+        "supportedObservationTypes": [
+          "Observation",
+          "Forecast"
+        ],
+        "supportedParameters": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed"
+        ],
+        "forecastHorizon": "P10D",
+        "updateFrequency": "PT1H",
+        "geographicGranularities": [
+          "Point",
+          "District"
+        ]
+      }
+    },
+    {
+      "id": "capability:weather-services:agricultural-advisory",
+      "descriptor": {
+        "code": "WEATHER_ADVISORY",
+        "name": "Weather-informed agricultural advisory",
+        "shortDesc": "Produces agricultural guidance using forecast weather parameters.",
+        "longDesc": "The capability supports point-level guidance for irrigation, spraying, and crop protection using rainfall, wind speed, humidity, and temperature forecasts."
+      },
+      "resourceAttributes": {
+        "@context": "https://openagrinet.github.io/network-specs/schema/WeatherAdvisory/v0.1/context.jsonld",
+        "@type": "openagrinet:WeatherAdvisory",
+        "informationMode": "OnDemand",
+        "subjectCategories": [
+          "Crop",
+          "Weather"
+        ],
+        "languages": [
+          "en",
+          "hi",
+          "mr"
+        ],
+        "coverageAreas": [
+          {
+            "codeScheme": "ISO-3166-1",
+            "areaCode": "IN",
+            "areaLevel": "Country"
+          }
+        ],
+        "topics": [
+          "Irrigation",
+          "Spraying",
+          "CropProtection"
+        ],
+        "supportedWeatherParameters": [
+          "Rainfall",
+          "Temperature",
+          "Humidity",
+          "WindSpeed"
+        ],
+        "forecastHorizon": "P7D",
+        "updateFrequency": "PT3H",
+        "geographicGranularities": [
+          "Point"
+        ]
+      }
+    }
+  ],
+  "validity": {
+    "startDate": "2026-08-01T00:00:00Z",
+    "endDate": "2027-08-01T00:00:00Z"
+  }
+}

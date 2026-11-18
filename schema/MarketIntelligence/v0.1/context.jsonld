@@ -1,0 +1,51 @@
+{
+  "@context": [
+    "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.1/context.jsonld",
+    {
+      "@version": 1.1,
+      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+      "MarketIntelligence": "openagrinet:MarketIntelligence",
+      "supportedCommodities": {
+        "@id": "openagrinet:supportedCommodities",
+        "@container": "@set",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
+      "supportedInsightTypes": { "@id": "openagrinet:supportedInsightTypes", "@container": "@set" },
+      "historyPeriod": "openagrinet:historyPeriod",
+      "forecastHorizon": "openagrinet:forecastHorizon",
+      "generatedAt": "openagrinet:generatedAt",
+      "validity": "openagrinet:validity",
+      "insights": { "@id": "openagrinet:insights", "@container": "@set" },
+      "insightType": "openagrinet:insightType",
+      "summary": "openagrinet:summary",
+      "market": "openagrinet:market",
+      "marketCode": "openagrinet:marketCode",
+      "marketName": "openagrinet:marketName",
+      "district": "openagrinet:district",
+      "state": "openagrinet:state",
+      "location": {
+        "@id": "openagrinet:location",
+        "@context": {
+          "geo": {
+            "@id": "beckn:geo",
+            "@context": "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld"
+          },
+          "address": {
+            "@id": "beckn:address",
+            "@context": "https://schema.beckn.io/Address/v2.0/context.jsonld"
+          }
+        }
+      },
+      "period": "openagrinet:period",
+      "indicator": "openagrinet:indicator",
+      "indicatorName": "openagrinet:indicatorName",
+      "indicatorValue": "openagrinet:indicatorValue",
+      "indicatorUnit": "openagrinet:indicatorUnit",
+      "value": "openagrinet:value",
+      "unit": "openagrinet:unit",
+      "distance": "openagrinet:distance",
+      "supportingResourceIds": { "@id": "openagrinet:supportingResourceIds", "@container": "@set" },
+      "source": "openagrinet:source"
+    }
+  ]
+}

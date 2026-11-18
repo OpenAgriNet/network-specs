@@ -1,0 +1,507 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "json"
+require "pathname"
+require "yaml"
+
+ROOT = Pathname.new(__dir__).join("..").expand_path
+SCHEMA_ROOT = ROOT.join("schema")
+DATA_FILE = ROOT.join("_data", "schema_packs.json")
+
+class SchemaResolver
+  CONSTRAINT_KEYS = %w[
+    const enum format pattern minLength maxLength minimum maximum
+    exclusiveMinimum exclusiveMaximum minItems maxItems uniqueItems
+    minProperties maxProperties additionalProperties
+  ].freeze
+
+  def initialize
+    @documents = {}
+  end
+
+  def document(path)
+    @documents[path.to_s] ||= YAML.safe_load(path.read, aliases: true)
+  end
+
+  def resolve(schema, source_path)
+    return [schema || {}, source_path, nil] unless schema.is_a?(Hash) && schema["$ref"]
+
+    reference = schema["$ref"]
+    return [schema, source_path, reference] if reference.start_with?("http://", "https://")
+
+    file_part, pointer = reference.split("#", 2)
+    target_path = file_part.to_s.empty? ? source_path : source_path.dirname.join(file_part).cleanpath
+    target = document(target_path)
+    pointer.to_s.split("/").reject(&:empty?).each do |segment|
+      target = target.fetch(segment.gsub("~1", "/").gsub("~0", "~"))
+    end
+    target = rebase_internal_refs(target, target_path)
+
+    siblings = schema.reject { |key, _| key == "$ref" }
+    [deep_merge(target, siblings), target_path, reference]
+  end
+
+  def expand(schema, source_path, seen = [])
+    resolved, resolved_path, external_ref = resolve(schema, source_path)
+    return [resolved, resolved_path, external_ref] if external_ref&.start_with?("http://", "https://")
+
+    fingerprint = [resolved_path.to_s, resolved.object_id]
+    return [resolved, resolved_path, nil] if seen.include?(fingerprint)
+
+    merged = resolved.reject { |key, _| key == "allOf" }
+    Array(resolved["allOf"]).each do |member|
+      expanded, = expand(member, resolved_path, seen + [fingerprint])
+      own_description = merged["description"]
+      merged = deep_merge(merged, join_restatements(merged, expanded))
+      # A description reached through a $ref describes a shape reused all over
+      # the network -- a Beckn location, a source reference -- so it must not
+      # displace what this field already says about itself. An inline member is
+      # the author narrowing this field right here, and its description does
+      # replace.
+      merged["description"] = own_description if own_description && member.is_a?(Hash) && member.key?("$ref")
+    end
+    [merged, resolved_path, nil]
+  end
+
+  def constraints(schema)
+    CONSTRAINT_KEYS.each_with_object([]) do |key, values|
+      next unless schema.key?(key)
+
+      value = schema[key]
+      formatted = value.is_a?(Array) ? value.join(", ") : value.inspect
+      values << "#{key}: #{formatted}"
+    end
+  end
+
+  private
+
+  def rebase_internal_refs(value, target_path)
+    case value
+    when Hash
+      value.each_with_object({}) do |(key, child), result|
+        result[key] = if key == "$ref" && child.is_a?(String) && child.start_with?("#")
+                        "#{target_path}#{child}"
+                      else
+                        rebase_internal_refs(child, target_path)
+                      end
+      end
+    when Array
+      value.map { |child| rebase_internal_refs(child, target_path) }
+    else
+      value
+    end
+  end
+
+  # A pack that extends a base restates an inherited field with a description
+  # and nothing else, to say how its own portal fills it. Both sentences belong
+  # on the page: the base says what the field means, the pack says where the
+  # value comes from. A restatement that also narrows the field -- an enum, a
+  # pattern, a nested allOf -- is an override rather than a note, so its
+  # description replaces the base's, as every description always has.
+  def join_restatements(base, member)
+    base_properties = base["properties"]
+    member_properties = member["properties"]
+    return member unless base_properties.is_a?(Hash) && member_properties.is_a?(Hash)
+
+    joined = member_properties.each_with_object({}) do |(name, schema), result|
+      inherited = base_properties[name]
+      note = schema.is_a?(Hash) && schema.keys == ["description"] ? schema["description"] : nil
+      meaning = inherited.is_a?(Hash) ? inherited["description"] : nil
+      result[name] = if note.is_a?(String) && meaning.is_a?(String) && meaning.strip != note.strip
+                       { "description" => "#{meaning.strip}\n\n#{note.strip}" }
+                     else
+                       schema
+                     end
+    end
+    member.merge("properties" => joined)
+  end
+
+  def deep_merge(left, right)
+    left.merge(right) do |key, old_value, new_value|
+      if old_value.is_a?(Hash) && new_value.is_a?(Hash)
+        deep_merge(old_value, new_value)
+      elsif key == "required" && old_value.is_a?(Array) && new_value.is_a?(Array)
+        (old_value + new_value).uniq
+      elsif key == "allOf" && old_value.is_a?(Array) && new_value.is_a?(Array)
+        old_value + new_value
+      else
+        new_value
+      end
+    end
+  end
+end
+
+def titleize(value)
+  value.to_s
+       .gsub(/([a-z0-9])([A-Z])/, '\\1 \\2')
+       .gsub(/[_-]+/, " ")
+       .split
+       .map(&:capitalize)
+       .join(" ")
+end
+
+def schema_type(schema, external_ref = nil)
+  return "External object" if external_ref
+  return schema["type"] if schema["type"]
+  return "constant" if schema.key?("const")
+  return "choice" if schema["oneOf"] || schema["anyOf"]
+
+  "object"
+end
+
+def condition_label(condition)
+  values = condition.fetch("properties", {}).each_with_object([]) do |(field, rule), result|
+    next unless rule.is_a?(Hash)
+
+    values = rule.key?("const") ? [rule["const"]] : Array(rule["enum"])
+    next if values.empty?
+
+    rendered = values.map(&:to_s).join(" or ")
+    result << if %w[informationMode observationType].include?(field)
+                rendered
+              else
+                "#{field}=#{rendered}"
+              end
+  end
+  values.empty? ? "Conditional" : values.join(" + ")
+end
+
+def collect_conditionals(schema)
+  Array(schema["allOf"]).flat_map do |member|
+    next [] unless member.is_a?(Hash)
+
+    current = []
+    if member["if"] && member["then"]
+      label = condition_label(member["if"])
+      current.concat(Array(member.dig("then", "required")).map { |field| [field, label] })
+    end
+    current + collect_conditionals(member)
+  end
+end
+
+def value_at(object, path)
+  path.reduce(object) do |value, segment|
+    return nil if value.nil?
+
+    if segment == "[]"
+      value.is_a?(Array) ? value.first : nil
+    elsif value.is_a?(Hash)
+      value[segment]
+    end
+  end
+end
+
+def concise_example(value)
+  return nil if value.nil?
+
+  rendered = JSON.pretty_generate(value)
+  rendered.length > 420 ? "#{rendered[0, 417]}..." : rendered
+end
+
+def display_reference(reference)
+  return reference unless reference&.start_with?(ROOT.to_s)
+
+  path, pointer = reference.split("#", 2)
+  relative_path = Pathname.new(path).relative_path_from(ROOT)
+  pointer ? "#{relative_path}##{pointer}" : relative_path.to_s
+end
+
+def collect_fields(resolver, schema, source_path, examples, root_origins = {}, path = [], ancestor_condition = nil, depth = 0, inherited_origin = nil)
+  return [] if depth > 5
+
+  resolved, = resolver.resolve(schema, source_path)
+  expanded, expanded_path, = resolver.expand(schema, source_path)
+  properties = expanded.fetch("properties", {})
+  required = Array(expanded["required"])
+  # A narrowing may refuse a property the shared definition offers, via
+  # `not: { required: [name] }`. The page must say so, or it advertises a
+  # field the validator rejects.
+  refused = Array(expanded.dig("not", "required"))
+  conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
+    fields = Array(member["required"])
+    result << fields unless fields.empty?
+  end
+  alternative_fields = alternatives.flatten.uniq
+
+  properties.flat_map do |name, raw_property|
+    origin = inherited_origin || root_origins[name] || expanded_path.dirname.parent.basename.to_s
+    property, property_path, property_external_ref = resolver.expand(raw_property, expanded_path)
+    field_path = path + [name]
+    requirement = if refused.include?(name)
+                    "Not accepted"
+                  elsif required.include?(name)
+                    ancestor_condition || "Always"
+                  elsif conditional[name]&.any?
+                    conditional[name].join(" or ")
+                  elsif alternatives.length > 1 && alternative_fields.include?(name)
+                    "At least one of #{alternative_fields.join(' or ')}"
+                  else
+                    "Optional"
+                  end
+
+    item_schema = property["items"]
+    type = schema_type(property, property_external_ref)
+    display_type = type == "array" ? "array<#{schema_type(item_schema || {})}>" : type
+    all_of_reference = Array(raw_property["allOf"]).each_with_object([]) do |part, references|
+      references << part["$ref"] if part.is_a?(Hash) && part["$ref"]
+    end.first
+    reference = property_external_ref || raw_property["$ref"] || all_of_reference
+    sample = examples.lazy.map { |example| value_at(example["data"], field_path) }.find { |value| !value.nil? }
+
+    row = {
+      "path" => field_path.join(".").gsub(".[]", "[]"),
+      "type" => display_type,
+      "requirement" => requirement,
+      "description" => property["description"] || raw_property["description"] || "No description supplied.",
+      "constraints" => resolver.constraints(property).join(" · "),
+      "reference" => display_reference(reference),
+      "origin" => origin,
+      "example" => concise_example(sample),
+      "enum" => property["enum"] || item_schema&.dig("enum"),
+      "enum_details" => property["x-enum-details"] || item_schema&.dig("x-enum-details")
+    }
+
+    nested = if property["type"] == "array" && item_schema
+               item_schema
+             elsif property["properties"] || property["allOf"] || property["$ref"]
+               property
+             end
+    children = if nested && !property_external_ref
+                 nested_path = field_path + (property["type"] == "array" ? ["[]"] : [])
+                 child_condition = if required.include?(name)
+                                     ancestor_condition
+                                   elsif conditional[name]&.any?
+                                     conditional[name].join(" or ")
+                                   else
+                                     "When #{field_path.join('.')} is supplied"
+                                   end
+                 collect_fields(resolver, nested, property_path, examples, root_origins, nested_path, child_condition, depth + 1, origin)
+               else
+                 []
+               end
+    [row] + children
+  end
+end
+
+# A leaf's gate is written entirely in `required`, `not`, `allOf` and `oneOf` over
+# which fields are present. Reading it is what tells an ask apart from an answer on
+# packs whose leaves share a `required` list, so the page cannot skip it. Members
+# reached through `$ref` are the scheme guards, which pin a value rather than a
+# presence and are checked separately.
+def presence_satisfied?(schema, data)
+  return true unless schema.is_a?(Hash)
+  return false unless Array(schema["required"]).all? { |name| data.key?(name) }
+  return false if schema["not"] && presence_satisfied?(schema["not"], data)
+
+  members = Array(schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }
+  return false unless members.all? { |member| presence_satisfied?(member, data) }
+
+  if schema["oneOf"]
+    matched = Array(schema["oneOf"]).count { |member| presence_satisfied?(member, data) }
+    return false unless matched == 1
+  end
+
+  true
+end
+
+# An API pack's root is a `oneOf` over leaves rather than an `allOf` over bases,
+# so a leaf owns a whole call and the examples that belong to it are the ones its
+# own shape accepts. The leaves are mutually exclusive by construction, so this
+# match is the same one the validator makes.
+def leaf_accepts?(resolver, member, source_path, expanded, declared, data)
+  return false unless data.is_a?(Hash)
+  return false unless shape_accepts?(resolver, member, source_path, data)
+  return false unless presence_satisfied?(declared, data)
+
+  code = expanded.dig("properties", "scheme", "properties", "code")
+  pinned = code && (code["const"] || Array(code["enum"]).first)
+  pinned.nil? || data.dig("scheme", "code") == pinned
+end
+
+# Every body in an API pack is closed, so which fields an object declares is
+# enough to tell two leaves apart all the way down -- a `challenge` holding
+# `methods` is a catalog entry and one holding `issued` is an acknowledgement,
+# and only the nested shape says which. Beckn-owned references are somebody
+# else's contract and are taken on trust.
+def shape_accepts?(resolver, schema, source_path, data)
+  expanded, expanded_path, external_ref = resolver.expand(schema, source_path)
+  return true if external_ref
+
+  if data.is_a?(Array)
+    items = expanded["items"]
+    return true unless items
+
+    return data.all? { |entry| shape_accepts?(resolver, items, expanded_path, entry) }
+  end
+
+  return true unless data.is_a?(Hash)
+
+  properties = expanded["properties"]
+  return true unless properties
+  return false unless (data.keys - properties.keys).empty?
+  return false unless Array(expanded["required"]).all? { |name| data.key?(name) }
+
+  data.all? do |name, value|
+    child = properties[name]
+    child.nil? || shape_accepts?(resolver, child, expanded_path, value)
+  end
+end
+
+def component_name(reference)
+  return "Pack-specific constraints" unless reference
+
+  name = reference.split("#", 2).last.to_s.split("/").last
+  name.to_s.empty? ? reference : name
+end
+
+resolver = SchemaResolver.new
+packs = {}
+
+Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file|
+  profile_path = Pathname.new(profile_file)
+  pack_dir = profile_path.dirname
+  pack_name = pack_dir.parent.basename.to_s
+  version_dir = pack_dir.basename.to_s
+  profile = JSON.parse(profile_path.read)
+  attributes_path = pack_dir.join("attributes.yaml")
+  attributes = resolver.document(attributes_path)
+  schema_name = Array(profile["included_schemas"]).first || pack_name
+  root_schema = attributes.dig("components", "schemas", schema_name)
+  raise "Missing schema #{schema_name} in #{attributes_path}" unless root_schema
+
+  examples = Dir.glob(pack_dir.join("examples", "*.json")).sort.map do |file|
+    path = Pathname.new(file)
+    data = JSON.parse(path.read)
+    {
+      "name" => titleize(path.basename(".json").to_s),
+      "file" => path.relative_path_from(pack_dir).to_s,
+      "mode" => data["informationMode"],
+      "data" => data,
+      "json" => JSON.pretty_generate(data)
+    }
+  end
+
+  root_origins = {}
+  referenced_components = Array(root_schema["allOf"]).filter { |member| member.is_a?(Hash) && member["$ref"] }.map do |member|
+    resolved_component, = resolver.expand(member, attributes_path)
+    component_origin = component_name(member["$ref"]).sub(/Fields\z/, "")
+    resolved_component.fetch("properties", {}).each_key { |field| root_origins[field] = component_origin }
+    {
+      "name" => component_name(member["$ref"]),
+      "reference" => member["$ref"],
+      "role" => "Shared fields"
+    }
+  end
+  # ||=, not =. A pack that extends a base restates an inherited field to say
+  # how its own portal fills it. The field still belongs to the base, and the
+  # page must keep saying so -- otherwise adding a one-line note silently
+  # reattributes the field to the pack.
+  root_schema.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name }
+  Array(root_schema["allOf"]).reject { |member| member.is_a?(Hash) && member["$ref"] }.each do |member|
+    member.fetch("properties", {}).each_key { |field| root_origins[field] ||= pack_name } if member.is_a?(Hash)
+  end
+  composition = referenced_components + [{
+    "name" => "#{pack_name} fields and rules",
+    "reference" => nil,
+    "role" => "Pack-specific constraints"
+  }]
+  pack_schema = root_schema.merge(
+    "allOf" => Array(root_schema["allOf"]).reject do |member|
+      member.is_a?(Hash) && member["$ref"] && !member["$ref"].start_with?("#")
+    end
+  )
+
+  # A pack whose root is a `oneOf` publishes one leaf per (scheme, call). There is
+  # no single composed object to tabulate, so the page is a table per leaf instead.
+  root_leaves = Array(root_schema["oneOf"]).select { |member| member.is_a?(Hash) && member["$ref"] }
+  actions_for_leaf = Hash.new { |store, name| store[name] = [] }
+  (root_schema["x-oan-schema-by-action"] || {}).each do |action, call_schema_name|
+    call_schema = attributes.dig("components", "schemas", call_schema_name)
+    next unless call_schema
+
+    Array(call_schema["oneOf"]).each do |member|
+      actions_for_leaf[component_name(member["$ref"])] << action if member.is_a?(Hash) && member["$ref"]
+    end
+  end
+
+  leaves = root_leaves.map do |member|
+    leaf_name = component_name(member["$ref"])
+    expanded_leaf, = resolver.expand(member, attributes_path)
+    declared = attributes.dig("components", "schemas", leaf_name) || {}
+    leaf_examples = examples.select do |example|
+      leaf_accepts?(resolver, member, attributes_path, expanded_leaf, declared, example["data"])
+    end
+    oan_fields = declared["x-oan-fields"] || {}
+    {
+      "name" => leaf_name,
+      "actions" => actions_for_leaf[leaf_name],
+      "must_send" => Array(oan_fields["mustSend"]),
+      "may_send" => Array(oan_fields["maySend"]),
+      "one_of" => Array(oan_fields["oneOf"]),
+      "comes_back" => Array(oan_fields["comesBack"]),
+      "examples" => leaf_examples.map { |example| example["name"] },
+      "fields" => collect_fields(resolver, member, attributes_path, leaf_examples, {}, [], nil, 0, leaf_name)
+    }
+  end
+
+  key = "#{pack_name}-#{version_dir}"
+  effective_fields = collect_fields(resolver, root_schema, attributes_path, examples, root_origins)
+  effective_requirements = effective_fields.each_with_object({}) do |field, requirements|
+    requirements[field["path"]] = field["requirement"]
+  end
+  pack_fields = collect_fields(resolver, pack_schema, attributes_path, examples, {}, [], nil, 0, pack_name)
+  pack_fields.each do |field|
+    field["requirement"] = effective_requirements.fetch(field["path"], field["requirement"])
+  end
+
+  unless leaves.empty?
+    seen_paths = {}
+    effective_fields = leaves.flat_map { |leaf| leaf["fields"] }.select do |field|
+      next false if seen_paths[field["path"]]
+
+      seen_paths[field["path"]] = true
+    end
+    pack_fields = []
+  end
+
+  by_action = root_schema["x-beckn-container-by-action"]
+
+  packs[key] = {
+    "key" => key,
+    "name" => pack_name,
+    "display_name" => profile["name"].to_s.sub(/ Attributes\z/, ""),
+    "version" => profile["version"],
+    "version_dir" => version_dir,
+    "protocol_version" => profile["protocol_version"],
+    "interaction_type" => profile["interaction_type"],
+    "description" => attributes.dig("info", "description").to_s.strip.gsub(/\s+/, " "),
+    "canonical_type" => root_schema.dig("x-jsonld", "@type"),
+    "beckn_container" => root_schema["x-beckn-container"],
+    "schema_name" => schema_name,
+    "composition" => composition,
+    "pack_fields" => pack_fields,
+    "fields" => effective_fields,
+    "conditions" => collect_conditionals(root_schema).map { |field, condition| { "field" => field, "condition" => condition } },
+    "examples" => examples.map { |example| example.reject { |key_name, _| key_name == "data" } },
+    "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]
+  }
+  packs[key]["beckn_container_by_action"] = by_action if by_action
+  packs[key]["leaves"] = leaves unless leaves.empty?
+  packs[key]["schemas_by_action"] = root_schema["x-oan-schema-by-action"] if root_schema["x-oan-schema-by-action"]
+
+  pack_dir.join("index.md").write(<<~MARKDOWN)
+    ---
+    layout: schema-pack
+    schema_key: #{key}
+    title: #{pack_name}
+    permalink: /schema/#{pack_name}/#{version_dir}/
+    ---
+    <!-- Generated by scripts/generate-schema-pages.rb. Edit the schema artifacts, profile, or examples instead. -->
+  MARKDOWN
+end
+
+DATA_FILE.dirname.mkpath
+DATA_FILE.write("#{JSON.pretty_generate(packs)}\n")
+puts "Generated #{packs.length} schema pages and #{DATA_FILE.relative_path_from(ROOT)}"
