@@ -29,6 +29,11 @@ for pack in ('Grievance', 'SchemeApplication'):
     for name, validator in validators.items():
         assert not validator.is_valid({}), name
         checks += 1
+    if pack == 'SchemeApplication':
+        empty = json.loads((api/'examples/PMKISANApplicationStatus-response.json').read_text())
+        empty['application'] = {}
+        assert not validators['PMKISANApplicationStatusResponse'].is_valid(empty)
+        checks += 1
     for operation in document['paths'].values():
         operation = operation['post']
         for schema in [operation['requestBody']['content']['application/json']['schema'],

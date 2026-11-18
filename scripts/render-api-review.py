@@ -16,7 +16,10 @@ def sample(schema):
     if 'enum' in schema:
         return schema['enum'][0]
     if schema.get('type') == 'object':
-        return {name: sample(schema['properties'][name]) for name in schema.get('required', [])}
+        names = list(schema.get('required', []))
+        if not names and schema.get('minProperties', 0):
+            names = ['registeredOn'] if 'registeredOn' in schema['properties'] else list(schema['properties'])[:schema['minProperties']]
+        return {name: sample(schema['properties'][name]) for name in names}
     if schema.get('type') == 'array':
         return [sample(schema['items']) for _ in range(schema.get('minItems', 0))]
     if schema.get('type') in ('integer', 'number'):
