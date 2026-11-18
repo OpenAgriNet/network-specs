@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '/network-specs'
@@ -33,6 +34,12 @@ def git(*args):
 
 
 def slug(branch):
+    if not branch or branch.startswith('/') or '\\' in branch or any(part in ('', '.', '..') for part in branch.split('/')):
+        raise ValueError('Unsafe preview branch path')
+    return branch
+
+
+def legacy_slug(branch):
     readable = re.sub(r'[^a-zA-Z0-9_-]+', '-', branch).strip('-')[:60] or 'branch'
     return readable + '-' + hashlib.sha256(branch.encode()).hexdigest()[:8]
 
@@ -71,13 +78,17 @@ def build(branch, revision, destination, preview):
         shutil.copytree(ROOT, source, ignore=shutil.ignore_patterns(
             '.git', '_site', '.bundle', 'vendor', '.jekyll-cache', 'docs'))
         if preview:
+            # Navigation is renderer code, not branch data. Keep it paired with
+            # the trusted includes so a new branch include cannot break production.
+            trusted_index = (source / 'schema/index.md').read_bytes()
             for directory in DATA_ROOTS:
                 path = source / directory
                 if path.exists():
                     shutil.rmtree(path)  # Only disposable generated staging.
             archive = run('git', 'archive', revision, capture_output=True).stdout
             extract_data(archive, source)
-        base = f'{BASE}/previews/{slug(branch)}' if preview else BASE
+            (source / 'schema/index.md').write_bytes(trusted_index)
+        base = f'{BASE}/previews/{quote(slug(branch), safe="/-._")}' if preview else BASE
         run('ruby', str(source / 'scripts/generate-schema-pages.rb'), cwd=source)
         env = dict(os.environ, BUNDLE_GEMFILE=str(ROOT / 'Gemfile'))
         run('bundle', 'exec', 'jekyll', 'build', '--safe', '--source', str(source),
@@ -128,7 +139,18 @@ def main():
         print(f'Building preview {branch} at {revision}', flush=True)
         build(branch, revision, previews / slug(branch), True)
         manifest['previews'].append({'branch': branch, 'commit': revision,
-                                     'url': f'{BASE}/previews/{slug(branch)}/'})
+                                     'url': f'{BASE}/previews/{quote(slug(branch), safe="/-._")}/'})
+        # Preserve old bookmarked preview entry points without duplicating artifacts.
+        old_path = previews / legacy_slug(branch)
+        if any(other.split(' ', 1)[0].split('/')[0] == old_path.name for other in refs):
+            continue  # A real branch owns this URL; never overwrite it with a redirect.
+        old_path.mkdir(parents=True, exist_ok=True)
+        target = html.escape(manifest['previews'][-1]['url'], quote=True)
+        (old_path / 'index.html').write_text(
+            '<!doctype html><html><head><meta charset="utf-8">'
+            f'<meta http-equiv="refresh" content="0;url={target}">'
+            '<meta name="robots" content="noindex,nofollow"><title>Preview moved</title>'
+            f'</head><body><a href="{target}">Open branch preview</a></body></html>')
     items = ''.join(f'<li><a href="{entry["url"]}">{html.escape(entry["branch"])}</a> '
                     f'<code>{entry["commit"][:12]}</code></li>' for entry in manifest['previews'])
     (previews / 'index.html').write_text(
