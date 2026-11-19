@@ -1,0 +1,319 @@
+openapi: 3.1.1
+info:
+  title: Grievance attributes
+  version: 0.3.0
+  description: Draft for review. Splits what a desk publishes (GrievanceCatalog) from what a call
+    carries (GrievanceRequest, GrievanceResponse). Provider fields live only under apiProperties.
+components:
+  schemas:
+
+    # Shared by the catalog entry and by every message. Not used on its own.
+    GrievanceBase:
+      type: object
+      description: Fields every Grievance payload shares.
+      required:
+      - '@context'
+      - '@type'
+      properties:
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        apiProperties:
+          type: object
+          description: The Provider's own fields. This pack does not define them. The Provider's
+            API contract does.
+
+    # What a desk publishes for discovery. Sits in resourceAttributes.
+    GrievanceCatalog:
+      description: Public metadata about a grievance desk. No applicant data, no issued challenge,
+        no OTP.
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        '@context': https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld
+        '@type': openagrinet:Grievance
+      allOf:
+      - $ref: '#/components/schemas/GrievanceBase'
+      required:
+      - informationMode
+      - about
+      - actions
+      properties:
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the desk on demand.
+        about:
+          type: object
+          additionalProperties: false
+          description: What this desk handles, for example a government scheme or an organisation.
+            Consumers pick a desk by about.code.
+          required:
+          - kind
+          - code
+          - name
+          properties:
+            kind:
+              type: string
+              enum:
+              - Scheme
+              description: What sort of thing the desk handles. More kinds can be added later.
+            code:
+              type: string
+              minLength: 1
+              description: Provider-defined code, for example PMFBY or PM-KISAN.
+            name:
+              type: string
+              minLength: 1
+              description: The full name, as a person would say it.
+        actions:
+          type: array
+          minItems: 1
+          maxItems: 3
+          uniqueItems: true
+          description: The calls this desk serves.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - action
+            - description
+            - operation
+            - attributesAt
+            properties:
+              action:
+                type: string
+                enum:
+                - init
+                - status
+                - support
+                description: The Beckn action. init starts verification, support files a new
+                  grievance, status reads a filed one. A Provider cannot change these meanings.
+              description:
+                type: string
+                minLength: 1
+                maxLength: 400
+                description: What this desk needs and returns for the call.
+              operation:
+                type: string
+                format: uri
+                pattern: '#/paths/'
+                description: URI of the operation in the Provider's API contract. One link gives
+                  the HTTP verb, the request and the response.
+              attributesAt:
+                type: string
+                description: Where the call's attributes sit in the Beckn message. Fixed per
+                  action by this pack.
+              challenge:
+                $ref: '#/components/schemas/ChallengeMethod'
+                description: The verification method this call needs, by its name in
+                  challenge.methods. The consumer calls init first. Absent means no verification.
+            oneOf:
+            # init starts the verification, so it cannot need one itself.
+            - properties:
+                action:
+                  const: init
+                attributesAt:
+                  const: $.message.contract.commitments[0].commitmentAttributes
+              not:
+                required:
+                - challenge
+            - properties:
+                action:
+                  const: status
+                attributesAt:
+                  const: $.message.contract.commitments[0].commitmentAttributes
+            - properties:
+                action:
+                  const: support
+                attributesAt:
+                  const: $.message.support.channels[0]
+        challenge:
+          type: object
+          additionalProperties: false
+          description: Tells the consumer that this desk needs verification before it answers.
+            Public requirements only.
+          required:
+          - methods
+          properties:
+            methods:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Verification methods this desk accepts.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - method
+                - suppliedBy
+                properties:
+                  method:
+                    $ref: '#/components/schemas/ChallengeMethod'
+                    description: The verification method this desk accepts.
+                  suppliedBy:
+                    type: string
+                    enum:
+                    - Applicant
+                    description: Who holds the value the call must carry. Applicant means the
+                      consumer asks the person for it. More sources can be added later.
+                  channel:
+                    type: string
+                    minLength: 1
+                    description: Delivery channel when applicable, for example SMS or EMAIL.
+                  length:
+                    type: integer
+                    minimum: 1
+                    description: Expected code length when the method uses a fixed-length code.
+                  valueType:
+                    type: string
+                    minLength: 1
+                    description: Expected code representation when applicable, for example NUMERIC.
+      # A call that needs verification means the desk must say how, and must serve init.
+      if:
+        required:
+        - actions
+        properties:
+          actions:
+            contains:
+              required:
+              - challenge
+      then:
+        required:
+        - challenge
+        properties:
+          actions:
+            contains:
+              required:
+              - action
+              properties:
+                action:
+                  const: init
+      unevaluatedProperties: false
+
+    # What a request carries. Sits at the action's attributesAt path.
+    GrievanceRequest:
+      description: A call's input. The Provider's own fields are under apiProperties. The answer
+        to the desk's verification, when the call needs one, is under challenge.
+      allOf:
+      - $ref: '#/components/schemas/GrievanceBase'
+      required:
+      - apiProperties
+      properties:
+        challenge:
+          type: object
+          additionalProperties: false
+          description: The answer to the desk's verification. Requests only.
+          x-jsonld-id: openagrinet:challenge
+          required:
+          - response
+          properties:
+            response:
+              type: object
+              additionalProperties: false
+              description: What the caller presents to prove the request is the applicant's.
+              x-jsonld-id: openagrinet:challengeResponse
+              required:
+              - method
+              - value
+              properties:
+                method:
+                  $ref: '#/components/schemas/ChallengeMethod'
+                  description: The catalog method this answers.
+                value:
+                  type: string
+                  minLength: 1
+                  description: The secret itself. A credential, not an attribute.
+                  x-oan-pii:
+                    class: credential
+                    handling:
+                    - no-log
+                    - no-trace
+                    - no-echo
+                    - no-forward
+                  x-jsonld-id: openagrinet:challengeValue
+      unevaluatedProperties: false
+
+    # What a response carries.
+    GrievanceResponse:
+      description: A call's outcome. The Provider's own fields are under apiProperties. An init
+        reply says under challenge that verification has started. It never carries the secret.
+      allOf:
+      - $ref: '#/components/schemas/GrievanceBase'
+      anyOf:
+      - required:
+        - apiProperties
+      - required:
+        - challenge
+      properties:
+        challenge:
+          type: object
+          additionalProperties: false
+          description: The desk's word that verification has started. Responses only.
+          x-jsonld-id: openagrinet:challenge
+          required:
+          - issued
+          properties:
+            issued:
+              type: object
+              additionalProperties: false
+              description: How the secret was sent and when it stops working. Carries no secret.
+              x-jsonld-id: openagrinet:challengeIssued
+              required:
+              - method
+              properties:
+                method:
+                  $ref: '#/components/schemas/ChallengeMethod'
+                  description: The catalog method in use.
+                channel:
+                  type: string
+                  minLength: 1
+                  description: How the secret reaches the applicant, for example SMS.
+                length:
+                  type: integer
+                  minimum: 1
+                  description: How long the secret is, when it has a fixed length.
+                valueType:
+                  type: string
+                  minLength: 1
+                  description: What the secret is made of, for example NUMERIC.
+                expiresAt:
+                  type: string
+                  format: date-time
+                  pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?(Z|[+-][0-9]{2}:[0-9]{2})$
+                  description: When the secret stops working.
+      unevaluatedProperties: false
+
+    # The one list of verification methods. The catalog, the request and the response all use it.
+    ChallengeMethod:
+      type: string
+      enum:
+      - OTP
+      description: A verification method this pack knows. More can be added later.

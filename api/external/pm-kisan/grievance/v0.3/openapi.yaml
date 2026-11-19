@@ -1,0 +1,539 @@
+openapi: 3.1.1
+info:
+  title: PM-KISAN grievance integration contract
+  version: 0.3.0
+  description: Draft for review. Proposed OAN adapter payloads for this external service. Not an
+    official provider API specification. Paths are illustrative; authentication, errors and Beckn
+    wire bindings are not defined. Examples are synthetic.
+servers:
+- url: https://adapter.example.invalid
+  description: Non-operational review placeholder
+
+# One operation per Beckn action. init is the verification call: it sends the OTP
+# that status and support then carry.
+paths:
+  /init:
+    post:
+      operationId: PMKISANInit
+      x-beckn-action: init
+      summary: Send an OTP to the registered mobile
+      description: Proposed adapter-facing synchronous operation for consumer review. Not a deployed
+        provider URL or a complete Beckn wire envelope. Authentication and the final Beckn binding
+        require consumer agreement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PMKISANInitRequest'
+      responses:
+        '200':
+          description: Successful operation outcome, not a transport ACK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PMKISANInitResponse'
+        default:
+          description: Error contract is not yet agreed. Do not return raw upstream errors or
+            personal data.
+  /status:
+    post:
+      operationId: PMKISANStatus
+      x-beckn-action: status
+      summary: Read a filed grievance
+      description: Proposed adapter-facing synchronous operation for consumer review. Not a deployed
+        provider URL or a complete Beckn wire envelope. Authentication and the final Beckn binding
+        require consumer agreement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PMKISANStatusRequest'
+      responses:
+        '200':
+          description: Successful operation outcome, not a transport ACK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PMKISANStatusResponse'
+        default:
+          description: Error contract is not yet agreed. Do not return raw upstream errors or
+            personal data.
+  /support:
+    post:
+      operationId: PMKISANSupport
+      x-beckn-action: support
+      summary: File a new grievance
+      description: Proposed adapter-facing synchronous operation for consumer review. Not a deployed
+        provider URL or a complete Beckn wire envelope. Authentication and the final Beckn binding
+        require consumer agreement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PMKISANSupportRequest'
+      responses:
+        '200':
+          description: Successful operation outcome, not a transport ACK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PMKISANSupportResponse'
+        default:
+          description: Error contract is not yet agreed. Do not return raw upstream errors or
+            personal data.
+
+components:
+  schemas:
+
+    # ------------------------------------------------------------------
+    # 1. Messages. Each is the pack's GrievanceRequest or GrievanceResponse
+    #    with apiProperties narrowed to this Provider's fields. A call that
+    #    needs the OTP also narrows the pack's challenge.
+    # ------------------------------------------------------------------
+    PMKISANInitRequest:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceRequest'
+      properties:
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANInitInput'
+    PMKISANInitResponse:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceResponse'
+      required:
+      - challenge
+      properties:
+        challenge:
+          $ref: '#/components/schemas/OtpIssued'
+      not:
+        required:
+        - apiProperties
+    PMKISANStatusRequest:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceRequest'
+      required:
+      - challenge
+      properties:
+        challenge:
+          $ref: '#/components/schemas/OtpAnswer'
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANStatusInput'
+    PMKISANStatusResponse:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceResponse'
+      required:
+      - apiProperties
+      properties:
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANStatusOutput'
+    PMKISANSupportRequest:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceRequest'
+      required:
+      - challenge
+      properties:
+        challenge:
+          $ref: '#/components/schemas/OtpAnswer'
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANSupportInput'
+    PMKISANSupportResponse:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceResponse'
+      required:
+      - apiProperties
+      properties:
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANSupportOutput'
+
+    # ------------------------------------------------------------------
+    # 2. Catalog entry. The pack's GrievanceCatalog, pinned to PM-KISAN.
+    #    It says status and support need an OTP, and that init sends it.
+    # ------------------------------------------------------------------
+    PMKISANCatalog:
+      allOf:
+      - $ref: '../../../../../schema/Grievance/v0.3/attributes.yaml#/components/schemas/GrievanceCatalog'
+      required:
+      - apiProperties
+      - challenge
+      properties:
+        about:
+          properties:
+            kind:
+              const: Scheme
+            code:
+              const: PM-KISAN
+        challenge:
+          properties:
+            methods:
+              items:
+                required:
+                - method
+                - channel
+                - length
+                - valueType
+                properties:
+                  method:
+                    const: OTP
+                  suppliedBy:
+                    const: Applicant
+                  channel:
+                    const: SMS
+                  length:
+                    const: 4
+                  valueType:
+                    const: NUMERIC
+        actions:
+          minItems: 3
+          items:
+            properties:
+              operation:
+                pattern: ^https://openagrinet\.github\.io/network-specs/api/external/pm-kisan/grievance/v0\.3/openapi\.yaml#/paths/
+            if:
+              properties:
+                action:
+                  enum:
+                  - status
+                  - support
+            then:
+              required:
+              - challenge
+              properties:
+                challenge:
+                  const: OTP
+        apiProperties:
+          $ref: '#/components/schemas/PMKISANCatalogProperties'
+    PMKISANCatalogProperties:
+      type: object
+      additionalProperties: false
+      description: What PM-KISAN publishes beyond the pack's fixed fields.
+      required:
+      - grievanceOptions
+      properties:
+        grievanceOptions:
+          type: object
+          additionalProperties: false
+          description: The categories a grievance can be filed under.
+          required:
+          - categories
+          properties:
+            categories:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Top-level grievance categories.
+              items:
+                type: object
+                additionalProperties: false
+                description: A grievance category PM-KISAN publishes.
+                required:
+                - code
+                properties:
+                  code:
+                    $ref: '#/components/schemas/CategoryCode'
+                  name:
+                    type: string
+                    minLength: 1
+                    description: The option's label.
+                    x-jsonld-id: openagrinet:optionName
+                  help:
+                    type: string
+                    minLength: 1
+                    description: When to pick this option.
+                    x-jsonld-id: openagrinet:optionHelp
+
+    # ------------------------------------------------------------------
+    # 3. PM-KISAN's own fields, one schema per direction per operation.
+    # ------------------------------------------------------------------
+    PMKISANInitInput:
+      type: object
+      additionalProperties: false
+      description: What PM-KISAN needs to send an OTP.
+      required:
+      - enrolmentId
+      properties:
+        enrolmentId:
+          $ref: '#/components/schemas/EnrolmentId'
+
+    PMKISANStatusInput:
+      type: object
+      additionalProperties: false
+      description: What PM-KISAN needs to find a filed grievance.
+      required:
+      - case
+      - enrolmentId
+      properties:
+        case:
+          type: object
+          additionalProperties: false
+          description: The case to read.
+          x-jsonld-id: openagrinet:case
+          required:
+          - filedOn
+          properties:
+            filedOn:
+              $ref: '#/components/schemas/FiledOn'
+              description: When the grievance was filed. Picks one case out of all on the
+                registration.
+        enrolmentId:
+          $ref: '#/components/schemas/EnrolmentId'
+
+    PMKISANStatusOutput:
+      type: object
+      additionalProperties: false
+      description: Where the filed grievance stands.
+      required:
+      - case
+      properties:
+        case:
+          type: object
+          additionalProperties: false
+          description: The case the reply concerns.
+          x-jsonld-id: openagrinet:case
+          required:
+          - status
+          properties:
+            filedOn:
+              $ref: '#/components/schemas/FiledOn'
+            repliedOn:
+              type: string
+              format: date
+              pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+              description: When the desk replied.
+              x-jsonld-id: openagrinet:repliedOn
+            reply:
+              type: string
+              minLength: 1
+              maxLength: 2000
+              description: The desk's reply to the grievance.
+              x-oan-pii:
+                class: freetext
+                handling:
+                - no-log
+                - no-trace
+              x-jsonld-id: openagrinet:caseReply
+            status:
+              $ref: '#/components/schemas/CaseStatus'
+              required:
+              - code
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          properties:
+            description:
+              $ref: '#/components/schemas/GrievanceDescription'
+
+    PMKISANSupportInput:
+      type: object
+      additionalProperties: false
+      description: What PM-KISAN needs to file a grievance.
+      required:
+      - enrolmentId
+      - grievance
+      - provider
+      properties:
+        enrolmentId:
+          $ref: '#/components/schemas/EnrolmentId'
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          required:
+          - category
+          - description
+          properties:
+            category:
+              $ref: '#/components/schemas/GrievanceCategory'
+              required:
+              - code
+            description:
+              $ref: '#/components/schemas/GrievanceDescription'
+        provider:
+          type: object
+          additionalProperties: false
+          description: The desk the grievance is filed with.
+          x-jsonld-id: openagrinet:provider
+          required:
+          - descriptor
+          - id
+          properties:
+            descriptor:
+              type: object
+              additionalProperties: false
+              description: How the desk is named.
+              required:
+              - name
+              properties:
+                name:
+                  $ref: '#/components/schemas/DeskName'
+            id:
+              $ref: '#/components/schemas/DeskId'
+
+    PMKISANSupportOutput:
+      type: object
+      additionalProperties: false
+      description: What PM-KISAN returns once the grievance is filed.
+      required:
+      - case
+      properties:
+        case:
+          type: object
+          additionalProperties: false
+          description: The case opened for this grievance.
+          x-jsonld-id: openagrinet:case
+          required:
+          - ticketNo
+          properties:
+            filedOn:
+              $ref: '#/components/schemas/FiledOn'
+            status:
+              $ref: '#/components/schemas/CaseStatus'
+            ticketNo:
+              type: string
+              minLength: 1
+              maxLength: 64
+              description: The handle the portal issued for the case.
+              x-jsonld-id: openagrinet:ticketNo
+        enrolmentId:
+          $ref: '#/components/schemas/EnrolmentId'
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          properties:
+            category:
+              $ref: '#/components/schemas/GrievanceCategory'
+            description:
+              $ref: '#/components/schemas/GrievanceDescription'
+        provider:
+          type: object
+          additionalProperties: false
+          description: The desk the grievance is filed with.
+          x-jsonld-id: openagrinet:provider
+          properties:
+            descriptor:
+              type: object
+              additionalProperties: false
+              description: How the desk is named.
+              properties:
+                name:
+                  $ref: '#/components/schemas/DeskName'
+            id:
+              $ref: '#/components/schemas/DeskId'
+
+    # ------------------------------------------------------------------
+    # 4. Fields used more than once. Defined here, referenced above.
+    # ------------------------------------------------------------------
+    OtpAnswer:
+      description: PM-KISAN's OTP is four digits. Narrows the pack's challenge in a request.
+      properties:
+        response:
+          properties:
+            method:
+              const: OTP
+            value:
+              pattern: ^[0-9]{4}$
+    OtpIssued:
+      description: PM-KISAN sends its OTP by SMS. Narrows the pack's challenge in the init reply.
+      properties:
+        issued:
+          required:
+          - channel
+          - expiresAt
+          - length
+          - valueType
+          properties:
+            method:
+              const: OTP
+            channel:
+              const: SMS
+            length:
+              const: 4
+            valueType:
+              const: NUMERIC
+    EnrolmentId:
+      type: string
+      pattern: ^[A-Za-z0-9]+$
+      minLength: 6
+      maxLength: 20
+      not:
+        pattern: ^[0-9]{12}$
+      description: The enrolment the grievance is about, as the scheme numbers it. Never an Aadhaar
+        number.
+      x-oan-pii:
+        class: identifier
+        handling:
+        - no-log
+        - no-trace
+      x-jsonld-id: openagrinet:enrolmentId
+    FiledOn:
+      type: string
+      format: date
+      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+      description: When the grievance was filed.
+      x-jsonld-id: openagrinet:filedOn
+    CaseStatus:
+      type: object
+      additionalProperties: false
+      description: Where the case stands.
+      x-jsonld-id: openagrinet:caseStatus
+      properties:
+        code:
+          type: string
+          enum:
+          - Registered
+          - UnderReview
+          - AwaitingApplicant
+          - Replied
+          - Resolved
+          - Rejected
+          - Closed
+          description: The status the desk reports.
+    GrievanceDescription:
+      type: string
+      minLength: 10
+      maxLength: 2000
+      description: What went wrong, in the farmer's own words.
+      x-oan-pii:
+        class: freetext
+        handling:
+        - no-log
+        - no-trace
+      x-jsonld-id: openagrinet:grievanceDescription
+    GrievanceCategory:
+      type: object
+      additionalProperties: false
+      description: The published category this grievance falls under.
+      properties:
+        code:
+          $ref: '#/components/schemas/CategoryCode'
+    CategoryCode:
+      type: string
+      enum:
+      - G001
+      - G002
+      - G003
+      - G004
+      - G005
+      - G006
+      - G007
+      - G008
+      - G009
+      - G010
+      description: Code of a category PM-KISAN publishes.
+      x-jsonld-id: openagrinet:optionCode
+    DeskName:
+      type: string
+      minLength: 1
+      maxLength: 200
+      description: The desk's display name.
+    DeskId:
+      type: string
+      pattern: ^[a-z0-9][a-z0-9.-]*$
+      maxLength: 100
+      description: Stable identifier for the desk.

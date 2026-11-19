@@ -1,0 +1,25 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "challenge": {
+    "response": {
+      "method": "OTP",
+      "value": "4821"
+    }
+  },
+  "apiProperties": {
+    "provider": {
+      "id": "pmkisan",
+      "descriptor": {
+        "name": "PM-KISAN Portal"
+      }
+    },
+    "enrolmentId": "UP12345678A",
+    "grievance": {
+      "category": {
+        "code": "G003"
+      },
+      "description": "Third instalment for 2026 has not been credited."
+    }
+  }
+}

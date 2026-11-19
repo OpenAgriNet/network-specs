@@ -1,0 +1,13 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "apiProperties": {
+    "case": {
+      "ticketNo": "PMK-2026-0098231",
+      "filedOn": "2026-09-28",
+      "status": {
+        "code": "Registered"
+      }
+    }
+  }
+}
