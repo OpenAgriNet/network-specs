@@ -1,0 +1,7 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "apiProperties": {
+    "enrolmentId": "UP12345678A"
+  }
+}

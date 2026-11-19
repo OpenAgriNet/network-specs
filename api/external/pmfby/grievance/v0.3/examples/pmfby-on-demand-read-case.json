@@ -1,0 +1,10 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "apiProperties": {
+    "applicantMobile": "9876543210",
+    "case": {
+      "ticketNo": "100626000099001"
+    }
+  }
+}

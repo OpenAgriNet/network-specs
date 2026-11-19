@@ -1,0 +1,13 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.3/context.jsonld",
+  "@type": "openagrinet:Grievance",
+  "apiProperties": {
+    "case": {
+      "ticketNo": "100626000099001",
+      "filedOn": "2026-09-28",
+      "status": {
+        "code": "UnderReview"
+      }
+    }
+  }
+}
