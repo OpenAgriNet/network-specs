@@ -3,22 +3,27 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
-  pull_request_target:
-    types: [opened, synchronize, reopened, closed]
-  schedule:
-    - cron: '*/15 * * * *'
+  workflow_run:
+    workflows: ['Check Pages build']
+    types: [completed]
   workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: pages
+  # Ignored PR completions must not replace a queued push deployment.
+  group: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event != 'push' && format('pages-ignored-{0}', github.run_id) || 'pages' }}
   cancel-in-progress: false
 
 jobs:
   build:
     # Never execute PR code. Only main's scripts, dependencies and layouts run.
-    if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
+    # Branch pushes signal a trusted main build; PR checks never publish.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     permissions:
       contents: read

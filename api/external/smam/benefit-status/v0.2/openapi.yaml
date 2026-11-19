@@ -1,0 +1,70 @@
+openapi: 3.1.1
+info:
+  title: SMAM benefit application status
+  version: 0.2.0
+  description: >
+    Native benefit-status read. Only fields observed in the adapter are described; this is not a deployed Beckn status binding.
+paths:
+  /api/BeneficiaryService/GetApplicationStatusByAI:
+    post:
+      operationId: readSmamBenefitStatus
+      security: [{providerToken: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SmamBenefitStatusRequest'}
+            example: {SearchValue: EXAMPLE-APPLICATION}
+      responses:
+        '200':
+          description: The adapter checks the success flag and parses the data field; an error or unreadable response is not confirmed absence of an application.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SmamBenefitStatusResponse'}
+              examples:
+                found:
+                  value: {success: true, data: [{ApplicationID: 1, ApplicationRefNo: EXAMPLE, Implements: [{ImplementName: Example implement, StatusHistory: [{StatusText: Example stage}]}]}]}
+                encoded: {value: {success: true, data: '[]'}}
+                failed: {value: {success: false, message: Example failure, data: null}}
+        default: {description: Transport/provider failure; error payload not verified.}
+components:
+  securitySchemes:
+    providerToken: {type: apiKey, name: Token, in: header}
+  schemas:
+    SmamBenefitStatusRequest:
+      type: object
+      required: [SearchValue]
+      properties:
+        SearchValue: {type: string, minLength: 1, writeOnly: true, description: Private search value selected by the caller. The adapter sends no search_type to SMAM.}
+    SmamBenefitStatusResponse:
+      type: object
+      required: [success]
+      properties:
+        success: {type: boolean}
+        message: {type: string}
+        data:
+          oneOf:
+            - {type: 'null'}
+            - {type: string, description: JSON-encoded applications (parsed by the adapter).}
+            - {$ref: '#/components/schemas/Application'}
+            - {type: array, items: {$ref: '#/components/schemas/Application'}}
+    Application:
+      type: object
+      properties:
+        ApplicationID: {type: [integer, string]}
+        ApplicationRefNo: {type: string}
+        Implements:
+          type: array
+          items:
+            type: object
+            properties:
+              ImplementSubsidyID: {type: [integer, string]}
+              ImplementName: {type: string}
+              StatusHistory:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    StatusCode: {type: [integer, string]}
+                    StatusText: {type: string}
+                    StatusDate: {type: string}

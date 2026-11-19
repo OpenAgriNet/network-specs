@@ -1,0 +1,204 @@
+openapi: 3.1.1
+info:
+  title: AIF proposed adapter exchanges
+  version: 0.2.0
+  description: Illustrative consumer-facing operation contracts, not native endpoints, verified bindings,
+    or production schemas. Field names, session references and sample values are proposed, not the legacy
+    payload. Transport authentication, failures, retries and protocol profile must be agreed before invocation.
+servers:
+- url: https://adapter.example.invalid
+paths:
+  /example/startChallenge:
+    post:
+      operationId: AIFStartChallenge
+      summary: Begin beneficiary verification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIFStartChallengeRequest'
+            example:
+              beneficiaryId: DEMO-BENEFICIARY
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIFStartChallengeResponse'
+              example:
+                challengeReference: DEMO-CHALLENGE
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+  /example/verifyChallenge:
+    post:
+      operationId: AIFVerifyChallenge
+      summary: Verify the challenge before private reads.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIFVerifyChallengeRequest'
+            example:
+              challengeReference: DEMO-CHALLENGE
+              otp: '000000'
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIFVerifyChallengeResponse'
+              example:
+                verified: true
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+  /example/readLoan:
+    post:
+      operationId: AIFReadLoan
+      summary: Read the selected beneficiary's loan application after verification.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIFReadLoanRequest'
+            example:
+              beneficiaryId: DEMO-BENEFICIARY
+              loanApplicationNumber: DEMO-LOAN
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIFReadLoanResponse'
+              example:
+                loanApplicationNumber: DEMO-LOAN
+                status: under review
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+  /example/readTickets:
+    post:
+      operationId: AIFReadTickets
+      summary: Return tickets linked to the verified beneficiary. An empty list is a valid result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIFReadTicketsRequest'
+            example:
+              beneficiaryId: DEMO-BENEFICIARY
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIFReadTicketsResponse'
+              example:
+                tickets: []
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+components:
+  schemas:
+    AIFStartChallengeRequest:
+      type: object
+      properties:
+        beneficiaryId:
+          type: string
+          minLength: 1
+      required:
+      - beneficiaryId
+      additionalProperties: false
+    AIFStartChallengeResponse:
+      type: object
+      properties:
+        challengeReference:
+          type: string
+          minLength: 1
+      required:
+      - challengeReference
+      additionalProperties: false
+    AIFVerifyChallengeRequest:
+      type: object
+      properties:
+        challengeReference:
+          type: string
+          minLength: 1
+        otp:
+          type: string
+          minLength: 1
+      required:
+      - challengeReference
+      - otp
+      additionalProperties: false
+    AIFVerifyChallengeResponse:
+      type: object
+      properties:
+        verified:
+          type: boolean
+      required:
+      - verified
+      additionalProperties: false
+    AIFReadLoanRequest:
+      type: object
+      properties:
+        beneficiaryId:
+          type: string
+          minLength: 1
+        loanApplicationNumber:
+          type: string
+          minLength: 1
+      required:
+      - beneficiaryId
+      - loanApplicationNumber
+      additionalProperties: false
+    AIFReadLoanResponse:
+      type: object
+      properties:
+        loanApplicationNumber:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          minLength: 1
+      required:
+      - loanApplicationNumber
+      - status
+      additionalProperties: false
+    AIFReadTicketsRequest:
+      type: object
+      properties:
+        beneficiaryId:
+          type: string
+          minLength: 1
+      required:
+      - beneficiaryId
+      additionalProperties: false
+    AIFReadTicketsResponse:
+      type: object
+      properties:
+        tickets:
+          type: array
+          items:
+            type: object
+            properties:
+              loanApplicationNumber:
+                type: string
+                minLength: 1
+              status:
+                type: string
+                minLength: 1
+              description:
+                type: string
+                minLength: 1
+            required:
+            - status
+            additionalProperties: false
+      required:
+      - tickets
+      additionalProperties: false

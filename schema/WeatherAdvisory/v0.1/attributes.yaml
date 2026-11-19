@@ -104,9 +104,6 @@ components:
                 type: object
                 required: [message, language]
                 properties:
-                  applicability:
-                    $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgriculturalApplicability"
-                    description: Optional conditions narrowing resource-level applicability. Both scopes must match.
                   topic:
                     type: string
                     minLength: 1

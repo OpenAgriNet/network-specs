@@ -64,9 +64,6 @@ components:
                 type: object
                 required: [message, language]
                 properties:
-                  applicability:
-                    $ref: "../../AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgriculturalApplicability"
-                    description: Optional conditions for this recommendation. These are ANDed with resource-level applicability; they cannot broaden it.
                   actions:
                     type: array
                     minItems: 1

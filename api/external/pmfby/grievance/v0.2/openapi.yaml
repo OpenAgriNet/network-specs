@@ -1,0 +1,960 @@
+openapi: 3.1.1
+info:
+  title: PMFBY grievance integration contract
+  version: 0.2.0
+  description: Proposed OAN adapter payloads for this external service. Not an official
+    provider API specification. Paths are illustrative; authentication, errors and
+    Beckn wire bindings are not defined. Examples are synthetic.
+servers:
+- url: https://adapter.example.invalid
+  description: Non-operational review placeholder
+paths:
+  /pmfby/status:
+    post:
+      operationId: PMFBYStatus
+      summary: PMFBYStatus attributes exchange
+      description: Proposed adapter-facing synchronous operation for consumer review.
+        Not a deployed provider URL or a complete Beckn wire envelope. Authentication
+        and the final Beckn binding require consumer agreement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PMFBYStatusRequest'
+      responses:
+        '200':
+          description: Successful operation outcome, not a transport ACK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PMFBYStatusResponse'
+        default:
+          description: Error contract is not yet agreed. Do not return raw upstream
+            errors or personal data.
+  /pmfby/support:
+    post:
+      operationId: PMFBYSupport
+      summary: PMFBYSupport attributes exchange
+      description: Proposed adapter-facing synchronous operation for consumer review.
+        Not a deployed provider URL or a complete Beckn wire envelope. Authentication
+        and the final Beckn binding require consumer agreement.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PMFBYSupportRequest'
+      responses:
+        '200':
+          description: Successful operation outcome, not a transport ACK.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PMFBYSupportResponse'
+        default:
+          description: Error contract is not yet agreed. Do not return raw upstream
+            errors or personal data.
+components:
+  schemas:
+    PMFBYStatusRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context
+            array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own
+            types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        applicantMobile:
+          type: string
+          pattern: ^[6-9][0-9]{9}$
+          description: The farmer's mobile, which the portal files the ticket against.
+          x-oan-pii:
+            class: contact
+            handling:
+            - no-log
+            - no-trace
+            - no-echo
+          x-jsonld-id: openagrinet:applicantMobile
+        case:
+          type: object
+          additionalProperties: false
+          description: The case opened for this grievance.
+          x-jsonld-id: openagrinet:case
+          properties:
+            ticketNo:
+              type: string
+              pattern: ^[0-9]+$
+              maxLength: 32
+              description: The handle the portal issued for the case.
+              x-jsonld-id: openagrinet:ticketNo
+          required:
+          - ticketNo
+        cropYear:
+          type: string
+          pattern: ^[0-9]{4}$
+          description: The crop year of the enrolment.
+          x-jsonld-id: openagrinet:cropYear
+        enrolmentId:
+          type: string
+          minLength: 10
+          maxLength: 30
+          not:
+            pattern: ^[0-9]{12}$
+          description: The enrolment the grievance is about, as the scheme numbers
+            it. Never an Aadhaar number.
+          x-oan-pii:
+            class: identifier
+            handling:
+            - no-log
+            - no-trace
+          x-jsonld-id: openagrinet:enrolmentId
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        scheme:
+          type: object
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+          properties:
+            code:
+              const: PMFBY
+              type: string
+              enum:
+              - PMFBY
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          required:
+          - code
+        season:
+          type: string
+          enum:
+          - Kharif
+          - Rabi
+          - Zaid
+          description: The season of the enrolment.
+          x-jsonld-id: openagrinet:season
+      required:
+      - '@context'
+      - '@type'
+      - applicantMobile
+      - case
+      - informationMode
+      - scheme
+    PMFBYStatusResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context
+            array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own
+            types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        case:
+          type: object
+          additionalProperties: false
+          description: The case opened for this grievance.
+          x-jsonld-id: openagrinet:case
+          properties:
+            cropName:
+              type: string
+              minLength: 1
+              maxLength: 120
+              description: The crop the case concerns.
+              x-jsonld-id: openagrinet:cropName
+            filedOn:
+              type: string
+              format: date
+              pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+              description: When the grievance was filed.
+              x-jsonld-id: openagrinet:filedOn
+            reply:
+              type: string
+              minLength: 1
+              maxLength: 2000
+              description: The desk's reply to the grievance.
+              x-oan-pii:
+                class: freetext
+                handling:
+                - no-log
+                - no-trace
+              x-jsonld-id: openagrinet:caseReply
+            status:
+              type: object
+              additionalProperties: false
+              description: Where the case stands.
+              x-jsonld-id: openagrinet:caseStatus
+              properties:
+                code:
+                  type: string
+                  enum:
+                  - Registered
+                  - UnderReview
+                  - AwaitingApplicant
+                  - Replied
+                  - Resolved
+                  - Rejected
+                  - Closed
+                  description: The status the desk reports.
+              required:
+              - code
+            ticketNo:
+              type: string
+              pattern: ^[0-9]+$
+              maxLength: 32
+              description: The handle the portal issued for the case.
+              x-jsonld-id: openagrinet:ticketNo
+          required:
+          - status
+        cropYear:
+          type: string
+          pattern: ^[0-9]{4}$
+          description: The crop year of the enrolment.
+          x-jsonld-id: openagrinet:cropYear
+        enrolmentId:
+          type: string
+          minLength: 10
+          maxLength: 30
+          not:
+            pattern: ^[0-9]{12}$
+          description: The enrolment the grievance is about, as the scheme numbers
+            it. Never an Aadhaar number.
+          x-oan-pii:
+            class: identifier
+            handling:
+            - no-log
+            - no-trace
+          x-jsonld-id: openagrinet:enrolmentId
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          properties:
+            category:
+              type: object
+              additionalProperties: false
+              description: The published category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The option's label.
+            description:
+              type: string
+              minLength: 10
+              maxLength: 2000
+              description: What went wrong, in the farmer's own words.
+              x-oan-pii:
+                class: freetext
+                handling:
+                - no-log
+                - no-trace
+              x-jsonld-id: openagrinet:grievanceDescription
+            subCategory:
+              type: object
+              additionalProperties: false
+              description: The published sub-category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The option's label.
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        scheme:
+          type: object
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+          properties:
+            code:
+              const: PMFBY
+              type: string
+              enum:
+              - PMFBY
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          required:
+          - code
+        season:
+          type: string
+          enum:
+          - Kharif
+          - Rabi
+          - Zaid
+          description: The season of the enrolment.
+          x-jsonld-id: openagrinet:season
+      required:
+      - '@context'
+      - '@type'
+      - case
+      - informationMode
+      - scheme
+    PMFBYSupportRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context
+            array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own
+            types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        applicantMobile:
+          type: string
+          pattern: ^[6-9][0-9]{9}$
+          description: The farmer's mobile, which the portal files the ticket against.
+          x-oan-pii:
+            class: contact
+            handling:
+            - no-log
+            - no-trace
+            - no-echo
+          x-jsonld-id: openagrinet:applicantMobile
+        complaintDate:
+          type: string
+          format: date
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+          description: The caller's own filing date, where case.filedOn is the portal's.
+          x-jsonld-id: openagrinet:complaintDate
+        cropYear:
+          type: string
+          pattern: ^[0-9]{4}$
+          description: The crop year of the enrolment.
+          x-jsonld-id: openagrinet:cropYear
+        enrolmentId:
+          type: string
+          minLength: 10
+          maxLength: 30
+          not:
+            pattern: ^[0-9]{12}$
+          description: The enrolment the grievance is about, as the scheme numbers
+            it. Never an Aadhaar number.
+          x-oan-pii:
+            class: identifier
+            handling:
+            - no-log
+            - no-trace
+          x-jsonld-id: openagrinet:enrolmentId
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          properties:
+            category:
+              type: object
+              additionalProperties: false
+              required:
+              - code
+              description: The published category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The option's label.
+            description:
+              type: string
+              minLength: 10
+              maxLength: 2000
+              description: What went wrong, in the farmer's own words.
+              x-oan-pii:
+                class: freetext
+                handling:
+                - no-log
+                - no-trace
+              x-jsonld-id: openagrinet:grievanceDescription
+            subCategory:
+              type: object
+              additionalProperties: false
+              required:
+              - code
+              description: The published sub-category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+                name:
+                  type: string
+                  minLength: 1
+                  description: The option's label.
+          required:
+          - description
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        provider:
+          type: object
+          additionalProperties: false
+          description: The desk the grievance is filed with.
+          x-jsonld-id: openagrinet:provider
+          properties:
+            descriptor:
+              type: object
+              additionalProperties: false
+              description: How the desk is named.
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  description: The desk's display name.
+              required:
+              - name
+            id:
+              type: string
+              pattern: ^[a-z0-9][a-z0-9.-]*$
+              maxLength: 100
+              description: Stable identifier for the desk.
+          required:
+          - descriptor
+          - id
+        receiptSourceId:
+          type: string
+          pattern: ^[0-9]+$
+          maxLength: 16
+          description: The channel the complaint arrived through. Names the channel,
+            not the farmer.
+          x-jsonld-id: openagrinet:receiptSourceId
+        scheme:
+          type: object
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+          properties:
+            code:
+              const: PMFBY
+              type: string
+              enum:
+              - PMFBY
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          required:
+          - code
+        season:
+          type: string
+          enum:
+          - Kharif
+          - Rabi
+          - Zaid
+          description: The season of the enrolment.
+          x-jsonld-id: openagrinet:season
+      required:
+      - '@context'
+      - '@type'
+      - applicantMobile
+      - cropYear
+      - enrolmentId
+      - grievance
+      - informationMode
+      - provider
+      - scheme
+      - season
+    PMFBYSupportResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context
+            array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own
+            types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        case:
+          type: object
+          additionalProperties: false
+          description: The case opened for this grievance.
+          x-jsonld-id: openagrinet:case
+          properties:
+            filedOn:
+              type: string
+              format: date
+              pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+              description: When the grievance was filed.
+              x-jsonld-id: openagrinet:filedOn
+            status:
+              type: object
+              additionalProperties: false
+              description: Where the case stands.
+              x-jsonld-id: openagrinet:caseStatus
+              properties:
+                code:
+                  type: string
+                  enum:
+                  - Registered
+                  - UnderReview
+                  - AwaitingApplicant
+                  - Replied
+                  - Resolved
+                  - Rejected
+                  - Closed
+                  description: The status the desk reports.
+            ticketNo:
+              type: string
+              pattern: ^[0-9]+$
+              maxLength: 32
+              description: The handle the portal issued for the case.
+              x-jsonld-id: openagrinet:ticketNo
+          required:
+          - ticketNo
+        enrolmentId:
+          type: string
+          minLength: 10
+          maxLength: 30
+          not:
+            pattern: ^[0-9]{12}$
+          description: The enrolment the grievance is about, as the scheme numbers
+            it. Never an Aadhaar number.
+          x-oan-pii:
+            class: identifier
+            handling:
+            - no-log
+            - no-trace
+          x-jsonld-id: openagrinet:enrolmentId
+        grievance:
+          type: object
+          additionalProperties: false
+          description: The grievance itself.
+          x-jsonld-id: openagrinet:grievance
+          properties:
+            category:
+              type: object
+              additionalProperties: false
+              description: The published category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+            description:
+              type: string
+              minLength: 10
+              maxLength: 2000
+              description: What went wrong, in the farmer's own words.
+              x-oan-pii:
+                class: freetext
+                handling:
+                - no-log
+                - no-trace
+              x-jsonld-id: openagrinet:grievanceDescription
+            subCategory:
+              type: object
+              additionalProperties: false
+              description: The published sub-category this grievance falls under.
+              properties:
+                code:
+                  type: string
+                  pattern: ^[0-9]+$
+                  description: Code of the published option.
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        provider:
+          type: object
+          additionalProperties: false
+          description: The desk the grievance is filed with.
+          x-jsonld-id: openagrinet:provider
+          properties:
+            descriptor:
+              type: object
+              additionalProperties: false
+              description: How the desk is named.
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  description: The desk's display name.
+            id:
+              type: string
+              pattern: ^[a-z0-9][a-z0-9.-]*$
+              maxLength: 100
+              description: Stable identifier for the desk.
+        scheme:
+          type: object
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+          properties:
+            code:
+              const: PMFBY
+              type: string
+              enum:
+              - PMFBY
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          required:
+          - code
+      required:
+      - '@context'
+      - '@type'
+      - case
+      - informationMode
+      - scheme
+    PMFBYCatalog:
+      externalDocs:
+        description: PMFBY grievance API specification
+        url: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml
+      type: object
+      required:
+      - scheme
+      - '@context'
+      - '@type'
+      - informationMode
+      - grievanceOptions
+      - actions
+      properties:
+        scheme:
+          type: object
+          required:
+          - code
+          - name
+          properties:
+            code:
+              const: PMFBY
+              type: string
+              enum:
+              - PMFBY
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context
+            array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own
+            types.
+          oneOf:
+          - type: string
+            const: openagrinet:Grievance
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:Grievance
+            items:
+              oneOf:
+              - const: openagrinet:Grievance
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        grievanceOptions:
+          type: object
+          additionalProperties: false
+          required:
+          - categories
+          - subCategories
+          description: The categories a grievance can be filed under.
+          properties:
+            categories:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Top-level grievance categories.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - code
+                description: A grievance category or sub-category PMFBY publishes.
+                properties:
+                  code:
+                    type: string
+                    pattern: ^[0-9]+$
+                    description: Code identifying the option.
+                    x-jsonld-id: openagrinet:optionCode
+                  name:
+                    type: string
+                    minLength: 1
+                    description: The option's label.
+                    x-jsonld-id: openagrinet:optionName
+                  help:
+                    type: string
+                    minLength: 1
+                    description: When to pick this option.
+                    x-jsonld-id: openagrinet:optionHelp
+              x-jsonld-id: openagrinet:grievanceCategoryOption
+            subCategories:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Sub-categories under those.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - code
+                description: A grievance category or sub-category PMFBY publishes.
+                properties:
+                  code:
+                    type: string
+                    pattern: ^[0-9]+$
+                    description: Code identifying the option.
+                    x-jsonld-id: openagrinet:optionCode
+                  name:
+                    type: string
+                    minLength: 1
+                    description: The option's label.
+                    x-jsonld-id: openagrinet:optionName
+                  help:
+                    type: string
+                    minLength: 1
+                    description: When to pick this option.
+                    x-jsonld-id: openagrinet:optionHelp
+              x-jsonld-id: openagrinet:grievanceSubCategoryOption
+          x-jsonld-id: openagrinet:grievanceOptions
+        actions:
+          type: array
+          minItems: 2
+          maxItems: 2
+          uniqueItems: true
+          description: Every call this desk serves.
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - action
+            - description
+            - schema
+            - operationRef
+            - attributesAt
+            properties:
+              action:
+                type: string
+                enum:
+                - init
+                - status
+                - support
+                description: The Beckn action this entry describes.
+                x-jsonld-id: openagrinet:actionName
+              description:
+                type: string
+                minLength: 1
+                maxLength: 400
+                description: What the call does, in the desk's own words.
+                x-jsonld-id: openagrinet:actionDescription
+              schema:
+                type: string
+                format: uri
+                description: Request attributes schema in the external API contract.
+                  Only request schemas in this API contract are advertised. Response
+                  schemas are defined in the API document.
+                x-jsonld-id: openagrinet:actionSchema
+              operationRef:
+                type: string
+                format: uri
+                pattern: '^https?://[^#]+/openapi\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$'
+                description: Absolute URI of the OpenAPI Operation Object (path and HTTP method), not an invocation URL.
+              attributesAt:
+                type: string
+                pattern: ^\$\.message\.[A-Za-z0-9.\[\]]+$
+                description: Where the call's attributes sit in the Beckn payload.
+                x-jsonld-id: openagrinet:actionAttributesAt
+            oneOf:
+            - properties:
+                action:
+                  const: support
+                description:
+                  default: File a new grievance. Needs the enrolment number, the applicant's
+                    mobile, the crop year, the season and a description of the problem.
+                    Returns case.ticketNo, which status requires. Needs no OTP, so
+                    it can be called without init.
+                schema:
+                  enum:
+                  - https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post
+                attributesAt:
+                  const: $.message.support.channels[0]
+            - properties:
+                action:
+                  const: status
+                description:
+                  default: 'Read where a filed grievance stands: its status code,
+                    the portal''s reply and the crop it concerns. Needs case.ticketNo
+                    from an earlier support call, plus the applicant''s mobile. Cases
+                    cannot be listed by enrolment number, so support must come first.'
+                schema:
+                  enum:
+                  - https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post
+                attributesAt:
+                  const: $.message.contract.commitments[0].commitmentAttributes
+          x-jsonld-id: openagrinet:publishedAction
+      additionalProperties: false

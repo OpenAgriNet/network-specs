@@ -1,0 +1,42 @@
+{
+  "id": "resource:example:ffs-fertilizer-booking",
+  "descriptor": {
+    "name": "Book fertilizer at a participating retailer",
+    "shortDesc": "Check the allowance, choose products and a retailer, then confirm the booking.",
+    "docs": [
+      {
+        "label": "FFS booking operations (caller-derived draft)",
+        "url": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      },
+      {
+        "label": "Proposed adapter operations",
+        "url": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      }
+    ]
+  },
+  "resourceAttributes": {
+    "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+    "@type": "openagrinet:AgricultureResource",
+    "informationMode": "OnDemand",
+    "subjectCategories": [
+      "Market",
+      "Practice"
+    ],
+    "actions": [
+      {
+        "action": "select",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1ffs-booking~1readAllowance/post"
+      },
+      {
+        "action": "init",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1ffs-booking~1prepareBooking/post"
+      },
+      {
+        "action": "confirm",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1ffs-booking~1submitBooking/post"
+      }
+    ]
+  }
+}

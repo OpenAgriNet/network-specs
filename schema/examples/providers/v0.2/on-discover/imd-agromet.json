@@ -1,0 +1,66 @@
+{
+  "context": {
+    "action": "on_discover",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000049",
+    "messageId": "fade0000-0000-4000-8000-000000000050",
+    "timestamp": "2026-11-19T01:00:00Z"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-imd",
+        "bppId": "imd.example.invalid",
+        "bppUri": "https://imd.example.invalid/beckn",
+        "descriptor": {
+          "name": "IMD example catalog"
+        },
+        "provider": {
+          "id": "prov-imd",
+          "descriptor": {
+            "name": "IMD example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-imd-agromet",
+            "descriptor": {
+              "code": "imd-agromet",
+              "name": "Agromet district crop guidance",
+              "shortDesc": "District crop bulletin",
+              "docs": [
+                {
+                  "label": "Native bulletin feed; not a Beckn action",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureAdvisory",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Weather",
+                "Crop"
+              ],
+              "topics": [
+                "District crop bulletin"
+              ],
+              "languages": [
+                "en"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

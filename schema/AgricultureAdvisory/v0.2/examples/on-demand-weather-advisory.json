@@ -1,0 +1,47 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureAdvisory",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Crop",
+    "Weather"
+  ],
+  "topics": [
+    "Irrigation",
+    "Crop protection",
+    "Spraying",
+    "Harvest planning"
+  ],
+  "supportedWeatherParameters": [
+    "Rainfall",
+    "Temperature",
+    "Humidity",
+    "WindSpeed"
+  ],
+  "forecastHorizon": "P7D",
+  "updateFrequency": "PT6H",
+  "geographicGranularities": [
+    "Point",
+    "District"
+  ],
+  "languages": [
+    "en",
+    "hi",
+    "te"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-1",
+      "areaCode": "IN",
+      "areaLevel": "Country",
+      "areaName": "India"
+    }
+  ],
+  "weatherInformed": true,
+  "actions": [
+    {
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post"
+    }
+  ]
+}

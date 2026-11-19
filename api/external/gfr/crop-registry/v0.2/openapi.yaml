@@ -1,0 +1,142 @@
+openapi: 3.1.1
+info:
+  title: GFR crop-registry
+  version: 0.2.0
+  description: 'GraphQL POST to the configured Soil Health endpoint (path / is relative to that endpoint). Source:
+    dev:src/services/gfr/gfr.service.ts. Describes this adapter''s query, not a provider-wide contract; no live
+    replay or error guarantees.'
+paths:
+  /:
+    post:
+      operationId: getCropRegistries
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GfrCropRegistryRequest'
+            example:
+              query: 'query GetCropRegistries($state: String) { getCropRegistries(state: $state) { name variety
+                irrigationType season splitdose state GFRavailable id combinedName __typename } }'
+              variables:
+                state: EXAMPLE-STATE
+      responses:
+        '200':
+          description: GraphQL envelope before adapter conversion. An error or missing data is not a successful
+            record lookup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GfrCropRegistryResponse'
+              examples:
+                found:
+                  value:
+                    data:
+                      getCropRegistries:
+                      - id: EXAMPLE-CROP
+                        name: Example crop
+                        season: Kharif
+                        splitdose: true
+                none:
+                  value:
+                    data:
+                      getCropRegistries: []
+                graphqlError:
+                  value:
+                    errors:
+                    - message: Example upstream error
+        default:
+          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+components:
+  schemas:
+    GfrCropRegistryRequest:
+      type: object
+      required:
+      - query
+      - variables
+      properties:
+        query:
+          const: 'query GetCropRegistries($state: String) { getCropRegistries(state: $state) { name variety irrigationType
+            season splitdose state GFRavailable id combinedName __typename } }'
+        variables:
+          type: object
+          properties:
+            state:
+              type: string
+          required:
+          - state
+    GfrCropRegistryResponse:
+      type: object
+      properties:
+        data:
+          type:
+          - object
+          - 'null'
+          properties:
+            getCropRegistries:
+              type:
+              - array
+              - 'null'
+              items:
+                $ref: '#/components/schemas/CropRegistryRecord'
+          required:
+          - getCropRegistries
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+            - message
+      anyOf:
+      - required:
+        - data
+      - required:
+        - errors
+    CropRegistryRecord:
+      type: object
+      properties:
+        id: {}
+        name:
+          type:
+          - string
+          - 'null'
+        variety:
+          type:
+          - string
+          - 'null'
+        irrigationType:
+          type:
+          - string
+          - 'null'
+        season:
+          type:
+          - string
+          - 'null'
+        splitdose: {}
+        state:
+          type:
+          - object
+          - 'null'
+          properties:
+            _id:
+              type: string
+            name:
+              type: string
+            code:
+              type:
+              - string
+              - integer
+        GFRavailable: {}
+        combinedName:
+          type:
+          - string
+          - 'null'
+        __typename:
+          type:
+          - string
+          - 'null'
+      description: Fields selected by the adapter. Unconstrained fields are provider data for which the selected
+        GraphQL query does not establish a reliable scalar type; this does not describe the full provider schema.

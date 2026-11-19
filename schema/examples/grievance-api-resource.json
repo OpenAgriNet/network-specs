@@ -1,0 +1,54 @@
+{
+  "id": "resource:example:grievance",
+  "descriptor": {
+    "name": "Scheme grievance service",
+    "docs": [
+      {
+        "label": "Grievance API specification",
+        "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      }
+    ]
+  },
+  "resourceAttributes": {
+    "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld",
+    "@type": "openagrinet:Grievance",
+    "informationMode": "OnDemand",
+    "scheme": {
+      "code": "PMFBY",
+      "name": "Pradhan Mantri Fasal Bima Yojana"
+    },
+    "grievanceOptions": {
+      "categories": [
+        {
+          "code": "3",
+          "name": "Enrollment / Portal Issues",
+          "help": "Something about your enrolment, or about the portal itself, is not working."
+        }
+      ],
+      "subCategories": [
+        {
+          "code": "10",
+          "name": "Login",
+          "help": "You cannot sign in to the portal to see your enrolment."
+        }
+      ]
+    },
+    "actions": [
+      {
+        "action": "support",
+        "description": "File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.",
+        "schema": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest",
+        "attributesAt": "$.message.support.channels[0]",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post"
+      },
+      {
+        "action": "status",
+        "description": "Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.",
+        "schema": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest",
+        "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post"
+      }
+    ]
+  }
+}

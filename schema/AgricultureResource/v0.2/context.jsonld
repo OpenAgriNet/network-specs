@@ -1,0 +1,107 @@
+{
+  "@context": [
+    "https://schema.beckn.io/GeoJSONGeometry/v2.0/context.jsonld",
+    {
+      "@version": 1.1,
+      "schema": "https://schema.org/",
+      "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+      "AgricultureResource": "openagrinet:AgricultureResource",
+      "actions": {
+        "@id": "openagrinet:publishedAction",
+        "@container": "@set",
+        "@context": {
+          "action": "openagrinet:actionName",
+          "operationRef": {"@id": "openagrinet:operationRef", "@type": "@id"}
+        }
+      },
+      "informationMode": "openagrinet:informationMode",
+      "subjectCategories": {
+        "@id": "openagrinet:subjectCategories",
+        "@container": "@set"
+      },
+      "agricultureSubjects": {
+        "@id": "openagrinet:agricultureSubjects",
+        "@container": "@set"
+      },
+      "AgricultureSubjectReference": "openagrinet:AgricultureSubjectReference",
+      "subjectId": {
+        "@id": "openagrinet:subjectId",
+        "@type": "@id"
+      },
+      "descriptor": {
+        "@id": "https://schema.beckn.io/descriptor",
+        "@context": "https://schema.beckn.io/Descriptor/v2.1/context.jsonld"
+      },
+      "languages": {
+        "@id": "openagrinet:languages",
+        "@container": "@set"
+      },
+      "coverageAreas": {
+        "@id": "openagrinet:coverageAreas",
+        "@container": "@set"
+      },
+      "AdministrativeAreaReference": "openagrinet:AdministrativeAreaReference",
+      "codeScheme": "openagrinet:areaCodeScheme",
+      "areaCode": "openagrinet:areaCode",
+      "areaLevel": "openagrinet:areaLevel",
+      "areaName": "openagrinet:areaName",
+      "sourceId": "openagrinet:sourceId",
+      "sourceName": "openagrinet:sourceName",
+      "sourceUri": "openagrinet:sourceUri",
+      "startsAt": "openagrinet:startsAt",
+      "endsAt": "openagrinet:endsAt",
+      "applicability": {
+        "@id": "openagrinet:applicability",
+        "@container": "@set"
+      },
+      "subjectIds": {
+        "@id": "openagrinet:subjectIds",
+        "@container": "@set",
+        "@type": "@id"
+      },
+      "seasons": {
+        "@id": "openagrinet:seasons",
+        "@container": "@set",
+        "@context": {
+          "codeSystem": {
+            "@id": "openagrinet:codeSystem",
+            "@type": "@id"
+          },
+          "code": "openagrinet:agronomicCode",
+          "label": "openagrinet:agronomicLabel"
+        }
+      },
+      "growthStages": {
+        "@id": "openagrinet:growthStages",
+        "@container": "@set",
+        "@context": {
+          "codeSystem": {
+            "@id": "openagrinet:codeSystem",
+            "@type": "@id"
+          },
+          "code": "openagrinet:agronomicCode",
+          "label": "openagrinet:agronomicLabel"
+        }
+      },
+      "relativeTiming": "openagrinet:relativeTiming",
+      "event": "openagrinet:event",
+      "fromDays": "openagrinet:fromDays",
+      "toDays": "openagrinet:toDays",
+      "establishmentMethods": {
+        "@id": "openagrinet:establishmentMethods",
+        "@container": "@set"
+      },
+      "waterRegimes": {
+        "@id": "openagrinet:waterRegimes",
+        "@container": "@set"
+      },
+      "extensions": {
+        "@id": "openagrinet:extensions",
+        "@type": "@json"
+      },
+      "codeSystem": "openagrinet:codeSystem",
+      "agronomicCode": "openagrinet:agronomicCode",
+      "agronomicLabel": "openagrinet:agronomicLabel"
+    }
+  ]
+}

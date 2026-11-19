@@ -137,7 +137,7 @@ def titleize(value)
        .gsub(/([a-z0-9])([A-Z])/, '\\1 \\2')
        .gsub(/[_-]+/, " ")
        .split
-       .map(&:capitalize)
+       .map { |word| { "pmfby" => "PMFBY", "pmkisan" => "PM-KISAN", "otp" => "OTP" }.fetch(word.downcase, word.capitalize) }
        .join(" ")
 end
 
@@ -167,7 +167,13 @@ def condition_label(condition)
   values.empty? ? "Conditional" : values.join(" + ")
 end
 
-def collect_conditionals(schema)
+def collect_conditionals(schema, resolver = nil, source_path = nil, ancestors = [])
+  if resolver && schema["$ref"]
+    resolved, source_path, ref = resolver.resolve(schema, source_path)
+    token = [source_path.to_s, ref]
+    return [] if ref.start_with?("http://", "https://") || ancestors.include?(token)
+    return collect_conditionals(resolved, resolver, source_path, ancestors + [token])
+  end
   Array(schema["allOf"]).flat_map do |member|
     next [] unless member.is_a?(Hash)
 
@@ -176,7 +182,7 @@ def collect_conditionals(schema)
       label = condition_label(member["if"])
       current.concat(Array(member.dig("then", "required")).map { |field| [field, label] })
     end
-    current + collect_conditionals(member)
+    current + collect_conditionals(member, resolver, source_path, ancestors)
   end
 end
 
@@ -218,7 +224,7 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   # `not: { required: [name] }`. The page must say so, or it advertises a
   # field the validator rejects.
   refused = Array(expanded.dig("not", "required"))
-  conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  conditional = collect_conditionals(resolved, resolver, source_path).group_by(&:first).transform_values { |pairs| pairs.map(&:last).uniq }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
     result << fields unless fields.empty?
@@ -415,7 +421,8 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
 
   # A pack whose root is a `oneOf` publishes one leaf per (scheme, call). There is
   # no single composed object to tabulate, so the page is a table per leaf instead.
-  root_leaves = Array(root_schema["oneOf"]).select { |member| member.is_a?(Hash) && member["$ref"] }
+  choice_schema = root_schema["oneOf"] || Array(root_schema["allOf"]).map { |member| member["oneOf"] if member.is_a?(Hash) }.compact.first
+  root_leaves = Array(choice_schema).select { |member| member.is_a?(Hash) && member["$ref"] }
   actions_for_leaf = Hash.new { |store, name| store[name] = [] }
   (root_schema["x-oan-schema-by-action"] || {}).each do |action, call_schema_name|
     call_schema = attributes.dig("components", "schemas", call_schema_name)
@@ -429,20 +436,26 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   leaves = root_leaves.map do |member|
     leaf_name = component_name(member["$ref"])
     expanded_leaf, = resolver.expand(member, attributes_path)
-    declared = attributes.dig("components", "schemas", leaf_name) || {}
+    declared = expanded_leaf
+    shared_members = Array(root_schema["allOf"]).reject { |part| part.is_a?(Hash) && part["oneOf"] }
+    effective_leaf = shared_members.empty? ? member : { "allOf" => shared_members + [member] }
     leaf_examples = examples.select do |example|
       leaf_accepts?(resolver, member, attributes_path, expanded_leaf, declared, example["data"])
     end
     oan_fields = declared["x-oan-fields"] || {}
     {
       "name" => leaf_name,
+      "reference" => member["$ref"],
+      "scheme" => expanded_leaf.dig("properties", "scheme", "properties", "code", "const"),
+      "external_docs" => declared["externalDocs"],
+      "has_directional_fields" => !oan_fields.empty?,
       "actions" => actions_for_leaf[leaf_name],
       "must_send" => Array(oan_fields["mustSend"]),
       "may_send" => Array(oan_fields["maySend"]),
       "one_of" => Array(oan_fields["oneOf"]),
       "comes_back" => Array(oan_fields["comesBack"]),
       "examples" => leaf_examples.map { |example| example["name"] },
-      "fields" => collect_fields(resolver, member, attributes_path, leaf_examples, {}, [], nil, 0, leaf_name)
+      "fields" => collect_fields(resolver, effective_leaf, attributes_path, leaf_examples, root_origins, [], nil, 0, leaf_name)
     }
   end
 
@@ -466,12 +479,31 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     pack_fields = []
   end
 
+  catalog_composition = !leaves.empty? && leaves.none? { |leaf| leaf["has_directional_fields"] }
+  if catalog_composition
+    # Keep distinct constraints for the same path; never let the first provider win.
+    rows = leaves.flat_map do |leaf|
+      leaf["fields"].map { |field| [field, leaf["scheme"] || leaf["name"]] }
+    end
+    effective_fields = rows.group_by { |field, _| field["path"] }.values.flat_map do |entries|
+      entries.group_by { |field, _| field.reject { |key, _| %w[origin example].include?(key) } }.values.map do |group|
+        field = group.first[0].dup
+        scopes = group.map(&:last).uniq
+        field["origin"] = group.map { |item, _| item["origin"] }.uniq.join(", ")
+        field["example"] = group.map { |item, _| item["example"] }.compact.first
+        field["applicability"] = "scheme.code: #{scopes.join(', ')}" if scopes.size < leaves.size
+        field
+      end
+    end
+    pack_fields = effective_fields.reject { |field| field["path"].include?(".") || field["path"].include?("[") }
+  end
+
   by_action = root_schema["x-beckn-container-by-action"]
 
   packs[key] = {
     "key" => key,
     "name" => pack_name,
-    "display_name" => profile["name"].to_s.sub(/ Attributes\z/, ""),
+    "display_name" => profile["name"].to_s.sub(/ (?:catalog )?attributes\z/i, "").gsub(/([a-z0-9])([A-Z])/, '\1 \2'),
     "version" => profile["version"],
     "version_dir" => version_dir,
     "protocol_version" => profile["protocol_version"],
@@ -488,7 +520,29 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     "artifacts" => %w[vocab.jsonld context.jsonld attributes.yaml profile.json renderer.json]
   }
   packs[key]["beckn_container_by_action"] = by_action if by_action
-  packs[key]["leaves"] = leaves unless leaves.empty?
+  packs[key]["catalog_composition"] = catalog_composition
+  packs[key]["catalog_fields"] = referenced_components.first if catalog_composition && !referenced_components.empty?
+  if catalog_composition
+    packs[key]["catalog_sources"] = leaves
+    packs[key]["api_docs"] = leaves.map { |leaf| leaf["external_docs"] }.compact.uniq
+  else
+    packs[key]["leaves"] = leaves unless leaves.empty?
+  end
+  packs[key]["has_directional_fields"] = leaves.any? { |leaf| leaf["has_directional_fields"] }
+  generic_catalog = leaves.empty? && effective_fields.any? { |field| field["path"] == "actions" } && effective_fields.any? { |field| field["path"] == "scheme" }
+  packs[key]["generic_catalog"] = generic_catalog
+  if generic_catalog
+    # API links document examples, but never become a catalog validation allow-list.
+    api_urls = examples.flat_map { |example| Array(example["data"]["actions"]).map { |action| action["schema"].to_s.split("#").first } }.uniq
+    packs[key]["api_docs"] = api_urls.map do |url|
+      relative = url.sub("https://openagrinet.github.io/network-specs/", "")
+      api_path = ROOT.join(relative).cleanpath
+      next unless relative.start_with?("api/external/") && api_path.to_s.start_with?(ROOT.join("api/external").to_s + "/") && api_path.file?
+      api = resolver.document(api_path)
+      { "url" => url, "description" => api.dig("info", "title") || "API specification" }
+    end.compact
+  end
+  packs[key]["summary"] = profile["description"] || packs[key]["description"].split(/(?<=\.)\s+/).first
   packs[key]["schemas_by_action"] = root_schema["x-oan-schema-by-action"] if root_schema["x-oan-schema-by-action"]
 
   pack_dir.join("index.md").write(<<~MARKDOWN)
@@ -500,6 +554,18 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
     ---
     <!-- Generated by scripts/generate-schema-pages.rb. Edit the schema artifacts, profile, or examples instead. -->
   MARKDOWN
+end
+
+# Keep version navigation in generated metadata, not in hand-maintained pages.
+packs.values.group_by { |pack| pack["name"] }.each_value do |family|
+  ordered = family.sort_by { |pack| Gem::Version.new(pack["version_dir"].sub(/^v/, "")) }.reverse
+  versions = ordered.map do |pack|
+    { "label" => pack["version_dir"], "url" => "/schema/#{pack['name']}/#{pack['version_dir']}/" }
+  end
+  family.each do |pack|
+    pack["versions"] = versions
+    pack["directory_entry"] = pack.equal?(ordered.first)
+  end
 end
 
 DATA_FILE.dirname.mkpath

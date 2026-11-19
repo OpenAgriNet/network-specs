@@ -51,18 +51,18 @@ def matches(conditions, facts):
 
 def main():
     registry=Registry()
-    for path in ROOT.glob('schema/*/v0.1/attributes.yaml'):
+    for path in ROOT.glob('schema/*/v0.2/attributes.yaml'):
         registry=registry.with_resource(BASE+str(path.relative_to(ROOT)),
             Resource.from_contents(yaml.safe_load(path.read_text()),default_specification=DRAFT202012))
-    advisory=Draft202012Validator({'$ref':BASE+'schema/KnowledgeAdvisory/v0.1/attributes.yaml#/components/schemas/KnowledgeAdvisory'},
+    advisory=Draft202012Validator({'$ref':BASE+'schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/AgricultureAdvisory'},
         registry=registry,format_checker=FormatChecker())
     count=0
-    for path in ROOT.glob('schema/KnowledgeAdvisory/v0.1/examples/applicability-*.json'):
+    for path in ROOT.glob('schema/AgricultureAdvisory/v0.2/examples/applicability-*.json'):
         data=json.loads(path.read_text()); advisory.validate(data); count+=1
         for condition in data.get('applicability',[]):
             window=condition.get('relativeTiming',{})
             assert window.get('fromDays',0)<=window.get('toDays',float('inf'))
-    applicability=Draft202012Validator({'$ref':BASE+'schema/AgricultureResource/v0.1/attributes.yaml#/components/schemas/AgriculturalApplicability'},
+    applicability=Draft202012Validator({'$ref':BASE+'schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability'},
         registry=registry,format_checker=FormatChecker())
     for invalid in [[],[{}],[{'relativeTiming':{'event':'Sowing'}}],
                     [{'relativeTiming':{'event':'Sowing','fromDays':-1}}],

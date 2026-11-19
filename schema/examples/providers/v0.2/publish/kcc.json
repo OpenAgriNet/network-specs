@@ -1,0 +1,79 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000083",
+    "messageId": "fade0000-0000-4000-8000-000000000084",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "kcc.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-kcc",
+        "bppId": "kcc.example.invalid",
+        "bppUri": "https://kcc.example.invalid/beckn",
+        "descriptor": {
+          "name": "KCC example catalog"
+        },
+        "provider": {
+          "id": "prov-kcc",
+          "descriptor": {
+            "name": "KCC example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-kcc-loan",
+            "descriptor": {
+              "code": "kcc-loan",
+              "name": "Kisan Credit Card application status",
+              "shortDesc": "KCC loan application",
+              "docs": [
+                {
+                  "label": "Proposed adapter binding; not a live provider route",
+                  "url": "https://openagrinet.github.io/network-specs/api/examples/kcc/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "KCC",
+                "name": "Kisan Credit Card"
+              },
+              "actions": [
+                {
+                  "action": "init",
+                  "description": "Start the applicant's verification challenge.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/kcc/v0.2/openapi.yaml#/components/schemas/KCCStartChallengeRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/kcc/v0.2/openapi.yaml#/paths/~1example~1startChallenge/post"
+                },
+                {
+                  "action": "status",
+                  "description": "Verify and read candidate applications; ask which one only if several are returned.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/kcc/v0.2/openapi.yaml#/components/schemas/KCCReadApplicationsRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/kcc/v0.2/openapi.yaml#/paths/~1example~1readApplications/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-kcc",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

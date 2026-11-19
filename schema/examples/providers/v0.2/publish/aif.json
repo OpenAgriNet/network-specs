@@ -1,0 +1,127 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000081",
+    "messageId": "fade0000-0000-4000-8000-000000000082",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "aif.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-aif",
+        "bppId": "aif.example.invalid",
+        "bppUri": "https://aif.example.invalid/beckn",
+        "descriptor": {
+          "name": "AIF example catalog"
+        },
+        "provider": {
+          "id": "prov-aif",
+          "descriptor": {
+            "name": "AIF example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-aif-loan",
+            "descriptor": {
+              "code": "aif-loan",
+              "name": "AIF beneficiary loan status",
+              "shortDesc": "Agriculture infrastructure loan application",
+              "docs": [
+                {
+                  "label": "Proposed adapter binding; not a live provider route",
+                  "url": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "AIF",
+                "name": "Agriculture Infrastructure Fund"
+              },
+              "actions": [
+                {
+                  "action": "init",
+                  "description": "Begin beneficiary verification.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/components/schemas/AIFStartChallengeRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/paths/~1example~1startChallenge/post"
+                },
+                {
+                  "action": "init",
+                  "description": "Verify the challenge before private reads.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/components/schemas/AIFVerifyChallengeRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/paths/~1example~1verifyChallenge/post"
+                },
+                {
+                  "action": "status",
+                  "description": "Read the selected beneficiary's loan application after verification.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/components/schemas/AIFReadLoanRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/paths/~1example~1readLoan/post"
+                }
+              ]
+            }
+          },
+          {
+            "id": "res-aif-tickets",
+            "descriptor": {
+              "code": "aif-tickets",
+              "name": "AIF beneficiary ticket lookup",
+              "shortDesc": "AIF support tickets",
+              "docs": [
+                {
+                  "label": "Proposed adapter binding; not a live provider route",
+                  "url": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld",
+              "@type": "openagrinet:Grievance",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "AIF",
+                "name": "Agriculture Infrastructure Fund"
+              },
+              "actions": [
+                {
+                  "action": "status",
+                  "description": "Return tickets linked to the verified beneficiary. An empty list is a valid result.",
+                  "schema": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/components/schemas/AIFReadTicketsRequest",
+                  "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/aif/v0.2/openapi.yaml#/paths/~1example~1readTickets/post"
+                }
+              ],
+              "grievanceOptions": {
+                "categories": [
+                  {
+                    "code": "EXAMPLE",
+                    "name": "Illustrative category; load actual provider options before use"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-aif",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

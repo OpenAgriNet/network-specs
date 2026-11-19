@@ -1,0 +1,37 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureFacility",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Facility",
+    "Crop",
+    "Livestock",
+    "Market",
+    "Practice"
+  ],
+  "languages": [
+    "en",
+    "mr"
+  ],
+  "supportedFacilityTypes": [
+    "CustomHiringCentre",
+    "KrishiVigyanKendra",
+    "Warehouse",
+    "SoilTestingFacility",
+    "https://facilities.example.org/types/seed-processing-centre"
+  ],
+  "coverageAreas": [
+    {
+      "codeScheme": "ISO-3166-2",
+      "areaCode": "IN-MH",
+      "areaLevel": "State",
+      "areaName": "Maharashtra"
+    }
+  ],
+  "actions": [
+    {
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agriculturefacility~1retrieveExampleAgriculturefacility/post"
+    }
+  ]
+}

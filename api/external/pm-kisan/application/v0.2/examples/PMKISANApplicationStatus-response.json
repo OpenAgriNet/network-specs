@@ -1,0 +1,11 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+  "@type": "openagrinet:SchemeApplication",
+  "application": {
+    "registeredOn": "2026-11-18T06:05:00Z"
+  },
+  "informationMode": "OnDemand",
+  "scheme": {
+    "code": "PM-KISAN"
+  }
+}

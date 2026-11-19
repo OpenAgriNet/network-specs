@@ -1,0 +1,77 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000097",
+    "messageId": "fade0000-0000-4000-8000-000000000098",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "video.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-video",
+        "bppId": "video.example.invalid",
+        "bppUri": "https://video.example.invalid/beckn",
+        "descriptor": {
+          "name": "VIDEO example catalog"
+        },
+        "provider": {
+          "id": "prov-video",
+          "descriptor": {
+            "name": "VIDEO example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-video-library",
+            "descriptor": {
+              "code": "video-library",
+              "name": "Agricultural video discovery",
+              "shortDesc": "Agricultural training videos",
+              "docs": [
+                {
+                  "label": "Proposed adapter operations",
+                  "url": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+              "@type": "openagrinet:KnowledgeResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Practice"
+              ],
+              "topics": [
+                "Agricultural training videos"
+              ],
+              "languages": [
+                "en"
+              ],
+              "supportedKnowledgeTypes": [
+                "TrainingMaterial"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1video-library~1retrieveVideoLibrary/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-video",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

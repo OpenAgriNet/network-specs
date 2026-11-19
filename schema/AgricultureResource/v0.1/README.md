@@ -1,9 +1,5 @@
 # Agriculture Resource
 
-## Applicability preview
-
-Optional `applicability` is composed into every domain pack. See the [field meanings, event values, matching rules and full examples](../../applicability-review.html). This is a consumer-review proposal, not a production version change. An omitted condition does not prove that advice is universally applicable. Existing required fields are unchanged.
-
 <nav class="artifact-links" aria-label="Schema artifacts">
   <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>

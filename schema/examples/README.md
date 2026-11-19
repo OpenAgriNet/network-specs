@@ -14,6 +14,20 @@ These examples show OAN domain attributes inside complete Beckn objects. They co
 | [Direct mandi-price Resource](live-mandi-price-resource.json) | Resource | Market, commodity, date, and price information returned in `Direct` mode |
 | [Direct weather advisory Resource](live-weather-advisory-resource.json) | Resource | Location- and time-specific weather guidance returned in `Direct` mode |
 | [Direct market intelligence Resource](direct-market-intelligence-resource.json) | Resource | Price trends, a demand forecast, and a nearby market opportunity returned in `Direct` mode |
+| [FFS booking service](ffs-booking-api-resource.json) | Resource | The catalog advertises a service. The [provider contract](../../api/external/ffs/booking/v0.2/openapi.yaml) describes the private steps that lead to a booking. |
+| [Seed availability](seedavailability-api-resource.json), [crop registry](cropregistry-api-resource.json), [soil report lookup](soilhealthcard-api-resource.json) | Resource | Three different services use the same public AgricultureResource fields and link to different provider contracts. |
+
+## Publish and discover a v0.2 catalog
+
+These are synthetic catalog entries, not live provider addresses. Send the publish examples to `POST /publish` and the search examples to `POST /discover`. Filters match the versioned resource type and public attributes such as subject category or scheme. Several providers may qualify. The example responses show matching catalog resources, not live availability.
+
+| Capability | Publish | Filter | Example response |
+|---|---|---|---|
+| District advisory | [Catalog](providers/v0.2/publish/imd.json) | [Request](providers/v0.2/discover/imd-agromet.json) | [Matches](providers/v0.2/on-discover/imd-agromet.json) |
+| Fertilizer booking | [Catalog](providers/v0.2/publish/ffs.json) | [Request](providers/v0.2/discover/ffs-booking.json) | [Matches](providers/v0.2/on-discover/ffs-booking.json) |
+| Scheme grievance | [Catalog](providers/v0.2/publish/pmfby.json) | [Request](providers/v0.2/discover/pmfby-grievances.json) | [Matches](providers/v0.2/on-discover/pmfby-grievances.json) |
+
+The public result carries the provider, resource and advertised contract references. Farmer identifiers, login challenges, case contents and bookings belong in the subsequent authorized interaction, not the published catalog. All request files under `providers/v0.2/` follow the same arrangement.
 
 The Catalog examples use the complete Beckn [Catalog](https://github.com/beckn/schemas/tree/draft/schema/Catalog), [Provider](https://github.com/beckn/schemas/tree/draft/schema/Provider), and [Resource](https://github.com/beckn/schemas/tree/draft/schema/Resource) boundaries. Their `resourceAttributes` values use the selected OAN schema pack.
 

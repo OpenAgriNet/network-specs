@@ -1,0 +1,45 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureAdvisory",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Crop"
+  ],
+  "languages": [
+    "en"
+  ],
+  "topics": [
+    "Applicability modelling review"
+  ],
+  "issuedAt": "2026-06-20T05:30:00Z",
+  "recommendations": [
+    {
+      "message": "Illustrative scope only. Consult a reviewed source before acting.",
+      "language": "en"
+    }
+  ],
+  "rationale": "Synthetic schema-review fixture, not agricultural advice.",
+  "source": {
+    "sourceId": "example:applicability-review",
+    "sourceName": "Synthetic review fixture"
+  },
+  "applicability": [
+    {
+      "subjectIds": [
+        "https://example.org/crops/cotton"
+      ],
+      "seasons": [
+        {
+          "codeSystem": "https://example.org/seasons/india/v1",
+          "code": "Kharif",
+          "label": "Kharif"
+        }
+      ],
+      "relativeTiming": {
+        "event": "Sowing",
+        "fromDays": 20,
+        "toDays": 30
+      }
+    }
+  ]
+}

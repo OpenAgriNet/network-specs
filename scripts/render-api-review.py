@@ -35,14 +35,14 @@ def sample(schema):
     return 'EXAMPLE'
 
 
-for pack in ('Grievance', 'SchemeApplication'):
-    directory = ROOT/'api-specs'/pack/'v0.1'
+for directory in sorted((ROOT/'api/external').glob('*/*/v0.2')):
     spec = yaml.safe_load((directory/'openapi.yaml').read_text())
     schemas = spec['components']['schemas']
-    lines = ['---', 'layout: default', f'title: {pack} API review', '---',
-             f'# {pack} operation contracts', '',
-             '[All API contracts](../../) · [OpenAPI document](openapi.yaml)', '',
-             'Consumer-review proposal. Paths are synthetic adapter-facing operations, not deployed endpoints or complete Beckn envelopes. Authentication and errors remain open. Response examples are synthetic minimum valid outcomes, not actual portal responses.', '']
+    title = spec['info']['title']
+    lines = ['---', 'layout: default', f'title: {title}', '---',
+             f'# {title}', '',
+             '[All external APIs](../../../) · [OpenAPI document](openapi.yaml)', '',
+             spec['info']['description'], '']
     for path, value in spec['paths'].items():
         operation = value['post']
         name = operation['operationId']
@@ -70,4 +70,4 @@ for pack in ('Grievance', 'SchemeApplication'):
             for filename, data in examples:
                 lines += [f'Example: [{filename}](examples/{filename})', '', '```json', json.dumps(data, indent=2), '```', '']
     (directory/'index.md').write_text('\n'.join(lines))
-print('Rendered both API review pages with validated synthetic outcomes.')
+print('Rendered provider API pages with validated synthetic outcomes.')

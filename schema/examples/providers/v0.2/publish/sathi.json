@@ -1,0 +1,82 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000077",
+    "messageId": "fade0000-0000-4000-8000-000000000078",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "sathi.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-sathi",
+        "bppId": "sathi.example.invalid",
+        "bppUri": "https://sathi.example.invalid/beckn",
+        "descriptor": {
+          "name": "SATHI example catalog"
+        },
+        "provider": {
+          "id": "prov-sathi",
+          "descriptor": {
+            "name": "SATHI example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-sathi-stock",
+            "descriptor": {
+              "code": "sathi-stock",
+              "name": "SATHI certified seed stock",
+              "shortDesc": "Certified seed availability",
+              "docs": [
+                {
+                  "label": "Provider API",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "Provider master data: resolve the crop group and crop before stock lookup",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/sathi/master/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "Proposed adapter operations",
+                  "url": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "languages": [
+                "en",
+                "hi"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1sathi-stock~1findSeedStock/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-sathi",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

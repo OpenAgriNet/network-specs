@@ -1,0 +1,36 @@
+{
+  "id": "resource:example:cropregistry",
+  "descriptor": {
+    "name": "GFR crop registry lookup",
+    "docs": [
+      {
+        "label": "Provider API",
+        "url": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      },
+      {
+        "label": "Proposed adapter operations",
+        "url": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml",
+        "mimeType": "application/vnd.oai.openapi"
+      }
+    ]
+  },
+  "resourceAttributes": {
+    "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+    "@type": "openagrinet:AgricultureResource",
+    "informationMode": "OnDemand",
+    "subjectCategories": [
+      "Crop"
+    ],
+    "languages": [
+      "en",
+      "hi"
+    ],
+    "actions": [
+      {
+        "action": "select",
+        "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1gfr-registry~1readCropRegistry/post"
+      }
+    ]
+  }
+}

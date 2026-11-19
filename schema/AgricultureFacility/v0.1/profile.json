@@ -46,17 +46,7 @@
     "beckn:resourceAttributes.address.postalCode",
     "beckn:resourceAttributes.services[].code",
     "beckn:resourceAttributes.source.sourceId",
-    "beckn:resourceAttributes.lastUpdatedAt",
-    "beckn:resourceAttributes.applicability[].subjectIds[]",
-    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
-    "beckn:resourceAttributes.applicability[].seasons[].code",
-    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
-    "beckn:resourceAttributes.applicability[].growthStages[].code",
-    "beckn:resourceAttributes.applicability[].relativeTiming.event",
-    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
-    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
-    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
-    "beckn:resourceAttributes.applicability[].waterRegimes[]"
+    "beckn:resourceAttributes.lastUpdatedAt"
   ],
   "filterable_paths": [
     "beckn:resourceAttributes.informationMode",
@@ -76,17 +66,7 @@
     "beckn:resourceAttributes.address.postalCode",
     "beckn:resourceAttributes.services[].code",
     "beckn:resourceAttributes.source.sourceId",
-    "beckn:resourceAttributes.lastUpdatedAt",
-    "beckn:resourceAttributes.applicability[].subjectIds[]",
-    "beckn:resourceAttributes.applicability[].seasons[].codeSystem",
-    "beckn:resourceAttributes.applicability[].seasons[].code",
-    "beckn:resourceAttributes.applicability[].growthStages[].codeSystem",
-    "beckn:resourceAttributes.applicability[].growthStages[].code",
-    "beckn:resourceAttributes.applicability[].relativeTiming.event",
-    "beckn:resourceAttributes.applicability[].relativeTiming.fromDays",
-    "beckn:resourceAttributes.applicability[].relativeTiming.toDays",
-    "beckn:resourceAttributes.applicability[].establishmentMethods[]",
-    "beckn:resourceAttributes.applicability[].waterRegimes[]"
+    "beckn:resourceAttributes.lastUpdatedAt"
   ],
   "sortable_paths": [
     "beckn:resourceAttributes.lastUpdatedAt"
@@ -105,12 +85,5 @@
     "Address": "2.0"
   },
   "interaction_type": "Observe",
-  "outcome_type": "openagrinet:AgricultureFacility",
-  "applicability_filtering": {
-    "status": "consumer-review",
-    "correlation": "Predicates must match within one applicability entry.",
-    "relative_timing": "Matching event AND fromDays <= age AND toDays >= age; absent bound is unbounded.",
-    "unknown": "Missing facts or unsupported extension conditions are unknown, not true.",
-    "extensions": "Not automatically indexed; agree provider schemas and evaluators."
-  }
+  "outcome_type": "openagrinet:AgricultureFacility"
 }
