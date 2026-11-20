@@ -1,0 +1,90 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: SATHI crop master reads
+  version: 0.2.0
+  description: Caller-derived wire contract from sathi_seed.py. Relative paths are under the configured master API base. No provider replay; quantity and dealer data are not part of these reads.
+paths:
+  /get-crop-group:
+    get:
+      operationId: listCropGroups
+      x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
+      responses:
+        '200':
+          description: Crop groups. Status other than application code 200 is an upstream error.
+          links:
+            cropsForSelectedGroup:
+              operationId: listCropsByGroup
+              description: After a successful read choose a group from data, then send its group_code. Do not silently choose the first row.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CropGroupsResponse' }
+              example: { status_code: 200, data: [{group_code: A02, group_name: Example group, is_active: 1}] }
+        default: {description: HTTP failure; body not specified by the caller.}
+  /get-crops-list:
+    get:
+      operationId: listCropsByGroup
+      x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
+      security: [{ masterKey: [] }]
+      parameters:
+        - { in: query, name: group_code, required: true, schema: { $ref: '#/components/schemas/GroupCode' }, description: Caller trims and uppercases the group code. }
+      responses:
+        '200':
+          description: Crops matching the group. Response may use a provider wrapper named EncryptedResponse.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CropsByGroupResponse' }
+              example: { EncryptedResponse: {statusCode: 200, data: [{crop_code: DEMO, crop_name: Example crop}]} }
+        default: {description: HTTP failure; body not specified by the caller.}
+components:
+  securitySchemes:
+    masterKey: { type: apiKey, in: query, name: apiKey }
+  schemas:
+    GroupCode: {type: string, minLength: 1, example: A02}
+    CropGroupsResponse:
+      oneOf:
+        - {$ref: '#/components/schemas/GroupPayload'}
+        - type: object
+          required: [EncryptedResponse]
+          properties: {EncryptedResponse: {$ref: '#/components/schemas/GroupPayload'}}
+    CropsByGroupResponse:
+      oneOf:
+        - {$ref: '#/components/schemas/CropPayload'}
+        - type: object
+          required: [EncryptedResponse]
+          properties: {EncryptedResponse: {$ref: '#/components/schemas/CropPayload'}}
+    GroupPayload:
+      allOf:
+        - {$ref: '#/components/schemas/Payload'}
+        - properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  group_code: {type: string}
+                  group_name: {type: string}
+                  is_active: {type: [boolean, integer, string]}
+    CropPayload:
+      allOf:
+        - {$ref: '#/components/schemas/Payload'}
+        - properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  crop_code: {type: string}
+                  crop_name: {type: string}
+    Payload:
+      type: object
+      anyOf: [{required: [status_code]}, {required: [statusCode]}]
+      properties:
+        status_code: { type: [integer, string] }
+        statusCode: { type: [integer, string] }
+        message: { type: string }
+        data:
+          type: array
+          items:
+            type: object
+            description: Group lookup consumes group_code and group_name; crop lookup consumes crop_code and crop_name.

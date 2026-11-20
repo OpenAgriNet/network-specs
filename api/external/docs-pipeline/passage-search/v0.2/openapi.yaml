@@ -1,0 +1,107 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: Legacy Docs Pipeline semantic search
+  version: '0.2'
+  description: Recorded subset of the legacy route for migration archaeology, not a public provider endpoint or proven implementation
+    of a KnowledgeDocument binding. Despite the route name, the backend may be Qdrant.
+paths:
+  /marqo/search:
+    post:
+      operationId: runMarqoSearch
+      security:
+      - bearerAuth: []
+      description: Requires search permission. Optional settings omitted here are provider-owned. Results are passage-level
+        hits, not whole documents.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunMarqoSearchRequest'
+            example:
+              query: PM-KISAN eligibility
+              top_k: 5
+      responses:
+        '200':
+          description: Ranked passages with search settings and counts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunMarqoSearchResponse200'
+              example:
+                effective_config:
+                  query: PM-KISAN eligibility
+                  top_k: 5
+                  domain_tags: []
+                candidate_count: 0
+                final_count: 0
+                hits: []
+                raw_hits: null
+        '400':
+          description: Blank query or vector search failure.
+        '401':
+          description: Missing or invalid credentials.
+        '403':
+          description: Caller lacks search permission.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    DomainTags:
+      oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
+    RunMarqoSearchRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+        index_name:
+          type: string
+        top_k:
+          type: integer
+        include_raw_hits:
+          type: boolean
+        domain_tags:
+          $ref: '#/components/schemas/DomainTags'
+        domain_tag_filters:
+          $ref: '#/components/schemas/DomainTags'
+          description: Alias used when domain_tags is missing or empty.
+    RunMarqoSearchResponse200:
+      type: object
+      required:
+      - effective_config
+      - candidate_count
+      - final_count
+      - hits
+      - raw_hits
+      properties:
+        effective_config:
+          type: object
+          additionalProperties: true
+        candidate_count:
+          type: integer
+          minimum: 0
+        final_count:
+          type: integer
+          minimum: 0
+        hits:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        raw_hits:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            additionalProperties: true

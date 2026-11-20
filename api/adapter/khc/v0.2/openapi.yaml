@@ -1,0 +1,192 @@
+openapi: 3.1.1
+info:
+  x-contract-role: adapter-proposal
+  title: KHC proposed adapter exchanges
+  version: 0.2.0
+  description: Illustrative consumer-facing operation contracts, not native endpoints, verified bindings,
+    or production schemas. Field names, session references and sample values are proposed, not the legacy
+    payload. Transport authentication, failures, retries and protocol profile must be agreed before invocation.
+servers:
+- url: https://adapter.example.invalid
+paths:
+  /example/fileCase:
+    post:
+      operationId: KHCFileCase
+      summary: Submit a confirmed case using IDs from the provider's master data and a separately verified
+        registration session. This draft models the existing-farmer example only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KHCFileCaseRequest'
+            example:
+              verifiedRegistration: DEMO-SESSION
+              grievanceText: Example service query
+              farmerLanguage: hi
+              stateId: 1
+              villageId: 2
+              schemeId: 3
+              divisionId: 4
+              problemCategoryId: 5
+              problemSubcategoryId: 6
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KHCFileCaseResponse'
+              example:
+                caseReference: DEMO-CASE
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+  /example/startCaseLookup:
+    post:
+      operationId: KHCStartCaseLookup
+      summary: Start the status-specific challenge for an existing case, separate from registration OTP.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KHCStartCaseLookupRequest'
+            example:
+              caseReference: DEMO-CASE
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KHCStartCaseLookupResponse'
+              example:
+                challengeReference: DEMO-CHALLENGE
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+  /example/readCase:
+    post:
+      operationId: KHCReadCase
+      summary: Verify the case lookup challenge and read the ticket.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KHCReadCaseRequest'
+            example:
+              caseReference: DEMO-CASE
+              challengeReference: DEMO-CHALLENGE
+              otp: '000000'
+      responses:
+        '200':
+          description: Completed operation; not a transport acknowledgement.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KHCReadCaseResponse'
+              example:
+                caseReference: DEMO-CASE
+                status: open
+        default:
+          description: Failure; authentication and error mapping require provider agreement.
+components:
+  schemas:
+    KHCFileCaseRequest:
+      type: object
+      properties:
+        verifiedRegistration:
+          type: string
+          minLength: 1
+        grievanceText:
+          type: string
+          minLength: 1
+        farmerLanguage:
+          type: string
+          minLength: 1
+        stateId:
+          type: integer
+          minimum: 1
+        villageId:
+          type: integer
+          minimum: 1
+        schemeId:
+          type: integer
+          minimum: 1
+        divisionId:
+          type: integer
+          minimum: 1
+        problemCategoryId:
+          type: integer
+          minimum: 1
+        problemSubcategoryId:
+          type: integer
+          minimum: 1
+      required:
+      - verifiedRegistration
+      - grievanceText
+      - farmerLanguage
+      - stateId
+      - villageId
+      - schemeId
+      - divisionId
+      - problemCategoryId
+      - problemSubcategoryId
+      additionalProperties: false
+    KHCFileCaseResponse:
+      type: object
+      properties:
+        caseReference:
+          type: string
+          minLength: 1
+      required:
+      - caseReference
+      additionalProperties: false
+    KHCStartCaseLookupRequest:
+      type: object
+      properties:
+        caseReference:
+          type: string
+          minLength: 1
+      required:
+      - caseReference
+      additionalProperties: false
+    KHCStartCaseLookupResponse:
+      type: object
+      properties:
+        challengeReference:
+          type: string
+          minLength: 1
+      required:
+      - challengeReference
+      additionalProperties: false
+    KHCReadCaseRequest:
+      type: object
+      properties:
+        caseReference:
+          type: string
+          minLength: 1
+        challengeReference:
+          type: string
+          minLength: 1
+        otp:
+          type: string
+          minLength: 1
+      required:
+      - caseReference
+      - challengeReference
+      - otp
+      additionalProperties: false
+    KHCReadCaseResponse:
+      type: object
+      properties:
+        caseReference:
+          type: string
+          minLength: 1
+        status:
+          type: string
+          minLength: 1
+      required:
+      - caseReference
+      - status
+      additionalProperties: false

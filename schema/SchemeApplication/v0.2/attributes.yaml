@@ -6,7 +6,7 @@ info:
     and operation links.
 externalDocs:
   description: PM-KISAN application API specification
-  url: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml
+  url: https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml
 components:
   schemas:
     SchemeApplication:
@@ -20,7 +20,7 @@ components:
       - $ref: '#/components/schemas/SchemeApplicationFields'
       unevaluatedProperties: false
     PMKISANApplicationCatalog:
-      $ref: ../../../api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
+      $ref: ../../../api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
       description: Compatibility reference to the external service catalog definition.
     SchemeApplicationFields:
       type: object
@@ -131,9 +131,7 @@ components:
             additionalProperties: false
             required:
             - action
-            - description
-            - schema
-            - attributesAt
+            - operationRef
             properties:
               action:
                 type: string
@@ -149,6 +147,11 @@ components:
                 format: uri
                 description: URI of the request schema in the Provider API contract. Resolve that contract
                   to validate operation inputs; this URI is not an allow-list.
+              operationRef:
+                type: string
+                format: uri
+                pattern: '^https?://[^#]+/openapi\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$'
+                description: Absolute URI of the OpenAPI Operation Object (path and HTTP method), not an invocation URL.
               attributesAt:
                 type: string
                 pattern: ^\$\.message\.[A-Za-z0-9.\[\]]+$

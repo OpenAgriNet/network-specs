@@ -167,7 +167,13 @@ def condition_label(condition)
   values.empty? ? "Conditional" : values.join(" + ")
 end
 
-def collect_conditionals(schema)
+def collect_conditionals(schema, resolver = nil, source_path = nil, ancestors = [])
+  if resolver && schema["$ref"]
+    resolved, source_path, ref = resolver.resolve(schema, source_path)
+    token = [source_path.to_s, ref]
+    return [] if ref.start_with?("http://", "https://") || ancestors.include?(token)
+    return collect_conditionals(resolved, resolver, source_path, ancestors + [token])
+  end
   Array(schema["allOf"]).flat_map do |member|
     next [] unless member.is_a?(Hash)
 
@@ -176,7 +182,7 @@ def collect_conditionals(schema)
       label = condition_label(member["if"])
       current.concat(Array(member.dig("then", "required")).map { |field| [field, label] })
     end
-    current + collect_conditionals(member)
+    current + collect_conditionals(member, resolver, source_path, ancestors)
   end
 end
 
@@ -218,7 +224,7 @@ def collect_fields(resolver, schema, source_path, examples, root_origins = {}, p
   # `not: { required: [name] }`. The page must say so, or it advertises a
   # field the validator rejects.
   refused = Array(expanded.dig("not", "required"))
-  conditional = collect_conditionals(resolved).group_by(&:first).transform_values { |pairs| pairs.map(&:last) }
+  conditional = collect_conditionals(resolved, resolver, source_path).group_by(&:first).transform_values { |pairs| pairs.map(&:last).uniq }
   alternatives = Array(expanded["anyOf"]).each_with_object([]) do |member, result|
     fields = Array(member["required"])
     result << fields unless fields.empty?
@@ -528,12 +534,20 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   if generic_catalog
     # API links document examples, but never become a catalog validation allow-list.
     api_urls = examples.flat_map { |example| Array(example["data"]["actions"]).map { |action| action["schema"].to_s.split("#").first } }.uniq
+    types = examples.flat_map { |example| Array(example["data"]["@type"]) }.uniq
+    native_urls = ROOT.glob("api/external/*/*/v0.2/openapi.yaml").select do |file|
+      resolver.document(file).fetch("paths").values.any? do |item|
+        item.values.any? { |op| op.is_a?(Hash) && types.include?(op.dig("x-oan-binding", "resourceType")) }
+      end
+    end.map { |file| "https://openagrinet.github.io/network-specs/" + file.relative_path_from(ROOT).to_s }
+    api_urls = (native_urls + api_urls).uniq
     packs[key]["api_docs"] = api_urls.map do |url|
       relative = url.sub("https://openagrinet.github.io/network-specs/", "")
       api_path = ROOT.join(relative).cleanpath
-      next unless relative.start_with?("api/external/") && api_path.to_s.start_with?(ROOT.join("api/external").to_s + "/") && api_path.file?
+      next unless %w[api/external api/adapter].any? { |dir| relative.start_with?(dir + "/") && api_path.to_s.start_with?(ROOT.join(dir).to_s + "/") } && api_path.file?
       api = resolver.document(api_path)
-      { "url" => url, "description" => api.dig("info", "title") || "API specification" }
+      role = native_urls.include?(url) ? "Provider HTTP" : "Adapter proposal"
+      { "url" => url, "description" => "#{role}: #{api.dig('info', 'title')}" }
     end.compact
   end
   packs[key]["summary"] = profile["description"] || packs[key]["description"].split(/(?<=\.)\s+/).first

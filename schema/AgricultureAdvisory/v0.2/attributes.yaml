@@ -1,0 +1,323 @@
+openapi: 3.1.1
+info:
+  title: OpenAgriNet - Agriculture Advisory Attributes
+  version: 0.2.0
+  description: >
+    Agricultural guidance, including weather-informed advice, obtained on
+    demand or supplied directly. Combines with AgricultureResource through
+    allOf and attaches through resourceAttributes.
+
+components:
+  schemas:
+    AgricultureAdvisory:
+      type: object
+      x-beckn-container: resourceAttributes
+      x-jsonld:
+        "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld"
+        "@type": openagrinet:AgricultureAdvisory
+      allOf:
+        - $ref: "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgricultureResourceFields"
+        - type: object
+          required: ["@type"]
+          properties:
+            "@type":
+              oneOf:
+                - type: string
+                  const: openagrinet:AgricultureAdvisory
+                - type: array
+                  minItems: 2
+                  uniqueItems: true
+                  contains:
+                    const: openagrinet:AgricultureAdvisory
+                  items:
+                    oneOf:
+                      - const: openagrinet:AgricultureAdvisory
+                      - type: string
+                        minLength: 1
+                        not:
+                          pattern: "^openagrinet:"
+              description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
+            applicability:
+              $ref: "#/components/schemas/AgriculturalApplicability"
+              description: Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.
+              x-jsonld-id: "openagrinet:applicability"
+            weatherInformed:
+              type: boolean
+              const: true
+              description: Declares that the Provider offers or supplies weather-informed advice. Omit when not asserting a weather basis. A weather topic or publisher name alone does not make that assertion.
+              x-jsonld-id: "openagrinet:weatherInformed"
+            topics:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Advisory topics used for discovery and matching.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:topics"
+            supportedWeatherParameters:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Weather parameters the Provider can use to produce advice on demand.
+              items:
+                type: string
+                enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+              x-jsonld-id: "openagrinet:supportedWeatherParameters"
+            forecastHorizon:
+              type: string
+              format: duration
+              description: Maximum supported forecast horizon for on-demand advice.
+              x-jsonld-id: "openagrinet:forecastHorizon"
+            updateFrequency:
+              type: string
+              format: duration
+              description: Expected refresh interval for the underlying information.
+              x-jsonld-id: "openagrinet:updateFrequency"
+            geographicGranularities:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Geographic granularities at which the Provider can produce advice.
+              items:
+                type: string
+                enum: [Point, Village, Block, District, State]
+              x-jsonld-id: "openagrinet:geographicGranularities"
+            location:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/CompleteLocation"
+              description: Beckn Location to which the advice applies. Its geo member carries the required GeoJSON geometry; Point coordinates use longitude, latitude order.
+              x-jsonld-id: "openagrinet:location"
+            issuedAt:
+              type: string
+              format: date-time
+              description: Time at which the Provider issued the advisory.
+              x-jsonld-id: "openagrinet:issuedAt"
+            validity:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/TimePeriod"
+              description: Period during which the advisory applies, when time-bounded.
+              x-jsonld-id: "openagrinet:validity"
+            recommendations:
+              type: array
+              minItems: 1
+              description: Actions or guidance issued by the Provider.
+              items:
+                type: object
+                required: [message, language]
+                properties:
+                  applicability:
+                    $ref: "#/components/schemas/AgriculturalApplicability"
+                    description: Optional conditions for this recommendation. These are ANDed with resource-level applicability; they cannot broaden it.
+                  actions:
+                    type: array
+                    minItems: 1
+                    uniqueItems: true
+                    description: Concise recommended actions when they apply.
+                    items:
+                      type: string
+                      minLength: 1
+                    x-jsonld-id: "openagrinet:actions"
+                  message:
+                    type: string
+                    minLength: 1
+                    description: Human-readable guidance.
+                    x-jsonld-id: "openagrinet:message"
+                  language:
+                    type: string
+                    minLength: 2
+                    description: BCP 47 language tag of the guidance.
+                    x-jsonld-id: "openagrinet:language"
+                  topic:
+                    type: string
+                    minLength: 1
+                    description: Advisory topic addressed by this recommendation.
+                    x-jsonld-id: "openagrinet:topic"
+                  severity:
+                    type: string
+                    enum: [Information, Watch, Warning, Critical]
+                    description: Weather-related severity associated with the recommendation.
+                    x-jsonld-id: "openagrinet:severity"
+                  priority:
+                    type: string
+                    enum: [Low, Normal, High, Critical]
+                    description: Relative urgency assigned by the Provider.
+                    x-jsonld-id: "openagrinet:priority"
+                additionalProperties: false
+              x-jsonld-id: "openagrinet:recommendations"
+            supportingResourceIds:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Beckn Resource identifiers of supporting KnowledgeResource information when available.
+              items:
+                type: string
+                minLength: 1
+              x-jsonld-id: "openagrinet:supportingResourceIds"
+            rationale:
+              type: string
+              minLength: 1
+              description: Concise explanation of how the Provider reached the recommendation.
+              x-jsonld-id: "openagrinet:rationale"
+            weatherBasis:
+              type: object
+              description: Weather information used to produce the advice.
+              required: [parameters]
+              properties:
+                parameters:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Weather parameters considered when the Provider produced the recommendation.
+                  items:
+                    type: string
+                    enum: [Rainfall, Temperature, Humidity, WindSpeed, WindDirection, SoilMoisture, Evapotranspiration, Alert]
+                  x-jsonld-id: "openagrinet:weatherParameters"
+                supportingResourceIds:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  description: Beckn Resource identifiers for observations or forecasts that support this advice.
+                  items:
+                    type: string
+                    minLength: 1
+                  x-jsonld-id: "openagrinet:supportingResourceIds"
+              additionalProperties: false
+              x-jsonld-id: "openagrinet:weatherBasis"
+            source:
+              allOf:
+                - $ref: "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/SourceReference"
+              description: Provider or authoritative source that issued the advisory.
+              x-jsonld-id: "openagrinet:source"
+        - if:
+            properties:
+              informationMode:
+                const: OnDemand
+            required: [informationMode]
+          then:
+            required: [topics, languages]
+        - if:
+            properties:
+              informationMode:
+                const: Direct
+            required: [informationMode]
+          then:
+            required: [topics, issuedAt, recommendations, source]
+        - if:
+            required: [weatherInformed]
+            properties:
+              weatherInformed: {const: true}
+          then:
+            properties:
+              subjectCategories: {contains: {const: Weather}}
+        - if:
+            required: [weatherInformed, informationMode]
+            properties:
+              weatherInformed: {const: true}
+              informationMode: {const: OnDemand}
+          then:
+            required: [supportedWeatherParameters, geographicGranularities]
+        - if:
+            required: [weatherInformed, informationMode]
+            properties:
+              weatherInformed: {const: true}
+              informationMode: {const: Direct}
+          then:
+            required: [location, validity, weatherBasis]
+            properties:
+              validity:
+                $ref: "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/ClosedTimePeriod"
+        - dependentRequired:
+            supportedWeatherParameters: [weatherInformed]
+            forecastHorizon: [weatherInformed]
+            weatherBasis: [weatherInformed]
+
+    AgriculturalApplicability:
+      type: array
+      minItems: 1
+      description: Alternative sets of agricultural applicability conditions. A recommendation-level set further narrows the resource-level set; both must match. Validity remains a separate absolute interval.
+      items:
+        $ref: "#/components/schemas/ApplicabilityCondition"
+
+    ApplicabilityCondition:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      description: Conditions that must hold together. Values within each list are alternatives. Do not independently flatten subjects and seasons across condition objects.
+      properties:
+        subjectIds:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, format: uri}
+          description: Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.
+        seasons:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/AgronomicCode"}
+          description: Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.
+        growthStages:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/AgronomicCode"}
+          description: Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.
+        relativeTiming:
+          $ref: "#/components/schemas/RelativeTiming"
+        establishmentMethods:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, enum: [DirectSeeded, Transplanted]}
+          description: How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.
+        waterRegimes:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, enum: [Rainfed, Irrigated]}
+          description: Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.
+        extensions:
+          type: object
+          minProperties: 1
+          propertyNames: {type: string, format: uri, pattern: '^https?://'}
+          additionalProperties: true
+          description: Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.
+
+    AgronomicCode:
+      type: object
+      additionalProperties: false
+      required: [codeSystem, code]
+      properties:
+        codeSystem:
+          type: string
+          format: uri
+          description: URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.
+        code:
+          type: string
+          minLength: 1
+          description: Exact code within the stated vocabulary. Preserve leading zeros.
+        label:
+          type: string
+          minLength: 1
+          description: Human-readable label; identity is the codeSystem and code pair.
+
+    RelativeTiming:
+      type: object
+      additionalProperties: false
+      required: [event]
+      anyOf:
+        - required: [fromDays]
+        - required: [toDays]
+      description: Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.
+      properties:
+        event:
+          type: string
+          enum: [Sowing, Transplanting, Emergence, Pruning, Harvest]
+          description: Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.
+        fromDays:
+          type: integer
+          minimum: 0
+          description: Inclusive lower bound. For example 20 means day 20 or later after the named event.
+        toDays:
+          type: integer
+          minimum: 0
+          description: Inclusive upper bound. For example 30 means up to and including day 30 after the named event.

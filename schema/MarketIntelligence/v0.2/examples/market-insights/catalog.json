@@ -1,0 +1,90 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000103",
+    "messageId": "fade0000-0000-4000-8000-000000000104",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "market-insights.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-market-insights",
+        "bppId": "market-insights.example.invalid",
+        "bppUri": "https://market-insights.example.invalid/beckn",
+        "descriptor": {
+          "name": "MARKET-INSIGHTS example catalog"
+        },
+        "provider": {
+          "id": "prov-market-insights",
+          "descriptor": {
+            "name": "MARKET-INSIGHTS example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-market-insights-outlook",
+            "descriptor": {
+              "code": "market-insights-outlook",
+              "name": "Crop market trend analysis",
+              "shortDesc": "Cotton market trends",
+              "docs": [
+                {
+                  "label": "Proposed adapter operations",
+                  "url": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.2/context.jsonld",
+              "@type": "openagrinet:MarketIntelligence",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Market"
+              ],
+              "supportedCommodities": [
+                {
+                  "code": "COTTON",
+                  "name": "Cotton"
+                },
+                {
+                  "code": "PADDY",
+                  "name": "Paddy"
+                }
+              ],
+              "supportedInsightTypes": [
+                "PriceTrend",
+                "DemandForecast",
+                "MarketOpportunity"
+              ],
+              "historyPeriod": "P5Y",
+              "forecastHorizon": "P30D",
+              "languages": [
+                "en",
+                "hi",
+                "te"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1market-insights-outlook~1retrieveMarketInsightsOutlook/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-market-insights",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

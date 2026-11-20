@@ -1,0 +1,202 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: Agmarknet selected-market prices
+  version: 0.2.0
+  description: 'Native price lookup for a selected market and commodity using codes and a date range. This is an observed
+    integration, not a Beckn endpoint or an official Agmarknet specification.
+
+    '
+paths:
+  /v1/fetch-agmarknet-vistaar:
+    get:
+      operationId: getSelectedMarketMandiPrices
+      x-oan-binding:
+        descriptorCode: agmarknet-market-prices
+        resourceType: openagrinet:MandiPrice
+        action: select
+      description: 'The adapter resolves location to the provider''s codes and supplies a date range. When a selected market
+        returns no rows, the adapter retries without marketcode. A row from that broader district search is not proof of a
+        price at the original market.
+
+        '
+      security:
+      - providerToken: []
+      parameters:
+      - in: query
+        name: statecode
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetSelectedMarketMandiPricesStatecodeParameter'
+        example: '27'
+      - in: query
+        name: districtcode
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetSelectedMarketMandiPricesDistrictcodeParameter'
+        description: The adapter sends an empty string when no district code was resolved.
+        example: '12'
+      - in: query
+        name: marketcode
+        schema:
+          $ref: '#/components/schemas/GetSelectedMarketMandiPricesMarketcodeParameter'
+        description: Supply to restrict results to the selected market.
+        example: '123'
+      - in: query
+        name: commoditycode
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetSelectedMarketMandiPricesCommoditycodeParameter'
+        example: '101'
+      - in: query
+        name: from_date
+        required: true
+        schema:
+          $ref: '#/components/schemas/PriceDate'
+        example: 18-09-2026
+      - in: query
+        name: to_date
+        required: true
+        schema:
+          $ref: '#/components/schemas/PriceDate'
+        example: 19-09-2026
+      responses:
+        '200':
+          description: 'Shapes the adapter accepts: rows, a named array of rows, or a lone row. The singleton example describes
+            a usable row rather than an arbitrary object. An empty array means no records for this request.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelectedMarketPricesResponse'
+              examples:
+                selectedMarket:
+                  value:
+                    records:
+                    - Market: Example market
+                      District: Example district
+                      Commodity: Paddy
+                      Arrival Date: 18-09-2026
+                      Min Price: '2000'
+                      Modal Price: 2200
+                      Max Price: 2350
+                      Price Unit: INR/quintal
+                none:
+                  value: []
+        default:
+          description: Upstream HTTP or transport errors are not a zero price. No stable error body is established.
+      x-oan-mapping:
+        href: ./mappings/select.yaml
+        status: existing
+        scope: adapter-action
+components:
+  securitySchemes:
+    providerToken:
+      type: apiKey
+      in: query
+      name: token
+      description: Private adapter credential.
+  schemas:
+    PriceDate:
+      type: string
+      pattern: ^[0-9]{2}-[0-9]{2}-[0-9]{4}$
+      description: dd-MM-yyyy
+    Price:
+      type:
+      - number
+      - string
+      - 'null'
+      description: Preserve missing values and use the returned price unit.
+    PriceRow:
+      type: object
+      properties:
+        State:
+          type:
+          - string
+          - 'null'
+        District:
+          type:
+          - string
+          - 'null'
+        Market:
+          type:
+          - string
+          - 'null'
+        Commodity:
+          type:
+          - string
+          - 'null'
+        Variety:
+          type:
+          - string
+          - 'null'
+        Grade:
+          type:
+          - string
+          - 'null'
+        Group:
+          type:
+          - string
+          - 'null'
+        Arrival Date:
+          type:
+          - string
+          - 'null'
+        Min Price:
+          $ref: '#/components/schemas/Price'
+        Modal Price:
+          $ref: '#/components/schemas/Price'
+        Max Price:
+          $ref: '#/components/schemas/Price'
+        Price Unit:
+          type:
+          - string
+          - 'null'
+    Rows:
+      type: array
+      items:
+        $ref: '#/components/schemas/PriceRow'
+    SelectedMarketPricesResponse:
+      anyOf:
+      - $ref: '#/components/schemas/Rows'
+      - type: object
+        anyOf:
+        - required:
+          - data
+        - required:
+          - records
+        - required:
+          - result
+        - required:
+          - results
+        properties:
+          data:
+            $ref: '#/components/schemas/Rows'
+          records:
+            $ref: '#/components/schemas/Rows'
+          result:
+            $ref: '#/components/schemas/Rows'
+          results:
+            $ref: '#/components/schemas/Rows'
+      - allOf:
+        - $ref: '#/components/schemas/PriceRow'
+        - anyOf:
+          - required:
+            - Market
+          - required:
+            - Commodity
+          - required:
+            - Min Price
+          - required:
+            - Modal Price
+          - required:
+            - Max Price
+    GetSelectedMarketMandiPricesStatecodeParameter:
+      type: string
+    GetSelectedMarketMandiPricesDistrictcodeParameter:
+      type: string
+    GetSelectedMarketMandiPricesMarketcodeParameter:
+      type: string
+    GetSelectedMarketMandiPricesCommoditycodeParameter:
+      type: string

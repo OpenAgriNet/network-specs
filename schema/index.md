@@ -14,7 +14,7 @@ Choose a schema, then a version. Schema names open the newest available version;
 
 JSON Schema `allOf` applies each referenced field set to the same JSON object. The selected pack remains the effective contract and declares its own canonical `@type`.
 
-For example, selecting `WeatherAdvisory` validates one flat object against the Agriculture Resource and Weather Advisory constraints. It does not create nested base objects and does not establish a parent-child hierarchy among the packs.
+For example, selecting `AgricultureAdvisory` v0.2 validates one flat object against the Agriculture Resource and advisory constraints. Weather-informed guidance adds conditional requirements. KnowledgeAdvisory and WeatherAdvisory remain available as separate v0.1 contracts.
 
 Provider-defined contracts may combine an OAN pack with additional Provider-owned constraints. A resource intended to interoperate as an OAN contract retains the applicable canonical OAN type.
 

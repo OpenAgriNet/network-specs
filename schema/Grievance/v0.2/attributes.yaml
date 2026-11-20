@@ -20,10 +20,10 @@ components:
       - $ref: '#/components/schemas/GrievanceFields'
       unevaluatedProperties: false
     PMFBYCatalog:
-      $ref: ../../../api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYCatalog
+      $ref: ../../../api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYCatalog
       description: Compatibility reference to the external service catalog definition.
     PMKISANCatalog:
-      $ref: ../../../api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANCatalog
+      $ref: ../../../api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANCatalog
       description: Compatibility reference to the external service catalog definition.
     GrievanceFields:
       type: object
@@ -156,9 +156,7 @@ components:
             additionalProperties: false
             required:
             - action
-            - description
-            - schema
-            - attributesAt
+            - operationRef
             properties:
               action:
                 type: string
@@ -174,6 +172,11 @@ components:
                 format: uri
                 description: URI of the request schema in the Provider API contract. Resolve that contract
                   to validate operation inputs; this URI is not an allow-list.
+              operationRef:
+                type: string
+                format: uri
+                pattern: '^https?://[^#]+/openapi\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$'
+                description: Absolute URI of the OpenAPI Operation Object (path and HTTP method), not an invocation URL.
               attributesAt:
                 type: string
                 pattern: ^\$\.message\.[A-Za-z0-9.\[\]]+$

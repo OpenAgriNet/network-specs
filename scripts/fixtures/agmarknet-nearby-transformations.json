@@ -1,0 +1,46 @@
+{
+  "classification": "native-transformation-fixture-only",
+  "operation": "GET /v1/fetch-agmarknet-vistaar-location",
+  "source": "provider backend origin/dev e42a69a, AgmarknetApiService.fetchVistaarLocation and normalizeRecords",
+  "inputBoundary": "After commodity-name resolution and coordinate and date-range validation. No Beckn select binding, provider lookup, authentication, validation, or network calls are represented.",
+  "requestProjection": "( $hasRange := $exists(fromDate) and $exists(toDate); $merge([{ 'commodity_id': $string(commodityId), 'lat': $string(lat), 'long': $string(lon) }, $hasRange ? { 'from_date': fromDate, 'to_date': toDate } : { 'date': date }]) )",
+  "responseProjection": "$type($) = 'array' ? $ : $type(data) = 'array' ? data : $type(records) = 'array' ? records : []",
+  "cases": [
+    {
+      "leg": "request",
+      "name": "Single arrival date; longitude key is long",
+      "input": {"commodityId": 101, "lat": 18.5, "lon": 73.8, "date": "18-09-2026"},
+      "expected": {"commodity_id": "101", "lat": "18.5", "long": "73.8", "date": "18-09-2026"}
+    },
+    {
+      "leg": "request",
+      "name": "Complete range takes precedence over single date",
+      "input": {"commodityId": 101, "lat": 18.5, "lon": 73.8, "date": "18-09-2026", "fromDate": "11-09-2026", "toDate": "18-09-2026"},
+      "expected": {"commodity_id": "101", "lat": "18.5", "long": "73.8", "from_date": "11-09-2026", "to_date": "18-09-2026"}
+    },
+    {
+      "leg": "response",
+      "name": "Bare array preserves absent unit and explicit null minimum",
+      "input": [{"Market": "Example market", "Arrival Date": "18-09-2026", "Min Price": null, "Modal Price": "1900"}],
+      "expected": [{"Market": "Example market", "Arrival Date": "18-09-2026", "Min Price": null, "Modal Price": "1900"}]
+    },
+    {
+      "leg": "response",
+      "name": "Data array takes precedence over records array",
+      "input": {"data": [{"Market": "Example market"}], "records": [{"Market": "Other example market"}]},
+      "expected": [{"Market": "Example market"}]
+    },
+    {
+      "leg": "response",
+      "name": "Non-array data does not hide a records array",
+      "input": {"data": null, "records": [{"Market": "Example market", "Max Price": 2000}]},
+      "expected": [{"Market": "Example market", "Max Price": 2000}]
+    },
+    {
+      "leg": "response",
+      "name": "Unknown payload becomes an empty array in this normalization leg only",
+      "input": {"data": {"notAnArray": true}},
+      "expected": []
+    }
+  ]
+}

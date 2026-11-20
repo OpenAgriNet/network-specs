@@ -1,0 +1,117 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000069",
+    "messageId": "fade0000-0000-4000-8000-000000000070",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "pmfby.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-pmfby",
+        "bppId": "pmfby.example.invalid",
+        "bppUri": "https://pmfby.example.invalid/beckn",
+        "descriptor": {
+          "name": "PMFBY example catalog"
+        },
+        "provider": {
+          "id": "prov-pmfby",
+          "descriptor": {
+            "name": "PMFBY example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-pmfby-insurance",
+            "descriptor": {
+              "code": "pmfby-insurance",
+              "name": "PMFBY policy and claim lookup",
+              "shortDesc": "Crop insurance claim lookup",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsurancePolicies · query parameter: farmerID",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/FarmerIdParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsurancePolicies · query parameter: listType",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsurancePolicies · query parameter: sssyID",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsurancePolicies · response 200: application/json",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/PolicyListResponse",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsuranceClaims · query parameter: farmerID",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/FarmerIdParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsuranceClaims · query parameter: searchType",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsuranceClaims · query parameter: season",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsuranceClaims · query parameter: year",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsYearParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "listPmfbyInsuranceClaims · response 200: application/json",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ClaimListResponse",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Scheme"
+              ],
+              "actions": [
+                {
+                  "action": "status",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get"
+                },
+                {
+                  "action": "status",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-pmfby",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

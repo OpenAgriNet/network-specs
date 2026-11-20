@@ -1,0 +1,14 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureFacility",
+  "informationMode": "Direct",
+  "subjectCategories": ["Facility", "Crop"],
+  "facilityType": "https://facilities.example.org/types/seed-processing-centre",
+  "address": {
+    "addressLocality": "Example village",
+    "addressCountry": "IN"
+  },
+  "source": {
+    "sourceId": "example:seed-processing-directory"
+  }
+}

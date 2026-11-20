@@ -74,20 +74,23 @@
     {
       "action": "init",
       "description": "Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.",
-      "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest",
-      "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
+      "schema": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest",
+      "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1init/post"
     },
     {
       "action": "status",
       "description": "Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.",
-      "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest",
-      "attributesAt": "$.message.contract.commitments[0].commitmentAttributes"
+      "schema": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest",
+      "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1status/post"
     },
     {
       "action": "support",
       "description": "File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.",
-      "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest",
-      "attributesAt": "$.message.support.channels[0]"
+      "schema": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest",
+      "attributesAt": "$.message.support.channels[0]",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1support/post"
     }
   ]
 }

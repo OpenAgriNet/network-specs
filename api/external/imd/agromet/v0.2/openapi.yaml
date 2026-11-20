@@ -1,0 +1,44 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: IMD district Agromet advisory feed
+  version: 0.2.0
+  description: Native upstream dated feed, not a Beckn discovery or select endpoint. Based on the 2026-09-18 /1 feed and the bh-main ingestion reader scripts/imd_agromet/imd_agromet.py, which defaults to /3. Selector values must not be assumed interchangeable.
+servers: [{url: 'https://agromet.imd.gov.in'}]
+paths:
+  /index.php/api/moag/district_rv_adv/{date}/{selector}:
+    parameters:
+      - {name: date, in: path, required: true, schema: {$ref: '#/components/schemas/BulletinDate'}}
+      - {name: selector, in: path, required: true, schema: {$ref: '#/components/schemas/FeedSelector'}}
+    get:
+      operationId: readDistrictAgrometFeed
+      x-oan-binding: {descriptorCode: imd-agromet, resourceType: "openagrinet:AgricultureAdvisory", action: select}
+      responses:
+        '200':
+          description: District advisory rows. The feed supplies a date, not an issuance timestamp, expiry, geometry or weather-basis metadata.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DistrictAgrometFeedResponse'}
+              example: [{id: '101', district_id: '1', custom_date: '2026-09-18', advisory_eng: Example advisory text}]
+        default: {description: Upstream HTTP error. Error format and availability are not guaranteed.}
+components:
+  schemas:
+    BulletinDate: {type: string, format: date, example: '2026-09-18'}
+    FeedSelector: {type: string, example: '1', description: Upstream selector. The listed sample uses 1; the ingestion job defaults to 3.}
+    DistrictAgrometFeedResponse: {type: array, items: {$ref: '#/components/schemas/BulletinRow'}}
+    BulletinRow:
+      type: object
+      required: [id]
+      description: The ingestion job accepts rows with an identifier and normalizes remaining fields to text if present. id, category and crop codes are provider identifiers, not OAN vocabulary terms.
+      properties:
+        id: {type: [integer, string]}
+        cat_id: {type: [integer, string, 'null']}
+        state_id: {type: [integer, string, 'null']}
+        district_id: {type: [integer, string, 'null']}
+        custom_date: {$ref: '#/components/schemas/BulletinDate'}
+        type_id: {type: [integer, string, 'null']}
+        variety_id: {type: [integer, string, 'null']}
+        advisory_eng: {type: [string, 'null']}
+        advisory_reg: {type: [string, 'null']}
+        crop_stage: {type: [integer, string, 'null']}
+        crop_state: {type: [integer, string, 'null']}

@@ -1,0 +1,124 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000065",
+    "messageId": "fade0000-0000-4000-8000-000000000066",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "agmarknet.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-agmarknet",
+        "bppId": "agmarknet.example.invalid",
+        "bppUri": "https://agmarknet.example.invalid/beckn",
+        "descriptor": {
+          "name": "AGMARKNET example catalog"
+        },
+        "provider": {
+          "id": "prov-agmarknet",
+          "descriptor": {
+            "name": "AGMARKNET example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-agmarknet-market-prices",
+            "descriptor": {
+              "code": "agmarknet-market-prices",
+              "name": "Selected market prices",
+              "shortDesc": "Market price by market and date",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: statecode",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/GetSelectedMarketMandiPricesStatecodeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: districtcode",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/GetSelectedMarketMandiPricesDistrictcodeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: marketcode",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/GetSelectedMarketMandiPricesMarketcodeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: commoditycode",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/GetSelectedMarketMandiPricesCommoditycodeParameter",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: from_date",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/PriceDate",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · query parameter: to_date",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/PriceDate",
+                  "mimeType": "application/vnd.oai.openapi"
+                },
+                {
+                  "label": "getSelectedMarketMandiPrices · response 200: application/json",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/components/schemas/SelectedMarketPricesResponse",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld",
+              "@type": "openagrinet:MandiPrice",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Market"
+              ],
+              "supportedCommodities": [
+                {
+                  "code": "COTTON",
+                  "name": "Cotton"
+                },
+                {
+                  "code": "PADDY",
+                  "name": "Paddy"
+                }
+              ],
+              "supportedPriceFields": [
+                "Minimum",
+                "Maximum",
+                "Modal"
+              ],
+              "historicalDataAvailable": true,
+              "historyPeriod": "P5Y",
+              "updateFrequency": "P1D",
+              "market": {
+                "marketName": "Illustrative mandi"
+              },
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-agmarknet",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

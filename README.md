@@ -35,7 +35,7 @@ Each versioned schema pack contains:
 - `README.md`: purpose, composition, fields, and boundaries;
 - `examples/`: complete JSON instances that validate against the pack.
 
-Examples that demonstrate a single contract live with that schema pack. Complete composition examples live in [`schema/examples/`](schema/examples/) and show those attributes inside Beckn-owned objects.
+Each schema pack owns its examples. Look under a version’s `examples/network/` for complete Beckn objects and `examples/<provider>/` for provider catalogs and exchanges. The [Examples index](schema/examples/) links to them. A catalog covering several packs is stored once and linked from each participating capability.
 
 ## Beckn dependencies
 
