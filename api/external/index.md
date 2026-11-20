@@ -4,14 +4,16 @@ title: External APIs
 ---
 # External APIs
 
-These files describe two different interfaces: proposed OAN integrations for scheme operations, and upstream operations as used by a provider adapter. Neither is an official provider specification. Examples are synthetic.
+Read one OpenAPI document per provider capability. The path, method and payload describe the upstream interface used by a caller or adapter. These are source-derived contracts, not claims of live availability. Synthetic examples use the upstream field names. Where present, `x-oan-binding` describes how the operation fits a network flow; it is not part of the HTTP request.
+
+For example, PMFBY grievance status calls `POST /krphapi/FGMS/GetGrievenceTicketsStatus`. The network action is `status`; it does not rename the provider path to `/pmfby/status`. An encrypted operation distinguishes the on-wire envelope from the plaintext fields inside it.
 
 | Provider | Service | Contract and examples |
 |---|---|---|
-| PMFBY | Grievance | [Grievance operations](pmfby/grievance/v0.2/) |
+| PMFBY | Grievance | [Grievance operations](pmfby/grievance/v0.2/openapi.yaml) |
 | PMFBY | Private policy and claim lookup | [Policy and claim reads](pmfby/insurance/v0.2/openapi.yaml) |
-| PM-KISAN | Grievance | [Grievance operations](pm-kisan/grievance/v0.2/) |
-| PM-KISAN | Application status | [Application operations](pm-kisan/application/v0.2/) |
+| PM-KISAN | Grievance | [Grievance operations](pm-kisan/grievance/v0.2/openapi.yaml) |
+| PM-KISAN | Application status | [Application operations](pm-kisan/application/v0.2/openapi.yaml) |
 | SATHI | Crop groups and crops by group | [Master-data reads](sathi/master/v0.2/openapi.yaml) |
 | SATHI | Certified seed stock | [Stock lookup](sathi/stock/v0.2/openapi.yaml) |
 | GFR | Crop registry | [Registry query](gfr/crop-registry/v0.2/openapi.yaml) |
@@ -22,5 +24,9 @@ These files describe two different interfaces: proposed OAN integrations for sch
 | Agmarknet | Nearby mandi prices | [Price lookup](agmarknet/nearby-prices/v0.2/openapi.yaml) |
 | Agmarknet | Prices by market and date range | [Selected-market lookup](agmarknet/market-prices/v0.2/openapi.yaml) |
 | SMAM | Private benefit application status | [Status lookup](smam/benefit-status/v0.2/openapi.yaml) |
+| NPSS | Crop image analysis (multipart) | [Image request and observed response](npss/diagnosis/v0.2/openapi.yaml) |
+| PoCRA | Facility aggregator (legacy Beckn) | [Facility search](pocra/facilities/v0.2/openapi.yaml) |
+| Knowledge Provider | Ranked passages | [Search](knowledge/search/v0.2/openapi.yaml) |
+| Docs Pipeline | Internal retrieval, not a public discovery action | [Passage search](docs-pipeline/passage-search/v0.2/openapi.yaml) |
 
-A catalog Resource links its contract through `descriptor.docs`. See the [Grievance](../../schema/examples/grievance-api-resource.json) and [SchemeApplication](../../schema/examples/schemeapplication-api-resource.json) examples. A document link does not define the Beckn invocation binding.
+Not every catalog action has a verified native endpoint. [Adapter proposals](../adapter/) stay separate until the native request and result are known.

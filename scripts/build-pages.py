@@ -21,7 +21,7 @@ from urllib.parse import quote
 ROOT = Path(__file__).resolve().parents[1]
 BASE = '/network-specs'
 ORIGIN = 'https://openagrinet.github.io'
-DATA_ROOTS = ('schema', 'api-schemas', 'api-specs', 'api')
+DATA_ROOTS = ('schema', 'api-schemas', 'api-specs', 'api', 'mappings')
 TEXT_SUFFIXES = {'.json', '.jsonld', '.yaml', '.yml', '.md', '.html', '.txt'}
 
 

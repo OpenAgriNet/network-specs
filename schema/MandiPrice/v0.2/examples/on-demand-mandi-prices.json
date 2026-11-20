@@ -15,9 +15,6 @@
       "name": "Paddy"
     }
   ],
-  "market": {
-    "state": "Telangana"
-  },
   "supportedPriceFields": [
     "Minimum",
     "Maximum",
@@ -26,18 +23,13 @@
   "historicalDataAvailable": true,
   "historyPeriod": "P5Y",
   "updateFrequency": "P1D",
-  "coverageAreas": [
-    {
-      "codeScheme": "ISO-3166-2",
-      "areaCode": "IN-TS",
-      "areaLevel": "State",
-      "areaName": "Telangana"
-    }
-  ],
+  "market": {
+    "marketName": "Illustrative mandi"
+  },
   "actions": [
     {
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-mandiprice~1retrieveExampleMandiprice/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get"
     }
   ]
 }

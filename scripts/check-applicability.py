@@ -56,13 +56,20 @@ def main():
             Resource.from_contents(yaml.safe_load(path.read_text()),default_specification=DRAFT202012))
     advisory=Draft202012Validator({'$ref':BASE+'schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/AgricultureAdvisory'},
         registry=registry,format_checker=FormatChecker())
+    for path in ROOT.glob('schema/*/v0.2/profile.json'):
+        profile=json.loads(path.read_text())
+        owns=path.parent.parent.name=='AgricultureAdvisory'
+        assert ('applicability_filtering' in profile)==owns, path
+        assert any('.applicability' in p for p in profile.get('filterable_paths', []))==owns, path
+    base=yaml.safe_load((ROOT/'schema/AgricultureResource/v0.2/attributes.yaml').read_text())
+    assert 'applicability' not in base['components']['schemas']['AgricultureResourceFields']['properties']
     count=0
     for path in ROOT.glob('schema/AgricultureAdvisory/v0.2/examples/applicability-*.json'):
         data=json.loads(path.read_text()); advisory.validate(data); count+=1
         for condition in data.get('applicability',[]):
             window=condition.get('relativeTiming',{})
             assert window.get('fromDays',0)<=window.get('toDays',float('inf'))
-    applicability=Draft202012Validator({'$ref':BASE+'schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability'},
+    applicability=Draft202012Validator({'$ref':BASE+'schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability'},
         registry=registry,format_checker=FormatChecker())
     for invalid in [[],[{}],[{'relativeTiming':{'event':'Sowing'}}],
                     [{'relativeTiming':{'event':'Sowing','fromDays':-1}}],

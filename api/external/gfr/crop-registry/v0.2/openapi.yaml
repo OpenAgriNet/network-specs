@@ -1,5 +1,6 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: GFR crop-registry
   version: 0.2.0
   description: 'GraphQL POST to the configured Soil Health endpoint (path / is relative to that endpoint). Source:
@@ -9,6 +10,7 @@ paths:
   /:
     post:
       operationId: getCropRegistries
+      x-oan-binding: {descriptorCode: gfr-registry, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
         content:

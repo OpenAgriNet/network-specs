@@ -114,6 +114,90 @@
       "@id": "openagrinet:weatherInformed",
       "@type": "rdfs:Property",
       "rdfs:label": "weather-informed advice declaration"
+    },
+    {
+      "@id": "openagrinet:applicability",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicability",
+      "rdfs:comment": "Alternative condition sets; fields within one set apply together."
+    },
+    {
+      "@id": "openagrinet:subjectIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "subjectIds",
+      "rdfs:comment": "Governed subjects for one condition."
+    },
+    {
+      "@id": "openagrinet:seasons",
+      "@type": "rdfs:Property",
+      "rdfs:label": "seasons",
+      "rdfs:comment": "Regional season references."
+    },
+    {
+      "@id": "openagrinet:growthStages",
+      "@type": "rdfs:Property",
+      "rdfs:label": "growthStages",
+      "rdfs:comment": "Observed developmental stage references."
+    },
+    {
+      "@id": "openagrinet:relativeTiming",
+      "@type": "rdfs:Property",
+      "rdfs:label": "relativeTiming",
+      "rdfs:comment": "Inclusive days since a named event."
+    },
+    {
+      "@id": "openagrinet:event",
+      "@type": "rdfs:Property",
+      "rdfs:label": "event",
+      "rdfs:comment": "Event used as day zero."
+    },
+    {
+      "@id": "openagrinet:fromDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "fromDays",
+      "rdfs:comment": "Inclusive lower day bound."
+    },
+    {
+      "@id": "openagrinet:toDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "toDays",
+      "rdfs:comment": "Inclusive upper day bound."
+    },
+    {
+      "@id": "openagrinet:establishmentMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "establishmentMethods",
+      "rdfs:comment": "Direct seeding or transplanting."
+    },
+    {
+      "@id": "openagrinet:waterRegimes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "waterRegimes",
+      "rdfs:comment": "Rainfed or irrigated."
+    },
+    {
+      "@id": "openagrinet:extensions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "extensions",
+      "rdfs:comment": "Provider-owned restrictions; unknown qualifiers cannot be ignored."
+    },
+    {
+      "@id": "openagrinet:codeSystem",
+      "@type": "rdfs:Property",
+      "rdfs:label": "codeSystem",
+      "rdfs:comment": "Versioned vocabulary URI."
+    },
+    {
+      "@id": "openagrinet:agronomicCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicCode",
+      "rdfs:comment": "Code within a vocabulary."
+    },
+    {
+      "@id": "openagrinet:agronomicLabel",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicLabel",
+      "rdfs:comment": "Display label."
     }
   ]
 }

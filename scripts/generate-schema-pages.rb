@@ -534,12 +534,20 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   if generic_catalog
     # API links document examples, but never become a catalog validation allow-list.
     api_urls = examples.flat_map { |example| Array(example["data"]["actions"]).map { |action| action["schema"].to_s.split("#").first } }.uniq
+    types = examples.flat_map { |example| Array(example["data"]["@type"]) }.uniq
+    native_urls = ROOT.glob("api/external/*/*/v0.2/openapi.yaml").select do |file|
+      resolver.document(file).fetch("paths").values.any? do |item|
+        item.values.any? { |op| op.is_a?(Hash) && types.include?(op.dig("x-oan-binding", "resourceType")) }
+      end
+    end.map { |file| "https://openagrinet.github.io/network-specs/" + file.relative_path_from(ROOT).to_s }
+    api_urls = (native_urls + api_urls).uniq
     packs[key]["api_docs"] = api_urls.map do |url|
       relative = url.sub("https://openagrinet.github.io/network-specs/", "")
       api_path = ROOT.join(relative).cleanpath
-      next unless relative.start_with?("api/external/") && api_path.to_s.start_with?(ROOT.join("api/external").to_s + "/") && api_path.file?
+      next unless %w[api/external api/adapter].any? { |dir| relative.start_with?(dir + "/") && api_path.to_s.start_with?(ROOT.join(dir).to_s + "/") } && api_path.file?
       api = resolver.document(api_path)
-      { "url" => url, "description" => api.dig("info", "title") || "API specification" }
+      role = native_urls.include?(url) ? "Provider HTTP" : "Adapter proposal"
+      { "url" => url, "description" => "#{role}: #{api.dig('info', 'title')}" }
     end.compact
   end
   packs[key]["summary"] = profile["description"] || packs[key]["description"].split(/(?<=\.)\s+/).first

@@ -37,6 +37,222 @@
         "enum_details": null
       },
       {
+        "path": "applicability",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
+        "constraints": "minItems: 1",
+        "reference": "#/components/schemas/AgriculturalApplicability",
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/cotton\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Kharif\",\n        \"label\": \"Kharif\"\n      }\n    ]\n  },\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/wheat\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Rabi\",\n   ...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].subjectIds",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"https://example.org/crops/cotton\"\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/seasons/india/v1\",\n    \"code\": \"Kharif\",\n    \"label\": \"Kharif\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].codeSystem",
+        "type": "string",
+        "requirement": "When applicability.[].seasons is supplied",
+        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"https://example.org/seasons/india/v1\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].code",
+        "type": "string",
+        "requirement": "When applicability.[].seasons is supplied",
+        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Kharif\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].label",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable label; identity is the codeSystem and code pair.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Kharif\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/rice-stages/v1\",\n    \"code\": \"flowering\",\n    \"label\": \"Flowering\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].codeSystem",
+        "type": "string",
+        "requirement": "When applicability.[].growthStages is supplied",
+        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"https://example.org/rice-stages/v1\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].code",
+        "type": "string",
+        "requirement": "When applicability.[].growthStages is supplied",
+        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"flowering\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].label",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable label; identity is the codeSystem and code pair.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Flowering\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
+        "constraints": "additionalProperties: false",
+        "reference": "schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
+        "origin": "AgricultureAdvisory",
+        "example": "{\n  \"event\": \"Sowing\",\n  \"fromDays\": 20,\n  \"toDays\": 30\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.event",
+        "type": "string",
+        "requirement": "When applicability.[].relativeTiming is supplied",
+        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
+        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Sowing\"",
+        "enum": [
+          "Sowing",
+          "Transplanting",
+          "Emergence",
+          "Pruning",
+          "Harvest"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.fromDays",
+        "type": "integer",
+        "requirement": "At least one of fromDays or toDays",
+        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "20",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.toDays",
+        "type": "integer",
+        "requirement": "At least one of fromDays or toDays",
+        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "30",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].establishmentMethods",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"Transplanted\"\n]",
+        "enum": [
+          "DirectSeeded",
+          "Transplanted"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].waterRegimes",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"Irrigated\"\n]",
+        "enum": [
+          "Rainfed",
+          "Irrigated"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].extensions",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
+        "constraints": "minProperties: 1 · additionalProperties: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "{\n  \"https://example.org/agronomy/v1/soilClass\": {\n    \"allowed\": [\n      \"Vertisol\"\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "weatherInformed",
         "type": "boolean",
         "requirement": "Optional",
@@ -68,7 +284,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "example": null,
         "enum": [
           "Rainfall",
           "Temperature",
@@ -89,7 +305,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "\"P7D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -101,7 +317,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "\"PT6H\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -113,7 +329,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "example": null,
         "enum": [
           "Point",
           "Village",
@@ -225,7 +441,7 @@
         "requirement": "Optional",
         "description": "Optional conditions for this recommendation. These are ANDed with resource-level applicability; they cannot broaden it.",
         "constraints": "minItems: 1",
-        "reference": "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
+        "reference": "#/components/schemas/AgriculturalApplicability",
         "origin": "AgricultureAdvisory",
         "example": "[\n  {\n    \"relativeTiming\": {\n      \"event\": \"Sowing\",\n      \"fromDays\": 20,\n      \"toDays\": 30\n    }\n  }\n]",
         "enum": null,
@@ -345,7 +561,7 @@
         "requirement": "Optional",
         "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
         "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
+        "reference": "schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
         "origin": "AgricultureAdvisory",
         "example": "{\n  \"event\": \"Sowing\",\n  \"fromDays\": 20,\n  \"toDays\": 30\n}",
         "enum": null,
@@ -644,7 +860,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -668,7 +884,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -780,222 +996,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/cotton\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Kharif\",\n        \"label\": \"Kharif\"\n      }\n    ]\n  },\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/wheat\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Rabi\",\n   ...",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "[\n  \"https://example.org/crops/cotton\"\n]",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/seasons/india/v1\",\n    \"code\": \"Kharif\",\n    \"label\": \"Kharif\"\n  }\n]",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"https://example.org/seasons/india/v1\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"Kharif\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"Kharif\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/rice-stages/v1\",\n    \"code\": \"flowering\",\n    \"label\": \"Flowering\"\n  }\n]",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"https://example.org/rice-stages/v1\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"flowering\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"Flowering\"",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": "{\n  \"event\": \"Sowing\",\n  \"fromDays\": 20,\n  \"toDays\": 30\n}",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "\"Sowing\"",
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "20",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "30",
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "[\n  \"Transplanted\"\n]",
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "[\n  \"Irrigated\"\n]",
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": "{\n  \"https://example.org/agronomy/v1/soilClass\": {\n    \"allowed\": [\n      \"Vertisol\"\n    ]\n  }\n}",
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "OnDemand",
@@ -1032,6 +1032,222 @@
         "enum_details": null
       },
       {
+        "path": "applicability",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
+        "constraints": "minItems: 1",
+        "reference": "#/components/schemas/AgriculturalApplicability",
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/cotton\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Kharif\",\n        \"label\": \"Kharif\"\n      }\n    ]\n  },\n  {\n    \"subjectIds\": [\n      \"https://example.org/crops/wheat\"\n    ],\n    \"seasons\": [\n      {\n        \"codeSystem\": \"https://example.org/seasons/india/v1\",\n        \"code\": \"Rabi\",\n   ...",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].subjectIds",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"https://example.org/crops/cotton\"\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/seasons/india/v1\",\n    \"code\": \"Kharif\",\n    \"label\": \"Kharif\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].codeSystem",
+        "type": "string",
+        "requirement": "When applicability.[].seasons is supplied",
+        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"https://example.org/seasons/india/v1\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].code",
+        "type": "string",
+        "requirement": "When applicability.[].seasons is supplied",
+        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Kharif\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].seasons[].label",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable label; identity is the codeSystem and code pair.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Kharif\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages",
+        "type": "array<object>",
+        "requirement": "Optional",
+        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
+        "constraints": "minItems: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  {\n    \"codeSystem\": \"https://example.org/rice-stages/v1\",\n    \"code\": \"flowering\",\n    \"label\": \"Flowering\"\n  }\n]",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].codeSystem",
+        "type": "string",
+        "requirement": "When applicability.[].growthStages is supplied",
+        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
+        "constraints": "format: \"uri\"",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"https://example.org/rice-stages/v1\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].code",
+        "type": "string",
+        "requirement": "When applicability.[].growthStages is supplied",
+        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"flowering\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].growthStages[].label",
+        "type": "string",
+        "requirement": "Optional",
+        "description": "Human-readable label; identity is the codeSystem and code pair.",
+        "constraints": "minLength: 1",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Flowering\"",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
+        "constraints": "additionalProperties: false",
+        "reference": "schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
+        "origin": "AgricultureAdvisory",
+        "example": "{\n  \"event\": \"Sowing\",\n  \"fromDays\": 20,\n  \"toDays\": 30\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.event",
+        "type": "string",
+        "requirement": "When applicability.[].relativeTiming is supplied",
+        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
+        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "\"Sowing\"",
+        "enum": [
+          "Sowing",
+          "Transplanting",
+          "Emergence",
+          "Pruning",
+          "Harvest"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.fromDays",
+        "type": "integer",
+        "requirement": "At least one of fromDays or toDays",
+        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "20",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].relativeTiming.toDays",
+        "type": "integer",
+        "requirement": "At least one of fromDays or toDays",
+        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
+        "constraints": "minimum: 0",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "30",
+        "enum": null,
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].establishmentMethods",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"Transplanted\"\n]",
+        "enum": [
+          "DirectSeeded",
+          "Transplanted"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].waterRegimes",
+        "type": "array<string>",
+        "requirement": "Optional",
+        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
+        "constraints": "minItems: 1 · uniqueItems: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "[\n  \"Irrigated\"\n]",
+        "enum": [
+          "Rainfed",
+          "Irrigated"
+        ],
+        "enum_details": null
+      },
+      {
+        "path": "applicability[].extensions",
+        "type": "object",
+        "requirement": "Optional",
+        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
+        "constraints": "minProperties: 1 · additionalProperties: true",
+        "reference": null,
+        "origin": "AgricultureAdvisory",
+        "example": "{\n  \"https://example.org/agronomy/v1/soilClass\": {\n    \"allowed\": [\n      \"Vertisol\"\n    ]\n  }\n}",
+        "enum": null,
+        "enum_details": null
+      },
+      {
         "path": "weatherInformed",
         "type": "boolean",
         "requirement": "Optional",
@@ -1063,7 +1279,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "example": null,
         "enum": [
           "Rainfall",
           "Temperature",
@@ -1084,7 +1300,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "\"P7D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -1096,7 +1312,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "\"PT6H\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -1108,7 +1324,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureAdvisory",
-        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "example": null,
         "enum": [
           "Point",
           "Village",
@@ -1220,7 +1436,7 @@
         "requirement": "Optional",
         "description": "Optional conditions for this recommendation. These are ANDed with resource-level applicability; they cannot broaden it.",
         "constraints": "minItems: 1",
-        "reference": "../../AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
+        "reference": "#/components/schemas/AgriculturalApplicability",
         "origin": "AgricultureAdvisory",
         "example": "[\n  {\n    \"relativeTiming\": {\n      \"event\": \"Sowing\",\n      \"fromDays\": 20,\n      \"toDays\": 30\n    }\n  }\n]",
         "enum": null,
@@ -1340,7 +1556,7 @@
         "requirement": "Optional",
         "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
         "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
+        "reference": "schema/AgricultureAdvisory/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
         "origin": "AgricultureAdvisory",
         "example": "{\n  \"event\": \"Sowing\",\n  \"fromDays\": 20,\n  \"toDays\": 30\n}",
         "enum": null,
@@ -1738,22 +1954,10 @@
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"agricultureSubjects\": [\n    {\n      \"subjectId\": \"https://taxonomy.openagrinet.global/crops/rice\",\n      \"descriptor\": {\n        \"code\": \"RICE\",\n        \"name\": \"Rice\"\n      }\n    }\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"topics\": [\n    \"Irrigation\",\n    \"CropProtection\"\n  ],\n  \"location\": {\n    \"geo\": {\n      \"type\": \"Polygon\",\n      \"coordinates\": [\n        [\n          [\n            78.1,\n            19.1\n          ],\n          [\n            78.5,\n            19.1\n          ],\n          [\n            78.5,\n            19.5\n          ],\n          [\n            78.1,\n            19.5\n          ],\n          [\n            78.1,\n            19.1\n          ]\n        ]\n      ]\n    }\n  },\n  \"issuedAt\": \"2026-08-26T06:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T06:00:00Z\",\n    \"endsAt\": \"2026-08-27T06:00:00Z\"\n  },\n  \"recommendations\": [\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"Postpone irrigation for the next 24 hours because moderate rainfall is expected.\",\n      \"language\": \"en\",\n      \"actions\": [\n        \"Postpone irrigation\",\n        \"Check field drainage\"\n      ],\n      \"severity\": \"Watch\"\n    },\n    {\n      \"topic\": \"Irrigation\",\n      \"message\": \"मध्यम बारिश की संभावना के कारण अगले 24 घंटों तक सिंचाई स्थगित करें।\",\n      \"language\": \"hi\",\n      \"severity\": \"Watch\"\n    }\n  ],\n  \"weatherBasis\": {\n    \"parameters\": [\n      \"Rainfall\",\n      \"Humidity\"\n    ],\n    \"supportingResourceIds\": [\n      \"weather-forecast:imd:2026-08-26:district-501\"\n    ]\n  },\n  \"source\": {\n    \"sourceId\": \"participant:weather-advisory-provider\",\n    \"sourceName\": \"Agricultural Agriculture Advisory Service\"\n  },\n  \"weatherInformed\": true\n}"
       },
       {
-        "name": "On Demand Crop Advisory",
-        "file": "examples/on-demand-crop-advisory.json",
-        "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\"\n  ],\n  \"agricultureSubjects\": [\n    {\n      \"subjectId\": \"https://taxonomy.openagrinet.global/crops/cotton\",\n      \"descriptor\": {\n        \"code\": \"COTTON\",\n        \"name\": \"Cotton\"\n      }\n    }\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"topics\": [\n    \"Crop establishment\",\n    \"Nutrient management\",\n    \"Pest management\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post\"\n    }\n  ]\n}"
-      },
-      {
-        "name": "On Demand Fertilizer Advice",
-        "file": "examples/on-demand-fertilizer-advice.json",
-        "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Practice\"\n  ],\n  \"topics\": [\n    \"Fertilizer recommendation\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post\"\n    }\n  ]\n}"
-      },
-      {
         "name": "On Demand Weather Advisory",
         "file": "examples/on-demand-weather-advisory.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Weather\"\n  ],\n  \"topics\": [\n    \"Irrigation\",\n    \"Crop protection\",\n    \"Spraying\",\n    \"Harvest planning\"\n  ],\n  \"supportedWeatherParameters\": [\n    \"Rainfall\",\n    \"Temperature\",\n    \"Humidity\",\n    \"WindSpeed\"\n  ],\n  \"forecastHorizon\": \"P7D\",\n  \"updateFrequency\": \"PT6H\",\n  \"geographicGranularities\": [\n    \"Point\",\n    \"District\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\",\n    \"te\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\",\n      \"areaName\": \"India\"\n    }\n  ],\n  \"weatherInformed\": true,\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureadvisory~1retrieveExampleAgricultureadvisory/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\",\n    \"Crop\"\n  ],\n  \"topics\": [\n    \"District crop bulletin\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Point Short Horizon Advisory",
@@ -2632,7 +2836,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureFacility",
-        "example": "[\n  \"CustomHiringCentre\",\n  \"KrishiVigyanKendra\",\n  \"Warehouse\",\n  \"SoilTestingFacility\",\n  \"https://facilities.example.org/types/seed-processing-centre\"\n]",
+        "example": "[\n  \"Warehouse\",\n  \"CustomHiringCentre\"\n]",
         "enum": null,
         "enum_details": null
       },
@@ -2850,7 +3054,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agriculturefacility~1retrieveExampleAgriculturefacility/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -2874,7 +3078,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agriculturefacility~1retrieveExampleAgriculturefacility/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -2986,222 +3190,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "Optional",
@@ -3221,7 +3209,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-2\",\n    \"areaCode\": \"IN-MH\",\n    \"areaLevel\": \"State\",\n    \"areaName\": \"Maharashtra\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -3245,7 +3233,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureFacility",
-        "example": "[\n  \"CustomHiringCentre\",\n  \"KrishiVigyanKendra\",\n  \"Warehouse\",\n  \"SoilTestingFacility\",\n  \"https://facilities.example.org/types/seed-processing-centre\"\n]",
+        "example": "[\n  \"Warehouse\",\n  \"CustomHiringCentre\"\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3485,7 +3473,7 @@
         "name": "On Demand Facility Discovery",
         "file": "examples/on-demand-facility-discovery.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureFacility\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Facility\",\n    \"Crop\",\n    \"Livestock\",\n    \"Market\",\n    \"Practice\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"mr\"\n  ],\n  \"supportedFacilityTypes\": [\n    \"CustomHiringCentre\",\n    \"KrishiVigyanKendra\",\n    \"Warehouse\",\n    \"SoilTestingFacility\",\n    \"https://facilities.example.org/types/seed-processing-centre\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-2\",\n      \"areaCode\": \"IN-MH\",\n      \"areaLevel\": \"State\",\n      \"areaName\": \"Maharashtra\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agriculturefacility~1retrieveExampleAgriculturefacility/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureFacility\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Facility\"\n  ],\n  \"supportedFacilityTypes\": [\n    \"Warehouse\",\n    \"CustomHiringCentre\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n    }\n  ]\n}"
       },
       {
         "name": "Seed Processing Centre",
@@ -3916,7 +3904,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3940,7 +3928,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -3967,7 +3955,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  \"Crop\",\n  \"Livestock\"\n]",
+        "example": "[\n  \"Crop\"\n]",
         "enum": [
           "Crop",
           "Livestock",
@@ -4052,222 +4040,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "Optional",
@@ -4287,7 +4059,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-1\",\n    \"areaCode\": \"IN\",\n    \"areaLevel\": \"Country\"\n  }\n]",
+        "example": "[\n  {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          75.0,\n          19.0\n        ],\n        [\n          76.0,\n          19.0\n        ],\n        [\n          76.0,\n          20.0\n        ],\n        [\n          75.0,\n          20.0\n        ],\n        [\n          75.0,\n          19.0\n        ]\n      ]\n    ]\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -4313,7 +4085,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -4337,7 +4109,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -4364,7 +4136,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  \"Crop\",\n  \"Livestock\"\n]",
+        "example": "[\n  \"Crop\"\n]",
         "enum": [
           "Crop",
           "Livestock",
@@ -4449,222 +4221,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "Optional",
@@ -4684,7 +4240,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-1\",\n    \"areaCode\": \"IN\",\n    \"areaLevel\": \"Country\"\n  }\n]",
+        "example": "[\n  {\n    \"type\": \"Polygon\",\n    \"coordinates\": [\n      [\n        [\n          75.0,\n          19.0\n        ],\n        [\n          76.0,\n          19.0\n        ],\n        [\n          76.0,\n          20.0\n        ],\n        [\n          75.0,\n          20.0\n        ],\n        [\n          75.0,\n          19.0\n        ]\n      ]\n    ]\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -4709,7 +4265,7 @@
         "name": "General Agriculture",
         "file": "examples/general-agriculture.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureResource\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Livestock\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureResource\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n    }\n  ]\n}"
       },
       {
         "name": "Specific Crop",
@@ -8101,7 +7657,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppo...",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppor...",
         "enum": null,
         "enum_details": null
       },
@@ -8120,7 +7676,7 @@
       {
         "path": "actions[].description",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "What the operation does.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -8132,12 +7688,12 @@
       {
         "path": "actions[].schema",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
         "enum": null,
         "enum_details": null
       },
@@ -8149,14 +7705,14 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
         "enum": null,
         "enum_details": null
       },
       {
         "path": "actions[].attributesAt",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "Path to operation attributes in the Beckn message.",
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
@@ -8429,7 +7985,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppo...",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppor...",
         "enum": null,
         "enum_details": null
       },
@@ -8448,7 +8004,7 @@
       {
         "path": "actions[].description",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "What the operation does.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -8460,12 +8016,12 @@
       {
         "path": "actions[].schema",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
         "enum": null,
         "enum_details": null
       },
@@ -8477,14 +8033,14 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
         "enum": null,
         "enum_details": null
       },
       {
         "path": "actions[].attributesAt",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "Path to operation attributes in the Beckn message.",
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
@@ -8574,13 +8130,13 @@
         "name": "PMFBY On Demand Capability",
         "file": "examples/pmfby-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post\"\n    }\n  ]\n}"
       },
       {
         "name": "PM-KISAN On Demand Capability",
         "file": "examples/pmkisan-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1status/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1support/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1status/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1support/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -8595,12 +8151,20 @@
     "generic_catalog": true,
     "api_docs": [
       {
-        "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
-        "description": "PMFBY grievance integration contract"
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
+        "description": "Provider HTTP: PM-KISAN grievance provider API"
       },
       {
-        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
-        "description": "PM-KISAN grievance integration contract"
+        "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
+        "description": "Provider HTTP: PMFBY grievance provider API"
+      },
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml",
+        "description": "Adapter proposal: PMFBY grievance integration contract"
+      },
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml",
+        "description": "Adapter proposal: PM-KISAN grievance integration contract"
       }
     ],
     "summary": "Public catalog metadata for grievance services, with Provider-defined schemes, complaint options and operation links.",
@@ -10261,7 +9825,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "KnowledgeResource",
-        "example": "[\n  \"Article\",\n  \"FAQ\",\n  \"Guide\"\n]",
+        "example": null,
         "enum": [
           "Article",
           "FAQ",
@@ -10280,7 +9844,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "KnowledgeResource",
-        "example": "[\n  \"application/json\",\n  \"text/plain\"\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -10590,7 +10154,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-knowledgeresource~1retrieveExampleKnowledgeresource/post\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -10602,7 +10166,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"select\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -10614,7 +10178,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-knowledgeresource~1retrieveExampleKnowledgeresource/post\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -10726,222 +10290,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "OnDemand or Direct",
@@ -10997,7 +10345,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "KnowledgeResource",
-        "example": "[\n  \"Article\",\n  \"FAQ\",\n  \"Guide\"\n]",
+        "example": null,
         "enum": [
           "Article",
           "FAQ",
@@ -11016,7 +10364,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "KnowledgeResource",
-        "example": "[\n  \"application/json\",\n  \"text/plain\"\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -11371,12 +10719,6 @@
         "file": "examples/general-multilingual-faq.json",
         "mode": "Direct",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:KnowledgeResource\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Crop\",\n    \"Livestock\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"topics\": [\n    \"Farm machinery safety\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\"\n    }\n  ],\n  \"knowledgeType\": \"FAQ\",\n  \"version\": \"2.0.0\",\n  \"lifecycleStatus\": \"Published\",\n  \"content\": [\n    {\n      \"inlineContent\": {\n        \"question\": \"When should farm machinery be inspected?\",\n        \"answer\": \"Inspect guards, controls, tyres, and visible damage before each use.\"\n      },\n      \"mediaType\": \"application/json\",\n      \"language\": \"en\"\n    },\n    {\n      \"inlineContent\": {\n        \"question\": \"कृषि मशीनरी की जाँच कब करनी चाहिए?\",\n        \"answer\": \"हर उपयोग से पहले गार्ड, नियंत्रण, टायर और दिखाई देने वाली क्षति की जाँच करें।\"\n      },\n      \"mediaType\": \"application/json\",\n      \"language\": \"hi\"\n    }\n  ],\n  \"provenance\": {\n    \"source\": {\n      \"sourceId\": \"participant:agri-information-provider\",\n      \"sourceName\": \"Agriculture Information Provider\"\n    },\n    \"publishedAt\": \"2026-08-01T09:00:00Z\",\n    \"lastReviewedAt\": \"2026-07-28T09:00:00Z\",\n    \"reviewedBy\": \"participant:subject-review-board\"\n  },\n  \"supersedes\": \"resource:faq:farm-safety:1.4.0\"\n}"
-      },
-      {
-        "name": "On Demand Agriculture Knowledge",
-        "file": "examples/on-demand-agriculture-knowledge.json",
-        "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:KnowledgeResource\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\"\n  ],\n  \"agricultureSubjects\": [\n    {\n      \"subjectId\": \"https://taxonomy.openagrinet.global/crops/cotton\",\n      \"descriptor\": {\n        \"code\": \"COTTON\",\n        \"name\": \"Cotton\"\n      }\n    }\n  ],\n  \"topics\": [\n    \"Crop management\",\n    \"Pest management\",\n    \"Nutrient management\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\",\n    \"te\"\n  ],\n  \"supportedKnowledgeTypes\": [\n    \"Article\",\n    \"FAQ\",\n    \"Guide\"\n  ],\n  \"supportedMediaTypes\": [\n    \"application/json\",\n    \"text/plain\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\",\n      \"areaName\": \"India\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-knowledgeresource~1retrieveExampleKnowledgeresource/post\"\n    }\n  ]\n}"
       },
       {
         "name": "Published Crop Guide",
@@ -12949,7 +12291,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-mandiprice~1retrieveExampleMandiprice/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -12973,7 +12315,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-mandiprice~1retrieveExampleMandiprice/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -13085,222 +12427,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "Optional",
@@ -13320,7 +12446,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-2\",\n    \"areaCode\": \"IN-TS\",\n    \"areaLevel\": \"State\",\n    \"areaName\": \"Telangana\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -13752,7 +12878,7 @@
         "name": "On Demand Mandi Prices",
         "file": "examples/on-demand-mandi-prices.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"market\": {\n    \"state\": \"Telangana\"\n  },\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-2\",\n      \"areaCode\": \"IN-TS\",\n      \"areaLevel\": \"State\",\n      \"areaName\": \"Telangana\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-mandiprice~1retrieveExampleMandiprice/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"market\": {\n    \"marketName\": \"Illustrative mandi\"\n  },\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Onion Lasalgaon",
@@ -15027,7 +14153,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "[\n  \"PriceTrend\",\n  \"DemandForecast\",\n  \"MarketOpportunity\"\n]",
+        "example": null,
         "enum": [
           "PriceTrend",
           "DemandForecast",
@@ -15043,7 +14169,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "\"P5Y\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15055,7 +14181,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "\"P30D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15433,7 +14559,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-marketintelligence~1retrieveExampleMarketintelligence/post\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15445,7 +14571,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"select\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15457,7 +14583,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-marketintelligence~1retrieveExampleMarketintelligence/post\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15569,222 +14695,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "OnDemand",
@@ -15792,7 +14702,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  \"en\",\n  \"hi\",\n  \"te\"\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15804,7 +14714,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-2\",\n    \"areaCode\": \"IN-TS\",\n    \"areaLevel\": \"State\",\n    \"areaName\": \"Telangana\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15840,7 +14750,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "[\n  \"PriceTrend\",\n  \"DemandForecast\",\n  \"MarketOpportunity\"\n]",
+        "example": null,
         "enum": [
           "PriceTrend",
           "DemandForecast",
@@ -15856,7 +14766,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "\"P5Y\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -15868,7 +14778,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "MarketIntelligence",
-        "example": "\"P30D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -16265,12 +15175,6 @@
         "file": "examples/direct-cotton-market-intelligence.json",
         "mode": "Direct",
         "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"Direct\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    }\n  ],\n  \"generatedAt\": \"2026-08-26T09:00:00Z\",\n  \"validity\": {\n    \"startsAt\": \"2026-08-26T09:00:00Z\",\n    \"endsAt\": \"2026-09-09T09:00:00Z\"\n  },\n  \"insights\": [\n    {\n      \"insightType\": \"PriceTrend\",\n      \"summary\": \"Cotton modal prices increased across the selected Telangana markets during the last 30 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-07-27T00:00:00Z\",\n        \"endsAt\": \"2026-08-26T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": 4.8,\n        \"indicatorUnit\": \"percent\",\n        \"indicatorName\": \"modalPriceChange\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:telangana:cotton:2026-07-27\",\n        \"resource:mandi-price:telangana:cotton:2026-08-26\"\n      ]\n    },\n    {\n      \"insightType\": \"DemandForecast\",\n      \"summary\": \"The Provider forecasts strong cotton demand over the next 14 days.\",\n      \"period\": {\n        \"startsAt\": \"2026-08-26T00:00:00Z\",\n        \"endsAt\": \"2026-09-09T00:00:00Z\"\n      },\n      \"indicator\": {\n        \"indicatorValue\": \"High\",\n        \"indicatorName\": \"demandClass\"\n      }\n    },\n    {\n      \"insightType\": \"MarketOpportunity\",\n      \"summary\": \"Adilabad Mandi is an active nearby market for cotton in the requested area.\",\n      \"market\": {\n        \"marketCode\": \"TS-ADILABAD\",\n        \"marketName\": \"Adilabad Mandi\",\n        \"district\": \"Adilabad\",\n        \"state\": \"Telangana\",\n        \"location\": {\n          \"geo\": {\n            \"type\": \"Point\",\n            \"coordinates\": [\n              78.532,\n              19.6641\n            ]\n          }\n        }\n      },\n      \"distance\": {\n        \"value\": 42,\n        \"unit\": \"km\"\n      },\n      \"supportingResourceIds\": [\n        \"resource:mandi-price:adilabad:cotton:2026-08-26\"\n      ]\n    }\n  ],\n  \"source\": {\n    \"sourceId\": \"participant:market-intelligence-provider\",\n    \"sourceName\": \"Market Intelligence Provider\"\n  }\n}"
-      },
-      {
-        "name": "On Demand Market Intelligence",
-        "file": "examples/on-demand-market-intelligence.json",
-        "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MarketIntelligence/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MarketIntelligence\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"supportedInsightTypes\": [\n    \"PriceTrend\",\n    \"DemandForecast\",\n    \"MarketOpportunity\"\n  ],\n  \"historyPeriod\": \"P5Y\",\n  \"forecastHorizon\": \"P30D\",\n  \"languages\": [\n    \"en\",\n    \"hi\",\n    \"te\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-2\",\n      \"areaCode\": \"IN-TS\",\n      \"areaLevel\": \"State\",\n      \"areaName\": \"Telangana\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-marketintelligence~1retrieveExampleMarketintelligence/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -17833,7 +16737,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"...",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"$...",
         "enum": null,
         "enum_details": null
       },
@@ -17852,7 +16756,7 @@
       {
         "path": "actions[].description",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "What the operation does.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -17864,12 +16768,12 @@
       {
         "path": "actions[].schema",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
         "enum": null,
         "enum_details": null
       },
@@ -17881,14 +16785,14 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
         "enum": null,
         "enum_details": null
       },
       {
         "path": "actions[].attributesAt",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "Path to operation attributes in the Beckn message.",
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
@@ -18053,7 +16957,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"...",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"$...",
         "enum": null,
         "enum_details": null
       },
@@ -18072,7 +16976,7 @@
       {
         "path": "actions[].description",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "What the operation does.",
         "constraints": "minLength: 1",
         "reference": null,
@@ -18084,12 +16988,12 @@
       {
         "path": "actions[].schema",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "URI of the request schema in the Provider API contract. Resolve that contract to validate operation inputs; this URI is not an allow-list.",
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
         "enum": null,
         "enum_details": null
       },
@@ -18101,14 +17005,14 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
         "enum": null,
         "enum_details": null
       },
       {
         "path": "actions[].attributesAt",
         "type": "string",
-        "requirement": "Always",
+        "requirement": "Optional",
         "description": "Path to operation attributes in the Beckn message.",
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
@@ -18126,7 +17030,7 @@
         "name": "On Demand Capability",
         "file": "examples/on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -18142,7 +17046,15 @@
     "api_docs": [
       {
         "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml",
-        "description": "PM-KISAN application integration contract"
+        "description": "Provider HTTP: PM-KISAN application status provider API"
+      },
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/external/smam/benefit-status/v0.2/openapi.yaml",
+        "description": "Provider HTTP: SMAM benefit application status"
+      },
+      {
+        "url": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml",
+        "description": "Adapter proposal: PM-KISAN application integration contract"
       }
     ],
     "summary": "Public catalog metadata for scheme application services, with Provider-defined schemes and operation links.",
@@ -20315,7 +19227,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Observation\",\n  \"Forecast\"\n]",
+        "example": "[\n  \"Forecast\"\n]",
         "enum": [
           "Observation",
           "Forecast"
@@ -20330,7 +19242,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "example": "[\n  \"Rainfall\",\n  \"Temperature\"\n]",
         "enum": [
           "Rainfall",
           "Temperature",
@@ -20351,7 +19263,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "\"P10D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -20363,7 +19275,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "\"PT1H\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -20375,7 +19287,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "example": "[\n  \"Point\"\n]",
         "enum": [
           "Point",
           "Village",
@@ -20687,7 +19599,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-weatherobservation~1retrieveExampleWeatherobservation/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -20711,7 +19623,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-weatherobservation~1retrieveExampleWeatherobservation/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -20823,222 +19735,6 @@
         "enum_details": null
       },
       {
-        "path": "applicability",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Optional structured applicability. Entries are OR; different conditions inside one entry are AND. Preserve entry correlation when filtering. Missing facts or unsupported extensions mean unknown, not a match. Absence does not establish universal applicability.",
-        "constraints": "minItems: 1",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/AgriculturalApplicability",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].subjectIds",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Governed subjects to which this condition applies. Use the same identifiers as agricultureSubjects, not another crop-name taxonomy.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Regional agricultural seasons. Kharif, Rabi, Navarai and Samba are examples, not a closed universal enumeration. Season identity does not imply fixed dates or a particular year.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].code",
-        "type": "string",
-        "requirement": "When applicability.[].seasons is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].seasons[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages",
-        "type": "array<object>",
-        "requirement": "Optional",
-        "description": "Observed developmental stages. Identify the crop-specific coding system and version; preserve codes as strings. Never infer a stage from age alone.",
-        "constraints": "minItems: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].codeSystem",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "URI identifying the vocabulary and its version, including crop-specific stage keys where relevant.",
-        "constraints": "format: \"uri\"",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].code",
-        "type": "string",
-        "requirement": "When applicability.[].growthStages is supplied",
-        "description": "Exact code within the stated vocabulary. Preserve leading zeros.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].growthStages[].label",
-        "type": "string",
-        "requirement": "Optional",
-        "description": "Human-readable label; identity is the codeSystem and code pair.",
-        "constraints": "minLength: 1",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Inclusive non-negative local-calendar days from the named event, with the event date as day zero. At least one bound is supplied. When both exist, fromDays must not exceed toDays; this comparison needs semantic validation. A missing event date makes matching unknown. Pre-event negative offsets are not supported in this proposal.",
-        "constraints": "additionalProperties: false",
-        "reference": "schema/AgricultureResource/v0.2/attributes.yaml#/components/schemas/RelativeTiming",
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.event",
-        "type": "string",
-        "requirement": "When applicability.[].relativeTiming is supplied",
-        "description": "Sowing is seed placement; Transplanting is moving seedlings to the production site; Emergence is observed seedling emergence; Pruning is the relevant pruning operation; Harvest is the relevant harvest operation. Identify the correct crop cycle and event occurrence before computing age.",
-        "constraints": "enum: Sowing, Transplanting, Emergence, Pruning, Harvest",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Sowing",
-          "Transplanting",
-          "Emergence",
-          "Pruning",
-          "Harvest"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.fromDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive lower bound. For example 20 means day 20 or later after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].relativeTiming.toDays",
-        "type": "integer",
-        "requirement": "At least one of fromDays or toDays",
-        "description": "Inclusive upper bound. For example 30 means up to and including day 30 after the named event.",
-        "constraints": "minimum: 0",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].establishmentMethods",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "How the crop was established. DirectSeeded means seed placed at the production site; Transplanted means established seedlings moved there. Omit for unrelated or unknown cases.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "DirectSeeded",
-          "Transplanted"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].waterRegimes",
-        "type": "array<string>",
-        "requirement": "Optional",
-        "description": "Rainfed relies on rainfall; Irrigated receives managed supplemental water. Do not infer this condition from season or geography.",
-        "constraints": "minItems: 1 · uniqueItems: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": [
-          "Rainfed",
-          "Irrigated"
-        ],
-        "enum_details": null
-      },
-      {
-        "path": "applicability[].extensions",
-        "type": "object",
-        "requirement": "Optional",
-        "description": "Provider-owned applicability qualifiers keyed by absolute HTTP(S) vocabulary IRIs. Values are preserved as JSON. A consumer that lacks the agreed extension schema or evaluator must report unknown applicability, never silently ignore the qualifier. This field does not advertise automatic support or automatic indexing.",
-        "constraints": "minProperties: 1 · additionalProperties: true",
-        "reference": null,
-        "origin": "AgricultureResource",
-        "example": null,
-        "enum": null,
-        "enum_details": null
-      },
-      {
         "path": "languages",
         "type": "array<string>",
         "requirement": "Optional",
@@ -21058,7 +19754,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"codeScheme\": \"ISO-3166-1\",\n    \"areaCode\": \"IN\",\n    \"areaLevel\": \"Country\",\n    \"areaName\": \"India\"\n  }\n]",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -21082,7 +19778,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Observation\",\n  \"Forecast\"\n]",
+        "example": "[\n  \"Forecast\"\n]",
         "enum": [
           "Observation",
           "Forecast"
@@ -21097,7 +19793,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Rainfall\",\n  \"Temperature\",\n  \"Humidity\",\n  \"WindSpeed\"\n]",
+        "example": "[\n  \"Rainfall\",\n  \"Temperature\"\n]",
         "enum": [
           "Rainfall",
           "Temperature",
@@ -21118,7 +19814,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "\"P10D\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -21130,7 +19826,7 @@
         "constraints": "format: \"duration\"",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "\"PT1H\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -21142,7 +19838,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "WeatherObservation",
-        "example": "[\n  \"Point\",\n  \"District\"\n]",
+        "example": "[\n  \"Point\"\n]",
         "enum": [
           "Point",
           "Village",
@@ -21508,7 +20204,7 @@
         "name": "On Demand Weather Information",
         "file": "examples/on-demand-weather-information.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"supportedObservationTypes\": [\n    \"Observation\",\n    \"Forecast\"\n  ],\n  \"supportedParameters\": [\n    \"Rainfall\",\n    \"Temperature\",\n    \"Humidity\",\n    \"WindSpeed\"\n  ],\n  \"forecastHorizon\": \"P10D\",\n  \"updateFrequency\": \"PT1H\",\n  \"geographicGranularities\": [\n    \"Point\",\n    \"District\"\n  ],\n  \"coverageAreas\": [\n    {\n      \"codeScheme\": \"ISO-3166-1\",\n      \"areaCode\": \"IN\",\n      \"areaLevel\": \"Country\",\n      \"areaName\": \"India\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-weatherobservation~1retrieveExampleWeatherobservation/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"supportedObservationTypes\": [\n    \"Forecast\"\n  ],\n  \"supportedParameters\": [\n    \"Rainfall\",\n    \"Temperature\"\n  ],\n  \"geographicGranularities\": [\n    \"Point\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Point Forecast",

@@ -1,9 +1,5 @@
 # Agriculture Resource
 
-## Applicability preview
-
-Optional `applicability` is available to packs that compose the shared fields. See the [advisory examples](../../AgricultureAdvisory/v0.2/#examples). An omitted condition does not prove that advice is universally applicable. Existing required fields are unchanged.
-
 <nav class="artifact-links" aria-label="Schema artifacts">
   <a href="../../">All schemas</a>
   <a href="attributes.yaml">attributes.yaml</a>
@@ -23,7 +19,7 @@ Agriculture Resource defines the shared agriculture fields used by OAN domain in
 
 The schema attaches to `beckn:Resource.resourceAttributes`. Beckn core owns the Resource `id` and `descriptor`.
 
-Every `OnDemand` resource lists its supported Beckn actions in `resourceAttributes.actions`. Each entry pairs an `action` with an `operationRef` pointing to a path **and HTTP method** inside an OpenAPI document. The [FFS booking example](../../examples/ffs-booking-api-resource.json) advertises separate operations for selecting an allowance, preparing a booking and confirming it. The reference describes the contract; it is not the address to call or a grant of access. A `Direct` resource needs no action.
+Every `OnDemand` resource lists its supported Beckn actions in `resourceAttributes.actions`. Each entry pairs an `action` with an `operationRef` pointing to a path **and HTTP method** inside an OpenAPI document. The [FFS booking example](examples/network/ffs-booking-api-resource.json) advertises separate operations for selecting an allowance, preparing a booking and confirming it. The reference describes the contract; it is not the address to call or a grant of access. A `Direct` resource needs no action.
 
 ## Composition
 

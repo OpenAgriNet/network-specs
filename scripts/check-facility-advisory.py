@@ -26,7 +26,9 @@ if __name__ == "__main__":
     direct = json.loads((facility_dir / "seed-processing-centre.json").read_text())
     offered = json.loads((facility_dir / "on-demand-facility-discovery.json").read_text())
     code = direct["facilityType"]
-    assert code in offered["supportedFacilityTypes"]
+    assert "Warehouse" in offered["supportedFacilityTypes"]
+    validator("AgricultureFacility", "v0.2", "AgricultureFacility").validate(
+        {**offered, "supportedFacilityTypes": [code]})
     # Keep this regression offline: geography brings in external Beckn schemas
     # unrelated to the code field. Test the offer without its optional coverage.
     validator("AgricultureFacility", "v0.2", "AgricultureFacility").validate(
@@ -43,13 +45,15 @@ if __name__ == "__main__":
     pack = "AgricultureAdvisory"
     advisory = validator(pack, "v0.2", pack)
     examples = SCHEMA / pack / "v0.2/examples"
-    for mode in ("direct", "on-demand"):
-        file = examples / f"{mode}-fertilizer-advice.json"
-        advisory.validate(json.loads(file.read_text()))
+    advisory.validate(json.loads((examples / "direct-fertilizer-advice.json").read_text()))
     weather = json.loads((examples / "on-demand-weather-advisory.json").read_text())
     # Check local mode rules offline; external geometry and descriptor schemas
     # are validated separately for complete example validation.
     weather.pop("coverageAreas", None)
+    advisory.validate(weather)
+    # Test weather-specific rules without advertising these fields for IMD.
+    weather.update(weatherInformed=True, supportedWeatherParameters=["Rainfall"],
+                   geographicGranularities=["District"])
     advisory.validate(weather)
     for missing in ["weatherInformed", "supportedWeatherParameters", "geographicGranularities"]:
         assert not advisory.is_valid({k: v for k, v in weather.items() if k != missing})

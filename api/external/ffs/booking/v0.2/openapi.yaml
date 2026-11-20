@@ -1,9 +1,13 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: FFS fertilizer allowance and booking
   version: 0.2.0
-  description: >
-    Four post-login operations for fertilizer allowance, product and retailer selection, and booking. Paths are relative to the FFS API origin. Authentication and plot selection precede these calls. Inputs and results are private. This is an observed integration, not an official provider specification or a Beckn action binding.
+  description: 'Four post-login operations for fertilizer allowance, product and retailer selection, and booking. Paths are
+    relative to the FFS API origin. Authentication and plot selection precede these calls. Inputs and results are private.
+    This is an observed integration, not an official provider specification or a Beckn action binding.
+
+    '
 security:
 - farmerSession: []
 paths:
@@ -12,6 +16,10 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsEntitlement
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: select
       summary: Read the provider's allowance for selected plots and crops
       requestBody:
         required: true
@@ -29,12 +37,13 @@ paths:
               isProceedWithGfr: true
       responses:
         '200':
-          description: Provider GFR alternatives. The adapter supports exactly one and reads offeredBags, not calculated
-            need, as the allowance. This is not an order.
+          description: Provider GFR alternatives. The adapter supports exactly one and reads offeredBags, not calculated need,
+            as the allowance. This is not an order.
           links:
             availableProducts:
               operationId: getFfsProducts
-              description: With a usable allowance, the adapter builds productGroupIds from eligible recommendation rows and reuses the authenticated location. No branch is selected by the link alone.
+              description: With a usable allowance, the adapter builds productGroupIds from eligible recommendation rows and
+                reuses the authenticated location. No branch is selected by the link alone.
           content:
             application/json:
               schema:
@@ -52,6 +61,10 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsProducts
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: init
       summary: Resolve the orderable products for the selected location
       requestBody:
         required: true
@@ -71,7 +84,8 @@ paths:
           links:
             chooseRetailer:
               operationId: getFfsRetailers
-              description: After product selection, pass product and group IDs with a stock-probe quantity and location. Never substitute this probe for the farmer's chosen order.
+              description: After product selection, pass product and group IDs with a stock-probe quantity and location. Never
+                substitute this probe for the farmer's chosen order.
           content:
             application/json:
               schema:
@@ -84,6 +98,10 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsRetailers
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: init
       summary: Search retailers for the selected products
       requestBody:
         required: true
@@ -108,12 +126,13 @@ paths:
               pageSize: 3
       responses:
         '200':
-          description: Paginated retailers. The client probes for one bag to include smaller shops; the booking
-            quantity comes from the farmer's order.
+          description: Paginated retailers. The client probes for one bag to include smaller shops; the booking quantity comes
+            from the farmer's order.
           links:
             submitAfterConfirmation:
               operationId: createFfsBooking
-              description: Candidate next step, not a command. Require the selected retailer, quantities and explicit confirmation; reconstruct the booking from private session state and the accepted recommendation.
+              description: Candidate next step, not a command. Require the selected retailer, quantities and explicit confirmation;
+                reconstruct the booking from private session state and the accepted recommendation.
           content:
             application/json:
               schema:
@@ -127,10 +146,14 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: createFfsBooking
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: confirm
       summary: Submit the confirmed order at the chosen retailer
-      description: 'This writes a booking. The tool''s confirmed flag is a local precondition, not a field sent
-        to FFS. Carry the provider''s recommendation through unchanged. Do not claim success or resubmit automatically
-        on a timeout or a contradictory result. No idempotency key is evidenced.
+      description: 'This writes a booking. The tool''s confirmed flag is a local precondition, not a field sent to FFS. Carry
+        the provider''s recommendation through unchanged. Do not claim success or resubmit automatically on a timeout or a
+        contradictory result. No idempotency key is evidenced.
 
         '
       requestBody:
@@ -177,8 +200,8 @@ paths:
               isProceedWithGfr: true
       responses:
         '200':
-          description: Inspect validity flags, retailer, counts and booking references before reporting confirmation
-            or waitlist. HTTP 200 alone does not establish success.
+          description: Inspect validity flags, retailer, counts and booking references before reporting confirmation or waitlist.
+            HTTP 200 alone does not establish success.
           content:
             application/json:
               schema:
@@ -211,8 +234,8 @@ paths:
                         procurementApplicationCode: EXAMPLE
                         isWaitlisted: true
         default:
-          description: FAILED with explicit null data and no contradicting success fields is a rejection in this
-            client. Missing data or an unreadable response is not proof that no booking was written.
+          description: FAILED with explicit null data and no contradicting success fields is a rejection in this client. Missing
+            data or an unreadable response is not proof that no booking was written.
           content:
             application/json:
               schema:
@@ -233,7 +256,7 @@ components:
       in: header
       required: true
       schema:
-        type: string
+        $ref: '#/components/schemas/SessionParameter'
   schemas:
     Id:
       type:
@@ -277,8 +300,7 @@ components:
           minimum: 0
         kgPerBag:
           type: number
-      description: Preserve all returned properties. Bookings carry the original recommendation, not just these
-        three fields.
+      description: Preserve all returned properties. Bookings carry the original recommendation, not just these three fields.
     ProductSelection:
       type: object
       required:
@@ -595,3 +617,5 @@ components:
                     type:
                     - string
                     - 'null'
+    SessionParameter:
+      type: string

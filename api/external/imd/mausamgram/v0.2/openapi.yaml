@@ -1,5 +1,6 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: Mausamgram daily coordinate forecast
   version: 0.2.0
   description: >
@@ -9,6 +10,8 @@ paths:
   /get-daily:
     get:
       operationId: getMausamgramDaily
+      x-oan-mapping: {"href": "./mappings/select.yaml", "status": "existing", "scope": "adapter-action"}
+      x-oan-binding: {descriptorCode: imd-mausamgram, resourceType: "openagrinet:WeatherObservation", action: select}
       parameters:
         - {in: query, name: lat, required: true, schema: {$ref: '#/components/schemas/Latitude'}, example: 18.5}
         - {in: query, name: lon, required: true, schema: {$ref: '#/components/schemas/Longitude'}, example: 73.8}

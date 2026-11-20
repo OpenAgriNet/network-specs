@@ -20,10 +20,10 @@ components:
       - $ref: '#/components/schemas/GrievanceFields'
       unevaluatedProperties: false
     PMFBYCatalog:
-      $ref: ../../../api/external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYCatalog
+      $ref: ../../../api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYCatalog
       description: Compatibility reference to the external service catalog definition.
     PMKISANCatalog:
-      $ref: ../../../api/external/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANCatalog
+      $ref: ../../../api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANCatalog
       description: Compatibility reference to the external service catalog definition.
     GrievanceFields:
       type: object
@@ -156,10 +156,7 @@ components:
             additionalProperties: false
             required:
             - action
-            - description
-            - schema
             - operationRef
-            - attributesAt
             properties:
               action:
                 type: string

@@ -1,0 +1,113 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000089",
+    "messageId": "fade0000-0000-4000-8000-000000000090",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "icar.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-icar",
+        "bppId": "icar.example.invalid",
+        "bppUri": "https://icar.example.invalid/beckn",
+        "descriptor": {
+          "name": "ICAR example catalog"
+        },
+        "provider": {
+          "id": "prov-icar",
+          "descriptor": {
+            "name": "ICAR example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-icar-materials",
+            "descriptor": {
+              "code": "icar-materials",
+              "name": "ICAR courses and learning material",
+              "shortDesc": "ICAR training material",
+              "docs": [
+                {
+                  "label": "Proposed adapter operations",
+                  "url": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+              "@type": "openagrinet:KnowledgeResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Practice"
+              ],
+              "topics": [
+                "ICAR training material"
+              ],
+              "languages": [
+                "en"
+              ],
+              "supportedKnowledgeTypes": [
+                "TrainingMaterial"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1icar-materials~1retrieveIcarMaterials/post"
+                }
+              ]
+            }
+          },
+          {
+            "id": "res-icar-field-advice",
+            "descriptor": {
+              "code": "icar-field-advice",
+              "name": "ICAR crop-stage advisory",
+              "shortDesc": "ICAR sowing-day advice",
+              "docs": [
+                {
+                  "label": "Proposed adapter operations",
+                  "url": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureAdvisory",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop",
+                "Practice"
+              ],
+              "topics": [
+                "ICAR sowing-day advice"
+              ],
+              "languages": [
+                "en"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1icar-field-advice~1retrieveIcarFieldAdvice/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-icar",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

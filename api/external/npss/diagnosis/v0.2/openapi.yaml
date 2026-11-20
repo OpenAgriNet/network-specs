@@ -1,0 +1,111 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: NPSS Vistaar crop image analysis
+  version: '3.0'
+  description: Consumer-observed contract from the calling application agents/tools/npss.py. The configured base URL includes
+    /api3.0. This is a direct integration, not a Beckn provider action.
+paths:
+  /api/Vistaar/token:
+    post:
+      operationId: issueNpssVistaarToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IssueNpssVistaarTokenRequest'
+            example:
+              userName: example-user
+              password: example-only-not-a-credential
+      responses:
+        '200':
+          description: Token response read by the consumer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IssueNpssVistaarTokenResponse200'
+              example:
+                token: synthetic-example-not-a-token
+        default:
+          description: Upstream error. Response shape not verified.
+  /api/Vistaar/analyze-image:
+    post:
+      operationId: analyzeNpssCropImage
+      security:
+      - npssBearer: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AnalyzeNpssCropImageRequest'
+            example:
+              File: <binary image bytes>
+              Latitude: '18.52'
+              Longitude: '73.85'
+      responses:
+        '200':
+          description: Raw NPSS result; the client preserves extra fields and does not require the listed fields to be present.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeNpssCropImageResponse200'
+        '401':
+          description: Unauthorized. The consumer invalidates its cached token.
+        default:
+          description: Upstream error. Response shape not verified.
+components:
+  securitySchemes:
+    npssBearer:
+      type: http
+      scheme: bearer
+  schemas:
+    IssueNpssVistaarTokenRequest:
+      type: object
+      required:
+      - userName
+      - password
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+          format: password
+    IssueNpssVistaarTokenResponse200:
+      type: object
+      required:
+      - token
+      properties:
+        token:
+          type: string
+    AnalyzeNpssCropImageRequest:
+      type: object
+      required:
+      - File
+      properties:
+        File:
+          type: string
+          format: binary
+        StateId:
+          type: string
+        DistrictId:
+          type: string
+        SubDistrictId:
+          type: string
+        VillageId:
+          type: string
+        Latitude:
+          type: string
+        Longitude:
+          type: string
+    AnalyzeNpssCropImageResponse200:
+      type: object
+      additionalProperties: true
+      properties:
+        errors: {}
+        pest: {}
+        crop: {}
+        pathogenClass: {}
+        description: {}

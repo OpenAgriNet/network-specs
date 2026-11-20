@@ -3,24 +3,16 @@
   "@type": "openagrinet:AgricultureResource",
   "informationMode": "OnDemand",
   "subjectCategories": [
-    "Crop",
-    "Livestock"
+    "Crop"
   ],
   "languages": [
     "en",
     "hi"
   ],
-  "coverageAreas": [
-    {
-      "codeScheme": "ISO-3166-1",
-      "areaCode": "IN",
-      "areaLevel": "Country"
-    }
-  ],
   "actions": [
     {
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/examples/provider-actions/v0.2/openapi.yaml#/paths/~1example-agricultureresource~1retrieveExampleAgricultureresource/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post"
     }
   ]
 }

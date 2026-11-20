@@ -35,13 +35,13 @@ def sample(schema):
     return 'EXAMPLE'
 
 
-for directory in sorted((ROOT/'api/external').glob('*/*/v0.2')):
+for directory in sorted((ROOT/'api/adapter').glob('*/*/v0.2')):
     spec = yaml.safe_load((directory/'openapi.yaml').read_text())
     schemas = spec['components']['schemas']
     title = spec['info']['title']
     lines = ['---', 'layout: default', f'title: {title}', '---',
              f'# {title}', '',
-             '[All external APIs](../../../) · [OpenAPI document](openapi.yaml)', '',
+             '[Adapter contracts](../../../) · [OpenAPI document](openapi.yaml)', '',
              spec['info']['description'], '']
     for path, value in spec['paths'].items():
         operation = value['post']

@@ -1,13 +1,18 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: SMAM benefit application status
   version: 0.2.0
   description: >
-    Native benefit-status read. Only fields observed in the adapter are described; this is not a deployed Beckn status binding.
+    Native benefit-status read derived from the provider adapter.
+    The chat tool calls legacy search; the provider adapter calls this operation.
+    This document does not define a Beckn status binding. All examples are synthetic.
 paths:
   /api/BeneficiaryService/GetApplicationStatusByAI:
     post:
       operationId: readSmamBenefitStatus
+      x-oan-mapping: {"href": "./mappings/status.yaml", "status": "draft-native", "scope": "adapter-action"}
+      x-oan-binding: {descriptorCode: smam-benefits, resourceType: "openagrinet:SchemeApplication", action: status}
       security: [{providerToken: []}]
       requestBody:
         required: true
@@ -17,14 +22,18 @@ paths:
             example: {SearchValue: EXAMPLE-APPLICATION}
       responses:
         '200':
-          description: The adapter checks the success flag and parses the data field; an error or unreadable response is not confirmed absence of an application.
+          description: >
+            Inspect success before interpreting data. The legacy adapter parses data
+            and returns an empty catalog when no application is parsed, even if
+            success is false. A new adapter must keep upstream failure and malformed
+            payloads separate from a successful lookup with no applications.
           content:
             application/json:
               schema: {$ref: '#/components/schemas/SmamBenefitStatusResponse'}
               examples:
                 found:
                   value: {success: true, data: [{ApplicationID: 1, ApplicationRefNo: EXAMPLE, Implements: [{ImplementName: Example implement, StatusHistory: [{StatusText: Example stage}]}]}]}
-                encoded: {value: {success: true, data: '[]'}}
+                notFound: {value: {success: true, data: '[]'}}
                 failed: {value: {success: false, message: Example failure, data: null}}
         default: {description: Transport/provider failure; error payload not verified.}
 components:
@@ -35,7 +44,13 @@ components:
       type: object
       required: [SearchValue]
       properties:
-        SearchValue: {type: string, minLength: 1, writeOnly: true, description: Private search value selected by the caller. The adapter sends no search_type to SMAM.}
+        SearchValue:
+          type: string
+          minLength: 1
+          writeOnly: true
+          description: >
+            Private search value. The adapter translates the legacy search_params
+            tag to SearchValue and sends no search_type field to SMAM.
     SmamBenefitStatusResponse:
       type: object
       required: [success]
@@ -62,6 +77,7 @@ components:
               ImplementName: {type: string}
               StatusHistory:
                 type: array
+                description: The legacy mapper uses the first entry as current status without sorting by date.
                 items:
                   type: object
                   properties:

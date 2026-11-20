@@ -1,5 +1,6 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: SATHI crop master reads
   version: 0.2.0
   description: Caller-derived wire contract from sathi_seed.py. Relative paths are under the configured master API base. No provider replay; quantity and dealer data are not part of these reads.
@@ -7,6 +8,7 @@ paths:
   /get-crop-group:
     get:
       operationId: listCropGroups
+      x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
       responses:
         '200':
           description: Crop groups. Status other than application code 200 is an upstream error.
@@ -22,6 +24,7 @@ paths:
   /get-crops-list:
     get:
       operationId: listCropsByGroup
+      x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
       security: [{ masterKey: [] }]
       parameters:
         - { in: query, name: group_code, required: true, schema: { $ref: '#/components/schemas/GroupCode' }, description: Caller trims and uppercases the group code. }

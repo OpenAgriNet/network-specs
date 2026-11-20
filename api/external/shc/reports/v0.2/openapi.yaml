@@ -1,5 +1,6 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: SHC reports
   version: 0.2.0
   description: >
@@ -8,6 +9,7 @@ paths:
   /:
     post:
       operationId: getTestForAuthUser
+      x-oan-binding: {descriptorCode: shc-reports, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
         content:

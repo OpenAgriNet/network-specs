@@ -51,5 +51,4 @@ The schema does not govern the calculation method, demand scale, or indicator vo
 
 ## Examples
 
-- [On-demand market intelligence](examples/on-demand-market-intelligence.json)
 - [Direct cotton market intelligence](examples/direct-cotton-market-intelligence.json)

@@ -1,0 +1,6 @@
+# Draft typed-handler payload mapping, NOT a verified native endpoint or complete callback.
+# Validate private input and output against the linked schemas; handler owns OTP/session/error handling.
+request: |
+  ($p := beckn.message.contract.commitments[0].commitmentAttributes; {"challengeReference": $lookup($p, "challengeReference"), "otp": $lookup($p, "otp")})
+response: |
+  {"applications": $lookup(response, "applications")}

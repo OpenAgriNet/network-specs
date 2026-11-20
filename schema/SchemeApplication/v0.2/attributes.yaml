@@ -6,7 +6,7 @@ info:
     and operation links.
 externalDocs:
   description: PM-KISAN application API specification
-  url: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml
+  url: https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml
 components:
   schemas:
     SchemeApplication:
@@ -20,7 +20,7 @@ components:
       - $ref: '#/components/schemas/SchemeApplicationFields'
       unevaluatedProperties: false
     PMKISANApplicationCatalog:
-      $ref: ../../../api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
+      $ref: ../../../api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
       description: Compatibility reference to the external service catalog definition.
     SchemeApplicationFields:
       type: object
@@ -131,10 +131,7 @@ components:
             additionalProperties: false
             required:
             - action
-            - description
-            - schema
             - operationRef
-            - attributesAt
             properties:
               action:
                 type: string

@@ -1,5 +1,6 @@
 openapi: 3.1.1
 info:
+  x-contract-role: provider-native
   title: IMD district Agromet advisory feed
   version: 0.2.0
   description: Native upstream dated feed, not a Beckn discovery or select endpoint. Based on the 2026-09-18 /1 feed and the bh-main ingestion reader scripts/imd_agromet/imd_agromet.py, which defaults to /3. Selector values must not be assumed interchangeable.
@@ -11,6 +12,7 @@ paths:
       - {name: selector, in: path, required: true, schema: {$ref: '#/components/schemas/FeedSelector'}}
     get:
       operationId: readDistrictAgrometFeed
+      x-oan-binding: {descriptorCode: imd-agromet, resourceType: "openagrinet:AgricultureAdvisory", action: select}
       responses:
         '200':
           description: District advisory rows. The feed supplies a date, not an issuance timestamp, expiry, geometry or weather-basis metadata.

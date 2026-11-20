@@ -58,4 +58,3 @@ An integrity digest contains `algorithm` and `digestValue`. Review evidence supp
 - [Published crop guide](examples/published-crop-guide.json)
 - [General multilingual FAQ](examples/general-multilingual-faq.json)
 - [General agriculture guide](examples/general-agriculture-guide.json)
-- [On-demand agriculture knowledge](examples/on-demand-agriculture-knowledge.json)

@@ -1,0 +1,6 @@
+# Draft typed-handler payload mapping, NOT a verified native endpoint or complete callback.
+# Validate private input and output against the linked schemas; handler owns OTP/session/error handling.
+request: |
+  ($p := beckn.message.support.channels[0]; {"verifiedRegistration": $lookup($p, "verifiedRegistration"), "grievanceText": $lookup($p, "grievanceText"), "farmerLanguage": $lookup($p, "farmerLanguage"), "stateId": $lookup($p, "stateId"), "villageId": $lookup($p, "villageId"), "schemeId": $lookup($p, "schemeId"), "divisionId": $lookup($p, "divisionId"), "problemCategoryId": $lookup($p, "problemCategoryId"), "problemSubcategoryId": $lookup($p, "problemSubcategoryId")})
+response: |
+  {"caseReference": $lookup(response, "caseReference")}

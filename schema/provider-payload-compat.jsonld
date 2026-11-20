@@ -1,0 +1,5 @@
+---
+layout: null
+permalink: /schema/examples/provider-payload/context.jsonld
+---
+{% include_relative provider-payload/context.jsonld %}

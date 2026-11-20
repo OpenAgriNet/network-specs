@@ -58,7 +58,59 @@
       "source": "openagrinet:source",
       "priority": "openagrinet:priority",
       "rationale": "openagrinet:rationale",
-      "weatherInformed": "openagrinet:weatherInformed"
+      "weatherInformed": "openagrinet:weatherInformed",
+      "applicability": {
+        "@id": "openagrinet:applicability",
+        "@container": "@set"
+      },
+      "subjectIds": {
+        "@id": "openagrinet:subjectIds",
+        "@container": "@set",
+        "@type": "@id"
+      },
+      "seasons": {
+        "@id": "openagrinet:seasons",
+        "@container": "@set",
+        "@context": {
+          "codeSystem": {
+            "@id": "openagrinet:codeSystem",
+            "@type": "@id"
+          },
+          "code": "openagrinet:agronomicCode",
+          "label": "openagrinet:agronomicLabel"
+        }
+      },
+      "growthStages": {
+        "@id": "openagrinet:growthStages",
+        "@container": "@set",
+        "@context": {
+          "codeSystem": {
+            "@id": "openagrinet:codeSystem",
+            "@type": "@id"
+          },
+          "code": "openagrinet:agronomicCode",
+          "label": "openagrinet:agronomicLabel"
+        }
+      },
+      "relativeTiming": "openagrinet:relativeTiming",
+      "event": "openagrinet:event",
+      "fromDays": "openagrinet:fromDays",
+      "toDays": "openagrinet:toDays",
+      "establishmentMethods": {
+        "@id": "openagrinet:establishmentMethods",
+        "@container": "@set"
+      },
+      "waterRegimes": {
+        "@id": "openagrinet:waterRegimes",
+        "@container": "@set"
+      },
+      "extensions": {
+        "@id": "openagrinet:extensions",
+        "@type": "@json"
+      },
+      "codeSystem": "openagrinet:codeSystem",
+      "agronomicCode": "openagrinet:agronomicCode",
+      "agronomicLabel": "openagrinet:agronomicLabel"
     }
   ]
 }

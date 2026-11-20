@@ -20,16 +20,16 @@
     {
       "action": "init",
       "description": "Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.",
-      "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest",
+      "schema": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest",
       "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post"
     },
     {
       "action": "status",
       "description": "Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.",
-      "schema": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest",
+      "schema": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest",
       "attributesAt": "$.message.contract.commitments[0].commitmentAttributes",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post"
     }
   ]
 }
