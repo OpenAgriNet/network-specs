@@ -1,6 +1,26 @@
-# Draft typed-handler payload mapping, NOT a verified native endpoint or complete callback.
-# Validate private input and output against the linked schemas; handler owns OTP/session/error handling.
-request: |
-  ($p := beckn.message.contract.commitments[0].commitmentAttributes; {"beneficiaryId": $lookup($p, "beneficiaryId")})
-response: |
-  {"tickets": $lookup(response, "tickets")}
+status: source-traced
+deployable: false
+action: status
+native:
+  method: GET
+  path: "/support-tickets"
+  placement: query+body
+  requestExample:
+    beneficiaryId: 101
+  headers:
+    apiKey: "<service key>"
+    Authorization: Bearer <verified beneficiary token>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L225
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/aif.py#L435
+behavior: 'grievance_status: beneficiary_id → beneficiaryId. Query and JSON body are
+  identical. A string instead of an array can mean no tickets; an object with Message
+  signals failure. No filing call.'
+responseExample:
+- BeneficiaryId: 101
+  LoanApplicationNumber: 201
+  Question: Example
+  Status: Open
+  description: Example
+  subQueryType: Example
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

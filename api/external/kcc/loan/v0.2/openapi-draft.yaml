@@ -1,0 +1,233 @@
+openapi: 3.1.1
+info:
+  title: kcc/loan native requests (implementation draft)
+  version: 0.2.0-draft
+  x-contract-role: provider-native
+servers:
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
+x-draft:
+  catalogCandidate:
+    descriptorCode: kcc-loan
+    resourceType: openagrinet:SchemeApplication
+    informationMode: OnDemand
+    publicationStatus: inactive-proposal
+    actions:
+    - action: init
+      operationRef: '#/paths/~1auth~1requestOtp/post'
+      variant: KccOtp
+      mapping: mappings/init.yaml
+    - action: status
+      operationRef: '#/paths/~1bharatVistaar~1krishika~1applicationStatus/post'
+      variant: KccStatus
+      mapping: mappings/status.yaml
+  proposedActions:
+  - init
+  - status
+  needsConfirmation:
+  - Pin deployed revision; validate sanitized success and failure responses and session
+    handling before activation.
+paths:
+  "/auth/token":
+    post:
+      operationId: KccToken
+      description: Form-encoded service login; cache token, never publish this operation.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L131
+      x-mappings:
+      - mappings/internal/token.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KccTokenResponse"
+              examples:
+                KccToken:
+                  value:
+                    status: true
+                    data:
+                      token: "<redacted>"
+                      sessionTTL: 3600
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              "$ref": "#/components/schemas/KccTokenRequest"
+            examples:
+              KccToken:
+                value:
+                  entityType: "<configured>"
+                  userID: "<configured>"
+                  password: "<secret>"
+  "/auth/requestOtp":
+    post:
+      operationId: KccOtp
+      description: 'get_otp: mobile_number → mobileNumber. Encrypt plaintext JSON
+        with AES-256-CBC; send {data: ciphertext} with token header. Retain decrypted
+        requestID. The adapter sends UTF-8 JSON encrypted to hex; it accepts encrypted
+        or already-decoded response data.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L236
+      x-mappings:
+      - mappings/init.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KccOtpResponse"
+              examples:
+                KccOtp:
+                  value:
+                    status: true
+                    data: "<ciphertext>"
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KccOtpRequest"
+            examples:
+              KccOtp:
+                value:
+                  data: "<ciphertext>"
+      x-plaintext-request:
+        type: object
+        properties:
+          mobileNumber:
+            type: string
+          otpFor:
+            type: string
+        required:
+        - mobileNumber
+        - otpFor
+        examples:
+        - mobileNumber: "<mobile>"
+          otpFor: krishika
+  "/bharatVistaar/krishika/applicationStatus":
+    post:
+      operationId: KccStatus
+      description: 'application_status: bind requestID from session, convert OTP to
+        number. Decrypted data can be one application, an array, or {applications:[…]}.
+        select_kcc_application sends application_no to the network, not in this native
+        body. The adapter sends UTF-8 JSON encrypted to hex; it accepts encrypted
+        or already-decoded response data.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L259
+      x-mappings:
+      - mappings/status.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KccStatusResponse"
+              examples:
+                KccStatus:
+                  value:
+                    status: true
+                    data: "<ciphertext>"
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KccStatusRequest"
+            examples:
+              KccStatus:
+                value:
+                  data: "<ciphertext>"
+      x-plaintext-request:
+        type: object
+        properties:
+          requestID:
+            type: string
+          otp:
+            type: integer
+        required:
+        - requestID
+        - otp
+        examples:
+        - requestID: "<from OTP start>"
+          otp: 123456
+components:
+  schemas:
+    KccTokenRequest:
+      type: object
+      properties:
+        entityType:
+          type: string
+        userID:
+          type: string
+        password:
+          type: string
+      required:
+      - entityType
+      - userID
+      - password
+    KccTokenResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+            sessionTTL:
+              type: integer
+    KccOtpRequest:
+      type: object
+      properties:
+        data:
+          type: string
+      required:
+      - data
+    KccOtpResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        data:
+          oneOf:
+          - type: string
+          - type: object
+          - type: array
+    KccStatusRequest:
+      type: object
+      properties:
+        data:
+          type: string
+      required:
+      - data
+    KccStatusResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        data:
+          oneOf:
+          - type: string
+          - type: object
+          - type: array
+  securitySchemes:
+    service:
+      type: apiKey
+      in: header
+      name: token

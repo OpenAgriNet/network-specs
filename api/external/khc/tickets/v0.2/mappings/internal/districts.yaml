@@ -1,0 +1,22 @@
+status: source-traced
+deployable: false
+action: internal
+native:
+  method: GET
+  path: "/v1/state/reference/districts"
+  placement: query
+  requestExample:
+    stateId: 1
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L635
+behavior: Reference data for location, grievance options and filing; use provider
+  IDs from lookup. Legacy name/page filter the lookup; not native HTTP parameters.
+responseExample:
+  status: 200 OK
+  data:
+  - districtid: 1
+    districtname: Example
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

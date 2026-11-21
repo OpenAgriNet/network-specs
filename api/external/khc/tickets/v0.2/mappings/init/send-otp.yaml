@@ -1,0 +1,20 @@
+status: source-traced
+deployable: false
+action: init
+native:
+  method: POST
+  path: "/auth/send-otp"
+  placement: body
+  requestExample:
+    mobile: "<mobile>"
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L344
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L488
+behavior: 'get_otp: farmerMobileNumber → mobile. Enforce resend limits and bind mobile
+  to transaction.'
+responseExample:
+  status: 200 OK
+  data: 
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

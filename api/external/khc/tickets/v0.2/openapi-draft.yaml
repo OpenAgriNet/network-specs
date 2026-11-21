@@ -1,0 +1,710 @@
+openapi: 3.1.1
+info:
+  title: khc/tickets native requests (implementation draft)
+  version: 0.2.0-draft
+  x-contract-role: provider-native
+servers:
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
+x-draft:
+  catalogCandidate:
+    descriptorCode: khc-tickets
+    resourceType: openagrinet:Grievance
+    informationMode: OnDemand
+    publicationStatus: inactive-proposal
+    actions:
+    - action: init
+      operationRef: '#/paths/~1auth~1send-otp/post'
+      variant: KhcStart
+      mapping: mappings/init/send-otp.yaml
+    - action: init
+      operationRef: '#/paths/~1auth~1verify-otp/post'
+      variant: KhcVerify
+      mapping: mappings/init/verify-otp.yaml
+    - action: support
+      operationRef: '#/paths/~1v1~1state~1grievances/post'
+      variant: KhcCreate
+      mapping: mappings/support.yaml
+    - action: status
+      operationRef: '#/paths/~1v1~1state~1grievances~1check-status/post'
+      variant: KhcStatusStart
+      mapping: mappings/status/KHCStartCaseLookup.yaml
+    - action: status
+      operationRef: '#/paths/~1v1~1state~1grievances~1verify-otp/post'
+      variant: KhcStatusRead
+      mapping: mappings/status/KHCReadCase.yaml
+  proposedActions:
+  - init
+  - support
+  - status
+  needsConfirmation:
+  - Pin deployed revision; validate sanitized success and failure responses and session
+    handling before activation.
+paths:
+  "/auth/send-otp":
+    post:
+      operationId: KhcStart
+      description: 'get_otp: farmerMobileNumber → mobile. Enforce resend limits and
+        bind mobile to transaction.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L344
+      x-mappings:
+      - mappings/init/send-otp.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcStartResponse"
+              examples:
+                KhcStart:
+                  value:
+                    status: 200 OK
+                    data: 
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KhcStartRequest"
+            examples:
+              KhcStart:
+                value:
+                  mobile: "<mobile>"
+  "/auth/verify-otp":
+    post:
+      operationId: KhcVerify
+      description: 'verify_otp: farmerMobileNumber → mobile. Keep verification and
+        registration state private.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L384
+      x-mappings:
+      - mappings/init/verify-otp.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcVerifyResponse"
+              examples:
+                KhcVerify:
+                  value:
+                    status: 200 OK
+                    data:
+                      isRegistered: true
+                      mobile: "<mobile>"
+                      token: "<redacted>"
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KhcVerifyRequest"
+            examples:
+              KhcVerify:
+                value:
+                  mobile: "<mobile>"
+                  otp: '000000'
+  "/v1/state/reference/states":
+    get:
+      operationId: KhcRefstates
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/states.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefstatesResponse"
+              examples:
+                KhcRefstates:
+                  value:
+                    status: 200 OK
+                    data:
+                    - stateid: 1
+                      statename: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters: []
+  "/v1/state/reference/districts":
+    get:
+      operationId: KhcRefdistricts
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/districts.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefdistrictsResponse"
+              examples:
+                KhcRefdistricts:
+                  value:
+                    status: 200 OK
+                    data:
+                    - districtid: 1
+                      districtname: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: stateId
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/reference/sub-districts":
+    get:
+      operationId: KhcRefsubdistricts
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/sub-districts.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefsubdistrictsResponse"
+              examples:
+                KhcRefsubdistricts:
+                  value:
+                    status: 200 OK
+                    data:
+                    - subdistrictid: 1
+                      subdistrictname: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: districtId
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/reference/villages":
+    get:
+      operationId: KhcRefvillages
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/villages.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefvillagesResponse"
+              examples:
+                KhcRefvillages:
+                  value:
+                    status: 200 OK
+                    data:
+                    - villageid: 1
+                      villagename: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: subDistrictId
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/reference/schemes":
+    get:
+      operationId: KhcRefschemes
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/schemes.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefschemesResponse"
+              examples:
+                KhcRefschemes:
+                  value:
+                    status: 200 OK
+                    data:
+                    - scheme: 1
+                      schemename: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: stateId
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/reference/categories":
+    get:
+      operationId: KhcRefcategories
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/categories.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefcategoriesResponse"
+              examples:
+                KhcRefcategories:
+                  value:
+                    status: 200 OK
+                    data:
+                    - problemcategory: 1
+                      categoryname: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: scheme
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/reference/sub-categories":
+    get:
+      operationId: KhcRefsubcategories
+      description: Reference data for location, grievance options and filing; use
+        provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
+        parameters.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
+      x-mappings:
+      - mappings/internal/sub-categories.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcRefsubcategoriesResponse"
+              examples:
+                KhcRefsubcategories:
+                  value:
+                    status: 200 OK
+                    data:
+                    - problemsubcategory: 1
+                      subcategoryname: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: problemCategory
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 1
+  "/v1/state/grievances":
+    post:
+      operationId: KhcCreate
+      description: Legacy init/create_grievance → proposed v2 support. Require explicit
+        confirmation, verified registration and resolved IDs. New farmers also send
+        farmerName and gender. Do not equate externalReferenceNo with returned grievanceNo;
+        ambiguous submission must not auto-retry.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L588
+      x-mappings:
+      - mappings/support.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcCreateResponse"
+              examples:
+                KhcCreate:
+                  value:
+                    status: 200 OK
+                    data:
+                      grievanceNo: EXAMPLE
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KhcCreateRequest"
+            examples:
+              KhcCreate:
+                value:
+                  externalReferenceNo: BV-example
+                  farmerMobileNumber: "<mobile>"
+                  farmerText: Example issue
+                  farmerLanguage: en
+                  stateId: 1
+                  villageId: 2
+                  scheme: 3
+                  division: 4
+                  problemCategory: 5
+                  problemSubCategory: 6
+              newFarmer:
+                value:
+                  externalReferenceNo: BV-example
+                  farmerMobileNumber: "<mobile>"
+                  farmerText: Example issue
+                  farmerLanguage: en
+                  stateId: 1
+                  villageId: 2
+                  scheme: 3
+                  division: 4
+                  problemCategory: 5
+                  problemSubCategory: 6
+                  farmerName: Example
+                  gender: O
+  "/v1/state/grievances/check-status":
+    post:
+      operationId: KhcStatusStart
+      description: 'get_status_otp: query only, no HTTP body. Starts a separate challenge
+        for this grievance.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L568
+      x-mappings:
+      - mappings/status/KHCStartCaseLookup.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcStatusStartResponse"
+              examples:
+                KhcStatusStart:
+                  value:
+                    status: 200 OK
+                    message: OTP sent
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      parameters:
+      - name: grievanceNo
+        in: query
+        required: true
+        schema:
+          type: string
+        example: EXAMPLE
+  "/v1/state/grievances/verify-otp":
+    post:
+      operationId: KhcStatusRead
+      description: 'verify_status_otp: check grievanceNo matches request. Preserve
+        address and escalationHistory where returned.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L576
+      x-mappings:
+      - mappings/status/KHCReadCase.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcStatusReadResponse"
+              examples:
+                KhcStatusRead:
+                  value:
+                    status: 200 OK
+                    data:
+                      grievanceNo: EXAMPLE
+                      currentStatus: Open
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - service: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KhcStatusReadRequest"
+            examples:
+              KhcStatusRead:
+                value:
+                  grievanceNo: EXAMPLE
+                  otp: '000000'
+components:
+  schemas:
+    KhcStartRequest:
+      type: object
+      properties:
+        mobile:
+          type: string
+      required:
+      - mobile
+    KhcStartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data: {}
+    KhcVerifyRequest:
+      type: object
+      properties:
+        mobile:
+          type: string
+        otp:
+          type: string
+      required:
+      - mobile
+      - otp
+    KhcVerifyResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            isRegistered:
+              type: boolean
+            mobile:
+              type: string
+            token:
+              type: string
+    KhcRefstatesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              stateid:
+                type: integer
+              statename:
+                type: string
+    KhcRefdistrictsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              districtid:
+                type: integer
+              districtname:
+                type: string
+    KhcRefsubdistrictsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              subdistrictid:
+                type: integer
+              subdistrictname:
+                type: string
+    KhcRefvillagesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              villageid:
+                type: integer
+              villagename:
+                type: string
+    KhcRefschemesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              scheme:
+                type: integer
+              schemename:
+                type: string
+    KhcRefcategoriesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              problemcategory:
+                type: integer
+              categoryname:
+                type: string
+    KhcRefsubcategoriesResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              problemsubcategory:
+                type: integer
+              subcategoryname:
+                type: string
+    KhcCreateRequest:
+      type: object
+      properties:
+        externalReferenceNo:
+          type: string
+        farmerMobileNumber:
+          type: string
+        farmerText:
+          type: string
+        farmerLanguage:
+          type: string
+        stateId:
+          type: integer
+        villageId:
+          type: integer
+        scheme:
+          type: integer
+        division:
+          type: integer
+        problemCategory:
+          type: integer
+        problemSubCategory:
+          type: integer
+        farmerName:
+          type: string
+        gender:
+          enum:
+          - M
+          - F
+          - O
+      required:
+      - externalReferenceNo
+      - farmerMobileNumber
+      - farmerText
+      - farmerLanguage
+      - stateId
+      - villageId
+      - scheme
+      - division
+      - problemCategory
+      - problemSubCategory
+    KhcCreateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            grievanceNo:
+              type: string
+    KhcStatusStartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+    KhcStatusReadRequest:
+      type: object
+      properties:
+        grievanceNo:
+          type: string
+        otp:
+          type: string
+      required:
+      - grievanceNo
+      - otp
+    KhcStatusReadResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            grievanceNo:
+              type: string
+            currentStatus:
+              type: string
+  securitySchemes:
+    service:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: ApiKey followed by a space and the configured key.

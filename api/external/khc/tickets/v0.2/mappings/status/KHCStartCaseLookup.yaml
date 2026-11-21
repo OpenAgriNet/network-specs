@@ -1,6 +1,20 @@
-# Draft typed-handler payload mapping, NOT a verified native endpoint or complete callback.
-# Validate private input and output against the linked schemas; handler owns OTP/session/error handling.
-request: |
-  ($p := beckn.message.contract.commitments[0].commitmentAttributes; {"caseReference": $lookup($p, "caseReference")})
-response: |
-  {"challengeReference": $lookup(response, "challengeReference")}
+status: source-traced
+deployable: false
+action: status
+native:
+  method: POST
+  path: "/v1/state/grievances/check-status"
+  placement: query
+  requestExample:
+    grievanceNo: EXAMPLE
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L568
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L694
+behavior: 'get_status_otp: query only, no HTTP body. Starts a separate challenge for
+  this grievance.'
+responseExample:
+  status: 200 OK
+  message: OTP sent
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

@@ -1,6 +1,20 @@
-# Draft typed-handler payload mapping, NOT a verified native endpoint or complete callback.
-# Validate private input and output against the linked schemas; handler owns OTP/session/error handling.
-request: |
-  ($p := beckn.message.contract.commitments[0].commitmentAttributes; {"beneficiaryId": $lookup($p, "beneficiaryId")})
-response: |
-  {"challengeReference": $lookup(response, "challengeReference")}
+status: source-traced
+deployable: false
+action: init
+native:
+  method: POST
+  path: "/validate_beneficiaries/"
+  placement: body
+  requestExample:
+    beneficiaryId: 101
+  headers:
+    apiKey: "<service key>"
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L137
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/aif.py#L321
+behavior: 'get_otp: beneficiary_id → beneficiaryId (number). No OTP on start.'
+responseExample:
+  Success: true
+  MobileNumber: masked
+  Message: OTP sent
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.
