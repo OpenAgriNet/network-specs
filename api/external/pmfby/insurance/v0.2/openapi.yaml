@@ -3,19 +3,62 @@ info:
   x-contract-role: provider-native
   title: PMFBY policy and claim lookup
   version: 0.2.0
-  description: 'Native policy and claim reads, separate from grievance ticket status. The calling tool calls legacy init to
-    start OTP verification, then calls legacy status. The provider status handler verifies the OTP and resolves the farmer
-    ID before choosing one of these native reads. That sequence describes the chat status path, not a guarantee about alternate
-    legacy paths. This slice does not define the login exchange, an official PMFBY specification, or a Beckn invocation binding.
-    Keep the farmer ID, credentials, and beneficiary records out of public catalogs. All examples are synthetic.
-
-    '
+  description: >
+    Looks up insurance policies and claims for an authenticated farmer. Farmer identifiers, credentials and beneficiary records are private.
 security:
 - providerToken: []
+servers:
+  - url: https://pmfby.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
+  /api/v1/services/nic/verifyMobile:
+    post:
+      operationId: verifyPmfbyInsuranceOtp
+      summary: Verify a farmer OTP
+      security: [{providerToken: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/status/verify-otp.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: status}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VerifyOtpRequest'}
+            example: {"mobile": "0000000000", "otp": 123456}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: {verified: true}}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
+  /api/v1/services/nic/getOtp:
+    post:
+      operationId: sendPmfbyInsuranceOtp
+      summary: Send a farmer OTP
+      security: [{providerToken: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/init/send-otp.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: init}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SendOtpRequest'}
+            example: {"mobile": "0000000000", "otpType": "SMS"}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: 'OTP sent'}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
   /api/v1/policy/policy/farmerpolicylist:
     get:
       operationId: listPmfbyInsurancePolicies
+      x-oan-mapping: {href: ./mappings/status/policies.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: pmfby-insurance
         resourceType: openagrinet:AgricultureResource
@@ -64,6 +107,7 @@ paths:
   /api/v1/claims/claims/claimSearchReport:
     get:
       operationId: listPmfbyInsuranceClaims
+      x-oan-mapping: {href: ./mappings/status/claims.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: pmfby-insurance
         resourceType: openagrinet:AgricultureResource
@@ -112,6 +156,7 @@ paths:
           description: No verified error schema; an upstream failure does not establish whether a claim exists.
 components:
   securitySchemes:
+    otpPassword: {type: apiKey, in: header, name: password}
     providerToken:
       type: apiKey
       in: header
@@ -127,6 +172,24 @@ components:
       description: A provider ID previously resolved for the authorized farmer.
       example: EXAMPLE-FARMER
   schemas:
+    OtpReply:
+      type: object
+      properties:
+        status: {type: boolean}
+        error: {type: string}
+        data: {description: Send reads a message string or object; verification reads boolean true or an object with verified true.}
+    VerifyOtpRequest:
+      type: object
+      required: [mobile, otp]
+      properties:
+        mobile: {type: string}
+        otp: {type: integer}
+    SendOtpRequest:
+      type: object
+      required: [mobile, otpType]
+      properties:
+        mobile: {type: string}
+        otpType: {const: SMS}
     Identifier:
       type:
       - string

@@ -3,7 +3,11 @@ info:
   x-contract-role: provider-native
   title: PoCRA facility search upstream
   version: 1.1.0
-  description: Caller-observed Beckn 1.1 aggregator contract. This is not a REST endpoint at an individual facility registry.
+  description: >
+    Searches the facility aggregator using its catalog search payload.
+servers:
+  - url: https://pocra.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /search:
     post:

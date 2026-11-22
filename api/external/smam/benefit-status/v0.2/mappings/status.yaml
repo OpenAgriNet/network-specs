@@ -1,13 +1,5 @@
-# Private payload legs only, not a full on_status envelope.
-# Adapter operation: SMAMReadBenefit. Native operation: readSmamBenefitStatus.
-# The native body carries only SearchValue. If a legacy bridge also sends
-# search_params metadata, translate mobile to phone_no before calling it.
-# The adapter authenticates, checks HTTP status, validates both schemas and
-# normalizes data to an array before the response leg. Decode string-encoded
-# arrays as JSON, wrap a direct object, and reject malformed data. Never eval it.
-# Check success before treating an empty data value as no records.
-# This draft projection accepts a single implement with one status per record.
-# It intentionally rejects more complex histories rather than hiding implements.
+# Private payloads only. Authenticate and check provider success before normalizing data to an array.
+# Reject malformed data; never evaluate strings as code.
 required:
   - check: |
       (

@@ -3,13 +3,16 @@ info:
   x-contract-role: provider-native
   title: GFR crop-registry
   version: 0.2.0
-  description: 'GraphQL POST to the configured Soil Health endpoint (path / is relative to that endpoint). Source:
-    dev:src/services/gfr/gfr.service.ts. Describes this adapter''s query, not a provider-wide contract; no live
-    replay or error guarantees.'
+  description: >
+    Looks up crop registry records by state through the Soil Health GraphQL endpoint.
+servers:
+  - url: https://gfr.example.invalid
+    description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a path.
 paths:
   /:
     post:
       operationId: getCropRegistries
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding: {descriptorCode: gfr-registry, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true

@@ -3,10 +3,11 @@ info:
   x-contract-role: provider-native
   title: Agmarknet selected-market prices
   version: 0.2.0
-  description: 'Native price lookup for a selected market and commodity using codes and a date range. This is an observed
-    integration, not a Beckn endpoint or an official Agmarknet specification.
-
-    '
+  description: >
+    Returns prices for a selected market, commodity and date range.
+servers:
+  - url: https://agmarknet.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /v1/fetch-agmarknet-vistaar:
     get:

@@ -4,6 +4,8 @@ title: External APIs
 ---
 # External APIs
 
+[Full provider and capability inventory](README.md)
+
 Read one OpenAPI document per provider capability. The path, method and payload describe the upstream interface used by a caller or adapter. These are source-derived contracts, not claims of live availability. Synthetic examples use the upstream field names. Where present, `x-oan-binding` describes how the operation fits a network flow; it is not part of the HTTP request.
 
 For example, PMFBY grievance status calls `POST /krphapi/FGMS/GetGrievenceTicketsStatus`. The network action is `status`; it does not rename the provider path to `/pmfby/status`. An encrypted operation distinguishes the on-wire envelope from the plaintext fields inside it.
@@ -27,6 +29,3 @@ For example, PMFBY grievance status calls `POST /krphapi/FGMS/GetGrievenceTicket
 | NPSS | Crop image analysis (multipart) | [Image request and observed response](npss/diagnosis/v0.2/openapi.yaml) |
 | PoCRA | Facility aggregator (legacy Beckn) | [Facility search](pocra/facilities/v0.2/openapi.yaml) |
 | Knowledge Provider | Ranked passages | [Search](knowledge/search/v0.2/openapi.yaml) |
-| Docs Pipeline | Internal retrieval, not a public discovery action | [Passage search](docs-pipeline/passage-search/v0.2/openapi.yaml) |
-
-Not every catalog action has a verified native endpoint. [Adapter proposals](../adapter/) stay separate until the native request and result are known.

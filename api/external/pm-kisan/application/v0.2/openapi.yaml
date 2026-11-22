@@ -3,11 +3,8 @@ info:
   title: PM-KISAN application status provider API
   version: 0.2.0
   x-contract-role: provider-native
-  description: Native PM-KISAN OTP, application status, and payment-blocker calls.
-    The provider backend client and OpenAgriNet network-adapter 29bc016f establish
-    the HTTP requests and the response fields the adapter reads. The service uses
-    the OTP-service encrypted envelope. Live behavior was not verified. Plaintext
-    examples are synthetic and are not HTTP bodies.
+  description: >
+    Requests and verifies an OTP, then retrieves beneficiary and payment-blocker details. The HTTP body is encrypted; plaintext examples describe the content before encryption.
 servers:
 - url: https://pm-kisan.example.invalid/services/chatbotservice.asmx
   description: Placeholder for the PM-KISAN OTP and application-status service base

@@ -22,7 +22,7 @@ For example, `scheme.code: "LOCAL-SUPPORT"` and a category with `code: "PAYMENT-
 
 ## Examples
 
-[Catalog attributes](examples/) · [Complete Resource linking the API specification](examples/network/grievance-api-resource.json)
+[Catalog attributes](examples/) · [Complete Resource linking the API specification](../../../api/external/pmfby/catalog.json)
 
 The complete Resource keeps its identity and API-document link in the Beckn wrapper. Its resourceAttributes contain the catalog metadata only.
 

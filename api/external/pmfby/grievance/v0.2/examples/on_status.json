@@ -1,0 +1,66 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "version": "2.0.0",
+    "action": "on_status",
+    "transactionId": "00000000-0000-4000-8000-000000000001",
+    "messageId": "00000000-0000-4000-8000-000000000002",
+    "timestamp": "2026-10-12T12:00:00Z",
+    "bapId": "consumer.example.invalid",
+    "bapUri": "https://consumer.example.invalid/beckn",
+    "bppId": "pmfby.example.invalid",
+    "bppUri": "https://pmfby.example.invalid/beckn",
+    "ttl": "PT30S"
+  },
+  "message": {
+    "contract": {
+      "id": "00000000-0000-4000-8000-000000000003",
+      "commitments": [
+        {
+          "id": "example-commitment",
+          "status": {
+            "descriptor": {
+              "code": "ACTIVE"
+            }
+          },
+          "resources": [
+            {
+              "id": "res-pmfby-grievances",
+              "quantity": {
+                "value": 1
+              }
+            }
+          ],
+          "offer": {
+            "id": "example-offer",
+            "resourceIds": [
+              "res-pmfby-grievances"
+            ]
+          },
+          "commitmentAttributes": {
+            "@context": {
+              "@version": 1.1,
+              "example": "https://openagrinet.github.io/network-specs/schema/examples/provider-payload/#",
+              "ProviderOperationPayload": "example:ProviderOperationPayload",
+              "operationRef": {"@id": "example:operationRef", "@type": "@id"},
+              "payload": {"@id": "example:payload", "@type": "@json"}
+            },
+            "@type": "ProviderOperationPayload",
+            "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
+            "payload": {
+              "responseCode": "1",
+              "responseDynamic": [
+                {
+                  "GrievenceSupportTicketNo": "10000001",
+                  "ApplicationNo": "DEMO-APP-01",
+                  "TicketStatus": "Open",
+                  "InsertDateTime": "2026-10-12T11:00:00Z"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

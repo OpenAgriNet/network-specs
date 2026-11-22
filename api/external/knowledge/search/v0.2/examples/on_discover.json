@@ -1,0 +1,106 @@
+{
+  "context": {
+    "action": "on_discover",
+    "version": "2.0.0",
+    "domain": "agriculture",
+    "transactionId": "bade0000-0000-4000-8000-000000000015",
+    "messageId": "fade0000-0000-4000-8000-000000000016",
+    "bapId": "consumer.example.invalid",
+    "bapUri": "https://consumer.example.invalid/beckn",
+    "bppId": "knowledge.example.invalid",
+    "bppUri": "https://knowledge.example.invalid/beckn",
+    "timestamp": "2026-11-19T01:00:01Z"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-knowledge",
+        "bppId": "knowledge.example.invalid",
+        "bppUri": "https://knowledge.example.invalid/beckn",
+        "descriptor": {
+          "name": "KNOWLEDGE example catalog"
+        },
+        "provider": {
+          "id": "prov-knowledge",
+          "descriptor": {
+            "name": "KNOWLEDGE example provider"
+          }
+        },
+        "resources": [
+          {
+            "id": "cat-knowledge:guide-2",
+            "descriptor": {
+              "name": "Seed storage guide"
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+              "@type": "openagrinet:KnowledgeResource",
+              "informationMode": "Direct",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "topics": [
+                "Seed storage"
+              ],
+              "languages": [
+                "en"
+              ],
+              "knowledgeType": "Reference",
+              "version": "1.0.0",
+              "lifecycleStatus": "Published",
+              "provenance": {
+                "source": {
+                  "sourceId": "seed-guide"
+                },
+                "publishedAt": "2026-08-01T09:00:00Z"
+              },
+              "content": [
+                {
+                  "inlineContent": "Label the container with the variety and harvest date.",
+                  "mediaType": "text/plain",
+                  "language": "en"
+                }
+              ]
+            }
+          },
+          {
+            "id": "cat-knowledge:guide-1",
+            "descriptor": {
+              "name": "Seed storage guide"
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+              "@type": "openagrinet:KnowledgeResource",
+              "informationMode": "Direct",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "topics": [
+                "Seed storage"
+              ],
+              "languages": [
+                "en"
+              ],
+              "knowledgeType": "Reference",
+              "version": "1.0.0",
+              "lifecycleStatus": "Published",
+              "provenance": {
+                "source": {
+                  "sourceId": "seed-guide"
+                },
+                "publishedAt": "2026-08-01T09:00:00Z"
+              },
+              "content": [
+                {
+                  "inlineContent": "Check stored seed periodically for moisture.",
+                  "mediaType": "text/plain",
+                  "language": "en"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

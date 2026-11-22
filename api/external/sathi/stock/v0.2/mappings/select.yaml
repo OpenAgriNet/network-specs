@@ -1,0 +1,14 @@
+status: draft-native
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post
+request:
+  in: body
+  jsonata: '{"cropCode": payload.cropCode, "seedClass": payload.seedClass, "stateCode": payload.stateCode, "districtCode":
+    payload.districtCode, "apiKey": adapterCredential}'
+response:
+  jsonata: response
+  guard: Inject the provider key privately. Check statusCode before accepting stock rows.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.

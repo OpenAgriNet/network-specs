@@ -1,0 +1,11 @@
+{
+  "provider": "khc",
+  "status": "placeholder",
+  "capabilities": [
+    {
+      "capability": "tickets",
+      "schemaPack": "Grievance",
+      "draft": "tickets/v0.2/openapi-draft.yaml"
+    }
+  ]
+}

@@ -3,11 +3,8 @@ info:
   title: PM-KISAN grievance provider API
   version: 0.2.0
   x-contract-role: provider-native
-  description: Native PM-KISAN registration-number grievance calls and their separate
-    OTP service calls. The routes and fields come from OpenAgriNet network-adapter
-    29bc016f and provider backend origin/dev e42a69a. The grievance
-    service and OTP service use different encrypted envelopes. Live behavior was not
-    verified. Plaintext examples are synthetic and are not HTTP bodies.
+  description: >
+    Files and retrieves grievances by registration number. OTP operations and grievance operations use different services and encryption envelopes.
 servers:
 - url: https://pm-kisan-grievance.example.invalid
   description: Placeholder for the PM-KISAN grievance service base URL, including

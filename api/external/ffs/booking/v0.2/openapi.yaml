@@ -3,19 +3,20 @@ info:
   x-contract-role: provider-native
   title: FFS fertilizer allowance and booking
   version: 0.2.0
-  description: 'Four post-login operations for fertilizer allowance, product and retailer selection, and booking. Paths are
-    relative to the FFS API origin. Authentication and plot selection precede these calls. Inputs and results are private.
-    This is an observed integration, not an official provider specification or a Beckn action binding.
-
-    '
+  description: >
+    Reads fertilizer entitlement, available products and retailers, and submits bookings. Authenticate the farmer and select the plot before calling.
 security:
 - farmerSession: []
+servers:
+  - url: https://ffs.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /ufa-fertilizer-service/ufa-fertilizer/v1/api/fertilizerRecommendation/getRecommendationsByGFRV4:
     parameters:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsEntitlement
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: ffs-booking
         resourceType: openagrinet:AgricultureResource
@@ -61,6 +62,7 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsProducts
+      x-oan-mapping: {href: ./mappings/init/products.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: ffs-booking
         resourceType: openagrinet:AgricultureResource
@@ -98,6 +100,7 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: getFfsRetailers
+      x-oan-mapping: {href: ./mappings/init/retailers.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: ffs-booking
         resourceType: openagrinet:AgricultureResource
@@ -146,6 +149,7 @@ paths:
     - $ref: '#/components/parameters/Session'
     post:
       operationId: createFfsBooking
+      x-oan-mapping: {href: ./mappings/confirm.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: ffs-booking
         resourceType: openagrinet:AgricultureResource

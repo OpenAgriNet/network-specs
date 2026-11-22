@@ -3,7 +3,9 @@
   "status_legend": {
     "existing": "From an adapter configuration; not a deployment assertion.",
     "draft-handler": "Projects payloads for a proposed handler. Native request and response translation is still needed.",
-    "draft-native": "Proposed native payload translation; not a verified integration."
+    "draft-native": "Proposed native payload translation; not a verified integration.",
+    "incomplete": "Partial mapping; not deployable.",
+    "source-traced": "Request traced to provider client source. Not deployed or replayed."
   },
   "mappings": [
     {
@@ -15,18 +17,20 @@
       "descriptor_codes": [
         "agmarknet-market-prices"
       ],
-      "fixture": "schema/MandiPrice/v0.2/examples/agmarknet/catalog.json",
-      "status": "existing"
+      "status": "existing",
+      "fixture": "api/external/agmarknet/catalog.json"
     },
     {
-      "provider": "knowledge",
-      "capability": "knowledge-advisory",
+      "provider": "agmarknet",
+      "capability": "nearby-prices",
       "action": "select",
-      "path": "knowledge/search/v0.2/mappings/select.yaml",
-      "selector_type": "openagrinet:KnowledgeAdvisory",
-      "descriptor_codes": [],
-      "match_note": "No catalog match asserted. The mapper emits openagrinet:KnowledgeAdvisory; the knowledge-answers fixture advertises openagrinet:AgricultureAdvisory.",
-      "status": "existing"
+      "path": "agmarknet/nearby-prices/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:MandiPrice",
+      "descriptor_codes": [
+        "agmarknet-nearby-prices"
+      ],
+      "status": "incomplete",
+      "fixture": "api/external/agmarknet/catalog.json"
     },
     {
       "provider": "mausamgram",
@@ -37,8 +41,8 @@
       "descriptor_codes": [
         "imd-mausamgram"
       ],
-      "fixture": "schema/WeatherObservation/v0.2/examples/imd/catalog.json",
-      "status": "existing"
+      "status": "existing",
+      "fixture": "api/external/imd/catalog.json"
     },
     {
       "provider": "pocra",
@@ -49,8 +53,8 @@
       "descriptor_codes": [
         "pocra-facilities"
       ],
-      "fixture": "schema/AgricultureFacility/v0.2/examples/pocra/catalog.json",
-      "status": "existing"
+      "status": "existing",
+      "fixture": "api/external/pocra/catalog.json"
     },
     {
       "provider": "pmfby",
@@ -61,9 +65,8 @@
       "descriptor_codes": [
         "pmfby-grievances"
       ],
-      "fixture": "schema/AgricultureResource/v0.2/examples/pmfby/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post"
+      "fixture": "api/external/pmfby/catalog.json"
     },
     {
       "provider": "pmfby",
@@ -74,9 +77,8 @@
       "descriptor_codes": [
         "pmfby-grievances"
       ],
-      "fixture": "schema/AgricultureResource/v0.2/examples/pmfby/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post"
+      "fixture": "api/external/pmfby/catalog.json"
     },
     {
       "provider": "pm-kisan",
@@ -87,9 +89,8 @@
       "descriptor_codes": [
         "pm-kisan-grievances"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/pm-kisan/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1init/post"
+      "fixture": "api/external/pm-kisan/catalog.json"
     },
     {
       "provider": "pm-kisan",
@@ -100,9 +101,8 @@
       "descriptor_codes": [
         "pm-kisan-grievances"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/pm-kisan/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1status/post"
+      "fixture": "api/external/pm-kisan/catalog.json"
     },
     {
       "provider": "pm-kisan",
@@ -113,9 +113,8 @@
       "descriptor_codes": [
         "pm-kisan-grievances"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/pm-kisan/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1support/post"
+      "fixture": "api/external/pm-kisan/catalog.json"
     },
     {
       "provider": "pm-kisan",
@@ -126,9 +125,8 @@
       "descriptor_codes": [
         "pm-kisan-benefits"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/pm-kisan/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post"
+      "fixture": "api/external/pm-kisan/catalog.json"
     },
     {
       "provider": "pm-kisan",
@@ -139,9 +137,8 @@
       "descriptor_codes": [
         "pm-kisan-benefits"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/pm-kisan/catalog.json",
       "status": "existing",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post"
+      "fixture": "api/external/pm-kisan/catalog.json"
     },
     {
       "provider": "aif",
@@ -152,10 +149,8 @@
       "descriptor_codes": [
         "aif-loan"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/aif/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/aif/v0.2/openapi.yaml#/paths/~1example~1startChallenge/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "aif",
@@ -166,10 +161,8 @@
       "descriptor_codes": [
         "aif-loan"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/aif/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/aif/v0.2/openapi.yaml#/paths/~1example~1verifyChallenge/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "aif",
@@ -180,10 +173,8 @@
       "descriptor_codes": [
         "aif-loan"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/aif/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/aif/v0.2/openapi.yaml#/paths/~1example~1readLoan/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "aif",
@@ -194,10 +185,8 @@
       "descriptor_codes": [
         "aif-tickets"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/aif/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/aif/v0.2/openapi.yaml#/paths/~1example~1readTickets/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "khc",
@@ -208,10 +197,8 @@
       "descriptor_codes": [
         "khc-tickets"
       ],
-      "fixture": "schema/Grievance/v0.2/examples/khc/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/khc/v0.2/openapi.yaml#/paths/~1example~1fileCase/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "khc",
@@ -222,10 +209,8 @@
       "descriptor_codes": [
         "khc-tickets"
       ],
-      "fixture": "schema/Grievance/v0.2/examples/khc/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/khc/v0.2/openapi.yaml#/paths/~1example~1startCaseLookup/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "khc",
@@ -236,10 +221,8 @@
       "descriptor_codes": [
         "khc-tickets"
       ],
-      "fixture": "schema/Grievance/v0.2/examples/khc/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/khc/v0.2/openapi.yaml#/paths/~1example~1readCase/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "kcc",
@@ -250,10 +233,8 @@
       "descriptor_codes": [
         "kcc-loan"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/kcc/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/kcc/v0.2/openapi.yaml#/paths/~1example~1startChallenge/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "kcc",
@@ -264,10 +245,8 @@
       "descriptor_codes": [
         "kcc-loan"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/kcc/catalog.json",
-      "status": "draft-handler",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/kcc/v0.2/openapi.yaml#/paths/~1example~1readApplications/post",
-      "binding_note": "Handler draft only; no native provider operation is documented."
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "smam",
@@ -278,158 +257,381 @@
       "descriptor_codes": [
         "smam-benefits"
       ],
-      "fixture": "schema/SchemeApplication/v0.2/examples/smam/catalog.json",
       "status": "draft-native",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/smam/v0.2/openapi.yaml#/paths/~1example~1readBenefit/post"
-    }
-  ],
-  "pending": [
+      "fixture": "api/external/smam/catalog.json"
+    },
     {
-      "descriptor_code": "agmarknet-nearby-prices",
+      "provider": "imd",
+      "capability": "agromet",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/agmarknet/nearby-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar-location/get"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get",
+      "path": "imd/agromet/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "imd-agromet"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/imd/catalog.json"
     },
     {
-      "descriptor_code": "agristack-consent",
-      "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1agristack-consent~1requestConsent/post"
-    },
-    {
-      "descriptor_code": "agristack-consent",
-      "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1agristack-consent~1readConsentedRecords/post"
-    },
-    {
-      "descriptor_code": "amul-schemes",
+      "provider": "ffs",
+      "capability": "booking",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1amul-schemes~1retrieveAmulSchemes/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post",
+      "path": "ffs/booking/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "ffs-booking"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/ffs/catalog.json"
     },
     {
-      "descriptor_code": "ffs-booking",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post"
-    },
-    {
-      "descriptor_code": "ffs-booking",
-      "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1ffs-booking~1prepareBooking/post"
-    },
-    {
-      "descriptor_code": "ffs-booking",
+      "provider": "ffs",
+      "capability": "booking",
       "action": "confirm",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post",
+      "path": "ffs/booking/v0.2/mappings/confirm.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "ffs-booking"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/ffs/catalog.json"
     },
     {
-      "descriptor_code": "gfr-advice",
+      "provider": "gfr",
+      "capability": "crop-registry",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1gfr-advice~1retrieveGfrAdvice/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post",
+      "path": "gfr/crop-registry/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "gfr-registry"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/gfr/catalog.json"
     },
     {
-      "descriptor_code": "gfr-registry",
+      "provider": "pmfby",
+      "capability": "insurance",
+      "action": "status",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get",
+      "path": "pmfby/insurance/v0.2/mappings/status/policies.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "pmfby-insurance"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/pmfby/catalog.json"
+    },
+    {
+      "provider": "pmfby",
+      "capability": "insurance",
+      "action": "status",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get",
+      "path": "pmfby/insurance/v0.2/mappings/status/claims.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "pmfby-insurance"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/pmfby/catalog.json"
+    },
+    {
+      "provider": "sathi",
+      "capability": "stock",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post",
+      "path": "sathi/stock/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "sathi-stock"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/sathi/catalog.json"
     },
     {
-      "descriptor_code": "icar-field-advice",
+      "provider": "shc",
+      "capability": "reports",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1icar-field-advice~1retrieveIcarFieldAdvice/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/shc/reports/v0.2/openapi.yaml#/paths/~1/post",
+      "path": "shc/reports/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "shc-reports"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/shc/catalog.json"
     },
     {
-      "descriptor_code": "icar-materials",
+      "provider": "ffs",
+      "capability": "booking",
+      "action": "status",
+      "path": "ffs/booking/v0.2/mappings/status.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "ffs-booking"
+      ],
+      "status": "incomplete",
+      "advertised": false
+    },
+    {
+      "provider": "npss",
+      "capability": "diagnosis",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1icar-materials~1retrieveIcarMaterials/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post",
+      "path": "npss/diagnosis/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "npss-diagnosis"
+      ],
+      "status": "incomplete",
+      "fixture": "api/external/npss/catalog.json"
     },
     {
-      "descriptor_code": "imd-agromet",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get"
+      "provider": "knowledge",
+      "capability": "search",
+      "action": "discover",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post",
+      "path": "knowledge/search/v0.2/mappings/discover.yaml",
+      "selector_type": "openagrinet:KnowledgeResource",
+      "descriptor_codes": [
+        "knowledge-search"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/knowledge/catalog.json"
     },
     {
-      "descriptor_code": "imd-district-forecast",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1imd-district-forecast~1retrieveImdDistrictForecast/post"
+      "provider": "kcc",
+      "capability": "loan",
+      "path": "kcc/loan/v0.2/mappings/internal/token.yaml",
+      "selector_type": "openagrinet:SchemeApplication",
+      "descriptor_codes": [
+        "kcc-loan"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
-      "descriptor_code": "knowledge-answers",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1knowledge-answers~1retrieveKnowledgeAnswers/post"
-    },
-    {
-      "descriptor_code": "knowledge-documents",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1knowledge-documents~1retrieveKnowledgeDocuments/post"
-    },
-    {
-      "descriptor_code": "knowledge-schemes",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1knowledge-schemes~1retrieveKnowledgeSchemes/post"
-    },
-    {
-      "descriptor_code": "mahavistaar-schemes",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1mahavistaar-schemes~1retrieveMahavistaarSchemes/post"
-    },
-    {
-      "descriptor_code": "market-insights-outlook",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1market-insights-outlook~1retrieveMarketInsightsOutlook/post"
-    },
-    {
-      "descriptor_code": "npss-diagnosis",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1npss-diagnosis~1analyzeCropImage/post"
-    },
-    {
-      "descriptor_code": "pmfby-insurance",
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/init/send-otp.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1pmfby-insurance~1startInsuranceChallenge/post"
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
-      "descriptor_code": "pmfby-insurance",
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/init/verify-otp.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "init",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/states.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/districts.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/sub-districts.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/villages.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/schemes.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/categories.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "path": "khc/tickets/v0.2/mappings/internal/sub-categories.yaml",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-tickets"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/internal/generateAccessToken.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/internal/getTestForAuthUser.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "select",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "ffs",
+      "capability": "booking",
+      "action": "init",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post",
+      "path": "ffs/booking/v0.2/mappings/init/products.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "ffs-booking"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/ffs/catalog.json"
+    },
+    {
+      "provider": "ffs",
+      "capability": "booking",
+      "action": "init",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post",
+      "path": "ffs/booking/v0.2/mappings/init/retailers.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "ffs-booking"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/ffs/catalog.json"
+    },
+    {
+      "provider": "pmfby",
+      "capability": "insurance",
+      "action": "init",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post",
+      "path": "pmfby/insurance/v0.2/mappings/init/send-otp.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "pmfby-insurance"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/pmfby/catalog.json"
+    },
+    {
+      "provider": "pmfby",
+      "capability": "insurance",
       "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get"
-    },
-    {
-      "descriptor_code": "pmfby-insurance",
-      "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get"
-    },
-    {
-      "descriptor_code": "sathi-stock",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post"
-    },
-    {
-      "descriptor_code": "shc-reports",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/shc/reports/v0.2/openapi.yaml#/paths/~1/post"
-    },
-    {
-      "descriptor_code": "video-library",
-      "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/adapter/provider-actions/v0.2/openapi.yaml#/paths/~1video-library~1retrieveVideoLibrary/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post",
+      "path": "pmfby/insurance/v0.2/mappings/status/verify-otp.yaml",
+      "selector_type": "openagrinet:AgricultureResource",
+      "descriptor_codes": [
+        "pmfby-insurance"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/pmfby/catalog.json"
     }
   ],
+  "pending": [],
   "integrationNotes": {
-    "agristack-consent": "Only a commented registration marker was found. No provider consent exchange or authorized data read was established.",
-    "aif-loan": "The scheme_info tool recognizes AIF as a scheme name. It does not establish the loan OTP or status HTTP contract.",
-    "aif-tickets": "The AIF scheme name is known, but no native ticket lookup was traced.",
-    "kcc-loan": "The scheme_info tool recognizes KCC; a scheme-name lookup does not establish application or OTP endpoints.",
-    "khc-tickets": "The KHC ticket flow is proposed. No native service endpoint or ticket response was established on the reviewed refs.",
-    "amul-schemes": "The union_schemes tool uses network /search or a union-scoped Redis cache. Neither is a separate native scheme HTTP interface.",
-    "ffs-booking": "The existing caller-derived contract lists four booking-related calls. The owning FFS client was not found in the reviewed tool refs. The proposed init/confirm sequence is not a verified runtime binding.",
-    "gfr-advice": "gfr_get_recommendations sends a legacy /search with crop and soil-context inputs. The service composes a recommendation; crop registry is not its result contract.",
-    "icar-materials": "The icar-schemes catalog handler queries internal content storage. No separate ICAR HTTP operation was identified.",
-    "icar-field-advice": "A material lookup does not establish an actionable ICAR field-advice endpoint or its request schema.",
-    "imd-district-forecast": "The provider resolves coordinates to a station and requests a configured URL with id. The path is unverified. This is not the Agromet bulletin feed.",
-    "knowledge-answers": "The legacy handler searches Marqo. The replacement Knowledge Provider /search returns passages, not necessarily actionable AgricultureAdvisory records. The v0.1 result mapper is not a v0.2 binding.",
-    "knowledge-documents": "The tool uses a scheme-filtered BAP /search. Internal Docs Pipeline /marqo/search returns passages; no whole-document or scheme-filter parity is established.",
-    "knowledge-schemes": "Scheme aliases and catalog search are evidenced, not a separate native scheme operation.",
-    "mahavistaar-schemes": "maha_vistaar sends BAP /search with scheme code in item.descriptor.code. A similarly named provider handler reads descriptor.name, so it is not a verified match.",
-    "market-insights-outlook": "The mandi tool retrieves dated prices. Its response is not a market outlook or forecast.",
-    "video-library": "The tool embeds a query and searches an internal video collection. No native video-provider HTTP API was established.",
-    "npss-diagnosis": "The tool exchanges a token and uploads image bytes as multipart. A URL or image reference in discovery does not implement that transfer.",
-    "pmfby-insurance": "A verified session and authorized farmer ID are prerequisites for the policy and claim reads. The two status operations have different parameters.",
-    "agmarknet-nearby-prices": "The original lookup sends user coordinates and a resolved commodity ID, not a selected market ID. The offline query/response transformations do not implement the private name resolver or a complete select binding."
+    "agristack-consent": "Consent and authorized read endpoints are unverified.",
+    "aif-loan": "Only scheme lookup is known; loan OTP and status are unverified.",
+    "aif-tickets": "No native ticket lookup is confirmed.",
+    "kcc-loan": "Only scheme lookup is known; loan and OTP endpoints are unverified.",
+    "khc-tickets": "Ticket submission and lookup are unverified.",
+    "amul-schemes": "Uses network search or cached results; no native scheme endpoint is confirmed.",
+    "ffs-booking": "Four caller-side operations; the provider client and booking sequence are unverified.",
+    "gfr-advice": "Recommendations use legacy search, not the crop registry API.",
+    "icar-materials": "Reads internal storage; no native HTTP endpoint is confirmed.",
+    "icar-field-advice": "Material lookup does not establish a field-advice endpoint.",
+    "imd-district-forecast": "Station lookup is known; the forecast route is unverified.",
+    "knowledge-answers": "Passage search is documented; advisory output is unverified.",
+    "knowledge-documents": "Passage search does not establish whole-document or scheme-filter support.",
+    "knowledge-schemes": "Scheme aliases use catalog search; no native endpoint is confirmed.",
+    "mahavistaar-schemes": "Caller and handler use different scheme fields; the binding is unverified.",
+    "market-insights-outlook": "Price history is available; no outlook endpoint is confirmed.",
+    "video-library": "Searches an internal collection; no native video API is confirmed.",
+    "npss-diagnosis": "Requires a token and multipart upload; image-reference handling is unverified.",
+    "pmfby-insurance": "Policy and claim reads require a session and an authorized farmer ID.",
+    "agmarknet-nearby-prices": "Missing commodity lookup, validation, authentication and response binding."
   }
 }

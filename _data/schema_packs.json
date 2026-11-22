@@ -7657,7 +7657,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppor...",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -7681,7 +7681,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -7693,7 +7693,7 @@
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -7705,7 +7705,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -7717,7 +7717,7 @@
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"$.message.support.channels[0]\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -7985,7 +7985,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSuppor...",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -8009,7 +8009,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -8021,7 +8021,7 @@
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -8033,7 +8033,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -8045,7 +8045,7 @@
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"$.message.support.channels[0]\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -8130,13 +8130,13 @@
         "name": "PMFBY On Demand Capability",
         "file": "examples/pmfby-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance. Needs the enrolment number, the applicant's mobile, the crop year, the season and a description of the problem. Returns case.ticketNo, which status requires. Needs no OTP, so it can be called without init.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1support/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read where a filed grievance stands: its status code, the portal's reply and the crop it concerns. Needs case.ticketNo from an earlier support call, plus the applicant's mobile. Cases cannot be listed by enrolment number, so support must come first.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/PMFBYStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml#/paths/~1pmfby~1status/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n    }\n  ]\n}"
       },
       {
         "name": "PM-KISAN On Demand Capability",
         "file": "examples/pmkisan-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP to the mobile registered against this enrolment number. Needs only the enrolment number. Call before status or support: both require challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read a grievance already filed against this enrolment number: its status code, the officer's reply and when it was given. Needs the OTP from init and case.filedOn, the filing date support returned, which picks one case out of all those on the registration.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1status/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"description\": \"File a new grievance against this enrolment number, under one of the categories published above. Needs the OTP from init. Returns case.ticketNo and case.filedOn; keep filedOn, because status selects a case by it.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/components/schemas/PMKISANSupportRequest\",\n      \"attributesAt\": \"$.message.support.channels[0]\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1pmkisan~1support/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -8157,14 +8157,6 @@
       {
         "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
         "description": "Provider HTTP: PMFBY grievance provider API"
-      },
-      {
-        "url": "https://openagrinet.github.io/network-specs/api/adapter/pmfby/grievance/v0.2/openapi.yaml",
-        "description": "Adapter proposal: PMFBY grievance integration contract"
-      },
-      {
-        "url": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/grievance/v0.2/openapi.yaml",
-        "description": "Adapter proposal: PM-KISAN grievance integration contract"
       }
     ],
     "summary": "Public catalog metadata for grievance services, with Provider-defined schemes, complaint options and operation links.",
@@ -16737,7 +16729,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"$...",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -16761,7 +16753,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -16773,7 +16765,7 @@
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -16785,7 +16777,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -16797,7 +16789,7 @@
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"$.message.contract.commitments[0].commitmentAttributes\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       }
@@ -16957,7 +16949,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n    \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n    \"attributesAt\": \"$...",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -16981,7 +16973,7 @@
         "constraints": "minLength: 1",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -16993,7 +16985,7 @@
         "constraints": "format: \"uri\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       },
@@ -17005,7 +16997,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -17017,7 +17009,7 @@
         "constraints": "pattern: \"^\\\\$\\\\.message\\\\.[A-Za-z0-9.\\\\[\\\\]]+$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"$.message.contract.commitments[0].commitmentAttributes\"",
+        "example": null,
         "enum": null,
         "enum_details": null
       }
@@ -17030,7 +17022,7 @@
         "name": "On Demand Capability",
         "file": "examples/on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"description\": \"Ask PM-KISAN to send a four-digit OTP, identified by either the registration number or the registered mobile. Call before status, which requires challenge.response carrying this OTP.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationInitRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1init/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"description\": \"Read how far the application has got: when it was registered, the latest instalment paid, whether eKYC is done, and anything blocking payment. Needs the OTP from init, and either the registration number or the registered mobile.\",\n      \"schema\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationStatusRequest\",\n      \"attributesAt\": \"$.message.contract.commitments[0].commitmentAttributes\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml#/paths/~1pmkisanapplication~1status/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -17051,10 +17043,6 @@
       {
         "url": "https://openagrinet.github.io/network-specs/api/external/smam/benefit-status/v0.2/openapi.yaml",
         "description": "Provider HTTP: SMAM benefit application status"
-      },
-      {
-        "url": "https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml",
-        "description": "Adapter proposal: PM-KISAN application integration contract"
       }
     ],
     "summary": "Public catalog metadata for scheme application services, with Provider-defined schemes and operation links.",

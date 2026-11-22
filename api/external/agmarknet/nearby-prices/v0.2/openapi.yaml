@@ -3,19 +3,23 @@ info:
   x-contract-role: provider-native
   title: Agmarknet nearby mandi prices
   version: 0.2.0
-  description: 'Native nearby-price lookup, distinct from selected-market prices. It does not define a Beckn select binding.
-
-    '
+  description: >
+    Returns prices near a location for a commodity and date or date range.
+servers:
+  - url: https://agmarknet.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /v1/fetch-agmarknet-vistaar-location:
     get:
       operationId: getNearbyMandiPrices
+      x-oan-mapping:
+        href: ./mappings/select.yaml
+        status: incomplete
       x-oan-binding:
         descriptorCode: agmarknet-nearby-prices
         resourceType: openagrinet:MandiPrice
         action: select
-      description: Send date OR both from_date and to_date (ordered, at most 30 elapsed days apart in the adapter). The adapter
-        resolves names to commodity IDs before calling.
+      description: Supply a commodity ID and either a date or a range of up to 30 elapsed days.
       security:
       - upstreamSession: []
       parameters:

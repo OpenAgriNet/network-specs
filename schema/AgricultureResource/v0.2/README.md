@@ -19,7 +19,7 @@ Agriculture Resource defines the shared agriculture fields used by OAN domain in
 
 The schema attaches to `beckn:Resource.resourceAttributes`. Beckn core owns the Resource `id` and `descriptor`.
 
-Every `OnDemand` resource lists its supported Beckn actions in `resourceAttributes.actions`. Each entry pairs an `action` with an `operationRef` pointing to a path **and HTTP method** inside an OpenAPI document. The [FFS booking example](examples/network/ffs-booking-api-resource.json) advertises separate operations for selecting an allowance, preparing a booking and confirming it. The reference describes the contract; it is not the address to call or a grant of access. A `Direct` resource needs no action.
+Every `OnDemand` resource lists its supported Beckn actions in `resourceAttributes.actions`. Each entry pairs an `action` with an `operationRef` pointing to a path **and HTTP method** inside an OpenAPI document. The [FFS booking example](../../../api/external/ffs/catalog.json) advertises separate operations for selecting an allowance and confirming a booking. The reference describes the contract; it is not the address to call or a grant of access. A `Direct` resource needs no action.
 
 ## Composition
 

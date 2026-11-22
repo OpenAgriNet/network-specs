@@ -1,0 +1,69 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000075",
+    "messageId": "fade0000-0000-4000-8000-000000000076",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "smam.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-smam",
+        "bppId": "smam.example.invalid",
+        "bppUri": "https://smam.example.invalid/beckn",
+        "descriptor": {
+          "name": "SMAM example catalog"
+        },
+        "provider": {
+          "id": "prov-smam",
+          "descriptor": {
+            "name": "SMAM example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-smam-benefits",
+            "descriptor": {
+              "code": "smam-benefits",
+              "name": "SMAM benefit status",
+              "shortDesc": "SMAM application status",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/smam/benefit-status/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "SMAM",
+                "name": "Sub-Mission on Agricultural Mechanization"
+              },
+              "actions": [
+                {
+                  "action": "status",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/smam/benefit-status/v0.2/openapi.yaml#/paths/~1api~1BeneficiaryService~1GetApplicationStatusByAI/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-smam",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

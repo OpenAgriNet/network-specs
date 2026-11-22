@@ -1,0 +1,7 @@
+status: incomplete
+deployable: false
+action: status
+follows: confirm
+missing:
+  - Verified provider lookup route and method.
+  - Booking reference, authorization and response contract.

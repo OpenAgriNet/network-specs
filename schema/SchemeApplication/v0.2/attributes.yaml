@@ -6,7 +6,7 @@ info:
     and operation links.
 externalDocs:
   description: PM-KISAN application API specification
-  url: https://openagrinet.github.io/network-specs/api/adapter/pm-kisan/application/v0.2/openapi.yaml
+  url: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml
 components:
   schemas:
     SchemeApplication:
@@ -20,8 +20,131 @@ components:
       - $ref: '#/components/schemas/SchemeApplicationFields'
       unevaluatedProperties: false
     PMKISANApplicationCatalog:
-      $ref: ../../../api/adapter/pm-kisan/application/v0.2/openapi.yaml#/components/schemas/PMKISANApplicationCatalog
-      description: Compatibility reference to the external service catalog definition.
+      externalDocs:
+        description: PM-KISAN application API specification
+        url: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml
+      type: object
+      required:
+      - scheme
+      - '@context'
+      - '@type'
+      - informationMode
+      - challenge
+      - actions
+      properties:
+        scheme:
+          type: object
+          required:
+          - code
+          - name
+          properties:
+            code:
+              const: PM-KISAN
+              type: string
+              enum:
+              - PM-KISAN
+              description: Short code naming the scheme.
+            name:
+              type: string
+              minLength: 1
+              description: The scheme's full name.
+          additionalProperties: false
+          description: The government scheme this payload is about.
+          x-jsonld-id: openagrinet:scheme
+        '@context':
+          description: This pack's JSON-LD context, alone or inside a larger context array.
+          oneOf:
+          - type: string
+            const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            items:
+              type: string
+              minLength: 1
+            contains:
+              const: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own types.
+          oneOf:
+          - type: string
+            const: openagrinet:SchemeApplication
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:SchemeApplication
+            items:
+              oneOf:
+              - const: openagrinet:SchemeApplication
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+        informationMode:
+          type: string
+          enum:
+          - OnDemand
+          description: How this information is obtained. Always fetched from the scheme
+            on demand.
+          x-jsonld-id: openagrinet:informationMode
+        challenge:
+          type: object
+          additionalProperties: false
+          required:
+          - methods
+          description: The verification this desk requires before it answers.
+          properties:
+            methods:
+              type: array
+              minItems: 1
+              uniqueItems: true
+              description: Verification methods this desk accepts.
+              items:
+                type: object
+                additionalProperties: false
+                required:
+                - method
+                - channel
+                - length
+                - valueType
+                properties:
+                  method:
+                    type: string
+                    enum:
+                    - OTP
+                    description: The kind of verification.
+                  channel:
+                    type: string
+                    enum:
+                    - SMS
+                    description: How the OTP reaches the applicant.
+                  length:
+                    type: integer
+                    enum:
+                    - 4
+                    description: How many digits the OTP has.
+                  valueType:
+                    type: string
+                    enum:
+                    - NUMERIC
+                    description: What the OTP is made of.
+              x-jsonld-id: openagrinet:challengeMethods
+          x-jsonld-id: openagrinet:challenge
+        actions:
+          type: array
+          minItems: 2
+          maxItems: 2
+          uniqueItems: true
+          description: Advertised provider operations.
+          items:
+            enum:
+            - action: init
+              operationRef: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post
+            - action: status
+              operationRef: https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post
+          x-jsonld-id: openagrinet:publishedAction
+      additionalProperties: false
     SchemeApplicationFields:
       type: object
       required:

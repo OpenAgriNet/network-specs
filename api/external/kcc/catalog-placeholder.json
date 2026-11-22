@@ -1,0 +1,11 @@
+{
+  "provider": "kcc",
+  "status": "placeholder",
+  "capabilities": [
+    {
+      "capability": "loan",
+      "schemaPack": "SchemeApplication",
+      "draft": "loan/v0.2/openapi-draft.yaml"
+    }
+  ]
+}

@@ -11,8 +11,8 @@ require 'date'
 require_relative 'discovery_example'
 
 ROOT = Pathname.new(ARGV.fetch(0, File.expand_path('..', __dir__))).realpath
-PAGE = ROOT.join('schema/examples/providers/index.html')
-OUTPUT = Pathname.new(ARGV.fetch(1, ROOT.join('schema/provider-walkthrough.html').to_s))
+PAGE = ROOT.join('api/providers/index.html')
+OUTPUT = Pathname.new(ARGV.fetch(1, PAGE.to_s))
 
 def escape(value)
   CGI.escapeHTML(value.to_s)
@@ -124,7 +124,7 @@ def contract_details(path_item, contract, spec, pointer)
     "<p><strong>Request</strong></p>#{inputs}<p><strong>Responses</strong></p><ul>#{outputs.join}</ul></details>"
 end
 
-catalogs = ROOT.glob('schema/*/v0.2/examples/*/catalog.json').sort.flat_map do |file|
+catalogs = ROOT.glob('api/external/*/catalog.json').sort.flat_map do |file|
   read_json(file).fetch('message').fetch('catalogs').map { |catalog| [file, catalog] }
 end
 offerings = catalogs.flat_map do |file, catalog|
@@ -200,10 +200,12 @@ capability_sections = by_name.map do |file, catalog, resource|
   code = desc.fetch('code')
   type = attrs.fetch('@type')
   mode = attrs.fetch('informationMode')
-  cap_dir = ROOT.join('schema', type.split(':').last, 'v0.2/examples', file.dirname.basename, code)
-  discovery = sample('Structured discovery request', DiscoveryExample.for(attrs, ROOT, cap_dir))
-  response = cap_dir.join('on-discover.json')
-  response_link = response.file? ? link('Read the on_discover response fixture', relative(response)) + '.' : ''
+  search_dir = ROOT.join('api/external/knowledge/search/v0.2/examples') if code == 'knowledge-search'
+  discovery = sample('Structured discovery request', search_dir ? read_json(search_dir.join('discover.json')) : DiscoveryExample.for(attrs, ROOT))
+  if search_dir
+    discovery += sample('Provider search request and hits', read_json(search_dir.join('search-exchange.json')).reject { |key,_| key == 'binding' })
+    discovery += sample('on_discover: ranked Direct resources', read_json(search_dir.join('on_discover.json')))
+  end
   notes = if catalog.fetch('resources').count { |item| item.fetch('resourceAttributes').fetch('@type') == type } > 1
             '<p>Other resources in this catalog use the same type. The binding key alone does not identify the selected resource.</p>'
           else
@@ -267,7 +269,6 @@ capability_sections = by_name.map do |file, catalog, resource|
       #{sample('Catalog resource', resource)}
       <h4>Structured discovery</h4>
       #{discovery}
-      #{response_link.empty? ? '' : "<p>#{response_link}</p>"}
       #{direct_links.empty? ? '' : "<p>Separate Direct examples for this type: #{direct_links.join(', ')}.</p>"}
       <h4>Actions and mappings</h4>
       #{upstream.empty? ? '<p>No provider HTTP contract is evidenced for this listing.</p>' : '<h5>Provider HTTP contracts and examples</h5>' + upstream.join}
@@ -282,10 +283,10 @@ capability_sections = by_name.map do |file, catalog, resource|
 end.join("\n")
 
 OUTPUT.dirname.mkpath
-OUTPUT.write(<<~HTML)
+OUTPUT.write((<<~HTML).gsub(/^[ \t]+$/, ''))
   ---
   layout: null
-  permalink: /schema/examples/providers/index.html
+  permalink: /api/providers/index.html
   ---
   <!doctype html>
   <!-- Generated from provider fixtures. Regenerate: ruby scripts/generate-provider-walkthrough.rb -->

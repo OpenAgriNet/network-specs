@@ -1,0 +1,13 @@
+status: draft-native
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post
+request:
+  in: body
+  jsonata: payload
+response:
+  jsonata: response
+  guard: Use the authenticated farmer session. Preserve the recommendation for product and retailer selection.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.

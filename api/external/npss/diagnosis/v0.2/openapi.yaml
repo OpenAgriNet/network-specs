@@ -3,8 +3,11 @@ info:
   x-contract-role: provider-native
   title: NPSS Vistaar crop image analysis
   version: '3.0'
-  description: Consumer-observed contract from the calling application agents/tools/npss.py. The configured base URL includes
-    /api3.0. This is a direct integration, not a Beckn provider action.
+  description: >
+    Issues an access token and accepts crop images for analysis. The successful analysis response format has not been verified.
+servers:
+  - url: https://npss.dac.gov.in/api3.0
+    description: Default service URL used by the calling client.
 paths:
   /api/Vistaar/token:
     post:
@@ -33,6 +36,8 @@ paths:
   /api/Vistaar/analyze-image:
     post:
       operationId: analyzeNpssCropImage
+      x-oan-binding: {descriptorCode: npss-diagnosis, resourceType: "openagrinet:AgricultureResource", action: select}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: incomplete}
       security:
       - npssBearer: []
       requestBody:

@@ -1,0 +1,57 @@
+{
+  "nativeRequest": {
+    "query": "How do I store wheat seed?"
+  },
+  "nativeResponse": {
+    "effective_config": {
+      "query": "How do I store wheat seed?"
+    },
+    "candidate_count": 2,
+    "final_count": 2,
+    "hits": [
+      {
+        "_id": "guide-2",
+        "doc_id": "seed-guide",
+        "text": "Label the container with the variety and harvest date."
+      },
+      {
+        "_id": "guide-1",
+        "doc_id": "seed-guide",
+        "text": "Check stored seed periodically for moisture."
+      }
+    ],
+    "raw_hits": null
+  },
+  "binding": {
+    "catalog": {
+      "id": "cat-knowledge",
+      "bppId": "knowledge.example.invalid",
+      "bppUri": "https://knowledge.example.invalid/beckn",
+      "descriptor": {
+        "name": "KNOWLEDGE example catalog"
+      },
+      "provider": {
+        "id": "prov-knowledge",
+        "descriptor": {
+          "name": "KNOWLEDGE example provider"
+        }
+      }
+    },
+    "callbackTime": "2026-11-19T01:00:01Z",
+    "sourceMetadata": {
+      "seed-guide": {
+        "title": "Seed storage guide",
+        "topics": [
+          "Seed storage"
+        ],
+        "subjectCategories": [
+          "Crop"
+        ],
+        "language": "en",
+        "version": "1.0.0",
+        "lifecycleStatus": "Published",
+        "publishedAt": "2026-08-01T09:00:00Z"
+      }
+    }
+  }
+}

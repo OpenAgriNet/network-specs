@@ -2,7 +2,7 @@
 
 <p class="page-intro">Browse the shared agriculture field set, the active OpenAgriNet domain contracts, and the provider API contracts. Each pack keeps its versioned artifacts together.</p>
 
-Read the [Complete Examples](examples/) to see the domain packs composed inside Beckn Catalog, Provider, and Resource objects.
+Read the [provider examples](../api/providers/) to see the domain packs composed inside Beckn Catalog, Provider, and Resource objects.
 
 ## Schema Packs
 

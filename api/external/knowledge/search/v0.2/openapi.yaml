@@ -3,12 +3,17 @@ info:
   x-contract-role: provider-native
   title: Knowledge Provider search for the network adapter
   version: '0.2'
-  description: Adapter-facing subset of the provider contract in knowledge-provider/docs/openapi-search.yaml and pipeline/api.py.
-    Other operator search settings and retrieval controls remain provider-owned.
+  description: >
+    Returns ranked passages from an authorized search corpus.
+servers:
+  - url: https://knowledge.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /search:
     post:
       operationId: runSearch
+      x-oan-binding: {descriptorCode: knowledge-search, resourceType: "openagrinet:KnowledgeResource", action: discover}
+      x-oan-mapping: {href: ./mappings/discover.yaml, status: draft-native}
       security:
       - bearerAuth: []
       description: Requires the search permission. Supply index_name only when the binding deliberately selects a corpus.
@@ -19,8 +24,7 @@ paths:
             schema:
               $ref: '#/components/schemas/RunSearchRequest'
             example:
-              query: PM-KISAN eligibility
-              index_name: documents-index-schemes
+              query: How do I store wheat seed?
       responses:
         '200':
           description: Ranked passages with their source metadata. See the provider's OpenAPI for the full hit schema.

@@ -4,11 +4,15 @@ info:
   title: SATHI certified seed stock
   version: 0.2.0
   description: >
-    Certified seed stock lookup. Resolve location codes before calling. Provider-required fields and error guarantees are unconfirmed.
+    Looks up certified seed stock by crop and location. Resolve location codes before calling.
+servers:
+  - url: https://sathi.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /inv-apis/stock/getSeedAvailability:
     post:
       operationId: getSeedAvailability
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true

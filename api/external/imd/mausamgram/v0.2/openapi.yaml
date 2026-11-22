@@ -4,7 +4,7 @@ info:
   title: Mausamgram daily coordinate forecast
   version: 0.2.0
   description: >
-    Native coordinate-based forecast, distinct from station forecasts and advisory bulletins. This is not a Beckn operation or an official provider guarantee.
+    Returns a daily weather forecast for a latitude and longitude.
 servers: [{url: 'https://mausamgram.imd.gov.in/nwpapi'}]
 paths:
   /get-daily:

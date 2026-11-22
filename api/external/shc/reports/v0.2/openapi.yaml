@@ -4,11 +4,15 @@ info:
   title: SHC reports
   version: 0.2.0
   description: >
-    GraphQL report lookup. The path is relative to the configured Soil Health endpoint. This describes an observed query, not a provider-wide contract or a verified error guarantee.
+    Retrieves private soil test reports for the authenticated user.
+servers:
+  - url: https://shc.example.invalid
+    description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a path.
 paths:
   /:
     post:
       operationId: getTestForAuthUser
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding: {descriptorCode: shc-reports, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true

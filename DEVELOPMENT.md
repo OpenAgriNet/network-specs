@@ -11,7 +11,6 @@ Generate the public schema pages whenever an attributes file, profile, or exampl
 ```bash
 ruby scripts/generate-schema-pages.rb
 ruby scripts/generate-provider-walkthrough.rb
-ruby scripts/generate-example-library.rb
 ```
 
 Then run the site through Bundler:

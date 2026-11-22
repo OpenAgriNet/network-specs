@@ -1,0 +1,13 @@
+status: draft-native
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post
+request:
+  in: body
+  jsonata: payload
+response:
+  jsonata: response
+  guard: Validate the fixed GraphQL query and variables. An errors envelope is not an empty registry.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.

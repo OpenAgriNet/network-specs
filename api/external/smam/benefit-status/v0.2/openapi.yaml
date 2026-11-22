@@ -4,9 +4,10 @@ info:
   title: SMAM benefit application status
   version: 0.2.0
   description: >
-    Native benefit-status read derived from the provider adapter.
-    The chat tool calls legacy search; the provider adapter calls this operation.
-    This document does not define a Beckn status binding. All examples are synthetic.
+    Looks up benefit application status using a private search value.
+servers:
+  - url: https://smam.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /api/BeneficiaryService/GetApplicationStatusByAI:
     post:

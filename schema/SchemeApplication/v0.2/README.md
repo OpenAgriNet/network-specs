@@ -19,7 +19,7 @@ Scheme codes are Provider-defined non-empty strings, not a PM-KISAN-only enumera
 
 ## Examples
 
-[Catalog attributes](examples/) · [Complete Resource linking the API specification](examples/network/schemeapplication-api-resource.json)
+[Catalog attributes](examples/) · [Complete Resource linking the API specification](../../../api/external/pm-kisan/catalog.json)
 
 The complete Resource keeps its identity and API-document link in the Beckn wrapper. Its resourceAttributes contain the catalog metadata only.
 

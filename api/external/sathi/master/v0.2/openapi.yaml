@@ -3,7 +3,11 @@ info:
   x-contract-role: provider-native
   title: SATHI crop master reads
   version: 0.2.0
-  description: Caller-derived wire contract from sathi_seed.py. Relative paths are under the configured master API base. No provider replay; quantity and dealer data are not part of these reads.
+  description: >
+    Lists crop groups and the crops in a selected group. Use the selected crop code for stock lookup.
+servers:
+  - url: https://sathi.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   /get-crop-group:
     get:

@@ -3,7 +3,8 @@ info:
   x-contract-role: provider-native
   title: IMD district Agromet advisory feed
   version: 0.2.0
-  description: Native upstream dated feed, not a Beckn discovery or select endpoint. Based on the 2026-09-18 /1 feed and the bh-main ingestion reader scripts/imd_agromet/imd_agromet.py, which defaults to /3. Selector values must not be assumed interchangeable.
+  description: >
+    Returns district advisory bulletins for a date and selector. The documented sample uses selector 1; selector 3 is also used. Do not assume their results are interchangeable.
 servers: [{url: 'https://agromet.imd.gov.in'}]
 paths:
   /index.php/api/moag/district_rv_adv/{date}/{selector}:
@@ -12,6 +13,7 @@ paths:
       - {name: selector, in: path, required: true, schema: {$ref: '#/components/schemas/FeedSelector'}}
     get:
       operationId: readDistrictAgrometFeed
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding: {descriptorCode: imd-agromet, resourceType: "openagrinet:AgricultureAdvisory", action: select}
       responses:
         '200':

@@ -1,0 +1,15 @@
+status: draft-native
+deployable: false
+action: confirm
+operationRef: https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post
+request:
+  in: body
+  jsonata: payload
+response:
+  jsonata: response
+  guard: Require explicit approval of this order. On timeout do not retry automatically. Check provider flags
+    and booking references before reporting success.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.
+retry: never automatically

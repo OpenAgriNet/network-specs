@@ -3,8 +3,8 @@ info:
   title: PMFBY grievance provider API
   version: 0.2.0
   x-contract-role: provider-native
-  description: FGMS JSON operations used by the adapter. The route and payload casing come from OpenAgriNet network-adapter
-    29bc016f and provider backend origin/dev e42a69a. Live provider behavior was not verified. Examples use synthetic values.
+  description: >
+    Files grievance tickets and reads their status through FGMS.
 servers:
 - url: https://pmfby.example.invalid
   description: Placeholder for the PMFBY FGMS service base URL.
