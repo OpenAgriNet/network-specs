@@ -1,0 +1,211 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: SHC reports
+  version: 0.2.0
+  description: >
+    Retrieves private soil test reports for the authenticated user.
+servers:
+  - url: https://shc.example.invalid
+    description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a path.
+paths:
+  /:
+    post:
+      operationId: getTestForAuthUser
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: shc-reports, resourceType: "openagrinet:AgricultureResource", action: select}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShcReportRequest'
+            example:
+              query: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state: String, $district:
+                String, $name: String, $farmer: String, $from: Datetime, $to: Datetime, $cycle: String, $locale:
+                String, $scheme: String, $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId,
+                phone: $phone, state: $state, district: $district, name: $name, farmer: $farmer, from: $from,
+                to: $to, cycle: $cycle, scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme
+                plot { address area surveyNo } farmer { address name phone } crop location testparameters rdfValues
+                status testCompletedAt sampleDate reportData district block village results fertilizer html(locale:
+                $locale) uniqueID } }'
+              variables:
+                cycle: 2024-25
+                phone: EXAMPLE-PHONE
+                locale: en
+                limit: 10
+                skip: 0
+      responses:
+        '200':
+          description: GraphQL envelope before adapter conversion. An error or missing data is not a successful
+            record lookup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShcReportResponse'
+              examples:
+                found:
+                  value:
+                    data:
+                      getTestForAuthUser:
+                      - id: EXAMPLE-REPORT
+                        cycle: 2024-25
+                        testparameters:
+                        - B
+                        rdfValues:
+                          fertilizerRecommendation_details: []
+                none:
+                  value:
+                    data:
+                      getTestForAuthUser: []
+                graphqlError:
+                  value:
+                    errors:
+                    - message: Example upstream error
+        default:
+          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+      security:
+      - providerBearer: []
+components:
+  schemas:
+    ShcReportRequest:
+      type: object
+      required:
+      - query
+      - variables
+      properties:
+        query:
+          const: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state: String, $district:
+            String, $name: String, $farmer: String, $from: Datetime, $to: Datetime, $cycle: String, $locale: String,
+            $scheme: String, $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId, phone: $phone,
+            state: $state, district: $district, name: $name, farmer: $farmer, from: $from, to: $to, cycle: $cycle,
+            scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme plot { address area surveyNo
+            } farmer { address name phone } crop location testparameters rdfValues status testCompletedAt sampleDate
+            reportData district block village results fertilizer html(locale: $locale) uniqueID } }'
+        variables:
+          type: object
+          properties:
+            phone:
+              type: string
+              writeOnly: true
+            cycle:
+              type: string
+            locale:
+              type: string
+            limit:
+              type: integer
+            skip:
+              type: integer
+          required:
+          - cycle
+          - phone
+          - locale
+          - limit
+          - skip
+    ShcReportResponse:
+      type: object
+      properties:
+        data:
+          type:
+          - object
+          - 'null'
+          properties:
+            getTestForAuthUser:
+              type:
+              - array
+              - 'null'
+              items:
+                $ref: '#/components/schemas/SoilReportRecord'
+          required:
+          - getTestForAuthUser
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+            required:
+            - message
+      anyOf:
+      - required:
+        - data
+      - required:
+        - errors
+    SoilReportRecord:
+      type: object
+      properties:
+        id: {}
+        computedID: {}
+        cycle: {}
+        scheme: {}
+        plot:
+          type:
+          - object
+          - 'null'
+          properties:
+            address: {}
+            area: {}
+            surveyNo: {}
+        farmer:
+          type:
+          - object
+          - 'null'
+          properties:
+            address: {}
+            name:
+              type:
+              - string
+              - 'null'
+            phone: {}
+        crop: {}
+        location: {}
+        testparameters:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+        rdfValues:
+          type:
+          - object
+          - 'null'
+          properties:
+            deficiency:
+              type:
+              - array
+              - 'null'
+              items: {}
+            fertilizerRecommendation_details:
+              type:
+              - array
+              - 'null'
+              items: {}
+            fymlist:
+              type:
+              - array
+              - 'null'
+              items: {}
+            gypsumlist:
+              type:
+              - array
+              - 'null'
+              items: {}
+        status: {}
+        testCompletedAt: {}
+        sampleDate: {}
+        reportData: {}
+        district: {}
+        block: {}
+        village: {}
+        results: {}
+        fertilizer: {}
+        html: {}
+        uniqueID: {}
+      description: Fields selected by the adapter. Unconstrained fields are provider data for which the selected
+        GraphQL query does not establish a reliable scalar type; this does not describe the full provider schema.
+  securitySchemes:
+    providerBearer:
+      type: http
+      scheme: bearer
+      description: Provider session used by the adapter; issuance is outside this operation.

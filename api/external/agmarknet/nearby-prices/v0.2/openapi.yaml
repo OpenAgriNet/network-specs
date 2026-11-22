@@ -1,0 +1,169 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: Agmarknet nearby mandi prices
+  version: 0.2.0
+  description: >
+    Returns prices near a location for a commodity and date or date range.
+servers:
+  - url: https://agmarknet.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /v1/fetch-agmarknet-vistaar-location:
+    get:
+      operationId: getNearbyMandiPrices
+      x-oan-mapping:
+        href: ./mappings/select.yaml
+        status: incomplete
+      x-oan-binding:
+        descriptorCode: agmarknet-nearby-prices
+        resourceType: openagrinet:MandiPrice
+        action: select
+      description: Supply a commodity ID and either a date or a range of up to 30 elapsed days.
+      security:
+      - upstreamSession: []
+      parameters:
+      - in: query
+        name: commodity_id
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetNearbyMandiPricesCommodityIdParameter'
+        example: '101'
+      - in: query
+        name: lat
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetNearbyMandiPricesLatParameter'
+        example: 18.5
+      - in: query
+        name: long
+        required: true
+        schema:
+          $ref: '#/components/schemas/GetNearbyMandiPricesLongParameter'
+        example: 73.8
+      - in: query
+        name: date
+        schema:
+          $ref: '#/components/schemas/PriceDate'
+        example: 18-09-2026
+      - in: query
+        name: from_date
+        schema:
+          $ref: '#/components/schemas/PriceDate'
+      - in: query
+        name: to_date
+        schema:
+          $ref: '#/components/schemas/PriceDate'
+      responses:
+        '200':
+          description: Adapter accepts an array or rows under data or records. Missing price is not zero; do not infer an
+            absent unit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearbyMandiPricesResponse'
+              example:
+              - State: Example state
+                District: Example district
+                Market: Example market
+                Commodity: Example crop
+                Arrival Date: 18-09-2026
+                Min Price: 1800
+                Modal Price: 1900
+                Max Price: 2000
+                Price Unit: Example unit
+        default:
+          description: Error response not verified. An authentication or network error is not an empty market.
+components:
+  securitySchemes:
+    upstreamSession:
+      type: apiKey
+      in: query
+      name: token
+      description: Adapter-supplied upstream credential.
+  schemas:
+    PriceDate:
+      type: string
+      pattern: ^[0-9]{2}-[0-9]{2}-[0-9]{4}$
+      description: dd-MM-yyyy
+    NearbyMandiPricesResponse:
+      anyOf:
+      - $ref: '#/components/schemas/PriceRows'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/PriceRows'
+      - type: object
+        required:
+        - records
+        properties:
+          records:
+            $ref: '#/components/schemas/PriceRows'
+    PriceRows:
+      type: array
+      items:
+        $ref: '#/components/schemas/PriceRow'
+    PriceRow:
+      type: object
+      properties:
+        State:
+          type:
+          - string
+          - 'null'
+        District:
+          type:
+          - string
+          - 'null'
+        Market:
+          type:
+          - string
+          - 'null'
+        Commodity:
+          type:
+          - string
+          - 'null'
+        Grade:
+          type:
+          - string
+          - 'null'
+        Group:
+          type:
+          - string
+          - 'null'
+        Variety:
+          type:
+          - string
+          - 'null'
+        Arrival Date:
+          $ref: '#/components/schemas/PriceDate'
+        Min Price:
+          type:
+          - number
+          - string
+          - 'null'
+        Max Price:
+          type:
+          - number
+          - string
+          - 'null'
+        Modal Price:
+          type:
+          - number
+          - string
+          - 'null'
+        Price Unit:
+          type:
+          - string
+          - 'null'
+    GetNearbyMandiPricesCommodityIdParameter:
+      type: string
+    GetNearbyMandiPricesLatParameter:
+      type: number
+      minimum: -90
+      maximum: 90
+    GetNearbyMandiPricesLongParameter:
+      type: number
+      minimum: -180
+      maximum: 180

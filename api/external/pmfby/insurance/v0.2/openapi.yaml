@@ -1,0 +1,313 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: PMFBY policy and claim lookup
+  version: 0.2.0
+  description: >
+    Looks up insurance policies and claims for an authenticated farmer. Farmer identifiers, credentials and beneficiary records are private.
+security:
+- providerToken: []
+servers:
+  - url: https://pmfby.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /api/v1/services/nic/verifyMobile:
+    post:
+      operationId: verifyPmfbyInsuranceOtp
+      summary: Verify a farmer OTP
+      security: [{providerToken: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/status/verify-otp.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: status}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VerifyOtpRequest'}
+            example: {"mobile": "0000000000", "otp": 123456}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: {verified: true}}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
+  /api/v1/services/nic/getOtp:
+    post:
+      operationId: sendPmfbyInsuranceOtp
+      summary: Send a farmer OTP
+      security: [{providerToken: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/init/send-otp.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: init}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SendOtpRequest'}
+            example: {"mobile": "0000000000", "otpType": "SMS"}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: 'OTP sent'}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
+  /api/v1/policy/policy/farmerpolicylist:
+    get:
+      operationId: listPmfbyInsurancePolicies
+      x-oan-mapping: {href: ./mappings/status/policies.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: pmfby-insurance
+        resourceType: openagrinet:AgricultureResource
+        action: status
+      summary: List policies and their applications for the authenticated farmer
+      parameters:
+      - $ref: '#/components/parameters/FarmerId'
+      - in: query
+        name: listType
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter'
+        example: POLICY_LIST
+      - in: query
+        name: sssyID
+        required: true
+        description: The legacy status handler uses the last two year digits. The adapter concatenates 040, the one-character
+          season code, 00, and those digits. The example is Kharif 2026.
+        schema:
+          $ref: '#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter'
+        example: '04010026'
+      responses:
+        '200':
+          description: The adapter reads the policy array directly or from data. An empty array contains no policies for the
+            selection.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyListResponse'
+              examples:
+                onePolicy:
+                  value:
+                    data:
+                    - policyID: EXAMPLE-POLICY
+                      insuranceCompanyName: Example insurer
+                      applicationList:
+                      - applicationNo: EXAMPLE-APPLICATION
+                        cropName: Paddy
+                        policyStatus: Example policy status
+                        seasonName: Kharif
+                        seasonYear: '2026'
+                noPolicies:
+                  value: []
+        default:
+          description: Error body not established. Do not report authentication or transport failure as no policies.
+  /api/v1/claims/claims/claimSearchReport:
+    get:
+      operationId: listPmfbyInsuranceClaims
+      x-oan-mapping: {href: ./mappings/status/claims.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: pmfby-insurance
+        resourceType: openagrinet:AgricultureResource
+        action: status
+      summary: Read claims for the authenticated farmer, season and year
+      parameters:
+      - $ref: '#/components/parameters/FarmerId'
+      - in: query
+        name: searchType
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter'
+        example: farmerID
+      - in: query
+        name: season
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter'
+        description: The adapter sends 1 for Kharif, 2 for Rabi or 3 for Summer.
+        example: '1'
+      - in: query
+        name: year
+        required: true
+        schema:
+          $ref: '#/components/schemas/ListPmfbyInsuranceClaimsYearParameter'
+        description: Pass the full crop year to the claim read.
+        example: '2026'
+      responses:
+        '200':
+          description: Claim records use different field names from policy applications. The adapter displays ClaimStatus
+            or falls back to Status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimListResponse'
+              examples:
+                oneClaim:
+                  value:
+                  - applicationNo: EXAMPLE-APPLICATION
+                    ClaimStatus: Example claim status
+                    ClaimType: Example claim type
+                noClaims:
+                  value:
+                    data: []
+        default:
+          description: No verified error schema; an upstream failure does not establish whether a claim exists.
+components:
+  securitySchemes:
+    otpPassword: {type: apiKey, in: header, name: password}
+    providerToken:
+      type: apiKey
+      in: header
+      name: token
+      description: A provider credential held by the adapter; not the farmer OTP.
+  parameters:
+    FarmerId:
+      in: query
+      name: farmerID
+      required: true
+      schema:
+        $ref: '#/components/schemas/FarmerIdParameter'
+      description: A provider ID previously resolved for the authorized farmer.
+      example: EXAMPLE-FARMER
+  schemas:
+    OtpReply:
+      type: object
+      properties:
+        status: {type: boolean}
+        error: {type: string}
+        data: {description: Send reads a message string or object; verification reads boolean true or an object with verified true.}
+    VerifyOtpRequest:
+      type: object
+      required: [mobile, otp]
+      properties:
+        mobile: {type: string}
+        otp: {type: integer}
+    SendOtpRequest:
+      type: object
+      required: [mobile, otpType]
+      properties:
+        mobile: {type: string}
+        otpType: {const: SMS}
+    Identifier:
+      type:
+      - string
+      - integer
+      - 'null'
+    Amount:
+      type:
+      - string
+      - number
+      - 'null'
+    Text:
+      type:
+      - string
+      - 'null'
+    PolicyApplication:
+      type: object
+      description: Selected fields read by the mapper. Accounts and land details may also be returned; they remain private.
+      properties:
+        applicationNo:
+          $ref: '#/components/schemas/Identifier'
+        cropID:
+          $ref: '#/components/schemas/Identifier'
+        cropName:
+          $ref: '#/components/schemas/Text'
+        seasonCode:
+          $ref: '#/components/schemas/Identifier'
+        seasonName:
+          $ref: '#/components/schemas/Text'
+        seasonYear:
+          $ref: '#/components/schemas/Identifier'
+        policyStatus:
+          $ref: '#/components/schemas/Text'
+        policyStatusCode:
+          $ref: '#/components/schemas/Identifier'
+        claimStatus:
+          $ref: '#/components/schemas/Text'
+        claimAmount:
+          $ref: '#/components/schemas/Amount'
+        sumInsured:
+          $ref: '#/components/schemas/Amount'
+    Policy:
+      type: object
+      properties:
+        policyID:
+          $ref: '#/components/schemas/Identifier'
+        insuranceCompanyName:
+          $ref: '#/components/schemas/Text'
+        districtName:
+          $ref: '#/components/schemas/Text'
+        stateName:
+          $ref: '#/components/schemas/Text'
+        applicationList:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/PolicyApplication'
+    Claim:
+      type: object
+      description: Selected private fields read by the adapter; the provider can return additional payment and identity information.
+      properties:
+        applicationNo:
+          $ref: '#/components/schemas/Identifier'
+        ClaimStatus:
+          $ref: '#/components/schemas/Text'
+        Status:
+          $ref: '#/components/schemas/Text'
+        claimDate:
+          $ref: '#/components/schemas/Text'
+        ClaimType:
+          $ref: '#/components/schemas/Text'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        totalPayable:
+          $ref: '#/components/schemas/Amount'
+    Policies:
+      type: array
+      items:
+        $ref: '#/components/schemas/Policy'
+    Claims:
+      type: array
+      items:
+        $ref: '#/components/schemas/Claim'
+    PolicyListResponse:
+      oneOf:
+      - $ref: '#/components/schemas/Policies'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/Policies'
+    ClaimListResponse:
+      oneOf:
+      - $ref: '#/components/schemas/Claims'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/Claims'
+    FarmerIdParameter:
+      type: string
+    ListPmfbyInsurancePoliciesListTypeParameter:
+      type: string
+      const: POLICY_LIST
+    ListPmfbyInsurancePoliciesSssyIDParameter:
+      type: string
+      pattern: ^040[123]00[0-9]{2}$
+    ListPmfbyInsuranceClaimsSearchTypeParameter:
+      type: string
+      const: farmerID
+    ListPmfbyInsuranceClaimsSeasonParameter:
+      type: string
+      enum:
+      - '1'
+      - '2'
+      - '3'
+    ListPmfbyInsuranceClaimsYearParameter:
+      type: string
+      pattern: ^[0-9]{4}$

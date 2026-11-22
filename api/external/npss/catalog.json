@@ -1,0 +1,68 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "fc98464c-6042-580c-904c-c26aa911e495",
+    "messageId": "79107b32-aaac-5318-a393-cfd6176ad985",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "npss.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-npss",
+        "bppId": "npss.example.invalid",
+        "bppUri": "https://npss.example.invalid/beckn",
+        "descriptor": {
+          "name": "NPSS example catalog"
+        },
+        "provider": {
+          "id": "prov-npss",
+          "descriptor": {
+            "name": "NPSS example provider"
+          }
+        },
+        "isActive": false,
+        "resources": [
+          {
+            "id": "res-npss-diagnosis",
+            "descriptor": {
+              "code": "npss-diagnosis",
+              "name": "Crop image analysis",
+              "shortDesc": "Crop image analysis",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-npss",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+status: source-traced
+deployable: false
+action: support
+native:
+  method: POST
+  path: "/v1/state/grievances"
+  placement: body
+  requestExample:
+    externalReferenceNo: BV-example
+    farmerMobileNumber: "<mobile>"
+    farmerText: Example issue
+    farmerLanguage: en
+    stateId: 1
+    villageId: 2
+    scheme: 3
+    division: 4
+    problemCategory: 5
+    problemSubCategory: 6
+  newFarmerAdditionalFields:
+    farmerName: Example
+    gender: O
+  preconditions:
+  - verified session for this mobile
+  - confirmed filing
+  - resolved provider reference IDs
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L588
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L787
+behavior: Legacy init/create_grievance → proposed v2 support. Require explicit confirmation,
+  verified registration and resolved IDs. New farmers also send farmerName and gender.
+  Do not equate externalReferenceNo with returned grievanceNo; ambiguous submission
+  must not auto-retry.
+responseExample:
+  status: 200 OK
+  data:
+    grievanceNo: EXAMPLE
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

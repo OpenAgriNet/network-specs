@@ -17,4 +17,4 @@ Every active pack lives here, one versioned contract per pack, in one of two kin
 
 Every pack carries the same artifacts: `vocab.jsonld`, `context.jsonld`, `attributes.yaml`, `profile.json`, `renderer.json`, `README.md`, and `examples/`. Read them in that order.
 
-Use the [Schema Pack index](./) to browse every pack, and the [Complete Examples](examples/) to see domain packs inside Beckn Catalog, Provider, and Resource objects. OAN terms use `openagrinet:` for `https://openagrinet.github.io/network-specs/vocab#`; versioned artifacts are published under `https://openagrinet.github.io/network-specs/schema/`.
+Use the [Schema Pack index](./) to browse every pack, and the [provider examples](../api/providers/) to see domain packs inside Beckn Catalog, Provider, and Resource objects. OAN terms use `openagrinet:` for `https://openagrinet.github.io/network-specs/vocab#`; versioned artifacts are published under `https://openagrinet.github.io/network-specs/schema/`.

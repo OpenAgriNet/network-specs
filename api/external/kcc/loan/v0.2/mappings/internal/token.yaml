@@ -1,0 +1,21 @@
+status: source-traced
+deployable: false
+action: internal
+native:
+  method: POST
+  path: "/auth/token"
+  placement: form
+  requestExample:
+    entityType: "<configured>"
+    userID: "<configured>"
+    password: "<secret>"
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L131
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/kcc.py#L314
+behavior: Form-encoded service login; cache token, never publish this operation.
+responseExample:
+  status: true
+  data:
+    token: "<redacted>"
+    sessionTTL: 3600
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

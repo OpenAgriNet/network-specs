@@ -1,0 +1,19 @@
+{
+  "exampleOnly": true,
+  "participant": "pmfby.example.invalid",
+  "capability": "openagrinet:Grievance",
+  "action": "status",
+  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
+  "method": "POST",
+  "path": "/krphapi/FGMS/GetGrievenceTicketsStatus",
+  "serverRef": "pmfby.fgms.baseUrl",
+  "headers": {
+    "Content-Type": "application/json",
+    "Authorization": {
+      "secretRef": "pmfby.fgms.authorization"
+    }
+  },
+  "bodyFrom": "message.contract.commitments[0].commitmentAttributes.payload",
+  "responseTo": "message.contract.commitments[0].commitmentAttributes.payload",
+  "responseGuard": "Release only a successful response authorized for the caller and requested ticket. Otherwise return an error without the provider body."
+}

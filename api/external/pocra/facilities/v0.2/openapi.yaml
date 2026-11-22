@@ -1,0 +1,195 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: PoCRA facility search upstream
+  version: 1.1.0
+  description: >
+    Searches the facility aggregator using its catalog search payload.
+servers:
+  - url: https://pocra.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /search:
+    post:
+      operationId: searchPocraFacilities
+      x-oan-binding:
+        descriptorCode: pocra-facilities
+        action: select
+        resourceType: openagrinet:AgricultureFacility
+      description: The network adapter sends one request per requested facility type. PoCRA caches and accumulates results
+        by message_id, so the adapter derives a separate ID per type.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchPocraFacilitiesRequest'
+            example:
+              context:
+                domain: advisory:mh-vistaar
+                location:
+                  country:
+                    name: IND
+                action: search
+                version: 1.1.0
+                bap_id: bap.mahapocra.gov.in
+                bap_uri: https://middleware.mahapocra.gov.in/bap/
+                message_id: 148b1122-3344-4566-8788-99aabbccdd00
+                transaction_id: cb981122-3344-4566-8788-99aabbccdde0
+                timestamp: '1795132800'
+              message:
+                intent:
+                  category:
+                    descriptor:
+                      code: chc
+                  item:
+                    descriptor:
+                      name: service-locations
+                  fulfillment:
+                    stops:
+                    - location:
+                        gps: 18.52,73.85
+                      time:
+                        range:
+                          start: '2026-11-20T00:00:00Z'
+      responses:
+        '200':
+          description: Search response consumed by the adapter. An empty result is possible. Individual facility coordinates
+            are not guaranteed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPocraFacilitiesResponse200'
+              example:
+                responses: []
+        default:
+          description: Upstream error. Response shape not verified.
+      x-oan-mapping:
+        href: ./mappings/select.yaml
+        status: existing
+        scope: adapter-action
+components:
+  schemas:
+    SearchPocraFacilitiesRequest:
+      type: object
+      required:
+      - context
+      - message
+      properties:
+        context:
+          type: object
+          properties:
+            domain:
+              type: string
+              enum:
+              - advisory:mh-vistaar
+            location:
+              type: object
+              properties:
+                country:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      enum:
+                      - IND
+            action:
+              type: string
+              enum:
+              - search
+            version:
+              type: string
+              enum:
+              - 1.1.0
+            bap_id:
+              type: string
+            bap_uri:
+              type: string
+              format: uri
+            message_id:
+              type: string
+              format: uuid
+            transaction_id:
+              type: string
+            timestamp:
+              type: string
+              description: Unix time in seconds, represented as a string.
+        message:
+          type: object
+          properties:
+            intent:
+              type: object
+              properties:
+                category:
+                  type: object
+                  properties:
+                    descriptor:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          enum:
+                          - chc
+                          - kvk
+                          - warehouse
+                          - soil_lab
+                item:
+                  type: object
+                  properties:
+                    descriptor:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          enum:
+                          - service-locations
+                fulfillment:
+                  type: object
+                  properties:
+                    stops:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          location:
+                            type: object
+                            properties:
+                              gps:
+                                type: string
+                                description: Latitude and longitude separated by a comma.
+                          time:
+                            type: object
+                            description: Forwarded by the adapter. Whether the provider requires it is unverified.
+                            properties:
+                              range:
+                                type: object
+                                properties:
+                                  start:
+                                    type: string
+                                    format: date-time
+    SearchPocraFacilitiesResponse200:
+      type: object
+      properties:
+        responses:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: object
+                properties:
+                  catalog:
+                    type: object
+                    properties:
+                      providers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            items:
+                              type: array
+                              items:
+                                type: object
+                                additionalProperties: true

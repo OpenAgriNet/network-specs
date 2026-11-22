@@ -1,0 +1,24 @@
+# Private payloads only. Authenticate and check provider success before normalizing data to an array.
+# Reject malformed data; never evaluate strings as code.
+required:
+  - check: |
+      (
+        $a := beckn.message.contract.commitments[0].commitmentAttributes;
+        $a.searchType in ["application_no","mobile"] and
+        $type($a.searchValue) = "string" and $length($trim($a.searchValue)) > 0
+      )
+    message: Valid lookup kind and a nonempty private lookup value are required.
+request: |
+  {"SearchValue": beckn.message.contract.commitments[0].commitmentAttributes.searchValue}
+response: |
+  (
+    $rows := $lookup(response, "data");
+    $assert(response.success = true and $type($rows) = "array", "Provider failure or unreadable records");
+    {"records": [$map($rows, function($a){(
+      $assert($type($a.ApplicationRefNo) = "string" and $length($a.ApplicationRefNo) > 0, "Missing reference");
+      $assert($count($a.Implements) = 1 and $count($a.Implements[0].StatusHistory) = 1, "Ambiguous status history");
+      $s := $a.Implements[0].StatusHistory[0].StatusText;
+      $assert($type($s) = "string" and $length($s) > 0, "Missing status");
+      {"applicationReference": $a.ApplicationRefNo, "status": $s}
+    )})]}
+  )

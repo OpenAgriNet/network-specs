@@ -1,0 +1,23 @@
+status: source-traced
+deployable: false
+action: status
+native:
+  method: POST
+  path: "/v1/state/grievances/verify-otp"
+  placement: body
+  requestExample:
+    grievanceNo: EXAMPLE
+    otp: '000000'
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L576
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L693
+behavior: 'verify_status_otp: check grievanceNo matches request. Preserve address
+  and escalationHistory where returned.'
+responseExample:
+  status: 200 OK
+  data:
+    grievanceNo: EXAMPLE
+    currentStatus: Open
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

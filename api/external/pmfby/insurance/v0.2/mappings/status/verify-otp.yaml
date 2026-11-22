@@ -1,0 +1,13 @@
+status: draft-native
+deployable: false
+action: status
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/pmfby/pmfby.service.ts#L267
+operationRef: https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post
+request:
+  in: body
+  jsonata: '{"mobile": session.mobile, "otp": $number(payload.otp)}'
+response:
+  jsonata: '{"verified": response.status != false and (response.data = true or response.data.verified = true)}'
+  guard: Reject transport errors and malformed or empty replies; never publish an OTP, token or farmer identifier.
+missing:
+- Bind private challenge state, mobile and both provider credential headers; reject expired or uncorrelated challenges.

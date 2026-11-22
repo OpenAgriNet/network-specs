@@ -1,0 +1,175 @@
+openapi: 3.1.1
+info:
+  title: aif/loan native requests (implementation draft)
+  version: 0.2.0-draft
+  x-contract-role: provider-native
+servers:
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
+x-draft:
+  catalogCandidate:
+    descriptorCode: aif-loan
+    resourceType: openagrinet:SchemeApplication
+    informationMode: OnDemand
+    publicationStatus: inactive-proposal
+    actions:
+    - action: init
+      operationRef: '#/paths/~1validate_beneficiaries~1/post'
+      variant: AifStart
+      mapping: mappings/init/AIFStartChallenge.yaml
+    - action: init
+      operationRef: '#/paths/~1validate_beneficiaries~1/post'
+      variant: AifVerify
+      mapping: mappings/init/AIFVerifyChallenge.yaml
+    - action: status
+      operationRef: '#/paths/~1Status/get'
+      variant: AifLoan
+      mapping: mappings/status.yaml
+  proposedActions:
+  - init
+  - status
+  needsConfirmation:
+  - Pin deployed revision; validate sanitized success and failure responses and session
+    handling before activation.
+paths:
+  "/validate_beneficiaries/":
+    post:
+      operationId: AifValidateBeneficiary
+      description: 'get_otp: beneficiary_id → beneficiaryId (number). No OTP on start.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L137
+      x-mappings:
+      - mappings/init/AIFStartChallenge.yaml
+      - mappings/init/AIFVerifyChallenge.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AifStartResponseVariants"
+              examples:
+                AifStart:
+                  value:
+                    Success: true
+                    MobileNumber: masked
+                    Message: OTP sent
+                AifVerify:
+                  value:
+                    Success: true
+                    Token: "<redacted>"
+                    ExpiresIn: 3600
+                    Beneficiary:
+                      Beneficiary_Name: Example
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - apiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AifStartRequestVariants"
+            examples:
+              AifStart:
+                value:
+                  beneficiaryId: 101
+              AifVerify:
+                value:
+                  beneficiaryId: 101
+                  otp: '000000'
+  "/Status":
+    get:
+      operationId: AifLoan
+      description: 'loan_status: loan_application_number → loanApplicationNumber.
+        Verified beneficiary selects session; it is not sent here. Duplicate parameters
+        into JSON body and query as the native client does. Object with Message may
+        signal failure even on 200.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L200
+      x-mappings:
+      - mappings/status.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AifLoanResponse"
+              examples:
+                AifLoan:
+                  value: Disbursed
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - apiKey: []
+        session: []
+      parameters:
+      - name: loanApplicationNumber
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 201
+      x-client-body: Same JSON fields as query; existing client sends both.
+components:
+  schemas:
+    AifStartRequest:
+      type: object
+      properties:
+        beneficiaryId:
+          type: integer
+      required:
+      - beneficiaryId
+    AifStartResponse:
+      type: object
+      properties:
+        Success:
+          type: boolean
+        MobileNumber:
+          type: string
+        Message:
+          type: string
+    AifVerifyRequest:
+      type: object
+      properties:
+        beneficiaryId:
+          type: integer
+        otp:
+          type: string
+      required:
+      - beneficiaryId
+      - otp
+    AifStartRequestVariants:
+      anyOf:
+      - "$ref": "#/components/schemas/AifStartRequest"
+      - "$ref": "#/components/schemas/AifVerifyRequest"
+    AifVerifyResponse:
+      type: object
+      properties:
+        Success:
+          type: boolean
+        Token:
+          type: string
+        ExpiresIn:
+          type: integer
+        Beneficiary:
+          type: object
+          properties:
+            Beneficiary_Name:
+              type: string
+    AifStartResponseVariants:
+      anyOf:
+      - "$ref": "#/components/schemas/AifStartResponse"
+      - "$ref": "#/components/schemas/AifVerifyResponse"
+    AifLoanResponse:
+      type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: apiKey
+    session:
+      type: http
+      scheme: bearer

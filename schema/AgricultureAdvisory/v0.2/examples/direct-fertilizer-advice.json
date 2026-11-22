@@ -1,0 +1,22 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureAdvisory",
+  "informationMode": "Direct",
+  "subjectCategories": [
+    "Crop",
+    "Practice"
+  ],
+  "topics": [
+    "Fertilizer recommendation"
+  ],
+  "issuedAt": "2026-07-01T09:00:00Z",
+  "source": {
+    "sourceId": "example:nutrient-advisory-service"
+  },
+  "recommendations": [
+    {
+      "language": "en",
+      "message": "Check the nutrient analysis on the product label against the nutrient plan for this field before choosing a fertilizer."
+    }
+  ]
+}

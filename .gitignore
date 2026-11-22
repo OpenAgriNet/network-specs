@@ -1,5 +1,6 @@
 .bundle/
 _site/
+__pycache__/
 .DS_Store
 
 # Test tooling stays local: Postman collections and fuzz harnesses are run

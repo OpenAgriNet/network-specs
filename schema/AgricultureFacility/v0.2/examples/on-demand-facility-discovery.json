@@ -1,0 +1,18 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureFacility",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Facility"
+  ],
+  "supportedFacilityTypes": [
+    "Warehouse",
+    "CustomHiringCentre"
+  ],
+  "actions": [
+    {
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post"
+    }
+  ]
+}

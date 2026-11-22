@@ -1,0 +1,203 @@
+{
+  "@context": {
+    "openagrinet": "https://openagrinet.github.io/network-specs/vocab#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "openagrinet:AgricultureAdvisory",
+      "@type": "rdfs:Class",
+      "rdfs:label": "Agriculture Advisory",
+      "rdfs:comment": "Agricultural guidance, including weather-informed advice, offered on demand or supplied directly."
+    },
+    {
+      "@id": "openagrinet:topics",
+      "@type": "rdfs:Property",
+      "rdfs:label": "topics"
+    },
+    {
+      "@id": "openagrinet:supportedWeatherParameters",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supported weather parameters"
+    },
+    {
+      "@id": "openagrinet:forecastHorizon",
+      "@type": "rdfs:Property",
+      "rdfs:label": "forecast horizon"
+    },
+    {
+      "@id": "openagrinet:updateFrequency",
+      "@type": "rdfs:Property",
+      "rdfs:label": "update frequency"
+    },
+    {
+      "@id": "openagrinet:geographicGranularities",
+      "@type": "rdfs:Property",
+      "rdfs:label": "geographic granularities"
+    },
+    {
+      "@id": "openagrinet:location",
+      "@type": "rdfs:Property",
+      "rdfs:label": "location"
+    },
+    {
+      "@id": "openagrinet:issuedAt",
+      "@type": "rdfs:Property",
+      "rdfs:label": "issued at"
+    },
+    {
+      "@id": "openagrinet:recommendations",
+      "@type": "rdfs:Property",
+      "rdfs:label": "recommendations"
+    },
+    {
+      "@id": "openagrinet:topic",
+      "@type": "rdfs:Property",
+      "rdfs:label": "topic"
+    },
+    {
+      "@id": "openagrinet:message",
+      "@type": "rdfs:Property",
+      "rdfs:label": "message"
+    },
+    {
+      "@id": "openagrinet:actions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "actions"
+    },
+    {
+      "@id": "openagrinet:weatherBasis",
+      "@type": "rdfs:Property",
+      "rdfs:label": "weather basis"
+    },
+    {
+      "@id": "openagrinet:weatherParameters",
+      "@type": "rdfs:Property",
+      "rdfs:label": "weather parameters"
+    },
+    {
+      "@id": "openagrinet:supportingResourceIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "supporting Resource identifiers"
+    },
+    {
+      "@id": "openagrinet:validity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "validity"
+    },
+    {
+      "@id": "openagrinet:language",
+      "@type": "rdfs:Property",
+      "rdfs:label": "language"
+    },
+    {
+      "@id": "openagrinet:severity",
+      "@type": "rdfs:Property",
+      "rdfs:label": "severity"
+    },
+    {
+      "@id": "openagrinet:source",
+      "@type": "rdfs:Property",
+      "rdfs:label": "source"
+    },
+    {
+      "@id": "openagrinet:priority",
+      "@type": "rdfs:Property",
+      "rdfs:label": "priority"
+    },
+    {
+      "@id": "openagrinet:rationale",
+      "@type": "rdfs:Property",
+      "rdfs:label": "rationale"
+    },
+    {
+      "@id": "openagrinet:weatherInformed",
+      "@type": "rdfs:Property",
+      "rdfs:label": "weather-informed advice declaration"
+    },
+    {
+      "@id": "openagrinet:applicability",
+      "@type": "rdfs:Property",
+      "rdfs:label": "applicability",
+      "rdfs:comment": "Alternative condition sets; fields within one set apply together."
+    },
+    {
+      "@id": "openagrinet:subjectIds",
+      "@type": "rdfs:Property",
+      "rdfs:label": "subjectIds",
+      "rdfs:comment": "Governed subjects for one condition."
+    },
+    {
+      "@id": "openagrinet:seasons",
+      "@type": "rdfs:Property",
+      "rdfs:label": "seasons",
+      "rdfs:comment": "Regional season references."
+    },
+    {
+      "@id": "openagrinet:growthStages",
+      "@type": "rdfs:Property",
+      "rdfs:label": "growthStages",
+      "rdfs:comment": "Observed developmental stage references."
+    },
+    {
+      "@id": "openagrinet:relativeTiming",
+      "@type": "rdfs:Property",
+      "rdfs:label": "relativeTiming",
+      "rdfs:comment": "Inclusive days since a named event."
+    },
+    {
+      "@id": "openagrinet:event",
+      "@type": "rdfs:Property",
+      "rdfs:label": "event",
+      "rdfs:comment": "Event used as day zero."
+    },
+    {
+      "@id": "openagrinet:fromDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "fromDays",
+      "rdfs:comment": "Inclusive lower day bound."
+    },
+    {
+      "@id": "openagrinet:toDays",
+      "@type": "rdfs:Property",
+      "rdfs:label": "toDays",
+      "rdfs:comment": "Inclusive upper day bound."
+    },
+    {
+      "@id": "openagrinet:establishmentMethods",
+      "@type": "rdfs:Property",
+      "rdfs:label": "establishmentMethods",
+      "rdfs:comment": "Direct seeding or transplanting."
+    },
+    {
+      "@id": "openagrinet:waterRegimes",
+      "@type": "rdfs:Property",
+      "rdfs:label": "waterRegimes",
+      "rdfs:comment": "Rainfed or irrigated."
+    },
+    {
+      "@id": "openagrinet:extensions",
+      "@type": "rdfs:Property",
+      "rdfs:label": "extensions",
+      "rdfs:comment": "Provider-owned restrictions; unknown qualifiers cannot be ignored."
+    },
+    {
+      "@id": "openagrinet:codeSystem",
+      "@type": "rdfs:Property",
+      "rdfs:label": "codeSystem",
+      "rdfs:comment": "Versioned vocabulary URI."
+    },
+    {
+      "@id": "openagrinet:agronomicCode",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicCode",
+      "rdfs:comment": "Code within a vocabulary."
+    },
+    {
+      "@id": "openagrinet:agronomicLabel",
+      "@type": "rdfs:Property",
+      "rdfs:label": "agronomicLabel",
+      "rdfs:comment": "Display label."
+    }
+  ]
+}

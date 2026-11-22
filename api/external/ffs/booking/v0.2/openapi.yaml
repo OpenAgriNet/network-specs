@@ -1,0 +1,625 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: FFS fertilizer allowance and booking
+  version: 0.2.0
+  description: >
+    Reads fertilizer entitlement, available products and retailers, and submits bookings. Authenticate the farmer and select the plot before calling.
+security:
+- farmerSession: []
+servers:
+  - url: https://ffs.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /ufa-fertilizer-service/ufa-fertilizer/v1/api/fertilizerRecommendation/getRecommendationsByGFRV4:
+    parameters:
+    - $ref: '#/components/parameters/Session'
+    post:
+      operationId: getFfsEntitlement
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: select
+      summary: Read the provider's allowance for selected plots and crops
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FfsEntitlementRequest'
+            example:
+              lands:
+              - farmlandPlotRegistryId: EXAMPLE-PLOT
+                areaHa: 1
+                cropCode: '001'
+                stateLgdCode: 0
+                districtLgdCode: 0
+              isProceedWithGfr: true
+      responses:
+        '200':
+          description: Provider GFR alternatives. The adapter supports exactly one and reads offeredBags, not calculated need,
+            as the allowance. This is not an order.
+          links:
+            availableProducts:
+              operationId: getFfsProducts
+              description: With a usable allowance, the adapter builds productGroupIds from eligible recommendation rows and
+                reuses the authenticated location. No branch is selected by the link alone.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FfsEntitlementResponse'
+              example:
+                code: 200
+                data:
+                - gfrType: 1
+                  recommendations:
+                  - productGroupId: 11
+                    kgPerBag: 45
+                    offeredBags: 2
+  /ufa-master-service/ufa-master/v1/api/product/getProductsByAvailability:
+    parameters:
+    - $ref: '#/components/parameters/Session'
+    post:
+      operationId: getFfsProducts
+      x-oan-mapping: {href: ./mappings/init/products.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: init
+      summary: Resolve the orderable products for the selected location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FfsProductsRequest'
+            example:
+              stateLgdCode: 0
+              districtLgdCode: 0
+              subDistrictLgdCode: 0
+              villageLgdCode: 0
+              productGroupIds: '11'
+      responses:
+        '200':
+          description: Matching products. Availability here is not a stock reservation.
+          links:
+            chooseRetailer:
+              operationId: getFfsRetailers
+              description: After product selection, pass product and group IDs with a stock-probe quantity and location. Never
+                substitute this probe for the farmer's chosen order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FfsProductsResponse'
+              example:
+                code: 200
+                data: []
+  /ufa-master-service/ufa-master/v1/api/retailer/getRetailersByProductAvailabilityV4:
+    parameters:
+    - $ref: '#/components/parameters/Session'
+    post:
+      operationId: getFfsRetailers
+      x-oan-mapping: {href: ./mappings/init/retailers.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: init
+      summary: Search retailers for the selected products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FfsRetailersRequest'
+            example:
+              stateLgdCode: 0
+              districtLgdCode: 0
+              subDistrictLgdCode: 0
+              villageLgdCode: 0
+              selectedProducts:
+              - productGroupId: 11
+                productId: 1
+                noBagsRequested: 1
+                quantityOfBagKg: 45
+              territoryLevel: V
+              farmerLatitude: null
+              farmerLongitude: null
+              pageNo: 1
+              pageSize: 3
+      responses:
+        '200':
+          description: Paginated retailers. The client probes for one bag to include smaller shops; the booking quantity comes
+            from the farmer's order.
+          links:
+            submitAfterConfirmation:
+              operationId: createFfsBooking
+              description: Candidate next step, not a command. Require the selected retailer, quantities and explicit confirmation;
+                reconstruct the booking from private session state and the accepted recommendation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FfsRetailersResponse'
+              example:
+                code: 200
+                totalPages: 0
+                data: []
+  /ufa-fertilizer-service/ufa-fertilizer/v1/api/bharatVistar/createMultipleBookingV2:
+    parameters:
+    - $ref: '#/components/parameters/Session'
+    post:
+      operationId: createFfsBooking
+      x-oan-mapping: {href: ./mappings/confirm.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: ffs-booking
+        resourceType: openagrinet:AgricultureResource
+        action: confirm
+      summary: Submit the confirmed order at the chosen retailer
+      description: 'This writes a booking. The tool''s confirmed flag is a local precondition, not a field sent to FFS. Carry
+        the provider''s recommendation through unchanged. Do not claim success or resubmit automatically on a timeout or a
+        contradictory result. No idempotency key is evidenced.
+
+        '
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FfsBookingRequest'
+            example:
+              stateLgdCode: 0
+              districtLgdCode: 0
+              subDistrictLgdCode: 0
+              villageLgdCode: 0
+              seasonId: 1
+              year: 2026
+              month: 11
+              requestedDatetime: '2026-11-01 09:00:00'
+              applicantUserId: EXAMPLE-USER
+              contactNoForCommunication: EXAMPLE-CONTACT
+              isReceiverApplicantSame: true
+              receiverUserId: EXAMPLE-USER
+              receiverName: Example recipient
+              receiverMobileNo: EXAMPLE-CONTACT
+              receiverAadharHash: EXAMPLE-NONIDENTIFYING
+              selectedLandIds:
+              - farmLandOwnershipId: EXAMPLE-LAND
+                cropCode: '001'
+                farmLandPlotRegistryId: EXAMPLE-PLOT
+              bookingRequest:
+              - retailerId: 1
+                productLines:
+                - productGroupId: 11
+                  productId: 1
+                  noBagsRequested: 1
+                  quantityOfBagKg: 45
+                  plantId: 1
+                  isLooseBuy: false
+                  totalQuantityKgRequested: 45
+              GFRRecommendation:
+              - productGroupId: 11
+                kgPerBag: 45
+                offeredBags: 2
+              gfrType: 1
+              isProceedWithGfr: true
+      responses:
+        '200':
+          description: Inspect validity flags, retailer, counts and booking references before reporting confirmation or waitlist.
+            HTTP 200 alone does not establish success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FfsBookingResponse'
+              examples:
+                confirmed:
+                  value:
+                    code: 200
+                    data:
+                      isValid: true
+                      totalBookingsSuccessful: 1
+                      totalBookingsFailed: 0
+                      bookingResults:
+                      - retailerId: 1
+                        isValid: true
+                        procurementId: 1
+                        procurementApplicationCode: EXAMPLE
+                        isWaitlisted: false
+                waitlisted:
+                  value:
+                    code: 200
+                    data:
+                      isValid: true
+                      totalBookingsSuccessful: 1
+                      totalBookingsFailed: 0
+                      bookingResults:
+                      - retailerId: 1
+                        isValid: true
+                        procurementId: 1
+                        procurementApplicationCode: EXAMPLE
+                        isWaitlisted: true
+        default:
+          description: FAILED with explicit null data and no contradicting success fields is a rejection in this client. Missing
+            data or an unreadable response is not proof that no booking was written.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FfsBookingResponse'
+              example:
+                code: 500
+                status: FAILED
+                data: null
+components:
+  securitySchemes:
+    farmerSession:
+      type: http
+      scheme: bearer
+      description: Authenticated FFS session after OTP verification.
+  parameters:
+    Session:
+      name: X-Session-Id
+      in: header
+      required: true
+      schema:
+        $ref: '#/components/schemas/SessionParameter'
+  schemas:
+    Id:
+      type:
+      - string
+      - integer
+    Area:
+      type: object
+      required:
+      - stateLgdCode
+      - districtLgdCode
+      - subDistrictLgdCode
+      - villageLgdCode
+      properties:
+        stateLgdCode:
+          $ref: '#/components/schemas/Id'
+        districtLgdCode:
+          $ref: '#/components/schemas/Id'
+        subDistrictLgdCode:
+          $ref: '#/components/schemas/Id'
+        villageLgdCode:
+          $ref: '#/components/schemas/Id'
+    ReadEnvelope:
+      type: object
+      required:
+      - code
+      - data
+      properties:
+        code:
+          const: 200
+        status:
+          type: string
+        message:
+          type: string
+    Recommendation:
+      type: object
+      properties:
+        productGroupId:
+          type: integer
+        offeredBags:
+          type: integer
+          minimum: 0
+        kgPerBag:
+          type: number
+      description: Preserve all returned properties. Bookings carry the original recommendation, not just these three fields.
+    ProductSelection:
+      type: object
+      required:
+      - productGroupId
+      - productId
+      - noBagsRequested
+      - quantityOfBagKg
+      properties:
+        productGroupId:
+          type: integer
+        productId:
+          type: integer
+        noBagsRequested:
+          type: integer
+          minimum: 1
+        quantityOfBagKg:
+          type: number
+          exclusiveMinimum: 0
+    FfsEntitlementRequest:
+      type: object
+      required:
+      - lands
+      - isProceedWithGfr
+      properties:
+        lands:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+            - farmlandPlotRegistryId
+            - areaHa
+            - cropCode
+            - stateLgdCode
+            - districtLgdCode
+            properties:
+              farmlandPlotRegistryId:
+                $ref: '#/components/schemas/Id'
+              areaHa:
+                type:
+                - number
+                - string
+              cropCode:
+                type: string
+              stateLgdCode:
+                type: integer
+              districtLgdCode:
+                $ref: '#/components/schemas/Id'
+        isProceedWithGfr:
+          const: true
+    FfsEntitlementResponse:
+      allOf:
+      - $ref: '#/components/schemas/ReadEnvelope'
+      - properties:
+          data:
+            type: array
+            items:
+              type: object
+              required:
+              - gfrType
+              - recommendations
+              properties:
+                gfrType:
+                  type: integer
+                recommendations:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Recommendation'
+    FfsProductsRequest:
+      allOf:
+      - $ref: '#/components/schemas/Area'
+      - required:
+        - productGroupIds
+        properties:
+          productGroupIds:
+            type: string
+            description: Comma-separated product group IDs.
+    FfsProductsResponse:
+      allOf:
+      - $ref: '#/components/schemas/ReadEnvelope'
+      - properties:
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                productId:
+                  type: integer
+                productGroupId:
+                  type: integer
+                plantId:
+                  $ref: '#/components/schemas/Id'
+                productName:
+                  type: string
+                bagWeightKg:
+                  type: number
+    FfsRetailersRequest:
+      allOf:
+      - $ref: '#/components/schemas/Area'
+      - required:
+        - selectedProducts
+        - territoryLevel
+        - farmerLatitude
+        - farmerLongitude
+        - pageNo
+        - pageSize
+        properties:
+          selectedProducts:
+            type: array
+            items:
+              $ref: '#/components/schemas/ProductSelection'
+          territoryLevel:
+            type: string
+            description: The client searches V then T then D then S.
+          farmerLatitude:
+            type:
+            - number
+            - 'null'
+          farmerLongitude:
+            type:
+            - number
+            - 'null'
+          pageNo:
+            type: integer
+            minimum: 1
+          pageSize:
+            type: integer
+            minimum: 1
+    FfsRetailersResponse:
+      allOf:
+      - $ref: '#/components/schemas/ReadEnvelope'
+      - required:
+        - totalPages
+        properties:
+          totalPages:
+            type: integer
+            minimum: 0
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                retailerId:
+                  type: integer
+                retailerName:
+                  type: string
+                availableProducts:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            productId:
+                              type: integer
+                            noBagsAvailable:
+                              type: number
+    FfsBookingRequest:
+      allOf:
+      - $ref: '#/components/schemas/Area'
+      - type: object
+        required:
+        - seasonId
+        - year
+        - month
+        - requestedDatetime
+        - applicantUserId
+        - contactNoForCommunication
+        - isReceiverApplicantSame
+        - receiverUserId
+        - receiverName
+        - receiverMobileNo
+        - receiverAadharHash
+        - selectedLandIds
+        - bookingRequest
+        - GFRRecommendation
+        - gfrType
+        - isProceedWithGfr
+        properties:
+          seasonId:
+            $ref: '#/components/schemas/Id'
+          year:
+            type: integer
+          month:
+            type: integer
+          requestedDatetime:
+            type: string
+            description: Local Asia/Kolkata date and time.
+          applicantUserId:
+            $ref: '#/components/schemas/Id'
+          contactNoForCommunication:
+            type:
+            - string
+            - integer
+            - 'null'
+          isReceiverApplicantSame:
+            const: true
+          receiverUserId:
+            $ref: '#/components/schemas/Id'
+          receiverName:
+            type:
+            - string
+            - 'null'
+          receiverMobileNo:
+            type:
+            - string
+            - integer
+            - 'null'
+          receiverAadharHash:
+            type: string
+            writeOnly: true
+          selectedLandIds:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required:
+              - farmLandOwnershipId
+              - cropCode
+              - farmLandPlotRegistryId
+              properties:
+                farmLandOwnershipId:
+                  type: string
+                cropCode:
+                  type: string
+                farmLandPlotRegistryId:
+                  type: string
+          bookingRequest:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required:
+              - retailerId
+              - productLines
+              properties:
+                retailerId:
+                  type: integer
+                productLines:
+                  type: array
+                  minItems: 1
+                  items:
+                    allOf:
+                    - $ref: '#/components/schemas/ProductSelection'
+                    - required:
+                      - plantId
+                      - isLooseBuy
+                      - totalQuantityKgRequested
+                      properties:
+                        plantId:
+                          type: integer
+                        isLooseBuy:
+                          const: false
+                        totalQuantityKgRequested:
+                          type: number
+          GFRRecommendation:
+            type: array
+            items:
+              $ref: '#/components/schemas/Recommendation'
+          gfrType:
+            type: integer
+          isProceedWithGfr:
+            const: true
+    FfsBookingResponse:
+      type: object
+      required:
+      - data
+      description: Wire shape only. Matching the shape does not validate a successful booking.
+      properties:
+        code:
+          type: integer
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type:
+          - object
+          - 'null'
+          properties:
+            isValid:
+              type: boolean
+            totalBookingsRequested:
+              type: integer
+            totalBookingsSuccessful:
+              type: integer
+            totalBookingsFailed:
+              type: integer
+            bookingResults:
+              type: array
+              items:
+                type: object
+                properties:
+                  retailerId:
+                    type: integer
+                  isValid:
+                    type: boolean
+                  procurementId:
+                    $ref: '#/components/schemas/Id'
+                  procurementApplicationCode:
+                    type:
+                    - string
+                    - 'null'
+                  isWaitlisted:
+                    type: boolean
+                  waitlistExpiresOn:
+                    type:
+                    - string
+                    - 'null'
+                  expiryDatetime:
+                    type:
+                    - string
+                    - 'null'
+    SessionParameter:
+      type: string

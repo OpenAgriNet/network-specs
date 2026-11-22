@@ -12,7 +12,7 @@ The contracts add agriculture-specific fields to Beckn `Resource.resourceAttribu
 |---|---|
 | [Schema Pack](schema/) | See every active schema pack, the fields it declares, the field sets it reuses, and where it is used |
 | [API specifications](api/) | External service integration contracts and examples |
-| [Complete Examples](schema/examples/) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
+| [Provider examples](api/providers/) | See OAN attributes composed inside complete Beckn Catalog, Provider, and Resource objects |
 
 ## Active version
 
@@ -35,7 +35,7 @@ Each versioned schema pack contains:
 - `README.md`: purpose, composition, fields, and boundaries;
 - `examples/`: complete JSON instances that validate against the pack.
 
-Examples that demonstrate a single contract live with that schema pack. Complete composition examples live in [`schema/examples/`](schema/examples/) and show those attributes inside Beckn-owned objects.
+Schema packs hold generic examples. Provider catalogs and native contracts are under [api/external/](api/external/).
 
 ## Beckn dependencies
 

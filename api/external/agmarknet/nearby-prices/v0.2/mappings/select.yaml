@@ -1,0 +1,14 @@
+status: incomplete
+deployable: false
+action: select
+operation: GET /v1/fetch-agmarknet-vistaar-location
+missing:
+  - Resolve commodity names and validate coordinates and dates.
+  - Supply the provider host and session token.
+  - Bind the select request, price response and errors.
+# Input: resolved commodity ID, coordinates and validated dates.
+requestProjection: >-
+  ( $hasRange := $exists(fromDate) and $exists(toDate); $merge([{ 'commodity_id': $string(commodityId), 'lat': $string(lat), 'long': $string(lon) }, $hasRange ? { 'from_date': fromDate, 'to_date': toDate } : { 'date': date }]) )
+# Known row containers; error handling is not specified.
+responseProjection: >-
+  $type($) = 'array' ? $ : $type(data) = 'array' ? data : $type(records) = 'array' ? records : $error("Unexpected price payload")

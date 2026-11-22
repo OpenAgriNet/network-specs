@@ -1,0 +1,21 @@
+status: source-traced
+deployable: false
+action: status
+native:
+  method: GET
+  path: "/Status"
+  placement: query+body
+  requestExample:
+    loanApplicationNumber: 201
+  headers:
+    apiKey: "<service key>"
+    Authorization: Bearer <verified beneficiary token>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L200
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/aif.py#L402
+behavior: 'loan_status: loan_application_number → loanApplicationNumber. Verified
+  beneficiary selects session; it is not sent here. Duplicate parameters into JSON
+  body and query as the native client does. Object with Message may signal failure
+  even on 200.'
+responseExample: Disbursed
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

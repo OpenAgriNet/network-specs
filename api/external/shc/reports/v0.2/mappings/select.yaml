@@ -1,0 +1,13 @@
+status: draft-native
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/shc/reports/v0.2/openapi.yaml#/paths/~1/post
+request:
+  in: body
+  jsonata: payload
+response:
+  jsonata: response
+  guard: Bind the farmer scope to the authorized session. Validate the fixed GraphQL query and reject error envelopes.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.

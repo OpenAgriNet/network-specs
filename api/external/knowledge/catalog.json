@@ -1,0 +1,77 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "88ad0276-792a-5368-a76e-343afd57cf45",
+    "messageId": "e55f0199-db98-5a62-a565-29c4788f8d9c",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "knowledge.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-knowledge",
+        "bppId": "knowledge.example.invalid",
+        "bppUri": "https://knowledge.example.invalid/beckn",
+        "descriptor": {
+          "name": "KNOWLEDGE example catalog"
+        },
+        "provider": {
+          "id": "prov-knowledge",
+          "descriptor": {
+            "name": "KNOWLEDGE example provider"
+          }
+        },
+        "isActive": false,
+        "resources": [
+          {
+            "id": "res-knowledge-search",
+            "descriptor": {
+              "code": "knowledge-search",
+              "name": "Agricultural knowledge search",
+              "shortDesc": "Search authorized knowledge sources through discover.",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+              "@type": "openagrinet:KnowledgeResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "actions": [
+                {
+                  "action": "discover",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post"
+                }
+              ],
+              "topics": [
+                "Agriculture"
+              ],
+              "languages": [
+                "en"
+              ],
+              "supportedKnowledgeTypes": [
+                "Reference"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-knowledge",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

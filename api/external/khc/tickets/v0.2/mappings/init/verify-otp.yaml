@@ -1,0 +1,24 @@
+status: source-traced
+deployable: false
+action: init
+native:
+  method: POST
+  path: "/auth/verify-otp"
+  placement: body
+  requestExample:
+    mobile: "<mobile>"
+    otp: '000000'
+  headers:
+    Authorization: ApiKey <configured key>
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L384
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/khc.py#L514
+behavior: 'verify_otp: farmerMobileNumber → mobile. Keep verification and registration
+  state private.'
+responseExample:
+  status: 200 OK
+  data:
+    isRegistered: true
+    mobile: "<mobile>"
+    token: "<redacted>"
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

@@ -1,0 +1,52 @@
+status: draft-native
+deployable: false
+action: discover
+operationRef: https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post
+# Inputs: beckn = original request; response = successful native response.
+# binding is trusted adapter context, never taken from intent or provider hits.
+request:
+  in: body
+  jsonata: |
+    (
+      $q := beckn.message.intent.textSearch;
+      $assert(beckn.context.action = "discover" and $type($q) = "string", "Expected discover with textSearch");
+      $assert($length($trim($q)) > 0, "Empty search query");
+      {"query": $q}
+    )
+response:
+  action: on_discover
+  jsonata: |
+    (
+      $ctx := beckn.context;
+      $b := binding;
+      $assert($type(response.hits) = "array", "Expected ranked hits");
+      $rows := [$map(response.hits, function($h){(
+        $m := $lookup($b.sourceMetadata, $string($h.doc_id));
+        $exists($m) and $not($h.is_reference = true) and $type($h.text) = "string" and
+        $length($trim($h.text)) > 0 and $type($h.`_id`) = "string" and $length($h.`_id`) > 0 ?
+        {
+          "id": $b.catalog.id & ":" & $h.`_id`,
+          "descriptor": {"name": $m.title},
+          "resourceAttributes": {
+            "@context": "https://openagrinet.github.io/network-specs/schema/KnowledgeResource/v0.2/context.jsonld",
+            "@type": "openagrinet:KnowledgeResource", "informationMode": "Direct",
+            "subjectCategories": $m.subjectCategories, "topics": $m.topics,
+            "languages": [$m.language], "knowledgeType": "Reference",
+            "version": $m.version, "lifecycleStatus": $m.lifecycleStatus,
+            "provenance": {"source": {"sourceId": $h.doc_id}, "publishedAt": $m.publishedAt},
+            "content": [{"inlineContent": $h.text, "mediaType": "text/plain", "language": $m.language}]
+          }
+        }
+      )})];
+      {
+        "context": {"action": "on_discover", "version": $ctx.version, "domain": $ctx.domain,
+          "transactionId": $ctx.transactionId, "messageId": $ctx.messageId,
+          "bapId": $ctx.bapId, "bapUri": $ctx.bapUri, "bppId": $b.catalog.bppId,
+          "bppUri": $b.catalog.bppUri, "timestamp": $b.callbackTime},
+        "message": {"catalogs": $count($rows) > 0 ? [$merge([$b.catalog, {"resources": $rows}])] : []}
+      }
+    )
+missing:
+  - Configure authorized discovery routing, corpus credentials and callback signing.
+  - Supply validated source metadata only for documents this caller may receive.
+  - Enforce intent filters on returned resources or reject unsupported constraints before replying.

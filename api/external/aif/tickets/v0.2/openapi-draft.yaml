@@ -1,0 +1,95 @@
+openapi: 3.1.1
+info:
+  title: aif/tickets native requests (implementation draft)
+  version: 0.2.0-draft
+  x-contract-role: provider-native
+servers:
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
+x-draft:
+  catalogCandidate:
+    descriptorCode: aif-tickets
+    resourceType: openagrinet:Grievance
+    informationMode: OnDemand
+    publicationStatus: inactive-proposal
+    actions:
+    - action: status
+      operationRef: '#/paths/~1support-tickets/get'
+      variant: AifTickets
+      mapping: mappings/status.yaml
+  proposedActions:
+  - status
+  needsConfirmation:
+  - Pin deployed revision; validate sanitized success and failure responses and session
+    handling before activation.
+paths:
+  "/support-tickets":
+    get:
+      operationId: AifTickets
+      description: 'grievance_status: beneficiary_id → beneficiaryId. Query and JSON
+        body are identical. A string instead of an array can mean no tickets; an object
+        with Message signals failure. No filing call.'
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L225
+      x-mappings:
+      - mappings/status.yaml
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AifTicketsResponse"
+              examples:
+                AifTickets:
+                  value:
+                  - BeneficiaryId: 101
+                    LoanApplicationNumber: 201
+                    Question: Example
+                    Status: Open
+                    description: Example
+                    subQueryType: Example
+                empty:
+                  value: No tickets
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful
+            callback.
+      security:
+      - apiKey: []
+        session: []
+      parameters:
+      - name: beneficiaryId
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 101
+      x-client-body: Same JSON fields as query; existing client sends both.
+components:
+  schemas:
+    AifTicketsResponse:
+      anyOf:
+      - type: array
+        items:
+          type: object
+          properties:
+            BeneficiaryId:
+              type: integer
+            LoanApplicationNumber:
+              type: integer
+            Question:
+              type: string
+            Status:
+              type: string
+            description:
+              type: string
+            subQueryType:
+              type: string
+      - type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: apiKey
+    session:
+      type: http
+      scheme: bearer

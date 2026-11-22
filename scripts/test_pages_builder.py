@@ -32,7 +32,7 @@ class PreviewTests(unittest.TestCase):
     def test_only_data_is_extracted(self):
         buffer = io.BytesIO()
         with tarfile.open(fileobj=buffer, mode='w') as tar:
-            for name in ['schema/A/profile.json', 'api/external/pmfby/openapi.yaml', '_plugins/evil.rb', 'scripts/evil.py']:
+            for name in ['schema/A/profile.json', 'api/external/pmfby/openapi.yaml', 'mappings/sample/select.yaml', 'mappings/ignored.rb', '_plugins/evil.rb', 'scripts/evil.py']:
                 info = tarfile.TarInfo(name)
                 info.size = 2
                 tar.addfile(info, io.BytesIO(b'{}'))
@@ -40,6 +40,8 @@ class PreviewTests(unittest.TestCase):
             pages.extract_data(buffer.getvalue(), Path(directory))
             self.assertTrue((Path(directory) / 'schema/A/profile.json').exists())
             self.assertTrue((Path(directory) / 'api/external/pmfby/openapi.yaml').exists())
+            self.assertTrue((Path(directory) / 'mappings/sample/select.yaml').is_file())
+            self.assertFalse((Path(directory) / 'mappings/ignored.rb').exists())
             self.assertFalse((Path(directory) / '_plugins').exists())
             self.assertFalse((Path(directory) / 'scripts').exists())
 

@@ -1,0 +1,24 @@
+status: source-traced
+deployable: false
+action: init
+native:
+  method: POST
+  path: "/auth/requestOtp"
+  placement: encrypted
+  requestExample:
+    data: "<ciphertext>"
+  plaintextExample:
+    mobileNumber: "<mobile>"
+    otpFor: krishika
+  encoding: AES-256-CBC over UTF-8 JSON; encode ciphertext as hex.
+  headers:
+    token: "<cached service token>"
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L236
+caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/kcc.py#L314
+behavior: 'get_otp: mobile_number → mobileNumber. Encrypt plaintext JSON with AES-256-CBC;
+  send {data: ciphertext} with token header. Retain decrypted requestID.'
+responseExample:
+  status: true
+  data: "<ciphertext>"
+binding: Design only. The adapter must implement the described transport and guards
+  before enabling this action.

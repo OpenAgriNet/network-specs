@@ -10,6 +10,7 @@
         "action": "openagrinet:actionName",
         "description": "openagrinet:actionDescription",
         "schema": "openagrinet:actionSchema",
+        "operationRef": {"@id": "openagrinet:operationRef", "@type": "@id"},
         "attributesAt": "openagrinet:actionAttributesAt"
       }
     },

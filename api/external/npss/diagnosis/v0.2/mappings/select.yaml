@@ -1,0 +1,15 @@
+status: incomplete
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post
+request:
+  contentType: multipart/form-data
+  filePart: File
+  optionalCoordinates:
+  - Latitude
+  - Longitude
+  authentication: Use a private provider token. Never publish credentials or image bytes in the catalog.
+response:
+  guard: Keep the result private. A transport success does not establish a diagnosis.
+missing:
+- Resolve an authorized upload to image bytes and verify the successful response schema.

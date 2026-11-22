@@ -1,0 +1,72 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000073",
+    "messageId": "fade0000-0000-4000-8000-000000000074",
+    "timestamp": "2026-11-19T01:00:00Z",
+    "senderId": "gfr.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-gfr",
+        "bppId": "gfr.example.invalid",
+        "bppUri": "https://gfr.example.invalid/beckn",
+        "descriptor": {
+          "name": "GFR example catalog"
+        },
+        "provider": {
+          "id": "prov-gfr",
+          "descriptor": {
+            "name": "GFR example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-gfr-registry",
+            "descriptor": {
+              "code": "gfr-registry",
+              "name": "GFR crop registry lookup",
+              "shortDesc": "GFR crop list",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "languages": [
+                "en",
+                "hi"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-gfr",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

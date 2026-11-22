@@ -1,0 +1,35 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld",
+  "@type": "openagrinet:MandiPrice",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Market"
+  ],
+  "supportedCommodities": [
+    {
+      "code": "COTTON",
+      "name": "Cotton"
+    },
+    {
+      "code": "PADDY",
+      "name": "Paddy"
+    }
+  ],
+  "supportedPriceFields": [
+    "Minimum",
+    "Maximum",
+    "Modal"
+  ],
+  "historicalDataAvailable": true,
+  "historyPeriod": "P5Y",
+  "updateFrequency": "P1D",
+  "market": {
+    "marketName": "Illustrative mandi"
+  },
+  "actions": [
+    {
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get"
+    }
+  ]
+}

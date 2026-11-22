@@ -1,0 +1,94 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: Knowledge Provider search for the network adapter
+  version: '0.2'
+  description: >
+    Returns ranked passages from an authorized search corpus.
+servers:
+  - url: https://knowledge.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /search:
+    post:
+      operationId: runSearch
+      x-oan-binding: {descriptorCode: knowledge-search, resourceType: "openagrinet:KnowledgeResource", action: discover}
+      x-oan-mapping: {href: ./mappings/discover.yaml, status: draft-native}
+      security:
+      - bearerAuth: []
+      description: Requires the search permission. Supply index_name only when the binding deliberately selects a corpus.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunSearchRequest'
+            example:
+              query: How do I store wheat seed?
+      responses:
+        '200':
+          description: Ranked passages with their source metadata. See the provider's OpenAPI for the full hit schema.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunSearchResponse200'
+              example:
+                effective_config:
+                  query: PM-KISAN eligibility
+                  index_name: documents-index-schemes
+                candidate_count: 0
+                final_count: 0
+                hits: []
+                raw_hits: null
+        '400':
+          description: Blank query, invalid validity date, or vector search failure.
+        '401':
+          description: Missing or invalid bearer token.
+        '403':
+          description: Caller lacks the search permission.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    RunSearchRequest:
+      type: object
+      required:
+      - query
+      properties:
+        query:
+          type: string
+          minLength: 1
+        index_name:
+          type: string
+    RunSearchResponse200:
+      type: object
+      required:
+      - effective_config
+      - candidate_count
+      - final_count
+      - hits
+      - raw_hits
+      properties:
+        effective_config:
+          type: object
+          additionalProperties: true
+        candidate_count:
+          type: integer
+          minimum: 0
+        final_count:
+          type: integer
+          minimum: 0
+        hits:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        raw_hits:
+          type:
+          - array
+          - 'null'
+          items:
+            type: object
+            additionalProperties: true

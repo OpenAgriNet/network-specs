@@ -10,6 +10,7 @@ Generate the public schema pages whenever an attributes file, profile, or exampl
 
 ```bash
 ruby scripts/generate-schema-pages.rb
+ruby scripts/generate-provider-walkthrough.rb
 ```
 
 Then run the site through Bundler:
@@ -22,7 +23,11 @@ Open `http://127.0.0.1:4173/network-specs/schema/`. The server rebuilds after so
 
 The generator writes one thin lowercase `index.md` per schema pack and `_data/schema_packs.json`. GitHub Pages therefore does not need to execute custom plugins. If a generated pack page is absent, the schema index links to that pack's `README.md` as a fallback.
 
-`DEVELOPMENT.md` and the generator are excluded from the published site.
+The [mapping index](api/external/mappings-index.json) lists adapter mappings under `api/external/<provider>/<capability>/<version>/mappings/`. A documented native operation can link to a related adapter action with `x-oan-mapping.href`, relative to its OpenAPI file. Check the index status before use: an existing adapter action or a handler draft is not proof of a working native integration. A mappings-only directory does not establish a provider endpoint. Regenerate the provider walkthrough and schema examples after changing a contract, mapping or catalog fixture.
+
+Use `openapi.yaml#/paths/…/<method>` to identify an operation and `openapi.yaml#/components/schemas/<name>` to identify a parameter, request body or response payload. GET examples refer to their parameter schemas; they do not have a synthetic body.
+
+`DEVELOPMENT.md` and the generators are excluded from the published site.
 
 ## Production and branch previews
 
@@ -52,6 +57,6 @@ This is a schema-content preview, not an arbitrary application deployment. Chang
 
 Keep Settings → Pages → Source set to GitHub Actions. The github-pages environment must admit main. Do not disable main's PR or force-push protection. The old schema-packs-v0.1 publishing workflow must not be permitted to deploy over production once the migration is complete.
 
-The last successful site remains online if a new build fails. To republish a known-good renderer, revert the faulty workflow or builder change through a PR, then run Deploy GitHub Pages on main. Do not use Unpublish site. The research stash is independent of this deployment configuration.
+The last successful site remains online if a new build fails. To republish a known-good renderer, revert the faulty workflow or builder change through a PR, then run Deploy GitHub Pages on main. Do not use Unpublish site.
 
 Run the dependency-free builder checks with `python3 -m unittest discover -s scripts -p 'test_pages*.py'`. With the Ruby bundle installed, validate an unmerged renderer using `python3 scripts/build-pages.py --output /absolute/path/to/a/new-build-directory --test-revision`. Never deploy that test output. Normal publication refuses to run from a revision other than fetched origin/main.

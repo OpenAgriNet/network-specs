@@ -1,0 +1,21 @@
+{
+  "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+  "@type": "openagrinet:AgricultureAdvisory",
+  "informationMode": "OnDemand",
+  "subjectCategories": [
+    "Weather",
+    "Crop"
+  ],
+  "topics": [
+    "District crop bulletin"
+  ],
+  "languages": [
+    "en"
+  ],
+  "actions": [
+    {
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get"
+    }
+  ]
+}

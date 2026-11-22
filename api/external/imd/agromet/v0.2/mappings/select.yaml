@@ -1,0 +1,13 @@
+status: draft-native
+deployable: false
+action: select
+operationRef: https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get
+request:
+  in: path
+  jsonata: '{"date": payload.date, "selector": payload.selector}'
+response:
+  jsonata: response
+  guard: Keep the dated bulletin rows; do not infer validity dates or district boundaries.
+missing:
+- Bind the private input and authenticated adapter context.
+- Verify the native exchange and response handling before deployment.

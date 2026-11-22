@@ -1,0 +1,146 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: SATHI certified seed stock
+  version: 0.2.0
+  description: >
+    Looks up certified seed stock by crop and location. Resolve location codes before calling.
+servers:
+  - url: https://sathi.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /inv-apis/stock/getSeedAvailability:
+    post:
+      operationId: getSeedAvailability
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SathiStockRequest'
+            example:
+              cropCode: EXAMPLE-CROP
+              seedClass: CERTIFIED I
+              stateCode: EXAMPLE-STATE
+              districtCode: EXAMPLE-DISTRICT
+              apiKey: NOT-A-KEY
+      responses:
+        '200':
+          description: The adapter checks numeric statusCode 200, reads data as stock rows and converts them into
+            Beckn catalog items. Do not interpret an error as confirmed zero stock.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SathiStockResponse'
+              examples:
+                found:
+                  value:
+                    statusCode: 200
+                    message: Success
+                    data:
+                    - variety_name: Example variety
+                      lot_number: LOT-DEMO
+                      bag_weight_kg: 25
+                      total_bags: 4
+                      available_at: []
+                noStock:
+                  value:
+                    statusCode: 200
+                    data: []
+                upstreamFailure:
+                  value:
+                    statusCode: 500
+                    message: Example upstream failure
+        default:
+          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+components:
+  schemas:
+    SathiStockRequest:
+      type: object
+      properties:
+        cropCode:
+          type:
+          - integer
+          - string
+        seedClass:
+          const: CERTIFIED I
+        stateCode:
+          type:
+          - integer
+          - string
+        districtCode:
+          type:
+          - integer
+          - string
+        apiKey:
+          type: string
+          writeOnly: true
+          description: Adapter credential; never publish in catalog metadata.
+      required:
+      - cropCode
+      - seedClass
+      - stateCode
+      - districtCode
+      - apiKey
+    SathiStockResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              variety_id: {}
+              variety_name:
+                type:
+                - string
+                - 'null'
+              crop_id: {}
+              crop_name:
+                type:
+                - string
+                - 'null'
+              lot_number: {}
+              bag_weight_kg:
+                type:
+                - integer
+                - number
+                - string
+                - 'null'
+              seed_class:
+                type:
+                - string
+                - 'null'
+              total_bags:
+                type:
+                - integer
+                - number
+                - string
+                - 'null'
+              total_quintals:
+                type:
+                - integer
+                - number
+                - string
+                - 'null'
+              available_at:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dealer_id: {}
+                    dealer_name: {}
+                    district: {}
+                    state: {}
+                    bags: {}
+                    quintals: {}
+                    contact_number: {}
+                  description: Dealer details from upstream; do not copy contact data to public catalog metadata.
+      required:
+      - statusCode
