@@ -7,3 +7,10 @@ __pycache__/
 # against the validation adapter, not published with the specs.
 *.postman_collection.json
 *.postman_environment.json
+
+# Agent tooling state and vector stores. Machine-local, regenerated on demand.
+.claude-flow/
+.swarm/
+ruvector.db
+agentdb.rvf
+agentdb.rvf.idmap.json
