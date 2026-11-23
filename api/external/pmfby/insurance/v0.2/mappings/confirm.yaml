@@ -1,6 +1,6 @@
 status: draft-native
 deployable: false
-action: status
+action: confirm
 source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/pmfby/pmfby.service.ts#L267
 operationRef: https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post
 request:

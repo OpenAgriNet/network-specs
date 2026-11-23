@@ -317,8 +317,8 @@
       "capability": "insurance",
       "action": "status",
       "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get",
-      "path": "pmfby/insurance/v0.2/mappings/status/policies.yaml",
-      "selector_type": "openagrinet:AgricultureResource",
+      "path": "pmfby/insurance/v0.2/mappings/status.yaml",
+      "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "pmfby-insurance"
       ],
@@ -328,10 +328,10 @@
     {
       "provider": "pmfby",
       "capability": "insurance",
-      "action": "status",
+      "action": "select",
       "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get",
-      "path": "pmfby/insurance/v0.2/mappings/status/claims.yaml",
-      "selector_type": "openagrinet:AgricultureResource",
+      "path": "pmfby/insurance/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "pmfby-insurance"
       ],
@@ -589,8 +589,8 @@
       "capability": "insurance",
       "action": "init",
       "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post",
-      "path": "pmfby/insurance/v0.2/mappings/init/send-otp.yaml",
-      "selector_type": "openagrinet:AgricultureResource",
+      "path": "pmfby/insurance/v0.2/mappings/init.yaml",
+      "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "pmfby-insurance"
       ],
@@ -600,10 +600,10 @@
     {
       "provider": "pmfby",
       "capability": "insurance",
-      "action": "status",
+      "action": "confirm",
       "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post",
-      "path": "pmfby/insurance/v0.2/mappings/status/verify-otp.yaml",
-      "selector_type": "openagrinet:AgricultureResource",
+      "path": "pmfby/insurance/v0.2/mappings/confirm.yaml",
+      "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "pmfby-insurance"
       ],

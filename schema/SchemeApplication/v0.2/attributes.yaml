@@ -18,6 +18,8 @@ components:
         '@type': openagrinet:SchemeApplication
       x-oan-schema-by-action:
         init: SchemeApplicationCall
+        confirm: SchemeApplicationCall
+        select: SchemeApplicationCall
         status: SchemeApplicationCall
       allOf:
       - $ref: '#/components/schemas/SchemeApplicationFields'

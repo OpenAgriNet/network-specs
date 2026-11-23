@@ -16,8 +16,8 @@ paths:
       operationId: verifyPmfbyInsuranceOtp
       summary: Verify a farmer OTP
       security: [{providerToken: [], otpPassword: []}]
-      x-oan-mapping: {href: ./mappings/status/verify-otp.yaml, status: draft-native}
-      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: status}
+      x-oan-mapping: {href: ./mappings/confirm.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:SchemeApplication', action: confirm}
       requestBody:
         required: true
         content:
@@ -38,8 +38,8 @@ paths:
       operationId: sendPmfbyInsuranceOtp
       summary: Send a farmer OTP
       security: [{providerToken: [], otpPassword: []}]
-      x-oan-mapping: {href: ./mappings/init/send-otp.yaml, status: draft-native}
-      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:AgricultureResource', action: init}
+      x-oan-mapping: {href: ./mappings/init.yaml, status: draft-native}
+      x-oan-binding: {descriptorCode: pmfby-insurance, resourceType: 'openagrinet:SchemeApplication', action: init}
       requestBody:
         required: true
         content:
@@ -58,10 +58,10 @@ paths:
   /api/v1/policy/policy/farmerpolicylist:
     get:
       operationId: listPmfbyInsurancePolicies
-      x-oan-mapping: {href: ./mappings/status/policies.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/status.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: pmfby-insurance
-        resourceType: openagrinet:AgricultureResource
+        resourceType: openagrinet:SchemeApplication
         action: status
       summary: List policies and their applications for the authenticated farmer
       parameters:
@@ -107,11 +107,11 @@ paths:
   /api/v1/claims/claims/claimSearchReport:
     get:
       operationId: listPmfbyInsuranceClaims
-      x-oan-mapping: {href: ./mappings/status/claims.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding:
         descriptorCode: pmfby-insurance
-        resourceType: openagrinet:AgricultureResource
-        action: status
+        resourceType: openagrinet:SchemeApplication
+        action: select
       summary: Read claims for the authenticated farmer, season and year
       parameters:
       - $ref: '#/components/parameters/FarmerId'

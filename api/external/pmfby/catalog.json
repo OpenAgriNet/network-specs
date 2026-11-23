@@ -81,7 +81,7 @@
             "descriptor": {
               "code": "pmfby-insurance",
               "name": "PMFBY policy and claim lookup",
-              "shortDesc": "Look up policies or claims with the corresponding status operation.",
+              "shortDesc": "Verify a farmer by OTP, then read insurance policies or crop-loss claims for one season and crop year.",
               "docs": [
                 {
                   "label": "Provider HTTP contract",
@@ -91,28 +91,43 @@
               ]
             },
             "resourceAttributes": {
-              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
-              "@type": "openagrinet:AgricultureResource",
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
               "informationMode": "OnDemand",
-              "subjectCategories": [
-                "Scheme"
-              ],
+              "scheme": {
+                "code": "PMFBY",
+                "name": "Pradhan Mantri Fasal Bima Yojana"
+              },
+              "challenge": {
+                "methods": [
+                  {
+                    "method": "OTP",
+                    "channel": "SMS",
+                    "length": 6,
+                    "valueType": "NUMERIC"
+                  }
+                ]
+              },
               "actions": [
                 {
-                  "action": "status",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get"
-                },
-                {
-                  "action": "status",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get"
-                },
-                {
                   "action": "init",
+                  "description": "Ask PMFBY to send a six-digit OTP to the farmer's registered mobile number. Call this before confirm.",
                   "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post"
                 },
                 {
-                  "action": "status",
+                  "action": "confirm",
+                  "description": "Answer the OTP sent by init. A correct answer opens the verified session that status and select spend; nothing else identifies the farmer.",
                   "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post"
+                },
+                {
+                  "action": "status",
+                  "description": "List the farmer's insurance policies and the applications under them for one season and crop year. Needs the session confirm opened.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get"
+                },
+                {
+                  "action": "select",
+                  "description": "Read the farmer's crop-loss claims for one season and crop year. Needs the session confirm opened.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get"
                 }
               ]
             }

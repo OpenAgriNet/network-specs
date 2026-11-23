@@ -75,7 +75,7 @@ permalink: /api/providers/index.html
 <tr><td><a href="#cap-pm-kisan-benefits">PM-KISAN application and instalment status</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-grievances">PM-KISAN grievance submission and tracking</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
 <tr><td><a href="#cap-pmfby-grievances">PMFBY grievance filing and tracking</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
-<tr><td><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
+<tr><td><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pocra-facilities">PoCRA facility directory</a></td><td><a href="#prov-pocra">POCRA example provider</a></td><td><code>openagrinet:AgricultureFacility</code></td></tr>
 <tr><td><a href="#cap-sathi-stock">SATHI certified seed stock</a></td><td><a href="#prov-sathi">SATHI example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-agmarknet-market-prices">Selected market prices</a></td><td><a href="#prov-agmarknet">AGMARKNET example provider</a></td><td><code>openagrinet:MandiPrice</code></td></tr>
@@ -697,6 +697,14 @@ permalink: /api/providers/index.html
       {
         &quot;action&quot;: &quot;confirm&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post&quot;
       }
     ]
   }
@@ -838,11 +846,46 @@ permalink: /api/providers/index.html
   &quot;code&quot;: 500,
   &quot;status&quot;: &quot;FAILED&quot;,
   &quot;data&quot;: null
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>init</code></td><td><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post">getFfsProducts</a><br><code>POST /ufa-master-service/ufa-master/v1/api/product/getProductsByAvailability</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/components/parameters/Session">Session</a></li></ul><p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsProductsRequest">FfsProductsRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;stateLgdCode&quot;: 0,
+  &quot;districtLgdCode&quot;: 0,
+  &quot;subDistrictLgdCode&quot;: 0,
+  &quot;villageLgdCode&quot;: 0,
+  &quot;productGroupIds&quot;: &quot;11&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post/responses/200">200</a> · Matching products. Availability here is not a stock reservation.<p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsProductsResponse">FfsProductsResponse</a></p><details><summary>Example</summary><pre><code>{
+  &quot;code&quot;: 200,
+  &quot;data&quot;: [
+
+  ]
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>init</code></td><td><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post">getFfsRetailers</a><br><code>POST /ufa-master-service/ufa-master/v1/api/retailer/getRetailersByProductAvailabilityV4</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/components/parameters/Session">Session</a></li></ul><p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsRetailersRequest">FfsRetailersRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;stateLgdCode&quot;: 0,
+  &quot;districtLgdCode&quot;: 0,
+  &quot;subDistrictLgdCode&quot;: 0,
+  &quot;villageLgdCode&quot;: 0,
+  &quot;selectedProducts&quot;: [
+    {
+      &quot;productGroupId&quot;: 11,
+      &quot;productId&quot;: 1,
+      &quot;noBagsRequested&quot;: 1,
+      &quot;quantityOfBagKg&quot;: 45
+    }
+  ],
+  &quot;territoryLevel&quot;: &quot;V&quot;,
+  &quot;farmerLatitude&quot;: null,
+  &quot;farmerLongitude&quot;: null,
+  &quot;pageNo&quot;: 1,
+  &quot;pageSize&quot;: 3
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post/responses/200">200</a> · Paginated retailers. The client probes for one bag to include smaller shops; the booking quantity comes from the farmer&#39;s order.<p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsRetailersResponse">FfsRetailersResponse</a></p><details><summary>Example</summary><pre><code>{
+  &quot;code&quot;: 200,
+  &quot;totalPages&quot;: 0,
+  &quot;data&quot;: [
+
+  ]
 }</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
 </table></div>
 
   <ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/ffs/booking/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/status.yaml">status · incomplete · status mapping</a></li></ul>
+  <ul><li><a href="../external/ffs/booking/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/status.yaml">status · incomplete · status mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/init/products.yaml">init · draft-native · products mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/init/retailers.yaml">init · draft-native · retailers mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -1462,10 +1505,10 @@ permalink: /api/providers/index.html
 <article class="capability" id="cap-pmfby-insurance" tabindex="-1">
   <h3><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></h3>
   <div class="capability-detail">
-  <p><a href="#prov-pmfby">PMFBY example provider</a> · <code>openagrinet:AgricultureResource</code></p>
-  <p>Look up policies or claims with the corresponding status operation.</p>
+  <p><a href="#prov-pmfby">PMFBY example provider</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Verify a farmer by OTP, then read insurance policies or crop-loss claims for one season and crop year.</p>
   <h4>Registry binding example</h4>
-  <p>Illustrative key: <code>prov-pmfby|openagrinet:AgricultureResource</code>. This is not a registry export.</p>
+  <p>Illustrative key: <code>prov-pmfby|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
 
   <h4>Published catalog fixture</h4>
   <p><code>cat-pmfby</code> contains <code>res-pmfby-insurance</code> in <code>OnDemand</code> mode. <a href="../external/pmfby/insurance/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
@@ -1474,7 +1517,7 @@ permalink: /api/providers/index.html
   &quot;descriptor&quot;: {
     &quot;code&quot;: &quot;pmfby-insurance&quot;,
     &quot;name&quot;: &quot;PMFBY policy and claim lookup&quot;,
-    &quot;shortDesc&quot;: &quot;Look up policies or claims with the corresponding status operation.&quot;,
+    &quot;shortDesc&quot;: &quot;Verify a farmer by OTP, then read insurance policies or crop-loss claims for one season and crop year.&quot;,
     &quot;docs&quot;: [
       {
         &quot;label&quot;: &quot;Provider HTTP contract&quot;,
@@ -1484,19 +1527,42 @@ permalink: /api/providers/index.html
     ]
   },
   &quot;resourceAttributes&quot;: {
-    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld&quot;,
-    &quot;@type&quot;: &quot;openagrinet:AgricultureResource&quot;,
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
     &quot;informationMode&quot;: &quot;OnDemand&quot;,
-    &quot;subjectCategories&quot;: [
-      &quot;Scheme&quot;
-    ],
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;PMFBY&quot;,
+      &quot;name&quot;: &quot;Pradhan Mantri Fasal Bima Yojana&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
     &quot;actions&quot;: [
       {
-        &quot;action&quot;: &quot;status&quot;,
-        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get&quot;
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask PMFBY to send a six-digit OTP to the farmer&#39;s registered mobile number. Call this before confirm.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;confirm&quot;,
+        &quot;description&quot;: &quot;Answer the OTP sent by init. A correct answer opens the verified session that status and select spend; nothing else identifies the farmer.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post&quot;
       },
       {
         &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;List the farmer&#39;s insurance policies and the applications under them for one season and crop year. Needs the session confirm opened.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get&quot;
+      },
+      {
+        &quot;action&quot;: &quot;select&quot;,
+        &quot;description&quot;: &quot;Read the farmer&#39;s crop-loss claims for one season and crop year. Needs the session confirm opened.&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get&quot;
       }
     ]
@@ -1512,25 +1578,45 @@ permalink: /api/providers/index.html
     &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
     &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
     &quot;schemaContext&quot;: [
-      &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld#openagrinet:AgricultureResource&quot;
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
     ]
   },
   &quot;message&quot;: {
     &quot;intent&quot;: {
       &quot;filters&quot;: {
         &quot;type&quot;: &quot;jsonpath&quot;,
-        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureResource\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Scheme\&quot;)&quot;
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;PMFBY\&quot;)&quot;
       }
     }
   }
 }</code></pre></details>
 
   <h4>Actions and mappings</h4>
-  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/insurance/v0.2/openapi.yaml">PMFBY policy and claim lookup</a></p><ul><li><code>GET /api/v1/policy/policy/farmerpolicylist</code> · status</li><li><code>GET /api/v1/claims/claims/claimSearchReport</code> · status</li></ul>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/insurance/v0.2/openapi.yaml">PMFBY policy and claim lookup</a></p><ul><li><code>POST /api/v1/services/nic/verifyMobile</code> · confirm</li><li><code>POST /api/v1/services/nic/getOtp</code> · init</li><li><code>GET /api/v1/policy/policy/farmerpolicylist</code> · status</li><li><code>GET /api/v1/claims/claims/claimSearchReport</code> · select</li></ul>
   <p>Policy and claim reads require a session and an authorized farmer ID.</p>
   <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for PMFBY policy and claim lookup"><table>
   <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
-  <tbody><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get">listPmfbyInsurancePolicies</a><br><code>GET /api/v1/policy/policy/farmerpolicylist</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>listType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter">ListPmfbyInsurancePoliciesListTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;POLICY_LIST&quot;</code></pre></details></li><li><code>sssyID</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter">ListPmfbyInsurancePoliciesSssyIDParameter</a><details><summary>Parameter example</summary><pre><code>&quot;04010026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/200">200</a> · The adapter reads the policy array directly or from data. An empty array contains no policies for the selection.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/PolicyListResponse">PolicyListResponse</a></p><details><summary>Example: onePolicy</summary><pre><code>{
+  <tbody><tr><td><code>init</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post">sendPmfbyInsuranceOtp</a><br><code>POST /api/v1/services/nic/getOtp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/SendOtpRequest">SendOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;0000000000&quot;,
+  &quot;otpType&quot;: &quot;SMS&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;OTP sent&quot;
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>confirm</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post">verifyPmfbyInsuranceOtp</a><br><code>POST /api/v1/services/nic/verifyMobile</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/VerifyOtpRequest">VerifyOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;0000000000&quot;,
+  &quot;otp&quot;: 123456
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: {
+    &quot;verified&quot;: true
+  }
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get">listPmfbyInsurancePolicies</a><br><code>GET /api/v1/policy/policy/farmerpolicylist</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>listType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter">ListPmfbyInsurancePoliciesListTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;POLICY_LIST&quot;</code></pre></details></li><li><code>sssyID</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter">ListPmfbyInsurancePoliciesSssyIDParameter</a><details><summary>Parameter example</summary><pre><code>&quot;04010026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/200">200</a> · The adapter reads the policy array directly or from data. An empty array contains no policies for the selection.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/PolicyListResponse">PolicyListResponse</a></p><details><summary>Example: onePolicy</summary><pre><code>{
   &quot;data&quot;: [
     {
       &quot;policyID&quot;: &quot;EXAMPLE-POLICY&quot;,
@@ -1548,7 +1634,7 @@ permalink: /api/providers/index.html
   ]
 }</code></pre></details><details><summary>Example: noPolicies</summary><pre><code>[
 
-]</code></pre></details></li><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/default">default</a> · Error body not established. Do not report authentication or transport failure as no policies.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get">listPmfbyInsuranceClaims</a><br><code>GET /api/v1/claims/claims/claimSearchReport</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>searchType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter">ListPmfbyInsuranceClaimsSearchTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;farmerID&quot;</code></pre></details></li><li><code>season</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter">ListPmfbyInsuranceClaimsSeasonParameter</a><details><summary>Parameter example</summary><pre><code>&quot;1&quot;</code></pre></details></li><li><code>year</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsYearParameter">ListPmfbyInsuranceClaimsYearParameter</a><details><summary>Parameter example</summary><pre><code>&quot;2026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get/responses/200">200</a> · Claim records use different field names from policy applications. The adapter displays ClaimStatus or falls back to Status.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ClaimListResponse">ClaimListResponse</a></p><details><summary>Example: oneClaim</summary><pre><code>[
+]</code></pre></details></li><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/default">default</a> · Error body not established. Do not report authentication or transport failure as no policies.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>select</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get">listPmfbyInsuranceClaims</a><br><code>GET /api/v1/claims/claims/claimSearchReport</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>searchType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter">ListPmfbyInsuranceClaimsSearchTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;farmerID&quot;</code></pre></details></li><li><code>season</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter">ListPmfbyInsuranceClaimsSeasonParameter</a><details><summary>Parameter example</summary><pre><code>&quot;1&quot;</code></pre></details></li><li><code>year</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsYearParameter">ListPmfbyInsuranceClaimsYearParameter</a><details><summary>Parameter example</summary><pre><code>&quot;2026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get/responses/200">200</a> · Claim records use different field names from policy applications. The adapter displays ClaimStatus or falls back to Status.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ClaimListResponse">ClaimListResponse</a></p><details><summary>Example: oneClaim</summary><pre><code>[
   {
     &quot;applicationNo&quot;: &quot;EXAMPLE-APPLICATION&quot;,
     &quot;ClaimStatus&quot;: &quot;Example claim status&quot;,
@@ -1562,7 +1648,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/pmfby/insurance/v0.2/mappings/status/policies.yaml">status · draft-native · policies mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/status/claims.yaml">status · draft-native · claims mapping</a></li></ul>
+  <ul><li><a href="../external/pmfby/insurance/v0.2/mappings/status.yaml">status · draft-native · status mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/init.yaml">init · draft-native · init mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
