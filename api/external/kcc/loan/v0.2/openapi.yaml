@@ -24,6 +24,8 @@ paths:
         descriptorCode: kcc-loan
         resourceType: openagrinet:SchemeApplication
         action: init
+      x-oan-request-attributes:
+        schema: {$ref: '#/components/schemas/SendOtpAttributes'}
       requestBody:
         required: true
         content:
@@ -55,6 +57,8 @@ paths:
         descriptorCode: kcc-loan
         resourceType: openagrinet:SchemeApplication
         action: status
+      x-oan-request-attributes:
+        schema: {$ref: '#/components/schemas/ReadApplicationsAttributes'}
       requestBody:
         required: true
         content:
@@ -114,7 +118,10 @@ components:
       required: [mobileNumber, otpFor]
       description: The plaintext sealed into SealedBody.data for /auth/requestOtp.
       properties:
-        mobileNumber: {type: string, description: Ten digits, no country code.}
+        mobileNumber:
+          type: string
+          x-oan-from: subject.mobile
+          description: Ten digits, no country code.
         otpFor: {const: krishika}
     SendOtpReply:
       type: object
@@ -133,8 +140,38 @@ components:
       required: [requestID, otp]
       description: The plaintext sealed into SealedBody.data for applicationStatus.
       properties:
-        requestID: {type: string}
-        otp: {type: integer, description: Six digits as a NUMBER; the quoted form is refused.}
+        requestID:
+          type: string
+          x-oan-from: session
+          description: >
+            Read back out of the init reply and quoted here. Not something a
+            caller can be asked for.
+        otp:
+          type: integer
+          x-oan-from: challenge.otp
+          description: Six digits as a NUMBER; the quoted form is refused.
+    SendOtpAttributes:
+      description: >
+        What a Beckn init call carries. The same fields as the plaintext body,
+        because nothing beyond them is needed to send an OTP.
+      allOf:
+      - {$ref: '#/components/schemas/SendOtpRequest'}
+    ReadApplicationsAttributes:
+      description: >
+        What a Beckn status call carries. One field more than the plaintext
+        body: the mobile is not sent to KCC -- the requestID is who the farmer
+        is -- but the adapter checks it against the mobile the session was
+        bought for, so a transaction id alone cannot read another farmer's
+        applications.
+      allOf:
+      - {$ref: '#/components/schemas/ReadApplicationsRequest'}
+      - type: object
+        required: [mobileNumber]
+        properties:
+          mobileNumber:
+            type: string
+            x-oan-from: subject.mobile
+            description: Not forwarded to KCC; it is what the session is bound to.
     ApplicationList:
       type: object
       description: >

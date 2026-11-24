@@ -13,6 +13,15 @@ components:
       x-jsonld:
         "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld"
         "@type": openagrinet:AgricultureResource
+      # informationMode and subjectCategories below are CATALOG facts. Without
+      # this, a select request -- which carries neither -- is validated against
+      # the catalog schema and refused for not being a catalog. Same entry as
+      # SchemeApplication v0.2 and Grievance v0.2.
+      x-oan-schema-by-action:
+        init: AgricultureResourceCall
+        confirm: AgricultureResourceCall
+        select: AgricultureResourceCall
+        status: AgricultureResourceCall
       allOf:
         - $ref: "#/components/schemas/AgricultureResourceFields"
         - type: object
@@ -36,6 +45,37 @@ components:
                           pattern: "^openagrinet:"
               description: Canonical OAN type, optionally accompanied by Provider-defined JSON-LD types.
 
+    AgricultureResourceCall:
+      description: >
+        A request or response payload for one of this capability's actions. v0.2
+        leaves operation-specific validation to the Provider API contract that
+        the catalog's actions[].operationRef names, so this checks only that the
+        payload claims this pack and this type.
+      type: object
+      required: ["@context", "@type"]
+      properties:
+        "@context":
+          description: This pack's JSON-LD context.
+          type: string
+          minLength: 1
+        "@type":
+          description: This pack's OAN type, alone or alongside the Provider's own types.
+          oneOf:
+            - type: string
+              const: openagrinet:AgricultureResource
+            - type: array
+              minItems: 2
+              uniqueItems: true
+              contains:
+                const: openagrinet:AgricultureResource
+              items:
+                oneOf:
+                  - const: openagrinet:AgricultureResource
+                  - type: string
+                    minLength: 1
+                    not:
+                      pattern: "^openagrinet:"
+      additionalProperties: true
     AgricultureResourceFields:
       type: object
       required: [informationMode, subjectCategories]
