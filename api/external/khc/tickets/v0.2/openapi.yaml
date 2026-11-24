@@ -431,21 +431,23 @@ paths:
   "/v1/state/grievances/check-status":
     post:
       operationId: KhcStatusStart
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: select
       summary: Ask KHC to send an OTP before a gated status read
-      x-oan-unbound-reason: >
-        Exists and answers, but this adapter cannot call it. The operation is a
-        POST whose only input is a query parameter -- verified against the
-        provider on 2026-11-24, where grievanceNo in the body returns
+      description: >
+        Bound to the Grievance capability's `select` action. The only input is a
+        query parameter on a POST -- verified against the provider on
+        2026-11-24, where grievanceNo in the body returns
         400 "grievanceNo is required" and the same value in the query string
-        returns 404 "Grievance not found". BuildEndpoint appends a query string
-        only when the method takes no body (util/endpoint.go:26-29, HasBody in
-        util/request.go:20-27), so a POST carrying its input in the query cannot
-        be expressed by a registry row.
+        reaches the grievance. A registry Path cannot hold a query, so the
+        mapping names the field under the reserved `_query` key and the adapter
+        lifts it onto the URL whatever the method (util/query.go, Split).
 
-        Two ways to bind it, neither ours alone to pick: KHC accepts grievanceNo
-        in the request body, or the adapter learns to send a query string on a
-        POST. Until then the gated journey is documented and not routed.
-        See migration-plan/open-issues.md item 20.
+        The request body below is empty and required because this repository's
+        contract checker requires one on every POST. Nothing is read from it.
       requestBody:
         required: true
         content:
@@ -484,14 +486,18 @@ paths:
   "/v1/state/grievances/verify-otp":
     post:
       operationId: KhcStatusVerify
+      x-oan-mapping: {href: ./mappings/status.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: status
       summary: Verify the status OTP and read the grievance
-      x-oan-unbound-reason: >
-        Routable in itself -- it takes a JSON body, unlike check-status -- but
-        it is the second step of a journey whose first step this adapter cannot
-        call, so binding it alone would publish a step no caller can reach.
+      description: >
+        Bound to the Grievance capability's `status` action, the second step of
+        the gated read. Takes both values in a JSON body, unlike check-status.
         Verified on 2026-11-24: a body of grievanceNo plus otp returns
-        401 "Invalid or expired OTP", so the body form is the one it reads.
-        Binds once item 20 settles how check-status is reached.
+        401 "Invalid or expired OTP" when no check-status preceded it, which is
+        the gate -- a caller cannot reach a grievance with a number alone.
       requestBody:
         required: true
         content:
@@ -526,26 +532,17 @@ paths:
       operationId: KhcReadGrievance
       summary: Read a grievance by its number
       x-oan-unbound-reason: >
-        Unbound pending one answer from KHC: is a grievance number alone enough
-        to read a grievance? This is the only status read present in the
-        provider backend, and it takes no OTP -- so if it is bound as it
-        stands, anyone holding a number can read that grievance, including the
-        free text the farmer wrote. v1 prompts for a six-digit OTP first, but
-        the backend's status branch ignores the request type it sends, so that
-        prompt may never have gated anything.
+        Unbound on purpose, and not pending anything. It reads a grievance on a
+        number alone, with no OTP, and the reply carries the free text the
+        farmer wrote -- so binding it would publish a read with no gate at all.
+        v1 prompts for a six-digit OTP before reaching this endpoint, but the
+        provider backend's status branch ignores the request type that prompt
+        sets, so the prompt may never have gated anything.
 
-        The draft this contract was promoted from published two operations here
-        instead, POST /v1/state/grievances/check-status and
-        POST /v1/state/grievances/verify-otp. Both are dropped. Neither appears
-        in the provider backend; the draft's source links point into a longer
-        revision, so they describe code this repository does not hold; and the
-        first was a POST whose only input was a query parameter, which no
-        adapter can send -- a query string is appended for GET, HEAD and DELETE
-        only (util/request.go:20-27) -- and which this repository's own
-        contract checker rejects, because it requires a request body on every
-        POST.
-
-        Resolve before binding. See migration-plan/open-issues.md item 20.
+        The gated pair above is bound instead: check-status sends an OTP to the
+        mobile the grievance was filed against, and verify-otp answers it and
+        returns the same body this operation would. Nothing is lost by leaving
+        this one out.
       parameters:
       - name: grievanceNo
         in: query

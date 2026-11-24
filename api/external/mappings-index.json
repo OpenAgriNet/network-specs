@@ -204,15 +204,28 @@
     {
       "provider": "khc",
       "capability": "tickets",
-      "action": "status",
-      "path": "khc/tickets/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
         "khc-grievance"
       ],
-      "status": "source-traced",
-      "binding_note": "Unbound pending confirmation from KHC that reading a grievance needs an OTP at all. Absent from the provider backend on disk, which reads with GET /v1/state/grievances/status. See migration-plan/open-issues.md item 20.",
-      "advertised": false
+      "status": "draft-native",
+      "fixture": "api/external/khc/catalog.json",
+      "action": "select",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post",
+      "path": "khc/tickets/v0.2/mappings/select.yaml"
+    },
+    {
+      "provider": "khc",
+      "capability": "tickets",
+      "selector_type": "openagrinet:Grievance",
+      "descriptor_codes": [
+        "khc-grievance"
+      ],
+      "status": "draft-native",
+      "fixture": "api/external/khc/catalog.json",
+      "action": "status",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post",
+      "path": "khc/tickets/v0.2/mappings/status.yaml"
     },
     {
       "provider": "kcc",

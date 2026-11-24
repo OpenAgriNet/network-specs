@@ -1,40 +1,69 @@
-status: provider-verified
+status: draft-native
 deployable: false
-advertised: false
 action: status
 verifiedAgainst: KHC UAT, 2026-11-24, read-only probes with a non-existent grievance number
+operationRef: https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post
 native:
-  method: GET
-  path: "/v1/state/grievances/status"
-  placement: query
+  method: POST
+  path: "/v1/state/grievances/verify-otp"
+  placement: body
   requestExample:
     grievanceNo: MH/123456/1
+    otp: '123456'
   headers:
     Authorization: ApiKey <configured key>
 responseExample:
-  status: 404 NOT_FOUND
-  message: Grievance not found
+  status: 401 UNAUTHORIZED
+  message: Invalid or expired OTP
   data: null
+request:
+  in: body
+  jsonata: >
+    {"grievanceNo": $string($attributes.case.ticketNo),
+     "otp": $string($attributes.challenge.response.value)}
+  guard: >
+    Both values travel in the body here, unlike check-status, which reads its
+    only value from the query string. The inconsistency is the provider's; each
+    mapping follows the call in front of it.
+
+    Never retried. The OTP is single-use, so a retry spends it and the farmer's
+    own answer is then refused.
+  preconditions:
+  - a check-status for this same grievance number, which is what sent the OTP
+response:
+  jsonata: >
+    {"case": {"ticketNo": $string(response.data.grievanceNo),
+              "status": {"code": $caseStatus}}}
+  guard: >
+    KHC's own status phrase does not travel. caseStatus is a CaseStatusCode
+    enum, so the phrase is lowercased, stripped of punctuation and looked up;
+    anything outside the known set is reported as UnderReview rather than
+    guessed at. KHC has not published its set.
+
+    The number reported is the one KHC named, not the one asked about. A 200
+    carrying no grievanceNo is refused as not a read.
 behavior: >
-  Three status operations exist on the provider, not one.
+  Three status operations exist on the provider, not one, and two of them are
+  bound as the gated pair select then status.
 
-  GET /v1/state/grievances/status?grievanceNo= reads a grievance with no
-  challenge of any kind. A non-existent number returns 404 "Grievance not
-  found", which means the call reached a grievance lookup rather than an
-  authorization check. A grievance number alone therefore reads a grievance,
-  including the free text the farmer wrote.
+  POST /v1/state/grievances/check-status?grievanceNo= sends an OTP to the
+  mobile the grievance was filed against, and POST
+  /v1/state/grievances/verify-otp reads the grievance once that OTP is given.
+  A verify with no check-status before it returns 401 "Invalid or expired OTP",
+  which is the gate.
 
-  POST /v1/state/grievances/check-status?grievanceNo= sends an OTP first, and
-  POST /v1/state/grievances/verify-otp reads the grievance once that OTP is
-  given. Both exist: a GET against either returns 405, not 404. An earlier
-  revision of this file claimed they were absent, on the strength of a provider
-  backend snapshot that is older than what is deployed.
+  GET /v1/state/grievances/status?grievanceNo= is left unbound. It reads a
+  grievance with no challenge of any kind -- a non-existent number returns 404
+  "Grievance not found", so the call reached a grievance lookup rather than an
+  authorization check -- and the reply carries the free text the farmer wrote.
+  It returns the same body verify-otp does, so nothing is lost by leaving it
+  out.
 missing:
 - >
-  Which journey KHC intends callers to use. The gated pair is the safe one but
-  its first step cannot be routed, because check-status is a POST whose only
-  input is a query parameter, and BuildEndpoint appends a query string for
-  bodyless methods only (util/endpoint.go:26-29). The ungated GET is routable
-  and is the one the provider backend implements, but publishing it hands any
-  holder of a grievance number the grievance behind it. Neither is bound until
-  KHC chooses. See migration-plan/open-issues.md item 20.
+  KHC's own set of status phrases. The mapping covers what the desk is seen to
+  return, and a phrase outside that set is reported as under review, which is a
+  statement about this mapping rather than about the grievance.
+- >
+  Where currentLevel and createdAt belong. KHC returns both on the read and the
+  Grievance v0.2 contract declares neither, so neither is mapped. See
+  migration-plan/khc/plan.md.

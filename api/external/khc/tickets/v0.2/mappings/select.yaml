@@ -1,0 +1,47 @@
+status: draft-native
+deployable: false
+action: select
+verifiedAgainst: KHC UAT, 2026-11-24, read-only probes with a non-existent grievance number
+operationRef: https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post
+native:
+  method: POST
+  path: "/v1/state/grievances/check-status"
+  placement: query
+  requestExample:
+    grievanceNo: MH/123456/1
+  headers:
+    Authorization: ApiKey <configured key>
+responseExample:
+  status: 404 NOT_FOUND
+  message: Grievance not found
+  data: null
+request:
+  in: query
+  jsonata: '{"_query": {"grievanceNo": $string($attributes.case.ticketNo)}}'
+  guard: >
+    The placement is the provider's, not a choice. grievanceNo in the body
+    returns 400 "grievanceNo is required"; the same value in the query string
+    reaches the grievance. A registry Path cannot hold a query, so the mapping
+    names the field under the reserved _query key and the adapter lifts it onto
+    the URL whatever the method.
+
+    Never retried. A second check-status invalidates the first code, so the
+    farmer reads one and types another.
+response:
+  jsonata: >
+    {"case": {"ticketNo": $string($attributes.case.ticketNo)},
+     "challenge": {"issued": {"method": "OTP", "channel": "SMS",
+                              "length": 6, "valueType": "NUMERIC"}}}
+  guard: >
+    Nothing is read by this call. The number echoed back is the one asked
+    about, which is honest here and nowhere else: KHC answers 404 for a number
+    it does not hold, so a 200 is KHC saying it knows this one.
+
+    The challenge length and expiry are not KHC's. It publishes neither, so the
+    six digits and the five-minute window are the filing challenge's figures
+    carried over.
+missing:
+- >
+  How long the status OTP lives and how many digits it has. KHC publishes
+  neither, so the mapping states the filing challenge's figures. A farmer told
+  five minutes on a code that lasts two is told something KHC never said.
