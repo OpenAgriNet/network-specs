@@ -14,9 +14,9 @@ paths:
         generated bearer token.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4420
       x-oan-binding:
-        descriptorCode: gfr-advice
+        descriptorCode: gfr-soil-report
         resourceType: openagrinet:AgricultureResource
-        action: init
+        action: select
       responses:
         '200':
           description: Native success payload; examples are synthetic.

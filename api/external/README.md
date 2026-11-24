@@ -43,8 +43,9 @@ A publication links only the operations currently backed by a native contract. O
 | aif | aif-tickets | Grievance | [Source-traced requests](aif/tickets/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
 | amul | amul-schemes | KnowledgeResource | Uses network search or cached results; no native scheme endpoint is confirmed. |
 | ffs | ffs-booking | AgricultureResource | [Catalog](ffs/catalog.json) |
-| gfr | gfr-advice | AgricultureResource | [Soil report](gfr/soil-report/v0.2/openapi.yaml) (`init`) · [Recommendation](gfr/advice/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
+| gfr | gfr-advice | AgricultureAdvisory | [Recommendation](gfr/advice/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
 | gfr | gfr-registry | AgricultureResource | [Catalog](gfr/catalog.json) |
+| gfr | gfr-soil-report | AgricultureResource | [Soil report](gfr/soil-report/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
 | icar | icar-field-advice | AgricultureAdvisory | Material lookup does not establish a field-advice endpoint. |
 | icar | icar-materials | KnowledgeResource | Reads internal storage; no native HTTP endpoint is confirmed. |
 | imd | imd-agromet | AgricultureAdvisory | [Catalog](imd/catalog.json) |

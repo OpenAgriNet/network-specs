@@ -15,7 +15,7 @@ paths:
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4423
       x-oan-binding:
         descriptorCode: gfr-advice
-        resourceType: openagrinet:AgricultureResource
+        resourceType: openagrinet:AgricultureAdvisory
         action: select
       responses:
         '200':
