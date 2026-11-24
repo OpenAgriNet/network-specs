@@ -523,6 +523,42 @@
       "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/internal/generateAccessToken.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/internal/getTestForAuthUser.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "internal",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
+      "provider": "gfr",
+      "capability": "advice",
+      "path": "gfr/advice/v0.2/mappings/select.yaml",
+      "selector_type": "openagrinet:AgricultureAdvisory",
+      "descriptor_codes": [
+        "gfr-advice"
+      ],
+      "action": "select",
+      "status": "source-traced",
+      "binding_note": "Native request documented; not a deployable adapter configuration."
+    },
+    {
       "provider": "ffs",
       "capability": "booking",
       "action": "init",
