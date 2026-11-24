@@ -54,6 +54,7 @@ permalink: /api/providers/index.html
 <li><a href="#prov-ffs">FFS example provider</a></li>
 <li><a href="#prov-gfr">GFR example provider</a></li>
 <li><a href="#prov-imd">IMD example provider</a></li>
+<li><a href="#prov-kcc">KCC example provider</a></li>
 <li><a href="#prov-knowledge">KNOWLEDGE example provider</a></li>
 <li><a href="#prov-npss">NPSS example provider</a></li>
 <li><a href="#prov-pm-kisan">PM-KISAN example provider</a></li>
@@ -71,6 +72,7 @@ permalink: /api/providers/index.html
 <tr><td><a href="#cap-npss-diagnosis">Crop image analysis</a></td><td><a href="#prov-npss">NPSS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-ffs-booking">FFS fertilizer booking</a></td><td><a href="#prov-ffs">FFS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-gfr-registry">GFR crop registry lookup</a></td><td><a href="#prov-gfr">GFR example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
+<tr><td><a href="#cap-kcc-loan">KCC loan application status</a></td><td><a href="#prov-kcc">KCC example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-agmarknet-nearby-prices">Nearby mandi prices</a></td><td><a href="#prov-agmarknet">AGMARKNET example provider</a></td><td><code>openagrinet:MandiPrice</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-benefits">PM-KISAN application and instalment status</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-grievances">PM-KISAN grievance submission and tracking</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
@@ -105,6 +107,12 @@ permalink: /api/providers/index.html
   <h3 id="prov-imd">IMD example provider</h3>
   <p>Catalog <code>cat-imd</code>. <a href="../external/imd/catalog.json">Read the catalog/publish fixture</a>.</p>
   <ul><li><a href="#cap-imd-agromet">Agromet district crop guidance</a></li><li><a href="#cap-imd-mausamgram">Block weather forecast</a></li></ul>
+</section>
+
+<section>
+  <h3 id="prov-kcc">KCC example provider</h3>
+  <p>Catalog <code>cat-kcc</code>. <a href="../external/kcc/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-kcc-loan">KCC loan application status</a></li></ul>
 </section>
 
 <section>
@@ -994,6 +1002,117 @@ permalink: /api/providers/index.html
 
   <ul><li><a href="../external/gfr/crop-registry/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
   <ul><li><a href="../external/gfr/crop-registry/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-kcc-loan" tabindex="-1">
+  <h3><a href="#cap-kcc-loan">KCC loan application status</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-kcc">KCC example provider</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Send an OTP to the mobile a Kisan Credit Card application was filed from, then read every application on that mobile.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-kcc|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-kcc</code> contains <code>res-kcc-loan</code> in <code>OnDemand</code> mode. <a href="../external/kcc/loan/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-kcc-loan&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;kcc-loan&quot;,
+    &quot;name&quot;: &quot;KCC loan application status&quot;,
+    &quot;shortDesc&quot;: &quot;Send an OTP to the mobile a Kisan Credit Card application was filed from, then read every application on that mobile.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;KCC&quot;,
+      &quot;name&quot;: &quot;Kisan Credit Card&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask KCC to send a six-digit OTP to the mobile the application was filed from. Call this before status.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Answer the OTP sent by init and read every KCC loan application on that mobile in the same call. There is no separate verify step, so a wrong OTP is refused here.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;KCC\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/kcc/loan/v0.2/openapi.yaml">KCC loan application status</a></p><ul><li><code>POST /auth/requestOtp</code> · init</li><li><code>POST /bharatVistaar/krishika/applicationStatus</code> · status</li></ul>
+  <p>Only scheme lookup is known; loan and OTP endpoints are unverified.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for KCC loan application status"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post">sendKccLoanOtp</a><br><code>POST /auth/requestOtp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedBody">SealedBody</a></p><details><summary>Example</summary><pre><code>{
+  &quot;data&quot;: &quot;&lt;hex ciphertext of SendOtpRequest&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post/responses/200">200</a> · A sealed reply carries the requestID the status call must quote. A refusal -- an unknown mobile, a rate limit -- is answered with status false and, as far as is known, no envelope at all.
+<p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedReply">SealedReply</a></p><details><summary>Example: sent</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;&lt;hex ciphertext of SendOtpReply&gt;&quot;
+}</code></pre></details><details><summary>Example: refused</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;message&quot;: &quot;No KCC application found for this mobile number&quot;
+}</code></pre></details></li><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post/responses/default">default</a> · Transport or gateway failure. Does not establish whether an OTP was sent.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post">readKccLoanApplications</a><br><code>POST /bharatVistaar/krishika/applicationStatus</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedBody">SealedBody</a></p><details><summary>Example</summary><pre><code>{
+  &quot;data&quot;: &quot;&lt;hex ciphertext of ReadApplicationsRequest&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post/responses/200">200</a> · There is no separate verify step: this one call checks the OTP and answers with the applications. A wrong or expired OTP is refused here, with status false.
+<p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedReply">SealedReply</a></p><details><summary>Example: found</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;&lt;hex ciphertext of ApplicationList&gt;&quot;
+}</code></pre></details><details><summary>Example: refused</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;message&quot;: &quot;Invalid OTP&quot;
+}</code></pre></details></li><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post/responses/default">default</a> · Transport or gateway failure. Does not establish whether the OTP was correct.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/kcc/loan/v0.2/mappings/init.yaml">init · draft-native · init mapping</a></li><li><a href="../external/kcc/loan/v0.2/mappings/status.yaml">status · draft-native · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>

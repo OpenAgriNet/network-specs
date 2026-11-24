@@ -1,24 +1,18 @@
-status: source-traced
+status: draft-native
 deployable: false
 action: init
-native:
-  method: POST
-  path: "/auth/requestOtp"
-  placement: encrypted
-  requestExample:
-    data: "<ciphertext>"
-  plaintextExample:
-    mobileNumber: "<mobile>"
-    otpFor: krishika
-  encoding: AES-256-CBC over UTF-8 JSON; encode ciphertext as hex.
-  headers:
-    token: "<cached service token>"
 source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L236
-caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/kcc.py#L314
-behavior: 'get_otp: mobile_number → mobileNumber. Encrypt plaintext JSON with AES-256-CBC;
-  send {data: ciphertext} with token header. Retain decrypted requestID.'
-responseExample:
-  status: true
-  data: "<ciphertext>"
-binding: Design only. The adapter must implement the described transport and guards
-  before enabling this action.
+operationRef: https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post
+request:
+  in: body
+  sealed: AES-256-CBC over UTF-8 JSON, hex, under data. The adapter seals; the mapping writes plaintext.
+  jsonata: '{"mobileNumber": payload.mobile, "otpFor": "krishika"}'
+response:
+  jsonata: '{"sent": response.status = true}'
+  guard: >
+    requestID is the farmer's session and never travels back on the wire; the
+    adapter holds it against the transaction. Never publish the mobile, the
+    OTP or the service token. A status of false is a business refusal, not an
+    unreachable provider.
+missing:
+- Confirm the IV rule for the fixed AES key. Everything else is traced to source.

@@ -1,25 +1,18 @@
-status: source-traced
+status: draft-native
 deployable: false
 action: status
-native:
-  method: POST
-  path: "/bharatVistaar/krishika/applicationStatus"
-  placement: encrypted
-  requestExample:
-    data: "<ciphertext>"
-  plaintextExample:
-    requestID: "<from OTP start>"
-    otp: 123456
-  encoding: AES-256-CBC over UTF-8 JSON; encode ciphertext as hex.
-  headers:
-    token: "<cached service token>"
 source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/kcc/kcc.service.ts#L259
-caller: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/agents/tools/kcc.py#L355
-behavior: 'application_status: bind requestID from session, convert OTP to number.
-  Decrypted data can be one application, an array, or {applications:[…]}. select_kcc_application
-  sends application_no to the network, not in this native body.'
-responseExample:
-  status: true
-  data: "<ciphertext>"
-binding: Design only. The adapter must implement the described transport and guards
-  before enabling this action.
+operationRef: https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post
+request:
+  in: body
+  sealed: AES-256-CBC over UTF-8 JSON, hex, under data. The adapter seals; the mapping writes plaintext.
+  jsonata: '{"requestID": session.requestID, "otp": $number(payload.otp)}'
+response:
+  jsonata: '{"applications": response.applications}'
+  guard: >
+    One call both checks the OTP and answers with the applications, so a
+    refusal here means the OTP was wrong or expired -- report that, not an
+    outage. A rejected application is returned as DRAFT, so rejectionReason
+    decides whether it was rejected. An empty list is a valid answer.
+missing:
+- Confirm the IV rule for the fixed AES key. Everything else is traced to source.

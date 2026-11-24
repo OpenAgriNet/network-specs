@@ -228,25 +228,27 @@
       "provider": "kcc",
       "capability": "loan",
       "action": "init",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post",
       "path": "kcc/loan/v0.2/mappings/init.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "kcc-loan"
       ],
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "status": "draft-native",
+      "fixture": "api/external/kcc/catalog.json"
     },
     {
       "provider": "kcc",
       "capability": "loan",
       "action": "status",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post",
       "path": "kcc/loan/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
         "kcc-loan"
       ],
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "status": "draft-native",
+      "fixture": "api/external/kcc/catalog.json"
     },
     {
       "provider": "smam",
@@ -401,18 +403,6 @@
       ],
       "status": "draft-native",
       "fixture": "api/external/knowledge/catalog.json"
-    },
-    {
-      "provider": "kcc",
-      "capability": "loan",
-      "path": "kcc/loan/v0.2/mappings/internal/token.yaml",
-      "selector_type": "openagrinet:SchemeApplication",
-      "descriptor_codes": [
-        "kcc-loan"
-      ],
-      "action": "internal",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
       "provider": "khc",

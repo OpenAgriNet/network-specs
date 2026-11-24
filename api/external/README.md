@@ -14,6 +14,7 @@ Provider-supplied means that the document uses a non-routable placeholder. An un
 | [gfr/crop-registry](gfr/crop-registry/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
 | [imd/agromet](imd/agromet/v0.2/openapi.yaml) | 1 | `https://agromet.imd.gov.in` | No header scheme documented |
 | [imd/mausamgram](imd/mausamgram/v0.2/openapi.yaml) | 1 | `https://mausamgram.imd.gov.in/nwpapi` | No header scheme documented |
+| [kcc/loan](kcc/loan/v0.2/openapi.yaml) | 2 | Provider-supplied | header: `token` |
 | [knowledge/search](knowledge/search/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
 | [npss/diagnosis](npss/diagnosis/v0.2/openapi.yaml) | 2 | `https://npss.dac.gov.in/api3.0` | bearer |
 | [pm-kisan/application](pm-kisan/application/v0.2/openapi.yaml) | 4 | Provider-supplied | No header scheme documented |
@@ -48,7 +49,7 @@ A publication links only the operations currently backed by a native contract. O
 | imd | imd-agromet | AgricultureAdvisory | [Catalog](imd/catalog.json) |
 | imd | imd-district-forecast | WeatherObservation | Station lookup is known; the forecast route is unverified. |
 | imd | imd-mausamgram | WeatherObservation | [Catalog](imd/catalog.json) |
-| kcc | kcc-loan | SchemeApplication | [Source-traced requests](kcc/loan/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
+| kcc | kcc-loan | SchemeApplication | [Catalog](kcc/catalog.json) |
 | khc | khc-tickets | Grievance | [Source-traced requests](khc/tickets/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
 | knowledge | knowledge-search | KnowledgeResource | [Catalog](knowledge/catalog.json) · [discover](knowledge/search/v0.2/examples/discover.json) · [native search](knowledge/search/v0.2/examples/search-exchange.json) · [on_discover](knowledge/search/v0.2/examples/on_discover.json). |
 | knowledge | knowledge-answers | AgricultureAdvisory | Passage search is documented; advisory output is unverified. |
