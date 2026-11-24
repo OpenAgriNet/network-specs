@@ -1,83 +1,59 @@
 openapi: 3.1.1
 info:
-  x-contract-role: provider-native
-  title: GFR advice
+  title: gfr/advice native requests
   version: 0.2.0
-  description: Gets fertilizer recommendations from soil test results through the Soil Health GraphQL endpoint.
+  x-contract-role: provider-native
 servers:
-- url: https://gfr.example.invalid
-  description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a
-    path.
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
 paths:
   /:
     post:
       operationId: getRecommendations
-      description: Fertilizer recommendation for crops in a state, from soil test results. naturalFarming false
-        gives fertilizer doses and organic inputs; true gives natural farming practices. No login.
+      description: GraphQL operations share this endpoint. Only the soil-test lookup uses the
+        generated bearer token.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4423
       x-oan-binding:
         descriptorCode: gfr-advice
         resourceType: openagrinet:AgricultureResource
         action: select
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GfrAdviceResponse'
+              examples:
+                GfrAdvice:
+                  value:
+                    data:
+                      getRecommendations: []
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful callback.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/GfrAdviceRequest'
-            example:
-              query: 'query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops: [ID!], $naturalFarming:
-                Boolean) { getRecommendations(state: $state results: $results district: $district crops: $crops
-                naturalFarming: $naturalFarming) }'
-              variables:
-                state: EXAMPLE-STATE-ID
-                results:
-                  n: 157
-                  p: 14.9
-                  k: 114.6
-                  OC: 1.4
-                crops:
-                - EXAMPLE-CROP-ID
-                naturalFarming: false
-      responses:
-        '200':
-          description: GraphQL envelope before adapter conversion. An error or a missing list is not a recommendation.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GfrAdviceResponse'
-              examples:
-                fertilizer:
-                  value:
-                    data:
-                      getRecommendations:
-                      - crop: EXAMPLE-CROP
-                        fertilizersdata:
-                        - name: DAP
-                          values: '130.43'
-                          unit: Kg per Hectare
-                        fertilizersdatacombTwo:
-                        - name: SSP
-                          values: '375.00'
-                          unit: Kg per Hectare
-                        organicFertilizer:
-                          fym: 4-5
-                          fymUnit: Tonne per Hectare
-                naturalFarming:
-                  value:
-                    data:
-                      getRecommendations:
-                      - crop: EXAMPLE-CROP
-                        recommendations:
-                        - component: Basal Application
-                          recommendation: Ghanjeevamrit @ 2000 kg/ha
-                          purpose: Builds soil organic carbon
-                graphqlError:
-                  value:
-                    errors:
-                    - message: Example upstream error
-        default:
-          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+            examples:
+              GfrAdvice:
+                value:
+                  query: 'query GetRecommendations($state: ID!, $results: JSON!, $district:
+                    ID, $crops: [ID!], $naturalFarming: Boolean) { getRecommendations(state:
+                    $state results: $results district: $district crops: $crops naturalFarming:
+                    $naturalFarming) }'
+                  variables:
+                    state: example
+                    results:
+                      n: 1
+                      p: 1
+                      k: 1
+                      OC: 1
+                    crops:
+                    - example
+                    naturalFarming: false
 components:
   schemas:
     GfrAdviceRequest:
@@ -85,9 +61,9 @@ components:
       properties:
         query:
           type: string
-          const: 'query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops: [ID!], $naturalFarming:
-            Boolean) { getRecommendations(state: $state results: $results district: $district crops: $crops naturalFarming:
-            $naturalFarming) }'
+          const: 'query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops:
+            [ID!], $naturalFarming: Boolean) { getRecommendations(state: $state results: $results
+            district: $district crops: $crops naturalFarming: $naturalFarming) }'
         variables:
           type: object
           properties:
@@ -134,19 +110,8 @@ components:
       type: object
       properties:
         data:
-          type:
-          - object
-          - 'null'
+          type: object
           properties:
             getRecommendations:
-              type:
-              - array
-              - 'null'
+              type: array
               items: {}
-        errors:
-          type: array
-          items:
-            type: object
-            properties:
-              message:
-                type: string
