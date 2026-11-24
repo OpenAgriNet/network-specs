@@ -1,0 +1,157 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: GFR soil report
+  version: 0.2.0
+  description: Reads the farmer's soil test results through the Soil Health GraphQL endpoint, for a GFR recommendation.
+servers:
+- url: https://gfr.example.invalid
+  description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a
+    path.
+paths:
+  /:
+    post:
+      operationId: getGfrSoilTest
+      description: The farmer's soil test for a cycle. GFR reads only the first report's results (n, p, k, OC) and
+        passes them to getRecommendations.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4420
+      x-oan-binding:
+        descriptorCode: gfr-advice
+        resourceType: openagrinet:AgricultureResource
+        action: init
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GfrSoilTestRequest'
+            example:
+              query: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state: String, $district:
+                String, $name: String, $farmer: String, $from: Datetime, $to: Datetime, $cycle: String, $locale:
+                String, $scheme: String, $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId,
+                phone: $phone, state: $state, district: $district, name: $name, farmer: $farmer, from: $from, to:
+                $to, cycle: $cycle, scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme plot
+                { address area surveyNo } farmer { address name phone } crop location testparameters rdfValues status
+                testCompletedAt sampleDate reportData district block village results fertilizer html(locale: $locale)
+                uniqueID } }'
+              variables:
+                cycle: 2024-25
+                phone: EXAMPLE-PHONE
+                limit: 1
+                skip: 0
+                locale: en
+      responses:
+        '200':
+          description: GraphQL envelope before adapter conversion. An error or an empty list is not a soil test.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GfrSoilTestResponse'
+              examples:
+                found:
+                  value:
+                    data:
+                      getTestForAuthUser:
+                      - results:
+                          n: 157
+                          p: 14.9
+                          k: 114.6
+                          OC: 1.4
+                none:
+                  value:
+                    data:
+                      getTestForAuthUser: []
+                graphqlError:
+                  value:
+                    errors:
+                    - message: Example upstream error
+        default:
+          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+      security:
+      - providerBearer: []
+components:
+  schemas:
+    GfrSoilTestRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          const: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state: String, $district:
+            String, $name: String, $farmer: String, $from: Datetime, $to: Datetime, $cycle: String, $locale: String,
+            $scheme: String, $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId, phone: $phone,
+            state: $state, district: $district, name: $name, farmer: $farmer, from: $from, to: $to, cycle: $cycle,
+            scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme plot { address area surveyNo
+            } farmer { address name phone } crop location testparameters rdfValues status testCompletedAt sampleDate
+            reportData district block village results fertilizer html(locale: $locale) uniqueID } }'
+        variables:
+          type: object
+          properties:
+            cycle:
+              type: string
+            phone:
+              type: string
+            limit:
+              type: integer
+            skip:
+              type: integer
+            locale:
+              type: string
+          required:
+          - cycle
+          - phone
+          - limit
+          - skip
+          - locale
+      required:
+      - query
+      - variables
+    GfrSoilTestResponse:
+      type: object
+      properties:
+        data:
+          type:
+          - object
+          - 'null'
+          properties:
+            getTestForAuthUser:
+              type:
+              - array
+              - 'null'
+              items:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      n:
+                        type:
+                        - number
+                        - string
+                        - 'null'
+                      p:
+                        type:
+                        - number
+                        - string
+                        - 'null'
+                      k:
+                        type:
+                        - number
+                        - string
+                        - 'null'
+                      OC:
+                        type:
+                        - number
+                        - string
+                        - 'null'
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+  securitySchemes:
+    providerBearer:
+      type: http
+      scheme: bearer
+      description: Provider session used by the adapter; issuance is outside this operation.

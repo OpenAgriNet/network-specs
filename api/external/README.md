@@ -12,6 +12,7 @@ Provider-supplied means that the document uses a non-routable placeholder. An un
 | [agmarknet/nearby-prices](agmarknet/nearby-prices/v0.2/openapi.yaml) | 1 | Provider-supplied | query: `token` |
 | [ffs/booking](ffs/booking/v0.2/openapi.yaml) | 4 | Provider-supplied | bearer |
 | [gfr/crop-registry](gfr/crop-registry/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
+| [gfr/soil-report](gfr/soil-report/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
 | [imd/agromet](imd/agromet/v0.2/openapi.yaml) | 1 | `https://agromet.imd.gov.in` | No header scheme documented |
 | [imd/mausamgram](imd/mausamgram/v0.2/openapi.yaml) | 1 | `https://mausamgram.imd.gov.in/nwpapi` | No header scheme documented |
 | [knowledge/search](knowledge/search/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
