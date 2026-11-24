@@ -1,0 +1,152 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: GFR advice
+  version: 0.2.0
+  description: Gets fertilizer recommendations from soil test results through the Soil Health GraphQL endpoint.
+servers:
+- url: https://gfr.example.invalid
+  description: Placeholder only. Use the complete GraphQL endpoint supplied by the provider, without appending a
+    path.
+paths:
+  /:
+    post:
+      operationId: getRecommendations
+      description: Fertilizer recommendation for crops in a state, from soil test results. naturalFarming false
+        gives fertilizer doses and organic inputs; true gives natural farming practices. No login.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4423
+      x-oan-binding:
+        descriptorCode: gfr-advice
+        resourceType: openagrinet:AgricultureResource
+        action: select
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GfrAdviceRequest'
+            example:
+              query: 'query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops: [ID!], $naturalFarming:
+                Boolean) { getRecommendations(state: $state results: $results district: $district crops: $crops
+                naturalFarming: $naturalFarming) }'
+              variables:
+                state: EXAMPLE-STATE-ID
+                results:
+                  n: 157
+                  p: 14.9
+                  k: 114.6
+                  OC: 1.4
+                crops:
+                - EXAMPLE-CROP-ID
+                naturalFarming: false
+      responses:
+        '200':
+          description: GraphQL envelope before adapter conversion. An error or a missing list is not a recommendation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GfrAdviceResponse'
+              examples:
+                fertilizer:
+                  value:
+                    data:
+                      getRecommendations:
+                      - crop: EXAMPLE-CROP
+                        fertilizersdata:
+                        - name: DAP
+                          values: '130.43'
+                          unit: Kg per Hectare
+                        fertilizersdatacombTwo:
+                        - name: SSP
+                          values: '375.00'
+                          unit: Kg per Hectare
+                        organicFertilizer:
+                          fym: 4-5
+                          fymUnit: Tonne per Hectare
+                naturalFarming:
+                  value:
+                    data:
+                      getRecommendations:
+                      - crop: EXAMPLE-CROP
+                        recommendations:
+                        - component: Basal Application
+                          recommendation: Ghanjeevamrit @ 2000 kg/ha
+                          purpose: Builds soil organic carbon
+                graphqlError:
+                  value:
+                    errors:
+                    - message: Example upstream error
+        default:
+          description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
+components:
+  schemas:
+    GfrAdviceRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          const: 'query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops: [ID!], $naturalFarming:
+            Boolean) { getRecommendations(state: $state results: $results district: $district crops: $crops naturalFarming:
+            $naturalFarming) }'
+        variables:
+          type: object
+          properties:
+            state:
+              type: string
+            results:
+              type: object
+              properties:
+                n:
+                  type:
+                  - number
+                  - string
+                  - 'null'
+                p:
+                  type:
+                  - number
+                  - string
+                  - 'null'
+                k:
+                  type:
+                  - number
+                  - string
+                  - 'null'
+                OC:
+                  type:
+                  - number
+                  - string
+                  - 'null'
+            crops:
+              type: array
+              items:
+                type: string
+            naturalFarming:
+              type: boolean
+          required:
+          - state
+          - results
+          - crops
+          - naturalFarming
+      required:
+      - query
+      - variables
+    GfrAdviceResponse:
+      type: object
+      properties:
+        data:
+          type:
+          - object
+          - 'null'
+          properties:
+            getRecommendations:
+              type:
+              - array
+              - 'null'
+              items: {}
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string

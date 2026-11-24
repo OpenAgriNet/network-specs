@@ -523,42 +523,6 @@
       "binding_note": "Native request documented; not a deployable adapter configuration."
     },
     {
-      "provider": "gfr",
-      "capability": "advice",
-      "path": "gfr/advice/v0.2/mappings/internal/generateAccessToken.yaml",
-      "selector_type": "openagrinet:AgricultureAdvisory",
-      "descriptor_codes": [
-        "gfr-advice"
-      ],
-      "action": "internal",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
-    },
-    {
-      "provider": "gfr",
-      "capability": "advice",
-      "path": "gfr/advice/v0.2/mappings/internal/getTestForAuthUser.yaml",
-      "selector_type": "openagrinet:AgricultureAdvisory",
-      "descriptor_codes": [
-        "gfr-advice"
-      ],
-      "action": "internal",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
-    },
-    {
-      "provider": "gfr",
-      "capability": "advice",
-      "path": "gfr/advice/v0.2/mappings/select.yaml",
-      "selector_type": "openagrinet:AgricultureAdvisory",
-      "descriptor_codes": [
-        "gfr-advice"
-      ],
-      "action": "select",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
-    },
-    {
       "provider": "ffs",
       "capability": "booking",
       "action": "init",
@@ -620,7 +584,7 @@
     "khc-tickets": "Ticket submission and lookup are unverified.",
     "amul-schemes": "Uses network search or cached results; no native scheme endpoint is confirmed.",
     "ffs-booking": "Four caller-side operations; the provider client and booking sequence are unverified.",
-    "gfr-advice": "Recommendations use legacy search, not the crop registry API.",
+    "gfr-advice": "Two operations on one resource: init reads the farmer's soil test (first report's n, p, k, OC); select gets the recommendation from those values. Not yet in the catalog.",
     "icar-materials": "Reads internal storage; no native HTTP endpoint is confirmed.",
     "icar-field-advice": "Material lookup does not establish a field-advice endpoint.",
     "imd-district-forecast": "Station lookup is known; the forecast route is unverified.",

@@ -11,6 +11,7 @@ Provider-supplied means that the document uses a non-routable placeholder. An un
 | [agmarknet/market-prices](agmarknet/market-prices/v0.2/openapi.yaml) | 1 | Provider-supplied | query: `token` |
 | [agmarknet/nearby-prices](agmarknet/nearby-prices/v0.2/openapi.yaml) | 1 | Provider-supplied | query: `token` |
 | [ffs/booking](ffs/booking/v0.2/openapi.yaml) | 4 | Provider-supplied | bearer |
+| [gfr/advice](gfr/advice/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
 | [gfr/crop-registry](gfr/crop-registry/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
 | [gfr/soil-report](gfr/soil-report/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
 | [imd/agromet](imd/agromet/v0.2/openapi.yaml) | 1 | `https://agromet.imd.gov.in` | No header scheme documented |
@@ -42,7 +43,7 @@ A publication links only the operations currently backed by a native contract. O
 | aif | aif-tickets | Grievance | [Source-traced requests](aif/tickets/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
 | amul | amul-schemes | KnowledgeResource | Uses network search or cached results; no native scheme endpoint is confirmed. |
 | ffs | ffs-booking | AgricultureResource | [Catalog](ffs/catalog.json) |
-| gfr | gfr-advice | AgricultureAdvisory | [Source-traced requests](gfr/advice/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
+| gfr | gfr-advice | AgricultureResource | [Soil report](gfr/soil-report/v0.2/openapi.yaml) (`init`) · [Recommendation](gfr/advice/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
 | gfr | gfr-registry | AgricultureResource | [Catalog](gfr/catalog.json) |
 | icar | icar-field-advice | AgricultureAdvisory | Material lookup does not establish a field-advice endpoint. |
 | icar | icar-materials | KnowledgeResource | Reads internal storage; no native HTTP endpoint is confirmed. |
