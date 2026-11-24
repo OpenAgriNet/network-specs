@@ -18,6 +18,8 @@ components:
         '@type': openagrinet:Grievance
       x-oan-schema-by-action:
         init: GrievanceCall
+        confirm: GrievanceCall
+        select: GrievanceCall
         status: GrievanceCall
         support: GrievanceCall
       allOf:
