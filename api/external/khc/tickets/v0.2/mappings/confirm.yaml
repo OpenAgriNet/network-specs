@@ -1,0 +1,25 @@
+status: draft-native
+deployable: false
+action: confirm
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L384
+operationRef: https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post
+request:
+  in: body
+  jsonata: >
+    {"mobile": $string($attributes.farmerMobileNumber),
+     "otp": $string($attributes.challenge.response.value)}
+response:
+  jsonata: '{"registered": response.data.isRegistered}'
+  guard: >
+    The reply holds data.token, and that token is the farmer's consent to file.
+    It is held against the transaction -- sessionCaptureOn on this binding --
+    and never returned to the caller, because Authorization already carries the
+    service key and a token on the wire outlives the exchange.
+
+    data.isRegistered decides what the filing has to carry: a farmer KHC has
+    not seen before must also send farmerName and gender. It is a branch in the
+    journey, not a failure.
+missing:
+- The header name the token travels in on the filing call. No operation
+  declares a second security scheme, so KHC has to say. Open item 1 in
+  migration-plan/khc/plan.md.

@@ -1,0 +1,25 @@
+status: draft-native
+deployable: false
+action: init
+source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L344
+operationRef: https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post
+request:
+  in: body
+  jsonata: '{"mobile": $string($attributes.farmerMobileNumber)}'
+response:
+  jsonata: '{"sent": $contains($string(response.status), "200")}'
+  guard: >
+    KHC answers with a status string -- "200 OK", not the number 200 -- so the
+    success test is a prefix match, not an equality.
+
+    The reply carries no masked number and no expiry, so neither can be echoed
+    to the farmer. Say an OTP was sent to the number they gave and nothing more
+    precise; inventing a masked number is what made the agent skip the tool
+    entirely on AIF (open-issues.md item 14).
+
+    Never retried. A second send invalidates the first code, so the farmer
+    reads one and types another.
+missing:
+- The OTP length and validity window. v1's tool asserts six digits and five
+  minutes, and nothing in the provider response states either, so that check is
+  carried over from v1 rather than traced to KHC. Confirm both.

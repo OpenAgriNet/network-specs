@@ -1,0 +1,40 @@
+status: provider-verified
+deployable: false
+advertised: false
+action: status
+verifiedAgainst: KHC UAT, 2026-11-24, read-only probes with a non-existent grievance number
+native:
+  method: GET
+  path: "/v1/state/grievances/status"
+  placement: query
+  requestExample:
+    grievanceNo: MH/123456/1
+  headers:
+    Authorization: ApiKey <configured key>
+responseExample:
+  status: 404 NOT_FOUND
+  message: Grievance not found
+  data: null
+behavior: >
+  Three status operations exist on the provider, not one.
+
+  GET /v1/state/grievances/status?grievanceNo= reads a grievance with no
+  challenge of any kind. A non-existent number returns 404 "Grievance not
+  found", which means the call reached a grievance lookup rather than an
+  authorization check. A grievance number alone therefore reads a grievance,
+  including the free text the farmer wrote.
+
+  POST /v1/state/grievances/check-status?grievanceNo= sends an OTP first, and
+  POST /v1/state/grievances/verify-otp reads the grievance once that OTP is
+  given. Both exist: a GET against either returns 405, not 404. An earlier
+  revision of this file claimed they were absent, on the strength of a provider
+  backend snapshot that is older than what is deployed.
+missing:
+- >
+  Which journey KHC intends callers to use. The gated pair is the safe one but
+  its first step cannot be routed, because check-status is a POST whose only
+  input is a query parameter, and BuildEndpoint appends a query string for
+  bodyless methods only (util/endpoint.go:26-29). The ungated GET is routable
+  and is the one the provider backend implements, but publishing it hands any
+  holder of a grievance number the grievance behind it. Neither is bound until
+  KHC chooses. See migration-plan/open-issues.md item 20.

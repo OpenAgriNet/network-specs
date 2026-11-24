@@ -55,6 +55,7 @@ permalink: /api/providers/index.html
 <li><a href="#prov-gfr">GFR example provider</a></li>
 <li><a href="#prov-imd">IMD example provider</a></li>
 <li><a href="#prov-kcc">KCC example provider</a></li>
+<li><a href="#prov-khc">KHC example provider</a></li>
 <li><a href="#prov-knowledge">KNOWLEDGE example provider</a></li>
 <li><a href="#prov-npss">NPSS example provider</a></li>
 <li><a href="#prov-pm-kisan">PM-KISAN example provider</a></li>
@@ -73,6 +74,7 @@ permalink: /api/providers/index.html
 <tr><td><a href="#cap-ffs-booking">FFS fertilizer booking</a></td><td><a href="#prov-ffs">FFS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-gfr-registry">GFR crop registry lookup</a></td><td><a href="#prov-gfr">GFR example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-kcc-loan">KCC loan application status</a></td><td><a href="#prov-kcc">KCC example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
+<tr><td><a href="#cap-khc-grievance">Kisan Help Center grievance</a></td><td><a href="#prov-khc">KHC example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
 <tr><td><a href="#cap-agmarknet-nearby-prices">Nearby mandi prices</a></td><td><a href="#prov-agmarknet">AGMARKNET example provider</a></td><td><code>openagrinet:MandiPrice</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-benefits">PM-KISAN application and instalment status</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-grievances">PM-KISAN grievance submission and tracking</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
@@ -113,6 +115,12 @@ permalink: /api/providers/index.html
   <h3 id="prov-kcc">KCC example provider</h3>
   <p>Catalog <code>cat-kcc</code>. <a href="../external/kcc/catalog.json">Read the catalog/publish fixture</a>.</p>
   <ul><li><a href="#cap-kcc-loan">KCC loan application status</a></li></ul>
+</section>
+
+<section>
+  <h3 id="prov-khc">KHC example provider</h3>
+  <p>Catalog <code>cat-khc</code>. <a href="../external/khc/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-khc-grievance">Kisan Help Center grievance</a></li></ul>
 </section>
 
 <section>
@@ -1113,6 +1121,164 @@ permalink: /api/providers/index.html
 
   <ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
   <ul><li><a href="../external/kcc/loan/v0.2/mappings/init.yaml">init · draft-native · init mapping</a></li><li><a href="../external/kcc/loan/v0.2/mappings/status.yaml">status · draft-native · status mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-khc-grievance" tabindex="-1">
+  <h3><a href="#cap-khc-grievance">Kisan Help Center grievance</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-khc">KHC example provider</a> · <code>openagrinet:Grievance</code></p>
+  <p>File a grievance with the Kisan Help Center in the farmer&#39;s own words, after an OTP confirms the mobile number it is filed against.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-khc|openagrinet:Grievance</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-khc</code> contains <code>res-khc-grievance</code> in <code>OnDemand</code> mode. <a href="../external/khc/tickets/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-khc-grievance&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;khc-grievance&quot;,
+    &quot;name&quot;: &quot;Kisan Help Center grievance&quot;,
+    &quot;shortDesc&quot;: &quot;File a grievance with the Kisan Help Center in the farmer&#39;s own words, after an OTP confirms the mobile number it is filed against.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:Grievance&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;38&quot;,
+      &quot;name&quot;: &quot;Agriculture Infrastructure Fund (AIF)&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;grievanceOptions&quot;: {
+      &quot;categories&quot;: [
+        {
+          &quot;code&quot;: &quot;39&quot;,
+          &quot;name&quot;: &quot;Loan&quot;,
+          &quot;help&quot;: &quot;Your complaint is about the loan itself -- applying for it, or a bank&#39;s decision on it.&quot;
+        }
+      ],
+      &quot;subCategories&quot;: [
+        {
+          &quot;code&quot;: &quot;1725&quot;,
+          &quot;name&quot;: &quot;Bank refused loan&quot;,
+          &quot;help&quot;: &quot;A bank turned down your loan application.&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask KHC to send a six-digit OTP to the mobile the grievance will be filed against. Call this first; nothing is filed by it.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;confirm&quot;,
+        &quot;description&quot;: &quot;Answer the OTP. KHC replies with whether it already knows this farmer, which decides whether the filing must also carry their name and gender.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;support&quot;,
+        &quot;description&quot;: &quot;File the grievance and return the number KHC gave it. Writes to a real help desk, so call it only after the farmer has confirmed the text in words.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld#openagrinet:Grievance&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:Grievance\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;38\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/khc/tickets/v0.2/openapi.yaml">Kisan Help Center grievances</a></p><ul><li><code>POST /auth/send-otp</code> · init</li><li><code>POST /auth/verify-otp</code> · confirm</li><li><code>GET /v1/state/reference/states</code></li><li><code>GET /v1/state/reference/districts</code></li><li><code>GET /v1/state/reference/sub-districts</code></li><li><code>GET /v1/state/reference/villages</code></li><li><code>GET /v1/state/reference/schemes</code></li><li><code>GET /v1/state/reference/categories</code></li><li><code>GET /v1/state/reference/sub-categories</code></li><li><code>POST /v1/state/grievances</code> · support</li><li><code>GET /v1/state/grievances/status</code></li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for Kisan Help Center grievance"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post">KhcStart</a><br><code>POST /auth/send-otp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStartRequest">KhcStartRequest</a></p><details><summary>Example: KhcStart</summary><pre><code>{
+  &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStartResponse">KhcStartResponse</a></p><details><summary>Example: KhcStart</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: null
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>confirm</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post">KhcVerify</a><br><code>POST /auth/verify-otp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcVerifyRequest">KhcVerifyRequest</a></p><details><summary>Example: KhcVerify</summary><pre><code>{
+  &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;otp&quot;: &quot;000000&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcVerifyResponse">KhcVerifyResponse</a></p><details><summary>Example: KhcVerify</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: {
+    &quot;isRegistered&quot;: true,
+    &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;,
+    &quot;token&quot;: &quot;&lt;redacted&gt;&quot;
+  }
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>support</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post">KhcCreate</a><br><code>POST /v1/state/grievances</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcCreateRequest">KhcCreateRequest</a></p><details><summary>Example: KhcCreate</summary><pre><code>{
+  &quot;externalReferenceNo&quot;: &quot;BV-example&quot;,
+  &quot;farmerMobileNumber&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;farmerText&quot;: &quot;Example issue&quot;,
+  &quot;farmerLanguage&quot;: &quot;en&quot;,
+  &quot;stateId&quot;: 1,
+  &quot;villageId&quot;: 2,
+  &quot;scheme&quot;: 3,
+  &quot;division&quot;: 4,
+  &quot;problemCategory&quot;: 5,
+  &quot;problemSubCategory&quot;: 6
+}</code></pre></details><details><summary>Example: newFarmer</summary><pre><code>{
+  &quot;externalReferenceNo&quot;: &quot;BV-example&quot;,
+  &quot;farmerMobileNumber&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;farmerText&quot;: &quot;Example issue&quot;,
+  &quot;farmerLanguage&quot;: &quot;en&quot;,
+  &quot;stateId&quot;: 1,
+  &quot;villageId&quot;: 2,
+  &quot;scheme&quot;: 3,
+  &quot;division&quot;: 4,
+  &quot;problemCategory&quot;: 5,
+  &quot;problemSubCategory&quot;: 6,
+  &quot;farmerName&quot;: &quot;Example&quot;,
+  &quot;gender&quot;: &quot;O&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcCreateResponse">KhcCreateResponse</a></p><details><summary>Example: KhcCreate</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: {
+    &quot;grievanceNo&quot;: &quot;EXAMPLE&quot;
+  }
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/khc/tickets/v0.2/mappings/support.yaml">support · draft-native · support mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/status.yaml">status · source-traced · status mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/init.yaml">init · draft-native · init mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/states.yaml">internal · source-traced · states mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/districts.yaml">internal · source-traced · districts mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/sub-districts.yaml">internal · source-traced · sub-districts mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/villages.yaml">internal · source-traced · villages mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/schemes.yaml">internal · source-traced · schemes mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/categories.yaml">internal · source-traced · categories mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/sub-categories.yaml">internal · source-traced · sub-categories mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>

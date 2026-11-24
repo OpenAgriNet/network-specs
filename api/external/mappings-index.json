@@ -192,37 +192,27 @@
       "provider": "khc",
       "capability": "tickets",
       "action": "support",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post",
       "path": "khc/tickets/v0.2/mappings/support.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "status": "draft-native",
+      "fixture": "api/external/khc/catalog.json"
     },
     {
       "provider": "khc",
       "capability": "tickets",
       "action": "status",
-      "path": "khc/tickets/v0.2/mappings/status/KHCStartCaseLookup.yaml",
+      "path": "khc/tickets/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
-    },
-    {
-      "provider": "khc",
-      "capability": "tickets",
-      "action": "status",
-      "path": "khc/tickets/v0.2/mappings/status/KHCReadCase.yaml",
-      "selector_type": "openagrinet:Grievance",
-      "descriptor_codes": [
-        "khc-tickets"
-      ],
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound pending confirmation from KHC that reading a grievance needs an OTP at all. Absent from the provider backend on disk, which reads with GET /v1/state/grievances/status. See migration-plan/open-issues.md item 20.",
+      "advertised": false
     },
     {
       "provider": "kcc",
@@ -407,26 +397,28 @@
     {
       "provider": "khc",
       "capability": "tickets",
-      "path": "khc/tickets/v0.2/mappings/init/send-otp.yaml",
+      "path": "khc/tickets/v0.2/mappings/init.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "init",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post",
+      "status": "draft-native",
+      "fixture": "api/external/khc/catalog.json"
     },
     {
       "provider": "khc",
       "capability": "tickets",
-      "path": "khc/tickets/v0.2/mappings/init/verify-otp.yaml",
+      "path": "khc/tickets/v0.2/mappings/confirm.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
-      "action": "init",
-      "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "action": "confirm",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post",
+      "status": "draft-native",
+      "fixture": "api/external/khc/catalog.json"
     },
     {
       "provider": "khc",
@@ -434,11 +426,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/states.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -446,11 +439,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/districts.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -458,11 +452,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/sub-districts.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -470,11 +465,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/villages.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -482,11 +478,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/schemes.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -494,11 +491,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/categories.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "khc",
@@ -506,11 +504,12 @@
       "path": "khc/tickets/v0.2/mappings/internal/sub-categories.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
-        "khc-tickets"
+        "khc-grievance"
       ],
       "action": "internal",
       "status": "source-traced",
-      "binding_note": "Native request documented; not a deployable adapter configuration."
+      "binding_note": "Unbound. A binding holds one path per action name and the filing journey spends every routable action; the tool reads these from the published catalog instead.",
+      "advertised": false
     },
     {
       "provider": "gfr",
