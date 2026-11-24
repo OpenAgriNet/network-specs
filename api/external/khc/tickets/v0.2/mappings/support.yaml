@@ -6,18 +6,18 @@ operationRef: https://openagrinet.github.io/network-specs/api/external/khc/ticke
 request:
   in: body
   jsonata: >
-    {"externalReferenceNo": $channel.referenceNo,
-     "farmerMobileNumber": $string($channel.applicantMobile),
-     "farmerText": $trim($channel.grievance.description),
-     "farmerLanguage": $channel.grievance.language,
-     "stateId": $channel.location.stateId,
-     "villageId": $channel.location.villageId,
-     "scheme": $channel.grievance.scheme.code,
-     "division": $channel.grievance.division,
-     "problemCategory": $channel.grievance.category.code,
-     "problemSubCategory": $channel.grievance.subCategory.code}
+    {"externalReferenceNo": $attributes.referenceNo,
+     "farmerMobileNumber": $string($attributes.farmerMobileNumber),
+     "farmerText": $trim($attributes.grievance.description),
+     "farmerLanguage": $attributes.grievance.language,
+     "stateId": $attributes.location.stateId,
+     "villageId": $attributes.location.villageId,
+     "scheme": $number($attributes.scheme.code),
+     "division": $attributes.grievance.division,
+     "problemCategory": $number($attributes.grievance.category.code),
+     "problemSubCategory": $number($attributes.grievance.subCategory.code)}
   newFarmerAdditionalFields:
-    jsonata: '{"farmerName": $channel.applicantName, "gender": $channel.applicantGender}'
+    jsonata: '{"farmerName": $attributes.applicantName, "gender": $attributes.applicantGender}'
     when: the confirm reply returned data.isRegistered false
   preconditions:
   - a session token captured on confirm, for this same mobile
