@@ -70,16 +70,19 @@ components:
       type: object
       properties:
         cropCode:
+          x-oan-from: crop.code
           type:
           - integer
           - string
         seedClass:
           const: CERTIFIED I
         stateCode:
+          x-oan-from: subject.state
           type:
           - integer
           - string
         districtCode:
+          x-oan-from: subject.district
           type:
           - integer
           - string

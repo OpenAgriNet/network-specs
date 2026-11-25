@@ -4,13 +4,13 @@
 required:
   - check: |
       (
-        $v := beckn.message.contract.commitments[0].commitmentAttributes.searchValue;
+        $v := beckn.message.contract.commitments[0].commitmentAttributes.SearchValue;
         $type($v) = "string" and $length($trim($v)) > 0
       )
-    message: "this capability needs a non-empty searchValue in commitmentAttributes"
+    message: "this capability needs a non-empty SearchValue in commitmentAttributes"
 
 request: |
-  { "SearchValue": $trim(beckn.message.contract.commitments[0].commitmentAttributes.searchValue) }
+  { "SearchValue": $trim(beckn.message.contract.commitments[0].commitmentAttributes.SearchValue) }
 
 # SMAM's answer goes back unchanged beside the pack fields: every application, machine and
 # status history, as v1 showed them. "No application found" is an answer, not an error.

@@ -17,10 +17,9 @@ required:
   - check: |
       (
         $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
-        $exists($attributes.applicant.mobile)
-          and $exists($attributes.challenge.response.value)
+        $exists($attributes.mobile) and $exists($attributes.otp)
       )
-    message: "this capability needs applicant.mobile and challenge.response.value in commitmentAttributes"
+    message: "this capability needs mobile and otp in commitmentAttributes"
 
 # PMFBY's contract says the OTP is an integer and its validator refuses the
 # quoted form. It is a string in the Beckn payload because the pack types it
@@ -29,8 +28,8 @@ request: |
   (
     $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "mobile": $string($attributes.applicant.mobile),
-      "otp": $number($attributes.challenge.response.value)
+      "mobile": $string($attributes.mobile),
+      "otp": $number($attributes.otp)
     }
   )
 
@@ -65,7 +64,7 @@ response: |
     /* Inputs */
     $commitment := beckn.message.contract.commitments[0];
     $attributes := $commitment.commitmentAttributes;
-    $mobile := $string($attributes.applicant.mobile);
+    $mobile := $string($attributes.mobile);
     $pmfbyMessage := $isText(response.error) ? $trim(response.error);
     $isVerified := response.status = true and response.data.verified = true;
     $isCallerFault := $exists($pmfbyMessage) and $contains($lowercase($pmfbyMessage), $KNOWN_REFUSALS);
@@ -101,6 +100,6 @@ response: |
     : $isVerified
       ? $error($ERROR_UNAVAILABLE, $MSG_NO_FARMER, undefined, $pmfbyMessage)
     : $isCallerFault or $not($exists($pmfbyMessage))
-      ? $error($ERROR_REFUSED, $MSG_WRONG_OTP, $ATTRIBUTES_PATH & "challenge.response.value", $pmfbyMessage)
+      ? $error($ERROR_REFUSED, $MSG_WRONG_OTP, $ATTRIBUTES_PATH & "otp", $pmfbyMessage)
     : $error($ERROR_UNAVAILABLE, $MSG_UNAVAILABLE, undefined, $pmfbyMessage)
   )

@@ -11,24 +11,24 @@ required:
   - check: |
       (
         $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
-        $exists($attributes.farmerId) and $exists($attributes.applicant.mobile)
+        $exists($attributes.farmerID) and $exists($attributes.mobile)
           and $exists($attributes.season) and $exists($attributes.year)
       )
-    message: "this capability needs farmerId, applicant.mobile, season and year in commitmentAttributes"
+    message: "this capability needs farmerID, mobile, season and year in commitmentAttributes"
 
 # season is PMFBY's own numbering -- 1 Kharif, 2 Rabi, 3 Zaid -- and is passed
 # through rather than mapped, because a season name has no single number
 # across its calls and guessing one would read the wrong season silently.
 #
-# applicant.mobile is not sent, for the same reason as on status: PMFBY reads
+# mobile is not sent, for the same reason as on status: PMFBY reads
 # the farmer from farmerID, and the mobile is here so the adapter can check it
 # against the session.
 request: |
   (
     $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "farmerID": $string($attributes.farmerId),
-      "searchType": "farmerID",
+      "farmerID": $string($attributes.farmerID),
+      "searchType": $attributes.searchType,
       "season": $string($attributes.season),
       "year": $string($attributes.year)
     }
@@ -116,7 +116,7 @@ response: |
               "@type": $attributes.`@type`,
               "informationMode": $INFORMATION_MODE,
               "scheme": $SCHEME,
-              "farmerId": $string($attributes.farmerId),
+              "farmerId": $string($attributes.farmerID),
               "season": $exists($lookup($SEASON_NAMES, $season))
                 ? $lookup($SEASON_NAMES, $season) : $season,
               "cropYear": $string($attributes.year),

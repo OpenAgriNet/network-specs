@@ -20,6 +20,17 @@ paths:
         resourceType: openagrinet:Grievance
         descriptorCode: pm-kisan-grievances
         schema: https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/attributes.yaml#/components/schemas/Grievance
+      x-oan-request-attributes:
+        description: >
+          What the call carries at the Beckn layer. PM-KISAN seals its bodies,
+          and on this capability it is the ADAPTER that builds the plaintext --
+          x-plaintext-request shows it -- from these. So what a caller fills is
+          the registration number, not the provider's own field names.
+        schema:
+          type: object
+          required: [enrolmentId]
+          properties:
+            enrolmentId: {type: string, x-oan-from: enrolment.id}
       requestBody:
         required: true
         content:
@@ -195,6 +206,28 @@ paths:
         steps:
         - verifyPmkisanGrievanceOtp
         - readPmkisanGrievance
+      x-oan-request-attributes:
+        description: >
+          What the call carries at the Beckn layer. PM-KISAN seals its bodies,
+          and on this capability it is the ADAPTER that builds the plaintext --
+          x-plaintext-request shows it -- from these. So what a caller fills is
+          the registration number and the OTP, not the provider's own field names.
+        schema:
+          type: object
+          required: [enrolmentId, challenge]
+          properties:
+            enrolmentId: {type: string, x-oan-from: enrolment.id}
+            challenge: {"$ref": "#/components/schemas/OtpChallenge"}
+            case:
+              type: object
+              description: >
+                Which filing to read. Left out, the adapter reads the newest
+                one, which is what a farmer who names no date is asking for.
+              properties:
+                filedOn:
+                  type: string
+                  format: date
+                  x-oan-from: grievance.filedOn
       requestBody:
         required: true
         content:
@@ -344,6 +377,28 @@ paths:
         steps:
         - verifyPmkisanGrievanceOtp
         - filePmkisanGrievance
+      x-oan-request-attributes:
+        description: >
+          What the call carries at the Beckn layer. PM-KISAN seals its bodies,
+          and on this capability it is the ADAPTER that builds the plaintext --
+          x-plaintext-request shows it -- from these. So what a caller fills is
+          the registration number, the OTP and the complaint, not the provider's own field names.
+        schema:
+          type: object
+          required: [enrolmentId, challenge, grievance]
+          properties:
+            enrolmentId: {type: string, x-oan-from: enrolment.id}
+            challenge: {"$ref": "#/components/schemas/OtpChallenge"}
+            grievance:
+              type: object
+              required: [category, description]
+              properties:
+                category:
+                  type: object
+                  required: [code]
+                  properties:
+                    code: {type: string, x-oan-from: grievance.category}
+                description: {type: string, x-oan-from: grievance.text}
       requestBody:
         required: true
         content:
@@ -433,6 +488,20 @@ paths:
             type: string
 components:
   schemas:
+    OtpChallenge:
+      type: object
+      description: >
+        The OTP the farmer read out. The adapter answers it at PM-KISAN's OTP
+        service before making this call, so the code itself never reaches this
+        endpoint.
+      required: [response]
+      properties:
+        response:
+          type: object
+          required: [method, value]
+          properties:
+            method: {const: OTP}
+            value: {type: string, x-oan-from: challenge.otp}
     EncryptedRequest:
       type: object
       properties:

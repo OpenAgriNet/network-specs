@@ -74,8 +74,10 @@ components:
           properties:
             state:
               type: string
+              x-oan-from: subject.state
             results:
               type: object
+              x-oan-from: soil.results
               properties:
                 n:
                   type:
@@ -99,10 +101,12 @@ components:
                   - 'null'
             crops:
               type: array
+              x-oan-from: crop.ids
               items:
                 type: string
             naturalFarming:
               type: boolean
+              x-oan-from: farming.natural
           required:
           - state
           - results

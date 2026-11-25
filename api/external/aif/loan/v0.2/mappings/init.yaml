@@ -20,9 +20,8 @@ required:
 request: |
   (
     $ca := beckn.message.contract.commitments[0].commitmentAttributes;
-    $otp := $ca.challenge.response.value;
     $asked := { "beneficiaryId": $number($ca.beneficiaryId) };
-    $exists($otp) ? $merge([$asked, { "otp": $string($otp) }]) : $asked
+    $exists($ca.otp) ? $merge([$asked, { "otp": $string($ca.otp) }]) : $asked
   )
 
 # AIF spells its flag Success and its text Message on every happy path, and
@@ -35,7 +34,7 @@ response: |
     $said := $exists(response.Message) ? response.Message : response.message;
     $c := beckn.message.contract.commitments[0];
     $ca := $c.commitmentAttributes;
-    $verifying := $exists($ca.challenge.response.value);
+    $verifying := $exists($ca.otp);
     $at := "$.message.contract.commitments[0].commitmentAttributes.";
 
     $otpWindowMillis := 10 * 60 * 1000;
@@ -47,7 +46,7 @@ response: |
           "message": $verifying
             ? "AIF did not accept that OTP."
             : "AIF holds no beneficiary with that id.",
-          "path": $at & ($verifying ? "challenge.response.value" : "beneficiaryId"),
+          "path": $at & ($verifying ? "otp" : "beneficiaryId"),
           "cause": $said } }
     : {
       "context": $merge([beckn.context, { "action": "on_init", "timestamp": $now() }]),

@@ -15,18 +15,18 @@
 
 required:
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.farmerMobileNumber)
-    message: "this capability needs farmerMobileNumber in commitmentAttributes"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.mobile)
+    message: "this capability needs mobile in commitmentAttributes"
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.challenge.response.value)
-    message: "this capability needs challenge.response.value -- the code the farmer read out"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.otp)
+    message: "this capability needs otp -- the code the farmer read out"
 
 request: |
   (
     $ca := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "mobile": $string($ca.farmerMobileNumber),
-      "otp": $string($ca.challenge.response.value)
+      "mobile": $string($ca.mobile),
+      "otp": $string($ca.otp)
     }
   )
 
@@ -45,7 +45,7 @@ response: |
           "status": 400,
           "code": "BIZ_GENERIC_ERROR",
           "message": "KHC did not accept that OTP.",
-          "path": $at & "challenge.response.value",
+          "path": $at & "otp",
           "cause": $exists(response.message) ? response.message : $said } }
     /* A 200 that carries no isRegistered is not a verification. Saying the
        farmer is verified on a reply that does not say so would send the
@@ -55,7 +55,7 @@ response: |
           "status": 400,
           "code": "BIZ_GENERIC_ERROR",
           "message": "KHC did not confirm the verification.",
-          "path": $at & "challenge.response.value",
+          "path": $at & "otp",
           "cause": $said } }
     : {
       "context": $merge([beckn.context, { "action": "on_confirm", "timestamp": $now() }]),

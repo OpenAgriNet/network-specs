@@ -18,39 +18,39 @@
 
 required:
   - check: |
-      $exists(beckn.message.support.channels[0].referenceNo)
-    message: "this capability needs referenceNo -- our own reference for the filing"
+      $exists(beckn.message.support.channels[0].externalReferenceNo)
+    message: "this capability needs externalReferenceNo on the support channel -- our own reference for the filing"
   - check: |
       $exists(beckn.message.support.channels[0].farmerMobileNumber)
-    message: "this capability needs farmerMobileNumber on the support channel"
+    message: "this capability needs farmerMobileNumber on the support channel -- the mobile the token was bought for"
   - check: |
-      $exists(beckn.message.support.channels[0].grievance.description)
-    message: "this capability needs grievance.description -- the farmer's own words"
+      $exists(beckn.message.support.channels[0].farmerText)
+    message: "this capability needs farmerText on the support channel -- the farmer's own words"
   - check: |
-      $exists(beckn.message.support.channels[0].grievance.language)
-    message: "this capability needs grievance.language"
+      $exists(beckn.message.support.channels[0].farmerLanguage)
+    message: "this capability needs farmerLanguage on the support channel -- the language the farmer spoke in"
   - check: |
-      $exists(beckn.message.support.channels[0].grievance.division)
-    message: "this capability needs grievance.division -- it comes beside the scheme on KHC's own list"
+      $exists(beckn.message.support.channels[0].division)
+    message: "this capability needs division on the support channel -- it comes beside the scheme on KHC's own list"
   - check: |
-      $exists(beckn.message.support.channels[0].grievance.category.code)
-    message: "this capability needs grievance.category.code"
+      $exists(beckn.message.support.channels[0].problemCategory)
+    message: "this capability needs problemCategory on the support channel -- the desk the grievance goes to"
   - check: |
-      $exists(beckn.message.support.channels[0].grievance.subCategory.code)
-    message: "this capability needs grievance.subCategory.code"
+      $exists(beckn.message.support.channels[0].problemSubCategory)
+    message: "this capability needs problemSubCategory on the support channel -- the desk the grievance goes to"
   - check: |
-      $exists(beckn.message.support.channels[0].scheme.code)
-    message: "this capability needs scheme.code"
+      $exists(beckn.message.support.channels[0].scheme)
+    message: "this capability needs scheme on the support channel -- the scheme the grievance is about"
   - check: |
-      $exists(beckn.message.support.channels[0].location.stateId)
-    message: "this capability needs location.stateId"
+      $exists(beckn.message.support.channels[0].stateId)
+    message: "this capability needs stateId on the support channel -- where the farmer is"
   - check: |
-      $exists(beckn.message.support.channels[0].location.villageId)
-    message: "this capability needs location.villageId"
+      $exists(beckn.message.support.channels[0].villageId)
+    message: "this capability needs villageId on the support channel -- where the farmer is"
 
-# The identifiers go out as NUMBERS. KHC's contract types them as integers and
-# they travel as strings in the Beckn payload, because an attribute the adapter
-# binds a session to has to be a string.
+# The channel already carries KHC's own field names -- the tool filled them
+# from this capability's contract -- so this half only casts and drops the
+# JSON-LD keys the envelope adds.
 #
 # farmerName and gender are sent only when they are there. KHC wants them for a
 # farmer it has not seen before -- the confirm reply said isRegistered false --
@@ -60,21 +60,21 @@ request: |
   (
     $ch := beckn.message.support.channels[0];
     $asked := {
-      "externalReferenceNo": $string($ch.referenceNo),
+      "externalReferenceNo": $string($ch.externalReferenceNo),
       "farmerMobileNumber":  $string($ch.farmerMobileNumber),
-      "farmerText":          $trim($ch.grievance.description),
-      "farmerLanguage":      $ch.grievance.language,
-      "stateId":             $number($ch.location.stateId),
-      "villageId":           $number($ch.location.villageId),
-      "scheme":              $number($ch.scheme.code),
-      "division":            $number($ch.grievance.division),
-      "problemCategory":     $number($ch.grievance.category.code),
-      "problemSubCategory":  $number($ch.grievance.subCategory.code)
+      "farmerText":          $trim($ch.farmerText),
+      "farmerLanguage":      $ch.farmerLanguage,
+      "stateId":             $number($ch.stateId),
+      "villageId":           $number($ch.villageId),
+      "scheme":              $number($ch.scheme),
+      "division":            $number($ch.division),
+      "problemCategory":     $number($ch.problemCategory),
+      "problemSubCategory":  $number($ch.problemSubCategory)
     };
-    $exists($ch.applicantName)
+    $exists($ch.farmerName)
       ? $merge([$asked, {
-          "farmerName": $ch.applicantName,
-          "gender": $ch.applicantGender
+          "farmerName": $ch.farmerName,
+          "gender": $ch.gender
         }])
       : $asked
   )

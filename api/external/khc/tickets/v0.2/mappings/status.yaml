@@ -15,18 +15,18 @@
 
 required:
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.case.ticketNo)
-    message: "this capability needs case.ticketNo -- the grievance number select asked about"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.grievanceNo)
+    message: "this capability needs grievanceNo -- the grievance number select asked about"
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.challenge.response.value)
-    message: "this capability needs challenge.response.value -- the code the farmer read out"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.otp)
+    message: "this capability needs otp -- the code the farmer read out"
 
 request: |
   (
     $ca := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "grievanceNo": $string($ca.case.ticketNo),
-      "otp": $string($ca.challenge.response.value)
+      "grievanceNo": $string($ca.grievanceNo),
+      "otp": $string($ca.otp)
     }
   )
 
@@ -63,7 +63,7 @@ response: |
           "status": 400,
           "code": "BIZ_GENERIC_ERROR",
           "message": "KHC did not accept that OTP.",
-          "path": $at & "challenge.response.value",
+          "path": $at & "otp",
           "cause": $exists(response.message) ? response.message : $said } }
     /* A 200 carrying no grievance number is not a read. Reporting a status
        against a number KHC did not name would show the farmer the wrong
@@ -73,7 +73,7 @@ response: |
           "status": 400,
           "code": "BIZ_GENERIC_ERROR",
           "message": "KHC verified the OTP but returned no grievance.",
-          "path": $at & "case.ticketNo",
+          "path": $at & "grievanceNo",
           "cause": $said } }
     : {
       "context": $merge([beckn.context, { "action": "on_status", "timestamp": $now() }]),

@@ -13,11 +13,11 @@ required:
   - check: |
       (
         $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
-        $exists($attributes.farmerId) and $exists($attributes.applicant.mobile)
+        $exists($attributes.farmerID) and $exists($attributes.mobile)
       )
-    message: "this capability needs farmerId and applicant.mobile in commitmentAttributes"
+    message: "this capability needs farmerID and mobile in commitmentAttributes"
 
-# applicant.mobile is not sent: PMFBY reads the farmer from farmerID. It is
+# mobile is not sent: PMFBY reads the farmer from farmerID. It is
 # still required above, because the adapter checks it against the mobile the
 # session was bought for -- a transaction id alone must not be enough to read
 # another farmer's policies.
@@ -29,9 +29,9 @@ request: |
   (
     $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "farmerID": $string($attributes.farmerId),
-      "listType": "POLICY_LIST",
-      "sssyID": $exists($attributes.sssyId) ? $string($attributes.sssyId) : "04020023"
+      "farmerID": $string($attributes.farmerID),
+      "listType": $attributes.listType,
+      "sssyID": $string($attributes.sssyID)
     }
   )
 
@@ -125,7 +125,7 @@ response: |
               "@type": $attributes.`@type`,
               "informationMode": $INFORMATION_MODE,
               "scheme": $SCHEME,
-              "farmerId": $string($attributes.farmerId),
+              "farmerId": $string($attributes.farmerID),
               "policies": $policies
             }
           }])]

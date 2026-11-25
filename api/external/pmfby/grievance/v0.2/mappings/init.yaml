@@ -3,8 +3,7 @@
 # The same NIC endpoint the insurance capability calls, reached here under
 # Grievance. One host and one verification, so a farmer who has proved the
 # mobile number is theirs has proved it for both capabilities -- see
-# insurance.init.yaml, which this is a copy of -- with the mobile number read
-# from applicantMobile, which is what the rest of this capability calls it.
+# insurance.init.yaml, which this is a copy of.
 #
 # Sends the OTP and nothing else. PMFBY splits the exchange across two
 # endpoints where AIF keeps it on one, so init and confirm are two actions
@@ -15,16 +14,19 @@
 
 required:
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.applicantMobile)
-    message: "this capability needs applicantMobile in commitmentAttributes"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.mobile)
+    message: "this capability needs mobile in commitmentAttributes"
 
-# otpType is PMFBY's channel selector and SMS is the only one it serves.
+# The attributes already carry getOtp's own field names -- the tool filled them
+# from this capability's contract -- so this half only casts.
 request: |
-  {
-    "mobile": $string(
-      beckn.message.contract.commitments[0].commitmentAttributes.applicantMobile),
-    "otpType": "SMS"
-  }
+  (
+    $ca := beckn.message.contract.commitments[0].commitmentAttributes;
+    {
+      "mobile": $string($ca.mobile),
+      "otpType": $ca.otpType
+    }
+  )
 
 # The NIC envelope: a BOOLEAN status, the reason in error, and data as a bare
 # string on this call. Nothing about the OTP itself comes back, and nothing
@@ -59,7 +61,7 @@ response: |
     /* Inputs */
     $commitment := beckn.message.contract.commitments[0];
     $attributes := $commitment.commitmentAttributes;
-    $mobile := $string($attributes.applicantMobile);
+    $mobile := $string($attributes.mobile);
     $pmfbyMessage := $isText(response.error) ? $trim(response.error);
     $isSent := response.status = true;
     $isCallerFault := $exists($pmfbyMessage) and $contains($lowercase($pmfbyMessage), $KNOWN_REFUSALS);
@@ -80,7 +82,7 @@ response: |
               "@type": $attributes.`@type`,
               "informationMode": $INFORMATION_MODE,
               "scheme": $SCHEME,
-              "applicantMobile": $mobile,
+              "mobile": $mobile,
               "challenge": {
                 "issued": {
                   "method": "OTP",
@@ -97,6 +99,6 @@ response: |
       }
     }
     : $isCallerFault
-      ? $error($ERROR_REFUSED, $MSG_REFUSED, $ATTRIBUTES_PATH & "applicantMobile", $pmfbyMessage)
+      ? $error($ERROR_REFUSED, $MSG_REFUSED, $ATTRIBUTES_PATH & "mobile", $pmfbyMessage)
       : $error($ERROR_UNAVAILABLE, $MSG_UNAVAILABLE, undefined, $pmfbyMessage)
   )

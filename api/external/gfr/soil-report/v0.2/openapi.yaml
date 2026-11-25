@@ -84,14 +84,21 @@ components:
           properties:
             cycle:
               type: string
+              x-oan-from: report.cycle
             phone:
               type: string
+              x-oan-from: subject.mobile
             limit:
               type: integer
+              default: 1
+              description: One report is enough; the advice call reads the latest soil values only.
             skip:
               type: integer
+              default: 0
             locale:
               type: string
+              x-oan-from: subject.language
+              default: en
           required:
           - cycle
           - phone

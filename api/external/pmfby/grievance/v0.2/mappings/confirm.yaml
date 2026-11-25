@@ -1,9 +1,8 @@
 # PMFBY grievance, confirm -> POST /api/v1/services/nic/verifyMobile.
 #
 # Answers the OTP init sent. The same NIC endpoint insurance.confirm.yaml
-# calls, reached here under Grievance, and this is a copy of that file with two
-# changes: the farmerID is NOT returned to the caller, and the mobile number is
-# read from applicantMobile, which is what the rest of this capability calls it.
+# calls, reached here under Grievance, and this is a copy of that file with one
+# change: the farmerID is NOT returned to the caller.
 #
 # Insurance has to return it -- it is a required query parameter on a GET and
 # the adapter cannot put a held value into a query string. Grievance does not:
@@ -23,20 +22,19 @@ required:
   - check: |
       (
         $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
-        $exists($attributes.applicantMobile)
-          and $exists($attributes.challenge.response.value)
+        $exists($attributes.mobile) and $exists($attributes.otp)
       )
-    message: "this capability needs applicantMobile and challenge.response.value in commitmentAttributes"
+    message: "this capability needs mobile and otp in commitmentAttributes"
 
-# PMFBY's contract says the OTP is an integer and its validator refuses the
-# quoted form. It is a string in the Beckn payload because the pack types it
-# as one.
+# The attributes already carry verifyMobile's own field names. Only the casts
+# are here: PMFBY's contract says the OTP is an integer and its validator
+# refuses the quoted form.
 request: |
   (
     $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "mobile": $string($attributes.applicantMobile),
-      "otp": $number($attributes.challenge.response.value)
+      "mobile": $string($attributes.mobile),
+      "otp": $number($attributes.otp)
     }
   )
 
@@ -71,7 +69,7 @@ response: |
     /* Inputs */
     $commitment := beckn.message.contract.commitments[0];
     $attributes := $commitment.commitmentAttributes;
-    $mobile := $string($attributes.applicantMobile);
+    $mobile := $string($attributes.mobile);
     $pmfbyMessage := $isText(response.error) ? $trim(response.error);
     $isVerified := response.status = true and response.data.verified = true;
     $isCallerFault := $exists($pmfbyMessage) and $contains($lowercase($pmfbyMessage), $KNOWN_REFUSALS);
@@ -90,15 +88,15 @@ response: |
         "contract": $merge([beckn.message.contract, {
           "commitments": [$merge([$commitment, {
             "status": { "descriptor": { "code": $COMMITMENT_STATUS_ACTIVE } },
-            /* Replaced rather than merged, so neither the OTP the caller sent
-               in challenge.response nor the farmerID the session now holds
-               comes back in the answer. */
+            /* Replaced rather than merged, so neither the OTP the caller
+               sent nor the farmerID the session now holds comes back in the
+               answer. */
             "commitmentAttributes": {
               "@context": $attributes.`@context`,
               "@type": $attributes.`@type`,
               "informationMode": $INFORMATION_MODE,
               "scheme": $SCHEME,
-              "applicantMobile": $mobile
+              "mobile": $mobile
             }
           }])]
         }])
@@ -107,6 +105,6 @@ response: |
     : $isVerified
       ? $error($ERROR_UNAVAILABLE, $MSG_NO_FARMER, undefined, $pmfbyMessage)
     : $isCallerFault or $not($exists($pmfbyMessage))
-      ? $error($ERROR_REFUSED, $MSG_WRONG_OTP, $ATTRIBUTES_PATH & "challenge.response.value", $pmfbyMessage)
+      ? $error($ERROR_REFUSED, $MSG_WRONG_OTP, $ATTRIBUTES_PATH & "otp", $pmfbyMessage)
     : $error($ERROR_UNAVAILABLE, $MSG_UNAVAILABLE, undefined, $pmfbyMessage)
   )

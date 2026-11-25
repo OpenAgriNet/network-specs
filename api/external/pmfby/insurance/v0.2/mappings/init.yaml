@@ -9,14 +9,14 @@
 
 required:
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.applicant.mobile)
-    message: "this capability needs applicant.mobile in commitmentAttributes"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.mobile)
+    message: "this capability needs mobile in commitmentAttributes"
 
 # otpType is PMFBY's channel selector and SMS is the only one it serves.
 request: |
   {
     "mobile": $string(
-      beckn.message.contract.commitments[0].commitmentAttributes.applicant.mobile),
+      beckn.message.contract.commitments[0].commitmentAttributes.mobile),
     "otpType": "SMS"
   }
 
@@ -53,7 +53,7 @@ response: |
     /* Inputs */
     $commitment := beckn.message.contract.commitments[0];
     $attributes := $commitment.commitmentAttributes;
-    $mobile := $string($attributes.applicant.mobile);
+    $mobile := $string($attributes.mobile);
     $pmfbyMessage := $isText(response.error) ? $trim(response.error);
     $isSent := response.status = true;
     $isCallerFault := $exists($pmfbyMessage) and $contains($lowercase($pmfbyMessage), $KNOWN_REFUSALS);
@@ -91,6 +91,6 @@ response: |
       }
     }
     : $isCallerFault
-      ? $error($ERROR_REFUSED, $MSG_REFUSED, $ATTRIBUTES_PATH & "applicant.mobile", $pmfbyMessage)
+      ? $error($ERROR_REFUSED, $MSG_REFUSED, $ATTRIBUTES_PATH & "mobile", $pmfbyMessage)
       : $error($ERROR_UNAVAILABLE, $MSG_UNAVAILABLE, undefined, $pmfbyMessage)
   )

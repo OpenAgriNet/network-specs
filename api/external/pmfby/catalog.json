@@ -66,11 +66,23 @@
               },
               "actions": [
                 {
+                  "action": "init",
+                  "description": "Ask PMFBY to send a six-digit OTP to the farmer's registered mobile number. Call this before confirm.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post"
+                },
+                {
+                  "action": "confirm",
+                  "description": "Answer the OTP sent by init. A correct answer opens the session the filing spends; nothing else proves the mobile number is the farmer's.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post"
+                },
+                {
                   "action": "support",
+                  "description": "File the grievance against an application. Needs the session confirm opened.",
                   "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post"
                 },
                 {
                   "action": "status",
+                  "description": "Read a filed grievance back by its ticket number.",
                   "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post"
                 }
               ]

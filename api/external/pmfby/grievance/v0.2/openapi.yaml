@@ -9,6 +9,54 @@ servers:
 - url: https://pmfby.example.invalid
   description: Placeholder for the PMFBY FGMS service base URL.
 paths:
+  /api/v1/services/nic/getOtp:
+    post:
+      operationId: sendPmfbyGrievanceOtp
+      summary: Send a farmer OTP
+      description: The same NIC endpoint the insurance capability calls, reached here under Grievance. One host and one
+        verification, so a farmer who proved the mobile number is theirs proved it for both.
+      security: [{PMFBYAuthorization: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/init.yaml, status: existing, scope: adapter-action}
+      x-oan-binding: {descriptorCode: pmfby-grievances, resourceType: 'openagrinet:Grievance', action: init}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SendOtpRequest'}
+            example: {"mobile": "9000000000", "otpType": "SMS"}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: 'OTP sent'}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
+  /api/v1/services/nic/verifyMobile:
+    post:
+      operationId: verifyPmfbyGrievanceOtp
+      summary: Verify a farmer OTP
+      description: Answers the OTP getOtp sent. A correct answer opens the session the filing spends; the farmerID it
+        returns is captured into that session and never comes back to the caller.
+      security: [{PMFBYAuthorization: [], otpPassword: []}]
+      x-oan-mapping: {href: ./mappings/confirm.yaml, status: existing, scope: adapter-action}
+      x-oan-binding: {descriptorCode: pmfby-grievances, resourceType: 'openagrinet:Grievance', action: confirm}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VerifyOtpRequest'}
+            example: {"mobile": "9000000000", "otp": 123456}
+      responses:
+        '200':
+          description: Provider reply; a false status is a business failure.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OtpReply'}
+              examples:
+                accepted: {value: {status: true, data: {verified: true, farmerID: 1001}}}
+                rejected: {value: {status: false, error: 'Request rejected'}}
   /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket:
     post:
       operationId: filePmfbyGrievance
@@ -104,46 +152,67 @@ components:
       in: header
       name: Authorization
       description: Provider-issued FGMS service token. This is not an applicant OTP.
+    otpPassword:
+      type: apiKey
+      in: header
+      name: password
+      description: Provider-issued password the NIC OTP endpoints require beside the service token.
   schemas:
     FilePmfbyGrievanceRequest:
       type: object
       properties:
         requestorMobileNo:
           type: string
+          x-oan-from: subject.mobile
           example: '9000000000'
         applicationNo:
           type: string
+          x-oan-from: application.id
           example: DEMO-APP-01
         requestYear:
           type: string
+          x-oan-from: year
           example: '2026'
         requestSeason:
+          x-oan-from: season
           oneOf:
           - type: number
           - type: string
           example: '1'
         ticketCategoryID:
+          x-oan-from: grievance.category
+          description: The portal's own category list. The default is the enrolment and portal category a farmer who
+            names no category is almost always describing.
+          default: '3'
           oneOf:
           - type: number
           - type: string
           example: '3'
         ticketSubCategoryID:
+          x-oan-from: grievance.subCategory
+          description: A sub-category of the category above; the default is the one the default category takes.
+          default: '10'
           oneOf:
           - type: number
           - type: string
           example: '10'
         grievenceDescription:
           type: string
+          x-oan-from: grievance.text
           example: The policy record has the wrong crop.
         complaintDate:
           type: string
           format: date
+          x-oan-from: grievance.filedOn
           example: '2026-10-12'
         receiptSourceID:
+          x-oan-from: grievance.source
+          description: Provider-assigned source code. The default is the one PMFBY issued for this network, so a caller
+            that names no source is still recorded as having come through it.
+          default: '134306'
           oneOf:
           - type: number
           - type: string
-          description: Provider-assigned source code.
       required:
       - requestorMobileNo
       - applicationNo
@@ -154,6 +223,39 @@ components:
       - grievenceDescription
       - complaintDate
       - receiptSourceID
+    SendOtpRequest:
+      type: object
+      required:
+      - mobile
+      - otpType
+      properties:
+        mobile:
+          type: string
+          x-oan-from: subject.mobile
+        otpType:
+          const: SMS
+    VerifyOtpRequest:
+      type: object
+      required:
+      - mobile
+      - otp
+      properties:
+        mobile:
+          type: string
+          x-oan-from: subject.mobile
+        otp:
+          type: integer
+          x-oan-from: challenge.otp
+    OtpReply:
+      type: object
+      properties:
+        status:
+          type: boolean
+        error:
+          type: string
+        data:
+          description: Send reads a message string; verification reads an object with verified true and the farmerID the
+            session holds.
     FilePmfbyGrievanceResponse2XX:
       type: object
       properties:
@@ -183,9 +285,11 @@ components:
       properties:
         requestorMobileNo:
           type: string
+          x-oan-from: subject.mobile
           example: '9000000000'
         GrievenceSupportTicketNo:
           type: string
+          x-oan-from: grievance.id
           example: '10000001'
       required:
       - requestorMobileNo

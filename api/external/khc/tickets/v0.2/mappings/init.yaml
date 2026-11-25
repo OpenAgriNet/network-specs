@@ -15,11 +15,11 @@
 
 required:
   - check: |
-      $exists(beckn.message.contract.commitments[0].commitmentAttributes.farmerMobileNumber)
-    message: "this capability needs farmerMobileNumber in commitmentAttributes"
+      $exists(beckn.message.contract.commitments[0].commitmentAttributes.mobile)
+    message: "this capability needs mobile in commitmentAttributes"
 
 request: |
-  { "mobile": $string(beckn.message.contract.commitments[0].commitmentAttributes.farmerMobileNumber) }
+  { "mobile": $string(beckn.message.contract.commitments[0].commitmentAttributes.mobile) }
 
 # KHC answers with a status STRING -- "200 OK", not the number 200 -- in the
 # body, on success and on refusal alike, so the body is what decides. An
@@ -41,7 +41,7 @@ response: |
           "status": 400,
           "code": "BIZ_GENERIC_ERROR",
           "message": "KHC could not send an OTP to that number.",
-          "path": $at & "farmerMobileNumber",
+          "path": $at & "mobile",
           "cause": $exists(response.message) ? response.message : $said } }
     : {
       "context": $merge([beckn.context, { "action": "on_init", "timestamp": $now() }]),

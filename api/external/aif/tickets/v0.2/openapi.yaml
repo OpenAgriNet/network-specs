@@ -47,6 +47,9 @@ paths:
       - name: beneficiaryId
         in: query
         required: true
+        x-oan-from: beneficiary.id
+        # Bound to the session the loan capability bought; bindings read text only.
+        x-oan-as: string
         schema:
           "$ref": "#/components/schemas/AifBeneficiaryId"
         example: 101
