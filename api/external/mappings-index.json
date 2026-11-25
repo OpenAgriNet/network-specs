@@ -653,7 +653,7 @@
     "khc-tickets": "Ticket submission and lookup are unverified.",
     "amul-schemes": "Uses network search or cached results; no native scheme endpoint is confirmed.",
     "ffs-booking": "Four caller-side operations; the provider client and booking sequence are unverified.",
-    "gfr-advice": "Recommendations use legacy search, not the crop registry API.",
+    "gfr-advice": "Selected with the soil test's n, p, k and OC; the soil test is gfr-soil-report's select. Not yet in the catalog.",
     "icar-materials": "Reads internal storage; no native HTTP endpoint is confirmed.",
     "icar-field-advice": "Material lookup does not establish a field-advice endpoint.",
     "imd-district-forecast": "Station lookup is known; the forecast route is unverified.",

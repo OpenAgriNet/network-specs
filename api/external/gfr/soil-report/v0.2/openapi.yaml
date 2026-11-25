@@ -1,0 +1,138 @@
+openapi: 3.1.1
+info:
+  title: gfr/soil-report native requests
+  version: 0.2.0
+  x-contract-role: provider-native
+servers:
+- url: https://provider.example.invalid
+  description: Non-routable placeholder; configure the provider service base URL.
+paths:
+  /:
+    post:
+      operationId: getGfrSoilTest
+      description: GraphQL operations share this endpoint. Only the soil-test lookup uses the
+        generated bearer token.
+      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4420
+      x-oan-binding:
+        descriptorCode: gfr-soil-report
+        resourceType: openagrinet:AgricultureResource
+        action: select
+      responses:
+        '200':
+          description: Native success payload; examples are synthetic.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GfrSoilResponse'
+              examples:
+                GfrSoil:
+                  value:
+                    data:
+                      getTestForAuthUser: []
+                errorsOnly:
+                  value:
+                    errors:
+                    - message: Example upstream error
+        default:
+          description: Provider error or unconfirmed result. Do not treat as a successful callback.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GfrSoilRequest'
+            examples:
+              GfrSoil:
+                value:
+                  query: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber,
+                    $state: String, $district: String, $name: String, $farmer: String, $from:
+                    Datetime, $to: Datetime, $cycle: String, $locale: String, $scheme: String,
+                    $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId, phone:
+                    $phone, state: $state, district: $district, name: $name, farmer: $farmer,
+                    from: $from, to: $to, cycle: $cycle, scheme: $scheme, limit: $limit, skip:
+                    $skip) { id computedID cycle scheme plot { address area surveyNo } farmer
+                    { address name phone } crop location testparameters rdfValues status testCompletedAt
+                    sampleDate reportData district block village results fertilizer html(locale:
+                    $locale) uniqueID } }'
+                  variables:
+                    cycle: 2025-26
+                    phone: <phone>
+                    limit: 1
+                    skip: 0
+                    locale: en
+      security:
+      - session: []
+components:
+  schemas:
+    GfrSoilRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          const: 'query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state:
+            String, $district: String, $name: String, $farmer: String, $from: Datetime, $to:
+            Datetime, $cycle: String, $locale: String, $scheme: String, $limit: Int, $skip:
+            Int) { getTestForAuthUser(computedID: $computedId, phone: $phone, state: $state,
+            district: $district, name: $name, farmer: $farmer, from: $from, to: $to, cycle:
+            $cycle, scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme
+            plot { address area surveyNo } farmer { address name phone } crop location testparameters
+            rdfValues status testCompletedAt sampleDate reportData district block village results
+            fertilizer html(locale: $locale) uniqueID } }'
+        variables:
+          type: object
+          properties:
+            cycle:
+              type: string
+            phone:
+              type: string
+            limit:
+              type: integer
+            skip:
+              type: integer
+            locale:
+              type: string
+          required:
+          - cycle
+          - phone
+          - limit
+          - skip
+          - locale
+      required:
+      - query
+      - variables
+    GfrSoilResponse:
+      oneOf:
+      - $ref: '#/components/schemas/GfrSoilSuccess'
+      - $ref: '#/components/schemas/GraphqlError'
+    GfrSoilSuccess:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: object
+          required:
+          - getTestForAuthUser
+          properties:
+            getTestForAuthUser:
+              type: array
+              items: {}
+    GraphqlError:
+      type: object
+      required:
+      - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+            - message
+            properties:
+              message:
+                type: string
+  securitySchemes:
+    session:
+      type: http
+      scheme: bearer
