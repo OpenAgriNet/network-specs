@@ -2,7 +2,7 @@
 
 request: |
   {
-    "Types":  "Ben_id",  /* identityType in Grievance/otp.go; keep them together */
+    "Types":  "Ben_id",  /* otpVerifyIdentityFrom in pmkisan.yaml; keep them together */
     "Values": beckn.message.contract.commitments[0].commitmentAttributes.enrolmentId
   }
 

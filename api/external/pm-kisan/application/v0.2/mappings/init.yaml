@@ -4,7 +4,7 @@ request: |
   (
     $ca := beckn.message.contract.commitments[0].commitmentAttributes;
     $exists($ca.enrolmentId)
-    /* Types: identityType and mobileType in Grievance/otp.go; keep them together. */
+    /* Types: otpVerifyIdentityFrom in pmkisan.yaml; keep them together. */
     ? { "Types": "Ben_id", "Values": $ca.enrolmentId }
     : { "Types": "Mobile", "Values": $ca.applicant.mobile }
   )
