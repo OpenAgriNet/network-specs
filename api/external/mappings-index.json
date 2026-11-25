@@ -609,7 +609,7 @@
       "provider": "sathi",
       "capability": "stock",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post",
       "path": "sathi/stock/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
