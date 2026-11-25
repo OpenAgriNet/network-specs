@@ -386,8 +386,25 @@ components:
       - '@context'
       - '@type'
       - informationMode
-      - grievanceOptions
       - actions
+      # Complaint categories are what a caller needs in order to FILE, so a desk
+      # that advertises support must publish them and a read-only grievance
+      # resource must not be made to invent them.
+      if:
+        required:
+        - actions
+        properties:
+          actions:
+            contains:
+              type: object
+              required:
+              - action
+              properties:
+                action:
+                  const: support
+      then:
+        required:
+        - grievanceOptions
       properties:
         scheme:
           type: object

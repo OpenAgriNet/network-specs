@@ -17,7 +17,7 @@ paths:
       x-oan-mapping: {href: ./mappings/status.yaml, status: existing}
       x-oan-binding:
         descriptorCode: aif-support-tickets
-        resourceType: openagrinet:AgricultureResource
+        resourceType: openagrinet:Grievance
         action: status
       responses:
         '200':

@@ -83,7 +83,7 @@
       "capability": "tickets",
       "action": "status",
       "path": "aif/tickets/v0.2/mappings/status.yaml",
-      "selector_type": "openagrinet:AgricultureResource",
+      "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
         "aif-support-tickets"
       ],

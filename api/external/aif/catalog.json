@@ -89,23 +89,13 @@
               ]
             },
             "resourceAttributes": {
-              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
-              "@type": "openagrinet:AgricultureResource",
+              "@context": "https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld",
+              "@type": "openagrinet:Grievance",
               "informationMode": "OnDemand",
-              "subjectCategories": [
-                "Scheme"
-              ],
-              "agricultureSubjects": [
-                {
-                  "descriptor": {
-                    "code": "AIF",
-                    "name": "Agriculture Infrastructure Fund"
-                  }
-                }
-              ],
-              "languages": [
-                "en"
-              ],
+              "scheme": {
+                "code": "AIF",
+                "name": "Agriculture Infrastructure Fund"
+              },
               "actions": [
                 {
                   "action": "status",
