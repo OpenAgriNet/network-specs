@@ -12,7 +12,7 @@ paths:
   /inv-apis2/stock/getSeedAvailability:
     post:
       operationId: getSeedAvailability
-      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
@@ -28,8 +28,8 @@ paths:
               apiKey: NOT-A-KEY
       responses:
         '200':
-          description: The adapter checks numeric statusCode 200, reads data as stock rows and converts them into
-            Beckn catalog items. Do not interpret an error as confirmed zero stock.
+          description: The adapter returns this reply unchanged in the on_select resourceAttributes. Do not
+            interpret an error as confirmed zero stock.
           content:
             application/json:
               schema:
