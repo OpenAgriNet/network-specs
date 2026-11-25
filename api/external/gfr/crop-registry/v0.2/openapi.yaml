@@ -12,7 +12,6 @@ paths:
   /:
     post:
       operationId: getCropRegistries
-      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
       x-oan-binding: {descriptorCode: gfr-registry, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true

@@ -9,10 +9,10 @@ servers:
   - url: https://sathi.example.invalid
     description: Placeholder only. Obtain the service base URL from the provider.
 paths:
-  /inv-apis/stock/getSeedAvailability:
+  /inv-apis2/stock/getSeedAvailability:
     post:
       operationId: getSeedAvailability
-      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       x-oan-binding: {descriptorCode: sathi-stock, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
@@ -28,8 +28,8 @@ paths:
               apiKey: NOT-A-KEY
       responses:
         '200':
-          description: The adapter checks numeric statusCode 200, reads data as stock rows and converts them into
-            Beckn catalog items. Do not interpret an error as confirmed zero stock.
+          description: The adapter returns this reply unchanged in the on_select resourceAttributes. Do not
+            interpret an error as confirmed zero stock.
           content:
             application/json:
               schema:
@@ -45,14 +45,23 @@ paths:
                       bag_weight_kg: 25
                       total_bags: 4
                       available_at: []
-                noStock:
-                  value:
-                    statusCode: 200
-                    data: []
                 upstreamFailure:
                   value:
                     statusCode: 500
                     message: Example upstream failure
+        '409':
+          description: No stock for this crop and district. A normal answer, not a failure.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SathiStockResponse'
+              examples:
+                noStock:
+                  value:
+                    statusCode: 409
+                    status: Error
+                    message: Data Not Found
+                    data: []
         default:
           description: Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.
 components:

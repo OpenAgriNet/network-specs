@@ -27,15 +27,15 @@
         "isActive": true,
         "resources": [
           {
-            "id": "res-gfr-registry",
+            "id": "res-gfr-soil-report",
             "descriptor": {
-              "code": "gfr-registry",
-              "name": "GFR crop registry lookup",
-              "shortDesc": "GFR crop list",
+              "code": "gfr-soil-report",
+              "name": "GFR soil test",
+              "shortDesc": "The farmer's soil test values for a cycle",
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -45,7 +45,7 @@
               "@type": "openagrinet:AgricultureResource",
               "informationMode": "OnDemand",
               "subjectCategories": [
-                "Crop"
+                "Practice"
               ],
               "languages": [
                 "en",
@@ -54,7 +54,43 @@
               "actions": [
                 {
                   "action": "select",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post"
+                }
+              ]
+            }
+          },
+          {
+            "id": "res-gfr-advice",
+            "descriptor": {
+              "code": "gfr-advice",
+              "name": "GFR fertilizer recommendation",
+              "shortDesc": "Fertilizer doses from soil test values",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/gfr/advice/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureAdvisory",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Crop"
+              ],
+              "topics": [
+                "Fertilizer recommendation"
+              ],
+              "languages": [
+                "en",
+                "hi"
+              ],
+              "actions": [
+                {
+                  "action": "select",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/advice/v0.2/openapi.yaml#/paths/~1/post"
                 }
               ]
             }

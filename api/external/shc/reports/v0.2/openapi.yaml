@@ -12,7 +12,7 @@ paths:
   /:
     post:
       operationId: getTestForAuthUser
-      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       x-oan-binding: {descriptorCode: shc-reports, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
