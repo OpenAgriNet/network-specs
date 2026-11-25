@@ -12,7 +12,7 @@ paths:
   /api/BeneficiaryService/GetApplicationStatusByAI:
     post:
       operationId: readSmamBenefitStatus
-      x-oan-mapping: {"href": "./mappings/status.yaml", "status": "draft-native", "scope": "adapter-action"}
+      x-oan-mapping: {"href": "./mappings/status.yaml", "status": "existing", "scope": "adapter-action"}
       x-oan-binding: {descriptorCode: smam-benefits, resourceType: "openagrinet:SchemeApplication", action: status}
       security: [{providerToken: []}]
       requestBody:
