@@ -13,7 +13,7 @@ paths:
     post:
       operationId: runSearch
       x-oan-binding: {descriptorCode: knowledge-search, resourceType: "openagrinet:KnowledgeResource", action: discover}
-      x-oan-mapping: {href: ./mappings/discover.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       security:
       - bearerAuth: []
       description: Requires the search permission. Supply index_name only when the binding deliberately selects a corpus.
