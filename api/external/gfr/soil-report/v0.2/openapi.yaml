@@ -13,6 +13,7 @@ paths:
       description: GraphQL operations share this endpoint. Only the soil-test lookup uses the
         generated bearer token.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/app.service.ts#L4420
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       x-oan-binding:
         descriptorCode: gfr-soil-report
         resourceType: openagrinet:AgricultureResource
