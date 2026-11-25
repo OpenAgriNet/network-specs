@@ -1,0 +1,127 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "a1f00000-0000-4000-8000-000000000001",
+    "messageId": "a1f00000-0000-4000-8000-000000000002",
+    "timestamp": "2026-11-24T01:00:00Z",
+    "senderId": "aif.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-aif",
+        "bppId": "aif.example.invalid",
+        "bppUri": "https://aif.example.invalid/beckn",
+        "descriptor": {
+          "code": "AIF",
+          "name": "Agriculture Infrastructure Fund"
+        },
+        "provider": {
+          "id": "prov-aif",
+          "descriptor": {
+            "code": "AIF",
+            "name": "Agriculture Infrastructure Fund"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-aif-loan-status",
+            "descriptor": {
+              "code": "aif-loan-status",
+              "name": "AIF loan application status",
+              "shortDesc": "Verify an AIF beneficiary by OTP, then read one loan application's status.",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "AIF",
+                "name": "Agriculture Infrastructure Fund"
+              },
+              "challenge": {
+                "methods": [
+                  {
+                    "method": "OTP",
+                    "channel": "SMS",
+                    "length": 6,
+                    "valueType": "NUMERIC"
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "action": "init",
+                  "description": "Start beneficiary verification, then answer the OTP AIF sends to the registered mobile. Both steps post to this operation; the body tells them apart.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post"
+                },
+                {
+                  "action": "status",
+                  "description": "Read one loan application's status. Requires the session a verified beneficiary holds.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get"
+                }
+              ]
+            }
+          },
+          {
+            "id": "res-aif-tickets",
+            "descriptor": {
+              "code": "aif-support-tickets",
+              "name": "AIF support tickets",
+              "shortDesc": "Read the support tickets raised by a verified AIF beneficiary.",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld",
+              "@type": "openagrinet:AgricultureResource",
+              "informationMode": "OnDemand",
+              "subjectCategories": [
+                "Scheme"
+              ],
+              "agricultureSubjects": [
+                {
+                  "descriptor": {
+                    "code": "AIF",
+                    "name": "Agriculture Infrastructure Fund"
+                  }
+                }
+              ],
+              "languages": [
+                "en"
+              ],
+              "actions": [
+                {
+                  "action": "status",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-aif",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

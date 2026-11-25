@@ -156,7 +156,10 @@ def validate_examples(media, registry, uri, direction, schema_pointer, unknown_r
     for value in examples:
         validator.validate(value)
     assert set(schema) == {'$ref'} and schema['$ref'].startswith('#/components/schemas/'), (uri, direction)
-    assert not validator.is_valid('not an envelope'), (uri, direction)
+    # The named schema must constrain the payload's own type. Probing every JSON type
+    # keeps that honest for a provider whose native result is a bare scalar, which a
+    # string probe alone would reject.
+    assert any(not validator.is_valid(probe) for probe in (None, True, 1, 'not an envelope', [], {})), (uri, direction)
     return len(examples)+2
 
 

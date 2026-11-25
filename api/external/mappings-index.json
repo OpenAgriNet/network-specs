@@ -39,7 +39,7 @@
       "path": "aif/loan/v0.2/mappings/init.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
-        "aif-loan"
+        "aif-loan-status"
       ],
       "status": "existing"
     },
@@ -50,7 +50,7 @@
       "path": "aif/loan/v0.2/mappings/init/AIFStartChallenge.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
-        "aif-loan"
+        "aif-loan-status"
       ],
       "status": "source-traced",
       "binding_note": "Native request documented; not a deployable adapter configuration."
@@ -62,7 +62,7 @@
       "path": "aif/loan/v0.2/mappings/init/AIFVerifyChallenge.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
-        "aif-loan"
+        "aif-loan-status"
       ],
       "status": "source-traced",
       "binding_note": "Native request documented; not a deployable adapter configuration."
@@ -74,7 +74,7 @@
       "path": "aif/loan/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
-        "aif-loan"
+        "aif-loan-status"
       ],
       "status": "existing"
     },
@@ -83,9 +83,9 @@
       "capability": "tickets",
       "action": "status",
       "path": "aif/tickets/v0.2/mappings/status.yaml",
-      "selector_type": "openagrinet:Grievance",
+      "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
-        "aif-tickets"
+        "aif-support-tickets"
       ],
       "status": "existing"
     },
@@ -644,7 +644,14 @@
       "fixture": "api/external/smam/catalog.json"
     }
   ],
-  "pending": [],
+  "pending": [
+    {
+      "descriptor_code": "knowledge-search",
+      "action": "discover",
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post",
+      "note": "The catalog advertises discover; the checked-in mapping answers select."
+    }
+  ],
   "integrationNotes": {
     "agristack-consent": "Consent and authorized read endpoints are unverified.",
     "aif-loan": "Only scheme lookup is known; loan OTP and status are unverified.",

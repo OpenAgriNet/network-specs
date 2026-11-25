@@ -51,6 +51,7 @@ permalink: /api/providers/index.html
   <ul><li><a href="../../schema/KnowledgeAdvisory/v0.1/examples/network/direct-knowledge-advisory-resource.json">Cotton establishment advisory</a></li><li><a href="../../schema/MarketIntelligence/v0.1/examples/network/direct-market-intelligence-resource.json">Cotton market intelligence for Telangana</a></li><li><a href="../../schema/MandiPrice/v0.1/examples/network/live-mandi-price-resource.json">Onion price at Lasalgaon APMC</a></li><li><a href="../../schema/WeatherAdvisory/v0.1/examples/network/live-weather-advisory-resource.json">Rice irrigation advisory</a></li><li><a href="../../schema/WeatherObservation/v0.1/examples/network/live-weather-resource.json">Three-hour weather forecast</a></li></ul>
   <h2 id="providers">Provider index</h2>
   <ul class="providers"><li><a href="#prov-agmarknet">AGMARKNET example provider</a></li>
+<li><a href="#prov-aif">Agriculture Infrastructure Fund</a></li>
 <li><a href="#prov-ffs">FFS example provider</a></li>
 <li><a href="#prov-gfr">GFR example provider</a></li>
 <li><a href="#prov-imd">IMD example provider</a></li>
@@ -69,6 +70,8 @@ permalink: /api/providers/index.html
     <thead><tr><th scope="col">Capability</th><th scope="col">Provider</th><th scope="col">Resource type</th></tr></thead>
     <tbody><tr><td><a href="#cap-knowledge-search">Agricultural knowledge search</a></td><td><a href="#prov-knowledge">KNOWLEDGE example provider</a></td><td><code>openagrinet:KnowledgeResource</code></td></tr>
 <tr><td><a href="#cap-imd-agromet">Agromet district crop guidance</a></td><td><a href="#prov-imd">IMD example provider</a></td><td><code>openagrinet:AgricultureAdvisory</code></td></tr>
+<tr><td><a href="#cap-aif-loan-status">AIF loan application status</a></td><td><a href="#prov-aif">Agriculture Infrastructure Fund</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
+<tr><td><a href="#cap-aif-support-tickets">AIF support tickets</a></td><td><a href="#prov-aif">Agriculture Infrastructure Fund</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-imd-mausamgram">Block weather forecast</a></td><td><a href="#prov-imd">IMD example provider</a></td><td><code>openagrinet:WeatherObservation</code></td></tr>
 <tr><td><a href="#cap-npss-diagnosis">Crop image analysis</a></td><td><a href="#prov-npss">NPSS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-ffs-booking">FFS fertilizer booking</a></td><td><a href="#prov-ffs">FFS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
@@ -92,6 +95,12 @@ permalink: /api/providers/index.html
   <h3 id="prov-agmarknet">AGMARKNET example provider</h3>
   <p>Catalog <code>cat-agmarknet</code>. <a href="../external/agmarknet/catalog.json">Read the catalog/publish fixture</a>.</p>
   <ul><li><a href="#cap-agmarknet-market-prices">Selected market prices</a></li><li><a href="#cap-agmarknet-nearby-prices">Nearby mandi prices</a></li></ul>
+</section>
+
+<section>
+  <h3 id="prov-aif">Agriculture Infrastructure Fund</h3>
+  <p>Catalog <code>cat-aif</code>. <a href="../external/aif/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-aif-loan-status">AIF loan application status</a></li><li><a href="#cap-aif-support-tickets">AIF support tickets</a></li></ul>
 </section>
 
 <section>
@@ -489,6 +498,211 @@ permalink: /api/providers/index.html
 
   <ul><li><a href="../external/imd/agromet/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
   <ul><li><a href="../external/imd/agromet/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-aif-loan-status" tabindex="-1">
+  <h3><a href="#cap-aif-loan-status">AIF loan application status</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-aif">Agriculture Infrastructure Fund</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Verify an AIF beneficiary by OTP, then read one loan application&#39;s status.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-aif|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-aif</code> contains <code>res-aif-loan-status</code> in <code>OnDemand</code> mode. <a href="../external/aif/loan/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-aif-loan-status&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;aif-loan-status&quot;,
+    &quot;name&quot;: &quot;AIF loan application status&quot;,
+    &quot;shortDesc&quot;: &quot;Verify an AIF beneficiary by OTP, then read one loan application&#39;s status.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;AIF&quot;,
+      &quot;name&quot;: &quot;Agriculture Infrastructure Fund&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Start beneficiary verification, then answer the OTP AIF sends to the registered mobile. Both steps post to this operation; the body tells them apart.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Read one loan application&#39;s status. Requires the session a verified beneficiary holds.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;AIF\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/aif/loan/v0.2/openapi.yaml">aif/loan native requests</a></p><ul><li><code>POST /validate_beneficiaries/</code> · init</li><li><code>GET /Status</code> · status</li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for AIF loan application status"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post">AifValidateBeneficiary</a><br><code>POST /validate_beneficiaries/</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifStartRequestVariants">AifStartRequestVariants</a></p><details><summary>Example: AifStart</summary><pre><code>{
+  &quot;beneficiaryId&quot;: 101
+}</code></pre></details><details><summary>Example: AifVerify</summary><pre><code>{
+  &quot;beneficiaryId&quot;: 101,
+  &quot;otp&quot;: &quot;000000&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifStartResponseVariants">AifStartResponseVariants</a></p><details><summary>Example: AifStart</summary><pre><code>{
+  &quot;Success&quot;: true,
+  &quot;MobileNumber&quot;: &quot;masked&quot;,
+  &quot;Message&quot;: &quot;OTP sent&quot;
+}</code></pre></details><details><summary>Example: AifVerify</summary><pre><code>{
+  &quot;Success&quot;: true,
+  &quot;Token&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;ExpiresIn&quot;: 3600,
+  &quot;Beneficiary&quot;: {
+    &quot;Beneficiary_Name&quot;: &quot;Example&quot;
+  }
+}</code></pre></details></li><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get">AifLoan</a><br><code>GET /Status</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><code>loanApplicationNumber</code> (query, required) · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifLoanApplicationNumber">AifLoanApplicationNumber</a><details><summary>Parameter example</summary><pre><code>201</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifLoanResponse">AifLoanResponse</a></p><details><summary>Example: AifLoan</summary><pre><code>&quot;Disbursed&quot;</code></pre></details></li><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/aif/loan/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/aif/loan/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/init/AIFStartChallenge.yaml">init · source-traced · AIFStartChallenge mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/init/AIFVerifyChallenge.yaml">init · source-traced · AIFVerifyChallenge mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-aif-support-tickets" tabindex="-1">
+  <h3><a href="#cap-aif-support-tickets">AIF support tickets</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-aif">Agriculture Infrastructure Fund</a> · <code>openagrinet:AgricultureResource</code></p>
+  <p>Read the support tickets raised by a verified AIF beneficiary.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-aif|openagrinet:AgricultureResource</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-aif</code> contains <code>res-aif-tickets</code> in <code>OnDemand</code> mode. <a href="../external/aif/tickets/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-aif-tickets&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;aif-support-tickets&quot;,
+    &quot;name&quot;: &quot;AIF support tickets&quot;,
+    &quot;shortDesc&quot;: &quot;Read the support tickets raised by a verified AIF beneficiary.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:AgricultureResource&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;subjectCategories&quot;: [
+      &quot;Scheme&quot;
+    ],
+    &quot;agricultureSubjects&quot;: [
+      {
+        &quot;descriptor&quot;: {
+          &quot;code&quot;: &quot;AIF&quot;,
+          &quot;name&quot;: &quot;Agriculture Infrastructure Fund&quot;
+        }
+      }
+    ],
+    &quot;languages&quot;: [
+      &quot;en&quot;
+    ],
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld#openagrinet:AgricultureResource&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureResource\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Scheme\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/aif/tickets/v0.2/openapi.yaml">aif/tickets native requests</a></p><ul><li><code>GET /support-tickets</code> · status</li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for AIF support tickets"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>status</code></td><td><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get">AifTickets</a><br><code>GET /support-tickets</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><code>beneficiaryId</code> (query, required) · <a href="../external/aif/tickets/v0.2/openapi.yaml#/components/schemas/AifBeneficiaryId">AifBeneficiaryId</a><details><summary>Parameter example</summary><pre><code>101</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/tickets/v0.2/openapi.yaml#/components/schemas/AifTicketsResponse">AifTicketsResponse</a></p><details><summary>Example: AifTickets</summary><pre><code>[
+  {
+    &quot;BeneficiaryId&quot;: 101,
+    &quot;LoanApplicationNumber&quot;: 201,
+    &quot;Question&quot;: &quot;Example&quot;,
+    &quot;Status&quot;: &quot;Open&quot;,
+    &quot;description&quot;: &quot;Example&quot;,
+    &quot;subQueryType&quot;: &quot;Example&quot;
+  }
+]</code></pre></details><details><summary>Example: empty</summary><pre><code>&quot;No tickets&quot;</code></pre></details></li><li><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/aif/tickets/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/aif/tickets/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
