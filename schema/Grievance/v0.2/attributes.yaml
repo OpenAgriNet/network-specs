@@ -193,15 +193,51 @@ components:
         actions:
           type: array
           minItems: 2
-          maxItems: 2
+          maxItems: 4
           uniqueItems: true
           description: Advertised provider operations.
           items:
-            enum:
-            - action: support
-              operationRef: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post
-            - action: status
-              operationRef: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post
+            type: object
+            additionalProperties: false
+            required:
+            - action
+            - operationRef
+            properties:
+              action:
+                type: string
+                description: The capability action this operation serves.
+              operationRef:
+                type: string
+                description: The provider operation the action resolves to.
+              description:
+                type: string
+                minLength: 1
+                description: The provider's own note on when to call it.
+              attributesAt:
+                type: string
+                minLength: 1
+                description: Where in the payload this action reads its attributes.
+            oneOf:
+            - properties:
+                action:
+                  const: init
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post
+            - properties:
+                action:
+                  const: confirm
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post
+            - properties:
+                action:
+                  const: support
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post
+            - properties:
+                action:
+                  const: status
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post
           x-jsonld-id: openagrinet:publishedAction
       additionalProperties: false
     PMKISANCatalog:
@@ -339,16 +375,26 @@ components:
                   code:
                     type: string
                     enum:
-                    - G001
-                    - G002
-                    - G003
-                    - G004
-                    - G005
-                    - G006
-                    - G007
-                    - G008
-                    - G009
-                    - G010
+                    - G011
+                    - G012
+                    - G013
+                    - G014
+                    - G015
+                    - G016
+                    - G017
+                    - G018
+                    - G019
+                    - G020
+                    - G021
+                    - G022
+                    - G023
+                    - G024
+                    - G025
+                    - G026
+                    - G027
+                    - G028
+                    - G029
+                    - G030
                     description: Code identifying the option.
                     x-jsonld-id: openagrinet:optionCode
                   name:
@@ -370,13 +416,42 @@ components:
           uniqueItems: true
           description: Advertised provider operations.
           items:
-            enum:
-            - action: init
-              operationRef: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post
-            - action: status
-              operationRef: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post
-            - action: support
-              operationRef: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post
+            type: object
+            additionalProperties: false
+            required:
+            - action
+            - operationRef
+            properties:
+              action:
+                type: string
+                description: The capability action this operation serves.
+              operationRef:
+                type: string
+                description: The provider operation the action resolves to.
+              description:
+                type: string
+                minLength: 1
+                description: The provider's own note on when to call it.
+              attributesAt:
+                type: string
+                minLength: 1
+                description: Where in the payload this action reads its attributes.
+            oneOf:
+            - properties:
+                action:
+                  const: init
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post
+            - properties:
+                action:
+                  const: status
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post
+            - properties:
+                action:
+                  const: support
+                operationRef:
+                  const: https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post
           x-jsonld-id: openagrinet:publishedAction
       additionalProperties: false
     GrievanceFields:

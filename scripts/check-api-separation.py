@@ -72,11 +72,19 @@ for provider in (p for p in external.iterdir() if p.is_dir()):
                 assert public <= {(external/m['path']).resolve() for m in traced + deployed if m['action'] != 'internal'}, version
                 for binding in candidate['actions']:
                     mapping = yaml.safe_load((version/binding['mapping']).read_text())
-                    if 'native' not in mapping:
-                        continue
-                    native = mapping['native']
-                    pointer = native['path'].replace('~', '~0').replace('/', '~1')
-                    assert binding['operationRef'] == '#/paths/'+pointer+'/'+native['method'].lower()
+                    if 'native' in mapping:
+                        native = mapping['native']
+                        pointer = native['path'].replace('~', '~0').replace('/', '~1')
+                        assert binding['operationRef'] == '#/paths/'+pointer+'/'+native['method'].lower()
+                    else:
+                        # A promoted mapping carries no native block, so the pointer is
+                        # checked against the draft's own paths rather than skipped.
+                        document, _, rest = binding['operationRef'].partition('#/paths/')
+                        assert document == '' and rest, binding['operationRef']
+                        pointer, _, verb = rest.rpartition('/')
+                        path = pointer.replace('~1', '/').replace('~0', '~')
+                        assert verb in doc['paths'].get(path, {}), (version, binding['operationRef'])
+                        checks += 1
                     assert binding['action'] == mapping['action']
             assert set(doc['x-draft']['proposedActions']) == {
                 m['action'] for m in inventory['mappings'] if (external/m['path']).is_relative_to(version) and m['action'] != 'internal'}, version
