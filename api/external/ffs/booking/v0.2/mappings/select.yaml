@@ -1,7 +1,7 @@
 status: draft-native
 deployable: false
 action: select
-operationRef: https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post
+operationRef: https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post
 request:
   in: body
   jsonata: payload

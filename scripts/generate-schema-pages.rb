@@ -539,10 +539,10 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
       resolver.document(file).fetch("paths").values.any? do |item|
         item.values.any? { |op| op.is_a?(Hash) && types.include?(op.dig("x-oan-binding", "resourceType")) }
       end
-    end.map { |file| "https://openagrinet.github.io/network-specs/" + file.relative_path_from(ROOT).to_s }
+    end.map { |file| "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/" + file.relative_path_from(ROOT).to_s }
     api_urls = (native_urls + api_urls).uniq
     packs[key]["api_docs"] = api_urls.map do |url|
-      relative = url.sub("https://openagrinet.github.io/network-specs/", "")
+      relative = url.sub("https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/", "").sub("https://openagrinet.github.io/network-specs/", "")
       api_path = ROOT.join(relative).cleanpath
       next unless %w[api/external].any? { |dir| relative.start_with?(dir + "/") && api_path.to_s.start_with?(ROOT.join(dir).to_s + "/") } && api_path.file?
       api = resolver.document(api_path)

@@ -36,8 +36,10 @@ end
 
 def spec_path(url)
   uri = URI.parse(url)
-  match = %r{\A/network-specs/(api/(?:adapter|external)/[A-Za-z0-9/._-]+/openapi\.yaml)\z}.match(uri.path)
-  unless uri.scheme == 'https' && uri.host == 'openagrinet.github.io' && match &&
+  # Contracts are served from the branch until v0.2 reaches the site; packs
+  # still come from the site, so both prefixes resolve to the same repo path.
+  match = %r{\A(?:/network-specs|/OpenAgriNet/network-specs/bv-migration)/(api/(?:adapter|external)/[A-Za-z0-9/._-]+/openapi\.yaml)\z}.match(uri.path)
+  unless uri.scheme == 'https' && %w[openagrinet.github.io raw.githubusercontent.com].include?(uri.host) && match &&
          (match[1].split('/') & %w[. ..]).empty?
     raise "Not a repository OpenAPI URL: #{url}"
   end

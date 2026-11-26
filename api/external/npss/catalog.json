@@ -35,7 +35,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml",
+                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/npss/diagnosis/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -50,7 +50,7 @@
               "actions": [
                 {
                   "action": "select",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post"
                 }
               ]
             }

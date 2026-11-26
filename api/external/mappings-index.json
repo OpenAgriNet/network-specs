@@ -93,7 +93,7 @@
       "provider": "ffs",
       "capability": "booking",
       "action": "confirm",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post",
       "path": "ffs/booking/v0.2/mappings/confirm.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -106,7 +106,7 @@
       "provider": "ffs",
       "capability": "booking",
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post",
       "path": "ffs/booking/v0.2/mappings/init/products.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -119,7 +119,7 @@
       "provider": "ffs",
       "capability": "booking",
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post",
       "path": "ffs/booking/v0.2/mappings/init/retailers.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -132,7 +132,7 @@
       "provider": "ffs",
       "capability": "booking",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1fertilizerRecommendation~1getRecommendationsByGFRV4/post",
       "path": "ffs/booking/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -192,7 +192,7 @@
       "provider": "gfr",
       "capability": "soil-report",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post",
       "path": "gfr/soil-report/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -205,7 +205,7 @@
       "provider": "imd",
       "capability": "agromet",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get",
       "path": "imd/agromet/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureAdvisory",
       "descriptor_codes": [
@@ -230,7 +230,7 @@
       "provider": "kcc",
       "capability": "loan",
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post",
       "path": "kcc/loan/v0.2/mappings/init.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -243,7 +243,7 @@
       "provider": "kcc",
       "capability": "loan",
       "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post",
       "path": "kcc/loan/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -261,7 +261,7 @@
         "khc-grievance"
       ],
       "action": "confirm",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post",
       "status": "existing",
       "fixture": "api/external/khc/catalog.json"
     },
@@ -274,7 +274,7 @@
         "khc-grievance"
       ],
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post",
       "status": "existing",
       "fixture": "api/external/khc/catalog.json"
     },
@@ -379,7 +379,7 @@
       "status": "existing",
       "fixture": "api/external/khc/catalog.json",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post",
       "path": "khc/tickets/v0.2/mappings/select.yaml"
     },
     {
@@ -392,14 +392,14 @@
       "status": "existing",
       "fixture": "api/external/khc/catalog.json",
       "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post",
       "path": "khc/tickets/v0.2/mappings/status.yaml"
     },
     {
       "provider": "khc",
       "capability": "tickets",
       "action": "support",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post",
       "path": "khc/tickets/v0.2/mappings/support.yaml",
       "selector_type": "openagrinet:Grievance",
       "descriptor_codes": [
@@ -424,7 +424,7 @@
       "provider": "npss",
       "capability": "diagnosis",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post",
       "path": "npss/diagnosis/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -545,7 +545,7 @@
       "provider": "pmfby",
       "capability": "insurance",
       "action": "confirm",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post",
       "path": "pmfby/insurance/v0.2/mappings/confirm.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -558,7 +558,7 @@
       "provider": "pmfby",
       "capability": "insurance",
       "action": "init",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post",
       "path": "pmfby/insurance/v0.2/mappings/init.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -571,7 +571,7 @@
       "provider": "pmfby",
       "capability": "insurance",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get",
       "path": "pmfby/insurance/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -584,7 +584,7 @@
       "provider": "pmfby",
       "capability": "insurance",
       "action": "status",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get",
       "path": "pmfby/insurance/v0.2/mappings/status.yaml",
       "selector_type": "openagrinet:SchemeApplication",
       "descriptor_codes": [
@@ -609,7 +609,7 @@
       "provider": "sathi",
       "capability": "stock",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post",
       "path": "sathi/stock/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -622,7 +622,7 @@
       "provider": "shc",
       "capability": "reports",
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/shc/reports/v0.2/openapi.yaml#/paths/~1/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/shc/reports/v0.2/openapi.yaml#/paths/~1/post",
       "path": "shc/reports/v0.2/mappings/select.yaml",
       "selector_type": "openagrinet:AgricultureResource",
       "descriptor_codes": [
@@ -648,7 +648,7 @@
     {
       "descriptor_code": "knowledge-search",
       "action": "discover",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post",
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post",
       "note": "The catalog advertises discover; the checked-in mapping answers select."
     }
   ],

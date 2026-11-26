@@ -12,7 +12,7 @@
   "actions": [
     {
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post"
+      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post"
     }
   ]
 }

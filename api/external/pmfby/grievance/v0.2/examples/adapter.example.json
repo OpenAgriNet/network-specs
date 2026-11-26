@@ -3,7 +3,7 @@
   "participant": "pmfby.example.invalid",
   "capability": "openagrinet:Grievance",
   "action": "status",
-  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
+  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
   "method": "POST",
   "path": "/krphapi/FGMS/GetGrievenceTicketsStatus",
   "serverRef": "pmfby.fgms.baseUrl",

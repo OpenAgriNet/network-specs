@@ -37,7 +37,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml",
+                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/aif/loan/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -64,12 +64,12 @@
                 {
                   "action": "init",
                   "description": "Start beneficiary verification, then answer the OTP AIF sends to the registered mobile. Both steps post to this operation; the body tells them apart.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post"
                 },
                 {
                   "action": "status",
                   "description": "Read one loan application's status. Requires the session a verified beneficiary holds.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get"
                 }
               ]
             }
@@ -83,7 +83,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml",
+                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/aif/tickets/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -99,7 +99,7 @@
               "actions": [
                 {
                   "action": "status",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get"
                 }
               ]
             }

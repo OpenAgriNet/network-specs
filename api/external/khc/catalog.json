@@ -35,7 +35,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml",
+                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -106,27 +106,27 @@
                 {
                   "action": "init",
                   "description": "Ask KHC to send a six-digit OTP to the mobile the grievance will be filed against. Call this first; nothing is filed by it.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post"
                 },
                 {
                   "action": "confirm",
                   "description": "Answer the OTP. KHC replies with whether it already knows this farmer, which decides whether the filing must also carry their name and gender.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post"
                 },
                 {
                   "action": "support",
                   "description": "File the grievance and return the number KHC gave it. Writes to a real help desk, so call it only after the farmer has confirmed the text in words.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post"
                 },
                 {
                   "action": "select",
                   "description": "Ask after a grievance already filed. KHC sends a six-digit OTP to the mobile that grievance was filed against; nothing is read by this call. Needs KHC's own number for the grievance, under case.ticketNo.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post"
                 },
                 {
                   "action": "status",
                   "description": "Answer the OTP from select and read the grievance back: its number and where the case stands. The OTP is single-use, so send it once.",
-                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post"
+                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post"
                 }
               ]
             }
