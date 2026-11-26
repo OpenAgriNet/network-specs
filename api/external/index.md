@@ -18,7 +18,6 @@ For example, PMFBY grievance status calls `POST /krphapi/FGMS/GetGrievenceTicket
 | PM-KISAN | Application status | [Application operations](pm-kisan/application/v0.2/openapi.yaml) |
 | SATHI | Crop groups and crops by group | [Master-data reads](sathi/master/v0.2/openapi.yaml) |
 | SATHI | Certified seed stock | [Stock lookup](sathi/stock/v0.2/openapi.yaml) |
-| GFR | Crop registry | [Registry query](gfr/crop-registry/v0.2/openapi.yaml) |
 | Soil Health Card | Private reports | [Report query](shc/reports/v0.2/openapi.yaml) |
 | FFS | Allowance, products, retailers and fertilizer booking | [Booking operations](ffs/booking/v0.2/openapi.yaml) |
 | IMD | Mausamgram coordinate forecasts | [Daily forecast](imd/mausamgram/v0.2/openapi.yaml) |

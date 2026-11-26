@@ -1,5 +1,6 @@
 status: source-traced
 deployable: false
+advertised: false
 action: internal
 native:
   method: GET
@@ -18,5 +19,8 @@ responseExample:
   data:
   - subdistrictid: 1
     subdistrictname: Example
-binding: Design only. The adapter must implement the described transport and guards
-  before enabling this action.
+missing:
+- How many rows each list returns. The provider pages and filters nothing --
+  KHC answers with the whole list and the legacy caller slices it fifty at a
+  time in memory -- so a published catalog has to carry every row or none.
+  Source cannot answer the size; only a live call can.

@@ -3,12 +3,14 @@
 # returned; the farmer's personal details are dropped.
 # Required fields and formats are checked by the Grievance pack.
 
+# The attributes already carry this endpoint's own field names -- the tool
+# filled them from this capability's contract -- so this half only casts.
 request: |
   (
     $attributes := beckn.message.contract.commitments[0].commitmentAttributes;
     {
-      "requestorMobileNo": $attributes.applicantMobile,
-      "GrievenceSupportTicketNo": $attributes.case.ticketNo
+      "requestorMobileNo": $string($attributes.requestorMobileNo),
+      "GrievenceSupportTicketNo": $string($attributes.GrievenceSupportTicketNo)
     }
   )
 
@@ -65,7 +67,7 @@ response: |
     /* Inputs */
     $commitment := beckn.message.contract.commitments[0];
     $attributes := $commitment.commitmentAttributes;
-    $requestedTicket := $string($attributes.case.ticketNo);
+    $requestedTicket := $string($attributes.GrievenceSupportTicketNo);
     /* The record that NAMES the ticket asked for, searched across every record
        returned rather than taken from the first. PMFBY reads by phone, so the
        list can hold this farmer's other grievances, and a record that does not

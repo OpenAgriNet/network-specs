@@ -1,24 +1,45 @@
-# Private payloads only. Authenticate and check provider success before normalizing data to an array.
-# Reject malformed data; never evaluate strings as code.
+# SMAM application status, openagrinet:SchemeApplication, status. The lookup value is SMAM's
+# own request field; SMAM works out whether it is a mobile or an application number.
+
 required:
   - check: |
       (
-        $a := beckn.message.contract.commitments[0].commitmentAttributes;
-        $a.searchType in ["application_no","mobile"] and
-        $type($a.searchValue) = "string" and $length($trim($a.searchValue)) > 0
+        $v := beckn.message.contract.commitments[0].commitmentAttributes.SearchValue;
+        $type($v) = "string" and $length($trim($v)) > 0
       )
-    message: Valid lookup kind and a nonempty private lookup value are required.
+    message: "this capability needs a non-empty SearchValue in commitmentAttributes"
+
 request: |
-  {"SearchValue": beckn.message.contract.commitments[0].commitmentAttributes.searchValue}
+  { "SearchValue": $trim(beckn.message.contract.commitments[0].commitmentAttributes.SearchValue) }
+
+# SMAM's answer goes back unchanged beside the pack fields: every application, machine and
+# status history, as v1 showed them. "No application found" is an answer, not an error.
 response: |
-  (
-    $rows := $lookup(response, "data");
-    $assert(response.success = true and $type($rows) = "array", "Provider failure or unreadable records");
-    {"records": [$map($rows, function($a){(
-      $assert($type($a.ApplicationRefNo) = "string" and $length($a.ApplicationRefNo) > 0, "Missing reference");
-      $assert($count($a.Implements) = 1 and $count($a.Implements[0].StatusHistory) = 1, "Ambiguous status history");
-      $s := $a.Implements[0].StatusHistory[0].StatusText;
-      $assert($type($s) = "string" and $length($s) > 0, "Missing status");
-      {"applicationReference": $a.ApplicationRefNo, "status": $s}
-    )})]}
+  $exists(_status)
+  ? {}
+  : (
+    $c := beckn.message.contract.commitments[0];
+    $ca := $c.commitmentAttributes;
+    {
+      "context": $merge([beckn.context, { "action": "on_status", "timestamp": $now() }]),
+      "message": {
+        "contract": {
+          "id": beckn.message.contract.id,
+          "commitments": [{
+            "status": { "descriptor": { "code": "CLOSED" } },
+            "offer": $c.offer,
+            "resources": $c.resources,
+            "commitmentAttributes": $merge([
+              {
+                "@context": $ca.`@context`,
+                "@type": $ca.`@type`,
+                "informationMode": "OnDemand",
+                "scheme": $ca.scheme
+              },
+              response
+            ])
+          }]
+        }
+      }
+    }
   )

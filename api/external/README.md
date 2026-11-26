@@ -11,9 +11,11 @@ Provider-supplied means that the document uses a non-routable placeholder. An un
 | [agmarknet/market-prices](agmarknet/market-prices/v0.2/openapi.yaml) | 1 | Provider-supplied | query: `token` |
 | [agmarknet/nearby-prices](agmarknet/nearby-prices/v0.2/openapi.yaml) | 1 | Provider-supplied | query: `token` |
 | [ffs/booking](ffs/booking/v0.2/openapi.yaml) | 4 | Provider-supplied | bearer |
-| [gfr/crop-registry](gfr/crop-registry/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
+| [gfr/advice](gfr/advice/v0.2/openapi.yaml) | 1 | Provider-supplied | No header scheme documented |
+| [gfr/soil-report](gfr/soil-report/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
 | [imd/agromet](imd/agromet/v0.2/openapi.yaml) | 1 | `https://agromet.imd.gov.in` | No header scheme documented |
 | [imd/mausamgram](imd/mausamgram/v0.2/openapi.yaml) | 1 | `https://mausamgram.imd.gov.in/nwpapi` | No header scheme documented |
+| [kcc/loan](kcc/loan/v0.2/openapi.yaml) | 2 | Provider-supplied | header: `token` |
 | [knowledge/search](knowledge/search/v0.2/openapi.yaml) | 1 | Provider-supplied | bearer |
 | [npss/diagnosis](npss/diagnosis/v0.2/openapi.yaml) | 2 | `https://npss.dac.gov.in/api3.0` | bearer |
 | [pm-kisan/application](pm-kisan/application/v0.2/openapi.yaml) | 4 | Provider-supplied | No header scheme documented |
@@ -41,14 +43,15 @@ A publication links only the operations currently backed by a native contract. O
 | aif | aif-tickets | Grievance | [Source-traced requests](aif/tickets/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
 | amul | amul-schemes | KnowledgeResource | Uses network search or cached results; no native scheme endpoint is confirmed. |
 | ffs | ffs-booking | AgricultureResource | [Catalog](ffs/catalog.json) |
-| gfr | gfr-advice | AgricultureAdvisory | [Source-traced requests](gfr/advice/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
+| gfr | gfr-advice | AgricultureAdvisory | [Recommendation](gfr/advice/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
 | gfr | gfr-registry | AgricultureResource | [Catalog](gfr/catalog.json) |
+| gfr | gfr-soil-report | AgricultureResource | [Soil report](gfr/soil-report/v0.2/openapi.yaml) (`select`); not yet in the catalog. |
 | icar | icar-field-advice | AgricultureAdvisory | Material lookup does not establish a field-advice endpoint. |
 | icar | icar-materials | KnowledgeResource | Reads internal storage; no native HTTP endpoint is confirmed. |
 | imd | imd-agromet | AgricultureAdvisory | [Catalog](imd/catalog.json) |
 | imd | imd-district-forecast | WeatherObservation | Station lookup is known; the forecast route is unverified. |
 | imd | imd-mausamgram | WeatherObservation | [Catalog](imd/catalog.json) |
-| kcc | kcc-loan | SchemeApplication | [Source-traced requests](kcc/loan/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
+| kcc | kcc-loan | SchemeApplication | [Catalog](kcc/catalog.json) |
 | khc | khc-tickets | Grievance | [Source-traced requests](khc/tickets/v0.2/openapi-draft.yaml); adapter binding not yet deployed. |
 | knowledge | knowledge-search | KnowledgeResource | [Catalog](knowledge/catalog.json) · [discover](knowledge/search/v0.2/examples/discover.json) · [native search](knowledge/search/v0.2/examples/search-exchange.json) · [on_discover](knowledge/search/v0.2/examples/on_discover.json). |
 | knowledge | knowledge-answers | AgricultureAdvisory | Passage search is documented; advisory output is unverified. |

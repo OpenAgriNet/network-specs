@@ -32,8 +32,6 @@ response: |
     };
     $ticketNo := $exists($handle(response.GrievanceID))
       ? $handle(response.GrievanceID)
-      : $exists($handle(response.grievanceId))
-      ? $handle(response.grievanceId)
       : $handle(response.GrievanceNo);
     $ch := beckn.message.support.channels[0];
 

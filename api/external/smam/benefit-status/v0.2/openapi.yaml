@@ -12,7 +12,7 @@ paths:
   /api/BeneficiaryService/GetApplicationStatusByAI:
     post:
       operationId: readSmamBenefitStatus
-      x-oan-mapping: {"href": "./mappings/status.yaml", "status": "draft-native", "scope": "adapter-action"}
+      x-oan-mapping: {"href": "./mappings/status.yaml", "status": "existing", "scope": "adapter-action"}
       x-oan-binding: {descriptorCode: smam-benefits, resourceType: "openagrinet:SchemeApplication", action: status}
       security: [{providerToken: []}]
       requestBody:
@@ -48,10 +48,11 @@ components:
         SearchValue:
           type: string
           minLength: 1
-          writeOnly: true
+          x-oan-from: subject.lookup
           description: >
-            Private search value. The adapter translates the legacy search_params
-            tag to SearchValue and sends no search_type field to SMAM.
+            What the farmer gave to be looked up. SMAM works out for itself
+            whether it is a mobile number or an application number, and no
+            search_type field is sent. Not published in catalog metadata.
     SmamBenefitStatusResponse:
       type: object
       required: [success]

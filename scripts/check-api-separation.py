@@ -37,7 +37,9 @@ for provider in (p for p in external.iterdir() if p.is_dir()):
             doc = yaml.safe_load(draft_path.read_text())
             assert doc['openapi'] == '3.1.1' and doc['x-draft']['needsConfirmation'], version
             traced = [m for m in inventory['mappings'] if (external/m['path']).is_relative_to(version) and m['status'] == 'source-traced']
-            assert bool(doc['paths']) == bool(traced), version
+            # A mapping can be deployed before its provider contract is verified.
+            deployed = [m for m in inventory['mappings'] if (external/m['path']).is_relative_to(version) and m['status'] == 'existing']
+            assert bool(doc['paths']) == bool(traced or deployed), version
             linked = set()
             draft_registry = Registry().with_resource(draft_path.as_uri(), Resource.from_contents(doc, default_specification=DRAFT202012))
             for path, methods in doc['paths'].items():
@@ -51,28 +53,45 @@ for provider in (p for p in external.iterdir() if p.is_dir()):
                     for rel in operation['x-mappings']:
                         mapping_file = version/rel
                         mapping = yaml.safe_load(mapping_file.read_text())
-                        assert mapping['deployable'] is False and mapping['native']['method'].lower() == verb
-                        assert mapping['native']['path'] == path and mapping['source'].startswith('https://github.com/OpenAgriNet/')
+                        if 'deployable' in mapping:
+                            assert mapping['deployable'] is False and mapping['native']['method'].lower() == verb
+                            assert mapping['native']['path'] == path and mapping['source'].startswith('https://github.com/OpenAgriNet/')
+                        else:
+                            # Promoted: the deployed mapping carries no trace metadata.
+                            assert mapping_file.resolve() in {(external/m['path']).resolve() for m in deployed}, mapping_file
                         linked.add(mapping_file.resolve())
                     assert operation['responses'] and operation['operationId']
-            assert linked == {(external/m['path']).resolve() for m in traced}, version
-            if traced:
+            # Every trace must be linked; a deployed mapping need not be documented here.
+            assert {(external/m['path']).resolve() for m in traced} <= linked, version
+            assert linked <= {(external/m['path']).resolve() for m in traced + deployed}, version
+            if traced or deployed:
                 candidate = doc['x-draft']['catalogCandidate']
                 assert candidate['informationMode'] == 'OnDemand' and candidate['publicationStatus'] == 'inactive-proposal'
                 public = {(version/b['mapping']).resolve() for b in candidate['actions']}
-                assert public == {(external/m['path']).resolve() for m in traced if m['action'] != 'internal'}
+                assert {(external/m['path']).resolve() for m in traced if m['action'] != 'internal'} <= public, version
+                assert public <= {(external/m['path']).resolve() for m in traced + deployed if m['action'] != 'internal'}, version
                 for binding in candidate['actions']:
                     mapping = yaml.safe_load((version/binding['mapping']).read_text())
-                    native = mapping['native']
-                    pointer = native['path'].replace('~', '~0').replace('/', '~1')
-                    assert binding['operationRef'] == '#/paths/'+pointer+'/'+native['method'].lower()
+                    if 'native' in mapping:
+                        native = mapping['native']
+                        pointer = native['path'].replace('~', '~0').replace('/', '~1')
+                        assert binding['operationRef'] == '#/paths/'+pointer+'/'+native['method'].lower()
+                    else:
+                        # A promoted mapping carries no native block, so the pointer is
+                        # checked against the draft's own paths rather than skipped.
+                        document, _, rest = binding['operationRef'].partition('#/paths/')
+                        assert document == '' and rest, binding['operationRef']
+                        pointer, _, verb = rest.rpartition('/')
+                        path = pointer.replace('~1', '/').replace('~0', '~')
+                        assert verb in doc['paths'].get(path, {}), (version, binding['operationRef'])
+                        checks += 1
                     assert binding['action'] == mapping['action']
             assert set(doc['x-draft']['proposedActions']) == {
                 m['action'] for m in inventory['mappings'] if (external/m['path']).is_relative_to(version) and m['action'] != 'internal'}, version
         if (version/'openapi.yaml').is_file():
             continue
         drafts = [m for m in inventory['mappings'] if (external/m['path']).is_relative_to(version)]
-        assert drafts and all(m['status'] in ('draft-handler', 'source-traced') for m in drafts), version
+        assert drafts and all(m['status'] in ('draft-handler', 'source-traced', 'existing') for m in drafts), version
 assert not list((ROOT/'schema').glob('*/v0.2/examples/network'))
 assert not list(external.rglob('catalog-schema.yaml'))
 for mapping in inventory['mappings']:
@@ -145,7 +164,10 @@ def validate_examples(media, registry, uri, direction, schema_pointer, unknown_r
     for value in examples:
         validator.validate(value)
     assert set(schema) == {'$ref'} and schema['$ref'].startswith('#/components/schemas/'), (uri, direction)
-    assert not validator.is_valid('not an envelope'), (uri, direction)
+    # The named schema must constrain the payload's own type. Probing every JSON type
+    # keeps that honest for a provider whose native result is a bare scalar, which a
+    # string probe alone would reject.
+    assert any(not validator.is_valid(probe) for probe in (None, True, 1, 'not an envelope', [], {})), (uri, direction)
     return len(examples)+2
 
 

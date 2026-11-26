@@ -533,7 +533,7 @@ Dir.glob(SCHEMA_ROOT.join("*", "v*", "profile.json")).sort.each do |profile_file
   packs[key]["generic_catalog"] = generic_catalog
   if generic_catalog
     # API links document examples, but never become a catalog validation allow-list.
-    api_urls = examples.flat_map { |example| Array(example["data"]["actions"]).map { |action| action["operationRef"].to_s.split("#").first } }.uniq
+    api_urls = examples.flat_map { |example| Array(example["data"]["actions"]).map { |action| action["operationRef"].to_s.split("#").first } }.compact.reject(&:empty?).uniq
     types = examples.flat_map { |example| Array(example["data"]["@type"]) }.uniq
     native_urls = ROOT.glob("api/external/*/*/v0.2/openapi.yaml").select do |file|
       resolver.document(file).fetch("paths").values.any? do |item|

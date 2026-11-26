@@ -1,0 +1,85 @@
+{
+  "context": {
+    "domain": "agriculture",
+    "action": "catalog/publish",
+    "version": "2.0.0",
+    "transactionId": "bade0000-0000-4000-8000-000000000071",
+    "messageId": "fade0000-0000-4000-8000-000000000072",
+    "timestamp": "2026-11-24T01:00:00Z",
+    "senderId": "kcc.example.invalid",
+    "receiverId": "discovery.example.invalid"
+  },
+  "message": {
+    "catalogs": [
+      {
+        "id": "cat-kcc",
+        "bppId": "kcc.example.invalid",
+        "bppUri": "https://kcc.example.invalid/beckn",
+        "descriptor": {
+          "name": "KCC example catalog"
+        },
+        "provider": {
+          "id": "prov-kcc",
+          "descriptor": {
+            "name": "KCC example provider"
+          }
+        },
+        "isActive": true,
+        "resources": [
+          {
+            "id": "res-kcc-loan",
+            "descriptor": {
+              "code": "kcc-loan",
+              "name": "KCC loan application status",
+              "shortDesc": "Send an OTP to the mobile a Kisan Credit Card application was filed from, then read every application on that mobile.",
+              "docs": [
+                {
+                  "label": "Provider HTTP contract",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml",
+                  "mimeType": "application/vnd.oai.openapi"
+                }
+              ]
+            },
+            "resourceAttributes": {
+              "@context": "https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld",
+              "@type": "openagrinet:SchemeApplication",
+              "informationMode": "OnDemand",
+              "scheme": {
+                "code": "KCC",
+                "name": "Kisan Credit Card"
+              },
+              "challenge": {
+                "methods": [
+                  {
+                    "method": "OTP",
+                    "channel": "SMS",
+                    "length": 6,
+                    "valueType": "NUMERIC"
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "action": "init",
+                  "description": "Ask KCC to send a six-digit OTP to the mobile the application was filed from. Call this before status.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post"
+                },
+                {
+                  "action": "status",
+                  "description": "Answer the OTP sent by init and read every KCC loan application on that mobile in the same call. There is no separate verify step, so a wrong OTP is refused here.",
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "publishDirectives": [
+      {
+        "catalogId": "cat-kcc",
+        "catalogType": "REGULAR"
+      }
+    ]
+  }
+}

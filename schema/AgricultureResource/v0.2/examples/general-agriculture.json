@@ -12,7 +12,7 @@
   "actions": [
     {
       "action": "select",
-      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post"
     }
   ]
 }

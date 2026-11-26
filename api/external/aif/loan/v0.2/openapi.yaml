@@ -1,45 +1,22 @@
 openapi: 3.1.1
 info:
-  title: aif/loan native requests (implementation draft)
-  version: 0.2.0-draft
+  title: aif/loan native requests
+  version: 0.2.0
   x-contract-role: provider-native
 servers:
 - url: https://provider.example.invalid
   description: Non-routable placeholder; configure the provider service base URL.
-x-draft:
-  catalogCandidate:
-    descriptorCode: aif-loan
-    resourceType: openagrinet:SchemeApplication
-    informationMode: OnDemand
-    publicationStatus: inactive-proposal
-    actions:
-    - action: init
-      operationRef: '#/paths/~1validate_beneficiaries~1/post'
-      variant: AifStart
-      mapping: mappings/init/AIFStartChallenge.yaml
-    - action: init
-      operationRef: '#/paths/~1validate_beneficiaries~1/post'
-      variant: AifVerify
-      mapping: mappings/init/AIFVerifyChallenge.yaml
-    - action: status
-      operationRef: '#/paths/~1Status/get'
-      variant: AifLoan
-      mapping: mappings/status.yaml
-  proposedActions:
-  - init
-  - status
-  needsConfirmation:
-  - Pin deployed revision; validate sanitized success and failure responses and session
-    handling before activation.
 paths:
   "/validate_beneficiaries/":
     post:
       operationId: AifValidateBeneficiary
       description: 'get_otp: beneficiary_id → beneficiaryId (number). No OTP on start.'
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L137
-      x-mappings:
-      - mappings/init/AIFStartChallenge.yaml
-      - mappings/init/AIFVerifyChallenge.yaml
+      x-oan-mapping: {href: ./mappings/init.yaml, status: existing}
+      x-oan-binding:
+        descriptorCode: aif-loan-status
+        resourceType: openagrinet:SchemeApplication
+        action: init
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -87,8 +64,25 @@ paths:
         into JSON body and query as the native client does. Object with Message may
         signal failure even on 200.'
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/aif/aif.service.ts#L200
-      x-mappings:
-      - mappings/status.yaml
+      x-oan-mapping: {href: ./mappings/status.yaml, status: existing}
+      x-oan-binding:
+        descriptorCode: aif-loan-status
+        resourceType: openagrinet:SchemeApplication
+        action: status
+      x-oan-request-attributes:
+        description: >
+          What the status call carries at the Beckn layer beside the query
+          parameter. beneficiaryId is not sent to AIF at all -- it is the value
+          the adapter binds the verified session to, so a transaction id alone
+          cannot ask after someone else's loan.
+        schema:
+          type: object
+          required: [beneficiaryId]
+          properties:
+            beneficiaryId:
+              type: integer
+              x-oan-from: beneficiary.id
+              x-oan-as: string
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -109,17 +103,24 @@ paths:
       - name: loanApplicationNumber
         in: query
         required: true
+        x-oan-from: application.id
         schema:
-          type: integer
+          "$ref": "#/components/schemas/AifLoanApplicationNumber"
         example: 201
       x-client-body: Same JSON fields as query; existing client sends both.
 components:
   schemas:
+    AifLoanApplicationNumber:
+      type: integer
     AifStartRequest:
       type: object
       properties:
         beneficiaryId:
           type: integer
+          x-oan-from: beneficiary.id
+          # The adapter binds AIF's session to this value and binds on text only,
+          # so it travels as a string and the mapping casts it back.
+          x-oan-as: string
       required:
       - beneficiaryId
     AifStartResponse:
@@ -136,8 +137,13 @@ components:
       properties:
         beneficiaryId:
           type: integer
+          x-oan-from: beneficiary.id
+          # The adapter binds AIF's session to this value and binds on text only,
+          # so it travels as a string and the mapping casts it back.
+          x-oan-as: string
         otp:
           type: string
+          x-oan-from: challenge.otp
       required:
       - beneficiaryId
       - otp

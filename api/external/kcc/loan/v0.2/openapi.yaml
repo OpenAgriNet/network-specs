@@ -1,0 +1,209 @@
+openapi: 3.1.1
+info:
+  x-contract-role: provider-native
+  title: KCC loan application status
+  version: 0.2.0
+  description: >
+    Reads the status of a farmer's Kisan Credit Card loan applications from the
+    Kisan Rin portal. Every call is authenticated twice over: a service token
+    held by the adapter, and a farmer OTP that buys a short-lived requestID.
+    Mobile numbers, applicant names, loan amounts and rejection reasons are
+    private, and the request and response bodies are encrypted end to end.
+security:
+- serviceToken: []
+servers:
+  - url: https://kcc.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
+paths:
+  /auth/requestOtp:
+    post:
+      operationId: sendKccLoanOtp
+      summary: Send an OTP to the mobile a KCC application was filed from
+      x-oan-mapping: {href: ./mappings/init.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: kcc-loan
+        resourceType: openagrinet:SchemeApplication
+        action: init
+      x-oan-request-attributes:
+        schema: {$ref: '#/components/schemas/SendOtpAttributes'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SealedBody'}
+            example: {data: '<hex ciphertext of SendOtpRequest>'}
+      responses:
+        '200':
+          description: >
+            A sealed reply carries the requestID the status call must quote. A
+            refusal -- an unknown mobile, a rate limit -- is answered with
+            status false and, as far as is known, no envelope at all.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SealedReply'}
+              examples:
+                sent:
+                  value: {status: true, data: '<hex ciphertext of SendOtpReply>'}
+                refused:
+                  value: {status: false, message: 'No KCC application found for this mobile number'}
+        default:
+          description: Transport or gateway failure. Does not establish whether an OTP was sent.
+  /bharatVistaar/krishika/applicationStatus:
+    post:
+      operationId: readKccLoanApplications
+      summary: Answer the OTP and read every application on that mobile
+      x-oan-mapping: {href: ./mappings/status.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: kcc-loan
+        resourceType: openagrinet:SchemeApplication
+        action: status
+      x-oan-request-attributes:
+        schema: {$ref: '#/components/schemas/ReadApplicationsAttributes'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SealedBody'}
+            example: {data: '<hex ciphertext of ReadApplicationsRequest>'}
+      responses:
+        '200':
+          description: >
+            There is no separate verify step: this one call checks the OTP and
+            answers with the applications. A wrong or expired OTP is refused
+            here, with status false.
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SealedReply'}
+              examples:
+                found:
+                  value: {status: true, data: '<hex ciphertext of ApplicationList>'}
+                refused:
+                  value: {status: false, message: 'Invalid OTP'}
+        default:
+          description: Transport or gateway failure. Does not establish whether the OTP was correct.
+components:
+  securitySchemes:
+    serviceToken:
+      type: apiKey
+      in: header
+      name: token
+      description: >
+        Held by the adapter and refreshed from the form-encoded login at
+        /auth/token. Not an action: it is never published and never mapped.
+        The farmer's own credential is the OTP, which travels inside the
+        encrypted body.
+  schemas:
+    SealedBody:
+      type: object
+      required: [data]
+      description: >
+        AES-256-CBC over UTF-8 JSON, written as hex. The key is fixed and
+        shared out of band. The IV rule is unconfirmed -- the adapter takes the
+        key's first sixteen bytes unless configured otherwise.
+      properties:
+        data: {type: string, description: Hex ciphertext.}
+    SealedReply:
+      type: object
+      properties:
+        status: {type: boolean, description: False is a business refusal, not a transport failure.}
+        message: {type: string, description: Present on a refusal; wording is the provider's.}
+        data:
+          description: >
+            Hex ciphertext on success. Absent on a refusal, which is why the
+            adapter is configured to pass an unsealed body to the mapping
+            rather than report the provider unreachable.
+          type: string
+    SendOtpRequest:
+      type: object
+      required: [mobileNumber, otpFor]
+      description: The plaintext sealed into SealedBody.data for /auth/requestOtp.
+      properties:
+        mobileNumber:
+          type: string
+          x-oan-from: subject.mobile
+          description: Ten digits, no country code.
+        otpFor: {const: krishika}
+    SendOtpReply:
+      type: object
+      description: The plaintext read out of SealedReply.data for /auth/requestOtp.
+      properties:
+        requestID:
+          type: string
+          description: >
+            Quoted back on the status call. Short-lived and single-mobile: it
+            is the farmer's session, so the adapter holds it against the
+            transaction rather than returning it on the wire.
+        message: {type: string}
+        expiresIn: {type: string, description: Seconds, as a string. 300 in the only example seen.}
+    ReadApplicationsRequest:
+      type: object
+      required: [requestID, otp]
+      description: The plaintext sealed into SealedBody.data for applicationStatus.
+      properties:
+        requestID:
+          type: string
+          x-oan-from: session
+          description: >
+            Read back out of the init reply and quoted here. Not something a
+            caller can be asked for.
+        otp:
+          type: integer
+          x-oan-from: challenge.otp
+          description: Six digits as a NUMBER; the quoted form is refused.
+    SendOtpAttributes:
+      description: >
+        What a Beckn init call carries. The same fields as the plaintext body,
+        because nothing beyond them is needed to send an OTP.
+      allOf:
+      - {$ref: '#/components/schemas/SendOtpRequest'}
+    ReadApplicationsAttributes:
+      description: >
+        What a Beckn status call carries. One field more than the plaintext
+        body: the mobile is not sent to KCC -- the requestID is who the farmer
+        is -- but the adapter checks it against the mobile the session was
+        bought for, so a transaction id alone cannot read another farmer's
+        applications.
+      allOf:
+      - {$ref: '#/components/schemas/ReadApplicationsRequest'}
+      - type: object
+        required: [mobileNumber]
+        properties:
+          mobileNumber:
+            type: string
+            x-oan-from: subject.mobile
+            description: Not forwarded to KCC; it is what the session is bound to.
+    ApplicationList:
+      type: object
+      description: >
+        The plaintext read out of SealedReply.data for applicationStatus. One
+        mobile can carry several applications, and none is also a valid answer.
+      properties:
+        applications:
+          type: array
+          items: {$ref: '#/components/schemas/Application'}
+    Application:
+      type: object
+      properties:
+        applicationNo: {type: string}
+        applicationCurrentStatus:
+          type: string
+          description: >
+            A rejected application is put back to DRAFT, so this field alone
+            does not say whether it was rejected. rejectionReason is what
+            tells the two apart.
+        requiredLoanAmount: {$ref: '#/components/schemas/Amount'}
+        sanctionedAmount: {$ref: '#/components/schemas/Amount'}
+        bankName: {type: [string, 'null']}
+        branchName: {type: [string, 'null']}
+        rejectionReason: {type: [string, 'null']}
+        updatedAt: {type: [string, 'null']}
+        applicationStatusHistory:
+          type: array
+          items:
+            type: object
+            properties:
+              createdAt: {type: [string, 'null']}
+              applicationStatus: {type: [string, 'null']}
+    Amount:
+      type: [string, number, 'null']
+      description: Seen as a number; read as either, because neither form is contractual.

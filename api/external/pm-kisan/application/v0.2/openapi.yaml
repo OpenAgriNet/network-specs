@@ -20,6 +20,28 @@ paths:
         resourceType: openagrinet:SchemeApplication
         descriptorCode: pm-kisan-benefits
         schema: https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/attributes.yaml#/components/schemas/SchemeApplication
+      x-oan-request-attributes:
+        description: >
+          What the call carries at the Beckn layer. PM-KISAN seals its bodies,
+          and on this capability it is the ADAPTER that builds the plaintext --
+          x-plaintext-request shows it -- naming the lookup kind itself from
+          whichever identifier is present. So what a caller fills is the
+          identifier: the registration number, or the mobile the enrolment was
+          made on.
+        schema:
+          oneOf:
+          - type: object
+            required: [enrolmentId]
+            properties:
+              enrolmentId: {type: string, x-oan-from: enrolment.id}
+          - type: object
+            required: [applicant]
+            properties:
+              applicant:
+                type: object
+                required: [mobile]
+                properties:
+                  mobile: {type: string, x-oan-from: subject.mobile}
       requestBody:
         required: true
         content:
@@ -189,6 +211,30 @@ paths:
         - verifyPmkisanApplicationOtp
         - readPmkisanApplication
         - readPmkisanApplicationBlockers
+      x-oan-request-attributes:
+        description: >
+          What the call carries at the Beckn layer. PM-KISAN seals its bodies,
+          and on this capability it is the ADAPTER that builds the plaintext --
+          x-plaintext-request shows it -- naming the lookup kind itself from
+          whichever identifier is present. So what a caller fills is the
+          identifier: the registration number, or the mobile the enrolment was
+          made on.
+        schema:
+          oneOf:
+          - type: object
+            required: [enrolmentId, challenge]
+            properties:
+              enrolmentId: {type: string, x-oan-from: enrolment.id}
+              challenge: {"$ref": "#/components/schemas/OtpChallenge"}
+          - type: object
+            required: [applicant, challenge]
+            properties:
+              applicant:
+                type: object
+                required: [mobile]
+                properties:
+                  mobile: {type: string, x-oan-from: subject.mobile}
+              challenge: {"$ref": "#/components/schemas/OtpChallenge"}
       requestBody:
         required: true
         content:
@@ -352,6 +398,20 @@ paths:
         additionalProperties: true
 components:
   schemas:
+    OtpChallenge:
+      type: object
+      description: >
+        The OTP the farmer read out. The adapter answers it at PM-KISAN's OTP
+        service before making this call, so the code itself never reaches this
+        endpoint.
+      required: [response]
+      properties:
+        response:
+          type: object
+          required: [method, value]
+          properties:
+            method: {const: OTP}
+            value: {type: string, x-oan-from: challenge.otp}
     EncryptedRequest:
       type: object
       properties:

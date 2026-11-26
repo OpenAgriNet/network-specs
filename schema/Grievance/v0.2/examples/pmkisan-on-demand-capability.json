@@ -19,54 +19,84 @@
   "grievanceOptions": {
     "categories": [
       {
-        "code": "G001",
-        "name": "Account number not correct",
-        "help": "The bank account held against your registration is wrong, so money cannot reach you."
+        "code": "G011",
+        "name": "Latest instalment not received"
       },
       {
-        "code": "G002",
-        "name": "Online application pending for approval",
-        "help": "You applied online and the application has not yet been approved."
+        "code": "G012",
+        "name": "Transaction failed"
       },
       {
-        "code": "G003",
-        "name": "Installment not received",
-        "help": "Your registration is approved but an instalment has not reached your account."
+        "code": "G013",
+        "name": "Previous instalments not received"
       },
       {
-        "code": "G004",
-        "name": "Transaction failed",
-        "help": "A payment was attempted and the transfer did not go through."
+        "code": "G014",
+        "name": "Incorrectly marked as deceased"
       },
       {
-        "code": "G005",
-        "name": "Problem in Aadhaar correction",
-        "help": "A correction to your Aadhaar details has not gone through."
+        "code": "G015",
+        "name": "Previous landowner incorrectly marked as deceased"
       },
       {
-        "code": "G006",
-        "name": "Gender not correct",
-        "help": "The gender recorded against your registration is wrong."
+        "code": "G016",
+        "name": "Incorrectly marked as ineligible"
       },
       {
-        "code": "G007",
-        "name": "Payment related",
-        "help": "Any other problem with a payment that the options above do not cover."
+        "code": "G017",
+        "name": "Voluntary surrender made by mistake"
       },
       {
-        "code": "G008",
-        "name": "Problem in OTP-based eKYC",
-        "help": "eKYC by OTP is failing."
+        "code": "G018",
+        "name": "Incorrectly marked under suspected cases"
       },
       {
-        "code": "G009",
-        "name": "Problem in biometric-based eKYC",
-        "help": "eKYC by fingerprint or iris is failing."
+        "code": "G019",
+        "name": "Problem updating land details"
       },
       {
-        "code": "G010",
-        "name": "Problem in facial-based eKYC",
-        "help": "eKYC by face scan is failing."
+        "code": "G020",
+        "name": "Problem seeding Aadhaar in the bank account"
+      },
+      {
+        "code": "G021",
+        "name": "Problem with biometric eKYC"
+      },
+      {
+        "code": "G022",
+        "name": "Problem with facial eKYC"
+      },
+      {
+        "code": "G023",
+        "name": "Self-registration pending approval"
+      },
+      {
+        "code": "G024",
+        "name": "Revocation of ineligibility pending approval"
+      },
+      {
+        "code": "G025",
+        "name": "Revocation of surrender pending approval"
+      },
+      {
+        "code": "G026",
+        "name": "Update of missing information pending approval"
+      },
+      {
+        "code": "G027",
+        "name": "Pending action on a suspected spouse or minor case"
+      },
+      {
+        "code": "G028",
+        "name": "Pending action on suspected incorrect land or previous-owner details"
+      },
+      {
+        "code": "G029",
+        "name": "Corruption"
+      },
+      {
+        "code": "G030",
+        "name": "Urgent"
       }
     ]
   },

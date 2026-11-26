@@ -16,9 +16,45 @@ components:
       x-jsonld:
         '@context': https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld
         '@type': openagrinet:SchemeApplication
+      x-oan-schema-by-action:
+        init: SchemeApplicationCall
+        confirm: SchemeApplicationCall
+        select: SchemeApplicationCall
+        status: SchemeApplicationCall
       allOf:
       - $ref: '#/components/schemas/SchemeApplicationFields'
       unevaluatedProperties: false
+    SchemeApplicationCall:
+      description: A request or response payload for one of this capability's actions. v0.2 leaves
+        operation-specific validation to the Provider API contract that the catalog's actions[].operationRef
+        names, so this checks only that the payload claims this pack and this type.
+      type: object
+      required:
+      - '@context'
+      - '@type'
+      properties:
+        '@context':
+          description: This pack's JSON-LD context.
+          type: string
+          minLength: 1
+        '@type':
+          description: This pack's OAN type, alone or alongside the Provider's own types.
+          oneOf:
+          - type: string
+            const: openagrinet:SchemeApplication
+          - type: array
+            minItems: 2
+            uniqueItems: true
+            contains:
+              const: openagrinet:SchemeApplication
+            items:
+              oneOf:
+              - const: openagrinet:SchemeApplication
+              - type: string
+                minLength: 1
+                not:
+                  pattern: '^openagrinet:'
+      additionalProperties: true
     PMKISANApplicationCatalog:
       externalDocs:
         description: PM-KISAN application API specification

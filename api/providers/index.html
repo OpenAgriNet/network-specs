@@ -51,9 +51,12 @@ permalink: /api/providers/index.html
   <ul><li><a href="../../schema/KnowledgeAdvisory/v0.1/examples/network/direct-knowledge-advisory-resource.json">Cotton establishment advisory</a></li><li><a href="../../schema/MarketIntelligence/v0.1/examples/network/direct-market-intelligence-resource.json">Cotton market intelligence for Telangana</a></li><li><a href="../../schema/MandiPrice/v0.1/examples/network/live-mandi-price-resource.json">Onion price at Lasalgaon APMC</a></li><li><a href="../../schema/WeatherAdvisory/v0.1/examples/network/live-weather-advisory-resource.json">Rice irrigation advisory</a></li><li><a href="../../schema/WeatherObservation/v0.1/examples/network/live-weather-resource.json">Three-hour weather forecast</a></li></ul>
   <h2 id="providers">Provider index</h2>
   <ul class="providers"><li><a href="#prov-agmarknet">AGMARKNET example provider</a></li>
+<li><a href="#prov-aif">Agriculture Infrastructure Fund</a></li>
 <li><a href="#prov-ffs">FFS example provider</a></li>
 <li><a href="#prov-gfr">GFR example provider</a></li>
 <li><a href="#prov-imd">IMD example provider</a></li>
+<li><a href="#prov-kcc">KCC example provider</a></li>
+<li><a href="#prov-khc">KHC example provider</a></li>
 <li><a href="#prov-knowledge">KNOWLEDGE example provider</a></li>
 <li><a href="#prov-npss">NPSS example provider</a></li>
 <li><a href="#prov-pm-kisan">PM-KISAN example provider</a></li>
@@ -67,15 +70,20 @@ permalink: /api/providers/index.html
     <thead><tr><th scope="col">Capability</th><th scope="col">Provider</th><th scope="col">Resource type</th></tr></thead>
     <tbody><tr><td><a href="#cap-knowledge-search">Agricultural knowledge search</a></td><td><a href="#prov-knowledge">KNOWLEDGE example provider</a></td><td><code>openagrinet:KnowledgeResource</code></td></tr>
 <tr><td><a href="#cap-imd-agromet">Agromet district crop guidance</a></td><td><a href="#prov-imd">IMD example provider</a></td><td><code>openagrinet:AgricultureAdvisory</code></td></tr>
+<tr><td><a href="#cap-aif-loan-status">AIF loan application status</a></td><td><a href="#prov-aif">Agriculture Infrastructure Fund</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
+<tr><td><a href="#cap-aif-support-tickets">AIF support tickets</a></td><td><a href="#prov-aif">Agriculture Infrastructure Fund</a></td><td><code>openagrinet:Grievance</code></td></tr>
 <tr><td><a href="#cap-imd-mausamgram">Block weather forecast</a></td><td><a href="#prov-imd">IMD example provider</a></td><td><code>openagrinet:WeatherObservation</code></td></tr>
 <tr><td><a href="#cap-npss-diagnosis">Crop image analysis</a></td><td><a href="#prov-npss">NPSS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-ffs-booking">FFS fertilizer booking</a></td><td><a href="#prov-ffs">FFS example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
-<tr><td><a href="#cap-gfr-registry">GFR crop registry lookup</a></td><td><a href="#prov-gfr">GFR example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
+<tr><td><a href="#cap-gfr-advice">GFR fertilizer recommendation</a></td><td><a href="#prov-gfr">GFR example provider</a></td><td><code>openagrinet:AgricultureAdvisory</code></td></tr>
+<tr><td><a href="#cap-gfr-soil-report">GFR soil test</a></td><td><a href="#prov-gfr">GFR example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
+<tr><td><a href="#cap-kcc-loan">KCC loan application status</a></td><td><a href="#prov-kcc">KCC example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
+<tr><td><a href="#cap-khc-grievance">Kisan Help Center grievance</a></td><td><a href="#prov-khc">KHC example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
 <tr><td><a href="#cap-agmarknet-nearby-prices">Nearby mandi prices</a></td><td><a href="#prov-agmarknet">AGMARKNET example provider</a></td><td><code>openagrinet:MandiPrice</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-benefits">PM-KISAN application and instalment status</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pm-kisan-grievances">PM-KISAN grievance submission and tracking</a></td><td><a href="#prov-pm-kisan">PM-KISAN example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
 <tr><td><a href="#cap-pmfby-grievances">PMFBY grievance filing and tracking</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:Grievance</code></td></tr>
-<tr><td><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
+<tr><td><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></td><td><a href="#prov-pmfby">PMFBY example provider</a></td><td><code>openagrinet:SchemeApplication</code></td></tr>
 <tr><td><a href="#cap-pocra-facilities">PoCRA facility directory</a></td><td><a href="#prov-pocra">POCRA example provider</a></td><td><code>openagrinet:AgricultureFacility</code></td></tr>
 <tr><td><a href="#cap-sathi-stock">SATHI certified seed stock</a></td><td><a href="#prov-sathi">SATHI example provider</a></td><td><code>openagrinet:AgricultureResource</code></td></tr>
 <tr><td><a href="#cap-agmarknet-market-prices">Selected market prices</a></td><td><a href="#prov-agmarknet">AGMARKNET example provider</a></td><td><code>openagrinet:MandiPrice</code></td></tr>
@@ -90,6 +98,12 @@ permalink: /api/providers/index.html
 </section>
 
 <section>
+  <h3 id="prov-aif">Agriculture Infrastructure Fund</h3>
+  <p>Catalog <code>cat-aif</code>. <a href="../external/aif/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-aif-loan-status">AIF loan application status</a></li><li><a href="#cap-aif-support-tickets">AIF support tickets</a></li></ul>
+</section>
+
+<section>
   <h3 id="prov-ffs">FFS example provider</h3>
   <p>Catalog <code>cat-ffs</code>. <a href="../external/ffs/catalog.json">Read the catalog/publish fixture</a>.</p>
   <ul><li><a href="#cap-ffs-booking">FFS fertilizer booking</a></li></ul>
@@ -98,13 +112,25 @@ permalink: /api/providers/index.html
 <section>
   <h3 id="prov-gfr">GFR example provider</h3>
   <p>Catalog <code>cat-gfr</code>. <a href="../external/gfr/catalog.json">Read the catalog/publish fixture</a>.</p>
-  <ul><li><a href="#cap-gfr-registry">GFR crop registry lookup</a></li></ul>
+  <ul><li><a href="#cap-gfr-soil-report">GFR soil test</a></li><li><a href="#cap-gfr-advice">GFR fertilizer recommendation</a></li></ul>
 </section>
 
 <section>
   <h3 id="prov-imd">IMD example provider</h3>
   <p>Catalog <code>cat-imd</code>. <a href="../external/imd/catalog.json">Read the catalog/publish fixture</a>.</p>
   <ul><li><a href="#cap-imd-agromet">Agromet district crop guidance</a></li><li><a href="#cap-imd-mausamgram">Block weather forecast</a></li></ul>
+</section>
+
+<section>
+  <h3 id="prov-kcc">KCC example provider</h3>
+  <p>Catalog <code>cat-kcc</code>. <a href="../external/kcc/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-kcc-loan">KCC loan application status</a></li></ul>
+</section>
+
+<section>
+  <h3 id="prov-khc">KHC example provider</h3>
+  <p>Catalog <code>cat-khc</code>. <a href="../external/khc/catalog.json">Read the catalog/publish fixture</a>.</p>
+  <ul><li><a href="#cap-khc-grievance">Kisan Help Center grievance</a></li></ul>
 </section>
 
 <section>
@@ -381,7 +407,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/knowledge/search/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/knowledge/search/v0.2/mappings/discover.yaml">discover · draft-native · discover mapping</a></li></ul>
+  <ul><li><a href="../external/knowledge/search/v0.2/mappings/select.yaml">select · existing · select mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -472,6 +498,201 @@ permalink: /api/providers/index.html
 
   <ul><li><a href="../external/imd/agromet/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
   <ul><li><a href="../external/imd/agromet/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-aif-loan-status" tabindex="-1">
+  <h3><a href="#cap-aif-loan-status">AIF loan application status</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-aif">Agriculture Infrastructure Fund</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Verify an AIF beneficiary by OTP, then read one loan application&#39;s status.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-aif|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-aif</code> contains <code>res-aif-loan-status</code> in <code>OnDemand</code> mode. <a href="../external/aif/loan/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-aif-loan-status&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;aif-loan-status&quot;,
+    &quot;name&quot;: &quot;AIF loan application status&quot;,
+    &quot;shortDesc&quot;: &quot;Verify an AIF beneficiary by OTP, then read one loan application&#39;s status.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;AIF&quot;,
+      &quot;name&quot;: &quot;Agriculture Infrastructure Fund&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Start beneficiary verification, then answer the OTP AIF sends to the registered mobile. Both steps post to this operation; the body tells them apart.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Read one loan application&#39;s status. Requires the session a verified beneficiary holds.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;AIF\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/aif/loan/v0.2/openapi.yaml">aif/loan native requests</a></p><ul><li><code>POST /validate_beneficiaries/</code> · init</li><li><code>GET /Status</code> · status</li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for AIF loan application status"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post">AifValidateBeneficiary</a><br><code>POST /validate_beneficiaries/</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifStartRequestVariants">AifStartRequestVariants</a></p><details><summary>Example: AifStart</summary><pre><code>{
+  &quot;beneficiaryId&quot;: 101
+}</code></pre></details><details><summary>Example: AifVerify</summary><pre><code>{
+  &quot;beneficiaryId&quot;: 101,
+  &quot;otp&quot;: &quot;000000&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifStartResponseVariants">AifStartResponseVariants</a></p><details><summary>Example: AifStart</summary><pre><code>{
+  &quot;Success&quot;: true,
+  &quot;MobileNumber&quot;: &quot;masked&quot;,
+  &quot;Message&quot;: &quot;OTP sent&quot;
+}</code></pre></details><details><summary>Example: AifVerify</summary><pre><code>{
+  &quot;Success&quot;: true,
+  &quot;Token&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;ExpiresIn&quot;: 3600,
+  &quot;Beneficiary&quot;: {
+    &quot;Beneficiary_Name&quot;: &quot;Example&quot;
+  }
+}</code></pre></details></li><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1validate_beneficiaries~1/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get">AifLoan</a><br><code>GET /Status</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><code>loanApplicationNumber</code> (query, required) · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifLoanApplicationNumber">AifLoanApplicationNumber</a><details><summary>Parameter example</summary><pre><code>201</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/loan/v0.2/openapi.yaml#/components/schemas/AifLoanResponse">AifLoanResponse</a></p><details><summary>Example: AifLoan</summary><pre><code>&quot;Disbursed&quot;</code></pre></details></li><li><a href="../external/aif/loan/v0.2/openapi.yaml#/paths/~1Status/get/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/aif/loan/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/aif/loan/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/init/AIFStartChallenge.yaml">init · source-traced · AIFStartChallenge mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/init/AIFVerifyChallenge.yaml">init · source-traced · AIFVerifyChallenge mapping</a></li><li><a href="../external/aif/loan/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-aif-support-tickets" tabindex="-1">
+  <h3><a href="#cap-aif-support-tickets">AIF support tickets</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-aif">Agriculture Infrastructure Fund</a> · <code>openagrinet:Grievance</code></p>
+  <p>Read the support tickets raised by a verified AIF beneficiary.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-aif|openagrinet:Grievance</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-aif</code> contains <code>res-aif-tickets</code> in <code>OnDemand</code> mode. <a href="../external/aif/tickets/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-aif-tickets&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;aif-support-tickets&quot;,
+    &quot;name&quot;: &quot;AIF support tickets&quot;,
+    &quot;shortDesc&quot;: &quot;Read the support tickets raised by a verified AIF beneficiary.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:Grievance&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;AIF&quot;,
+      &quot;name&quot;: &quot;Agriculture Infrastructure Fund&quot;
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld#openagrinet:Grievance&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:Grievance\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;AIF\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/aif/tickets/v0.2/openapi.yaml">aif/tickets native requests</a></p><ul><li><code>GET /support-tickets</code> · status</li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for AIF support tickets"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>status</code></td><td><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get">AifTickets</a><br><code>GET /support-tickets</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><code>beneficiaryId</code> (query, required) · <a href="../external/aif/tickets/v0.2/openapi.yaml#/components/schemas/AifBeneficiaryId">AifBeneficiaryId</a><details><summary>Parameter example</summary><pre><code>101</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/aif/tickets/v0.2/openapi.yaml#/components/schemas/AifTicketsResponse">AifTicketsResponse</a></p><details><summary>Example: AifTickets</summary><pre><code>[
+  {
+    &quot;BeneficiaryId&quot;: 101,
+    &quot;LoanApplicationNumber&quot;: 201,
+    &quot;Question&quot;: &quot;Example&quot;,
+    &quot;Status&quot;: &quot;Open&quot;,
+    &quot;description&quot;: &quot;Example&quot;,
+    &quot;subQueryType&quot;: &quot;Example&quot;
+  }
+]</code></pre></details><details><summary>Example: empty</summary><pre><code>&quot;No tickets&quot;</code></pre></details></li><li><a href="../external/aif/tickets/v0.2/openapi.yaml#/paths/~1support-tickets/get/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/aif/tickets/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/aif/tickets/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -697,6 +918,14 @@ permalink: /api/providers/index.html
       {
         &quot;action&quot;: &quot;confirm&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-fertilizer-service~1ufa-fertilizer~1v1~1api~1bharatVistar~1createMultipleBookingV2/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post&quot;
       }
     ]
   }
@@ -838,35 +1067,180 @@ permalink: /api/providers/index.html
   &quot;code&quot;: 500,
   &quot;status&quot;: &quot;FAILED&quot;,
   &quot;data&quot;: null
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>init</code></td><td><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post">getFfsProducts</a><br><code>POST /ufa-master-service/ufa-master/v1/api/product/getProductsByAvailability</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/components/parameters/Session">Session</a></li></ul><p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsProductsRequest">FfsProductsRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;stateLgdCode&quot;: 0,
+  &quot;districtLgdCode&quot;: 0,
+  &quot;subDistrictLgdCode&quot;: 0,
+  &quot;villageLgdCode&quot;: 0,
+  &quot;productGroupIds&quot;: &quot;11&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post/responses/200">200</a> · Matching products. Availability here is not a stock reservation.<p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsProductsResponse">FfsProductsResponse</a></p><details><summary>Example</summary><pre><code>{
+  &quot;code&quot;: 200,
+  &quot;data&quot;: [
+
+  ]
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>init</code></td><td><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post">getFfsRetailers</a><br><code>POST /ufa-master-service/ufa-master/v1/api/retailer/getRetailersByProductAvailabilityV4</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/components/parameters/Session">Session</a></li></ul><p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsRetailersRequest">FfsRetailersRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;stateLgdCode&quot;: 0,
+  &quot;districtLgdCode&quot;: 0,
+  &quot;subDistrictLgdCode&quot;: 0,
+  &quot;villageLgdCode&quot;: 0,
+  &quot;selectedProducts&quot;: [
+    {
+      &quot;productGroupId&quot;: 11,
+      &quot;productId&quot;: 1,
+      &quot;noBagsRequested&quot;: 1,
+      &quot;quantityOfBagKg&quot;: 45
+    }
+  ],
+  &quot;territoryLevel&quot;: &quot;V&quot;,
+  &quot;farmerLatitude&quot;: null,
+  &quot;farmerLongitude&quot;: null,
+  &quot;pageNo&quot;: 1,
+  &quot;pageSize&quot;: 3
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1retailer~1getRetailersByProductAvailabilityV4/post/responses/200">200</a> · Paginated retailers. The client probes for one bag to include smaller shops; the booking quantity comes from the farmer&#39;s order.<p><code>application/json</code> · <a href="../external/ffs/booking/v0.2/openapi.yaml#/components/schemas/FfsRetailersResponse">FfsRetailersResponse</a></p><details><summary>Example</summary><pre><code>{
+  &quot;code&quot;: 200,
+  &quot;totalPages&quot;: 0,
+  &quot;data&quot;: [
+
+  ]
 }</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
 </table></div>
 
   <ul><li><a href="../external/ffs/booking/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/ffs/booking/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/status.yaml">status · incomplete · status mapping</a></li></ul>
+  <ul><li><a href="../external/ffs/booking/v0.2/mappings/confirm.yaml">confirm · draft-native · confirm mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/init/products.yaml">init · draft-native · products mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/init/retailers.yaml">init · draft-native · retailers mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li><li><a href="../external/ffs/booking/v0.2/mappings/status.yaml">status · incomplete · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
 
-<article class="capability" id="cap-gfr-registry" tabindex="-1">
-  <h3><a href="#cap-gfr-registry">GFR crop registry lookup</a></h3>
+<article class="capability" id="cap-gfr-advice" tabindex="-1">
+  <h3><a href="#cap-gfr-advice">GFR fertilizer recommendation</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-gfr">GFR example provider</a> · <code>openagrinet:AgricultureAdvisory</code></p>
+  <p>Fertilizer doses from soil test values</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-gfr|openagrinet:AgricultureAdvisory</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-gfr</code> contains <code>res-gfr-advice</code> in <code>OnDemand</code> mode. <a href="../external/gfr/advice/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-gfr-advice&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;gfr-advice&quot;,
+    &quot;name&quot;: &quot;GFR fertilizer recommendation&quot;,
+    &quot;shortDesc&quot;: &quot;Fertilizer doses from soil test values&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/advice/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:AgricultureAdvisory&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;subjectCategories&quot;: [
+      &quot;Crop&quot;
+    ],
+    &quot;topics&quot;: [
+      &quot;Fertilizer recommendation&quot;
+    ],
+    &quot;languages&quot;: [
+      &quot;en&quot;,
+      &quot;hi&quot;
+    ],
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;select&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/advice/v0.2/openapi.yaml#/paths/~1/post&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld#openagrinet:AgricultureAdvisory&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureAdvisory\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Crop\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/gfr/advice/v0.2/openapi.yaml">gfr/advice native requests</a></p><ul><li><code>POST /</code> · select</li></ul>
+  <p>Selected with the soil test&#39;s n, p, k and OC; the soil test is gfr-soil-report&#39;s select. Not yet in the catalog.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for GFR fertilizer recommendation"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>select</code></td><td><a href="../external/gfr/advice/v0.2/openapi.yaml#/paths/~1/post">getRecommendations</a><br><code>POST /</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/gfr/advice/v0.2/openapi.yaml#/components/schemas/GfrAdviceRequest">GfrAdviceRequest</a></p><details><summary>Example: GfrAdvice</summary><pre><code>{
+  &quot;query&quot;: &quot;query GetRecommendations($state: ID!, $results: JSON!, $district: ID, $crops: [ID!], $naturalFarming: Boolean) { getRecommendations(state: $state results: $results district: $district crops: $crops naturalFarming: $naturalFarming) }&quot;,
+  &quot;variables&quot;: {
+    &quot;state&quot;: &quot;example&quot;,
+    &quot;results&quot;: {
+      &quot;n&quot;: 1,
+      &quot;p&quot;: 1,
+      &quot;k&quot;: 1,
+      &quot;OC&quot;: 1
+    },
+    &quot;crops&quot;: [
+      &quot;example&quot;
+    ],
+    &quot;naturalFarming&quot;: false
+  }
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/gfr/advice/v0.2/openapi.yaml#/paths/~1/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/gfr/advice/v0.2/openapi.yaml#/components/schemas/GfrAdviceResponse">GfrAdviceResponse</a></p><details><summary>Example: GfrAdvice</summary><pre><code>{
+  &quot;data&quot;: {
+    &quot;getRecommendations&quot;: [
+
+    ]
+  }
+}</code></pre></details><details><summary>Example: errorsOnly</summary><pre><code>{
+  &quot;errors&quot;: [
+    {
+      &quot;message&quot;: &quot;Example upstream error&quot;
+    }
+  ]
+}</code></pre></details></li><li><a href="../external/gfr/advice/v0.2/openapi.yaml#/paths/~1/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/gfr/advice/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/gfr/advice/v0.2/mappings/internal/generateAccessToken.yaml">internal · source-traced · generateAccessToken mapping</a></li><li><a href="../external/gfr/advice/v0.2/mappings/internal/getTestForAuthUser.yaml">internal · source-traced · getTestForAuthUser mapping</a></li><li><a href="../external/gfr/advice/v0.2/mappings/select.yaml">select · existing · select mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-gfr-soil-report" tabindex="-1">
+  <h3><a href="#cap-gfr-soil-report">GFR soil test</a></h3>
   <div class="capability-detail">
   <p><a href="#prov-gfr">GFR example provider</a> · <code>openagrinet:AgricultureResource</code></p>
-  <p>GFR crop list</p>
+  <p>The farmer&#39;s soil test values for a cycle</p>
   <h4>Registry binding example</h4>
   <p>Illustrative key: <code>prov-gfr|openagrinet:AgricultureResource</code>. This is not a registry export.</p>
 
   <h4>Published catalog fixture</h4>
-  <p><code>cat-gfr</code> contains <code>res-gfr-registry</code> in <code>OnDemand</code> mode. <a href="../external/gfr/crop-registry/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <p><code>cat-gfr</code> contains <code>res-gfr-soil-report</code> in <code>OnDemand</code> mode. <a href="../external/gfr/soil-report/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
   <details><summary>Catalog resource</summary><pre><code>{
-  &quot;id&quot;: &quot;res-gfr-registry&quot;,
+  &quot;id&quot;: &quot;res-gfr-soil-report&quot;,
   &quot;descriptor&quot;: {
-    &quot;code&quot;: &quot;gfr-registry&quot;,
-    &quot;name&quot;: &quot;GFR crop registry lookup&quot;,
-    &quot;shortDesc&quot;: &quot;GFR crop list&quot;,
+    &quot;code&quot;: &quot;gfr-soil-report&quot;,
+    &quot;name&quot;: &quot;GFR soil test&quot;,
+    &quot;shortDesc&quot;: &quot;The farmer&#39;s soil test values for a cycle&quot;,
     &quot;docs&quot;: [
       {
         &quot;label&quot;: &quot;Provider HTTP contract&quot;,
-        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml&quot;,
         &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
       }
     ]
@@ -876,7 +1250,7 @@ permalink: /api/providers/index.html
     &quot;@type&quot;: &quot;openagrinet:AgricultureResource&quot;,
     &quot;informationMode&quot;: &quot;OnDemand&quot;,
     &quot;subjectCategories&quot;: [
-      &quot;Crop&quot;
+      &quot;Practice&quot;
     ],
     &quot;languages&quot;: [
       &quot;en&quot;,
@@ -885,7 +1259,7 @@ permalink: /api/providers/index.html
     &quot;actions&quot;: [
       {
         &quot;action&quot;: &quot;select&quot;,
-        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post&quot;
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post&quot;
       }
     ]
   }
@@ -907,50 +1281,365 @@ permalink: /api/providers/index.html
     &quot;intent&quot;: {
       &quot;filters&quot;: {
         &quot;type&quot;: &quot;jsonpath&quot;,
-        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureResource\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Crop\&quot;)&quot;
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureResource\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Practice\&quot;)&quot;
       }
     }
   }
 }</code></pre></details>
 
   <h4>Actions and mappings</h4>
-  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/gfr/crop-registry/v0.2/openapi.yaml">GFR crop-registry</a></p><ul><li><code>POST /</code> · select</li></ul>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/gfr/soil-report/v0.2/openapi.yaml">gfr/soil-report native requests</a></p><ul><li><code>POST /</code> · select</li></ul>
 
-  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for GFR crop registry lookup"><table>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for GFR soil test"><table>
   <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
-  <tbody><tr><td><code>select</code></td><td><a href="../external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post">getCropRegistries</a><br><code>POST /</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/gfr/crop-registry/v0.2/openapi.yaml#/components/schemas/GfrCropRegistryRequest">GfrCropRegistryRequest</a></p><details><summary>Example</summary><pre><code>{
-  &quot;query&quot;: &quot;query GetCropRegistries($state: String) { getCropRegistries(state: $state) { name variety irrigationType season splitdose state GFRavailable id combinedName __typename } }&quot;,
+  <tbody><tr><td><code>select</code></td><td><a href="../external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post">getGfrSoilTest</a><br><code>POST /</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/gfr/soil-report/v0.2/openapi.yaml#/components/schemas/GfrSoilRequest">GfrSoilRequest</a></p><details><summary>Example: GfrSoil</summary><pre><code>{
+  &quot;query&quot;: &quot;query GetTestForAuthUser($computedId: String, $phone: PhoneNumber, $state: String, $district: String, $name: String, $farmer: String, $from: Datetime, $to: Datetime, $cycle: String, $locale: String, $scheme: String, $limit: Int, $skip: Int) { getTestForAuthUser(computedID: $computedId, phone: $phone, state: $state, district: $district, name: $name, farmer: $farmer, from: $from, to: $to, cycle: $cycle, scheme: $scheme, limit: $limit, skip: $skip) { id computedID cycle scheme plot { address area surveyNo } farmer { address name phone } crop location testparameters rdfValues status testCompletedAt sampleDate reportData district block village results fertilizer html(locale: $locale) uniqueID } }&quot;,
   &quot;variables&quot;: {
-    &quot;state&quot;: &quot;EXAMPLE-STATE&quot;
+    &quot;cycle&quot;: &quot;2025-26&quot;,
+    &quot;phone&quot;: &quot;&lt;phone&gt;&quot;,
+    &quot;limit&quot;: 1,
+    &quot;skip&quot;: 0,
+    &quot;locale&quot;: &quot;en&quot;
   }
-}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post/responses/200">200</a> · GraphQL envelope before adapter conversion. An error or missing data is not a successful record lookup.<p><code>application/json</code> · <a href="../external/gfr/crop-registry/v0.2/openapi.yaml#/components/schemas/GfrCropRegistryResponse">GfrCropRegistryResponse</a></p><details><summary>Example: found</summary><pre><code>{
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/gfr/soil-report/v0.2/openapi.yaml#/components/schemas/GfrSoilResponse">GfrSoilResponse</a></p><details><summary>Example: GfrSoil</summary><pre><code>{
   &quot;data&quot;: {
-    &quot;getCropRegistries&quot;: [
-      {
-        &quot;id&quot;: &quot;EXAMPLE-CROP&quot;,
-        &quot;name&quot;: &quot;Example crop&quot;,
-        &quot;season&quot;: &quot;Kharif&quot;,
-        &quot;splitdose&quot;: true
-      }
-    ]
-  }
-}</code></pre></details><details><summary>Example: none</summary><pre><code>{
-  &quot;data&quot;: {
-    &quot;getCropRegistries&quot;: [
+    &quot;getTestForAuthUser&quot;: [
 
     ]
   }
-}</code></pre></details><details><summary>Example: graphqlError</summary><pre><code>{
+}</code></pre></details><details><summary>Example: errorsOnly</summary><pre><code>{
   &quot;errors&quot;: [
     {
       &quot;message&quot;: &quot;Example upstream error&quot;
     }
   ]
-}</code></pre></details></li><li><a href="../external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post/responses/default">default</a> · Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+}</code></pre></details></li><li><a href="../external/gfr/soil-report/v0.2/openapi.yaml#/paths/~1/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
 </table></div>
 
-  <ul><li><a href="../external/gfr/crop-registry/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/gfr/crop-registry/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <ul><li><a href="../external/gfr/soil-report/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/gfr/soil-report/v0.2/mappings/select.yaml">select · existing · select mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-kcc-loan" tabindex="-1">
+  <h3><a href="#cap-kcc-loan">KCC loan application status</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-kcc">KCC example provider</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Send an OTP to the mobile a Kisan Credit Card application was filed from, then read every application on that mobile.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-kcc|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-kcc</code> contains <code>res-kcc-loan</code> in <code>OnDemand</code> mode. <a href="../external/kcc/loan/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-kcc-loan&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;kcc-loan&quot;,
+    &quot;name&quot;: &quot;KCC loan application status&quot;,
+    &quot;shortDesc&quot;: &quot;Send an OTP to the mobile a Kisan Credit Card application was filed from, then read every application on that mobile.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;KCC&quot;,
+      &quot;name&quot;: &quot;Kisan Credit Card&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask KCC to send a six-digit OTP to the mobile the application was filed from. Call this before status.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Answer the OTP sent by init and read every KCC loan application on that mobile in the same call. There is no separate verify step, so a wrong OTP is refused here.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;KCC\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/kcc/loan/v0.2/openapi.yaml">KCC loan application status</a></p><ul><li><code>POST /auth/requestOtp</code> · init</li><li><code>POST /bharatVistaar/krishika/applicationStatus</code> · status</li></ul>
+  <p>Only scheme lookup is known; loan and OTP endpoints are unverified.</p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for KCC loan application status"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post">sendKccLoanOtp</a><br><code>POST /auth/requestOtp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedBody">SealedBody</a></p><details><summary>Example</summary><pre><code>{
+  &quot;data&quot;: &quot;&lt;hex ciphertext of SendOtpRequest&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post/responses/200">200</a> · A sealed reply carries the requestID the status call must quote. A refusal -- an unknown mobile, a rate limit -- is answered with status false and, as far as is known, no envelope at all.
+<p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedReply">SealedReply</a></p><details><summary>Example: sent</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;&lt;hex ciphertext of SendOtpReply&gt;&quot;
+}</code></pre></details><details><summary>Example: refused</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;message&quot;: &quot;No KCC application found for this mobile number&quot;
+}</code></pre></details></li><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1auth~1requestOtp/post/responses/default">default</a> · Transport or gateway failure. Does not establish whether an OTP was sent.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post">readKccLoanApplications</a><br><code>POST /bharatVistaar/krishika/applicationStatus</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedBody">SealedBody</a></p><details><summary>Example</summary><pre><code>{
+  &quot;data&quot;: &quot;&lt;hex ciphertext of ReadApplicationsRequest&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post/responses/200">200</a> · There is no separate verify step: this one call checks the OTP and answers with the applications. A wrong or expired OTP is refused here, with status false.
+<p><code>application/json</code> · <a href="../external/kcc/loan/v0.2/openapi.yaml#/components/schemas/SealedReply">SealedReply</a></p><details><summary>Example: found</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;&lt;hex ciphertext of ApplicationList&gt;&quot;
+}</code></pre></details><details><summary>Example: refused</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;message&quot;: &quot;Invalid OTP&quot;
+}</code></pre></details></li><li><a href="../external/kcc/loan/v0.2/openapi.yaml#/paths/~1bharatVistaar~1krishika~1applicationStatus/post/responses/default">default</a> · Transport or gateway failure. Does not establish whether the OTP was correct.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/kcc/loan/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/kcc/loan/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/kcc/loan/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
+  <p><a href="#capabilities">Back to capability index</a></p>
+  </div>
+</article>
+
+<article class="capability" id="cap-khc-grievance" tabindex="-1">
+  <h3><a href="#cap-khc-grievance">Kisan Help Center grievance</a></h3>
+  <div class="capability-detail">
+  <p><a href="#prov-khc">KHC example provider</a> · <code>openagrinet:Grievance</code></p>
+  <p>File a grievance with the Kisan Help Center in the farmer&#39;s own words, after an OTP confirms the mobile number it is filed against.</p>
+  <h4>Registry binding example</h4>
+  <p>Illustrative key: <code>prov-khc|openagrinet:Grievance</code>. This is not a registry export.</p>
+
+  <h4>Published catalog fixture</h4>
+  <p><code>cat-khc</code> contains <code>res-khc-grievance</code> in <code>OnDemand</code> mode. <a href="../external/khc/tickets/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
+  <details><summary>Catalog resource</summary><pre><code>{
+  &quot;id&quot;: &quot;res-khc-grievance&quot;,
+  &quot;descriptor&quot;: {
+    &quot;code&quot;: &quot;khc-grievance&quot;,
+    &quot;name&quot;: &quot;Kisan Help Center grievance&quot;,
+    &quot;shortDesc&quot;: &quot;File a grievance with the Kisan Help Center in the farmer&#39;s own words, after an OTP confirms the mobile number it is filed against.&quot;,
+    &quot;docs&quot;: [
+      {
+        &quot;label&quot;: &quot;Provider HTTP contract&quot;,
+        &quot;url&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml&quot;,
+        &quot;mimeType&quot;: &quot;application/vnd.oai.openapi&quot;
+      }
+    ]
+  },
+  &quot;resourceAttributes&quot;: {
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:Grievance&quot;,
+    &quot;informationMode&quot;: &quot;OnDemand&quot;,
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;38&quot;,
+      &quot;name&quot;: &quot;Agriculture Infrastructure Fund (AIF)&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
+    &quot;grievanceOptions&quot;: {
+      &quot;categories&quot;: [
+        {
+          &quot;code&quot;: &quot;39&quot;,
+          &quot;name&quot;: &quot;Bank Loan Sanction Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;40&quot;,
+          &quot;name&quot;: &quot;Credit Guarantee Coverage Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;41&quot;,
+          &quot;name&quot;: &quot;Fund Disbursement Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;42&quot;,
+          &quot;name&quot;: &quot;Infrastructure Implementation Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;43&quot;,
+          &quot;name&quot;: &quot;Interest Subvention Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;44&quot;,
+          &quot;name&quot;: &quot;Monitoring &amp; Reporting Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;45&quot;,
+          &quot;name&quot;: &quot;Nodal Agency / Department Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;46&quot;,
+          &quot;name&quot;: &quot;Portal / Technical Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;47&quot;,
+          &quot;name&quot;: &quot;Project Appraisal &amp; Approval Issues&quot;
+        },
+        {
+          &quot;code&quot;: &quot;48&quot;,
+          &quot;name&quot;: &quot;Registration &amp; Application Issues&quot;
+        }
+      ]
+    },
+    &quot;actions&quot;: [
+      {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask KHC to send a six-digit OTP to the mobile the grievance will be filed against. Call this first; nothing is filed by it.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;confirm&quot;,
+        &quot;description&quot;: &quot;Answer the OTP. KHC replies with whether it already knows this farmer, which decides whether the filing must also carry their name and gender.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;support&quot;,
+        &quot;description&quot;: &quot;File the grievance and return the number KHC gave it. Writes to a real help desk, so call it only after the farmer has confirmed the text in words.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;select&quot;,
+        &quot;description&quot;: &quot;Ask after a grievance already filed. KHC sends a six-digit OTP to the mobile that grievance was filed against; nothing is read by this call. Needs KHC&#39;s own number for the grievance, under case.ticketNo.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Answer the OTP from select and read the grievance back: its number and where the case stands. The OTP is single-use, so send it once.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post&quot;
+      }
+    ]
+  }
+}</code></pre></details>
+  <h4>Structured discovery</h4>
+  <details><summary>Structured discovery request</summary><pre><code>{
+  &quot;context&quot;: {
+    &quot;domain&quot;: &quot;agriculture&quot;,
+    &quot;action&quot;: &quot;discover&quot;,
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;transactionId&quot;: &quot;bade0000-0000-4000-8000-000000000015&quot;,
+    &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
+    &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
+    &quot;schemaContext&quot;: [
+      &quot;https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld#openagrinet:Grievance&quot;
+    ]
+  },
+  &quot;message&quot;: {
+    &quot;intent&quot;: {
+      &quot;filters&quot;: {
+        &quot;type&quot;: &quot;jsonpath&quot;,
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:Grievance\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;38\&quot;)&quot;
+      }
+    }
+  }
+}</code></pre></details>
+
+  <h4>Actions and mappings</h4>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/khc/tickets/v0.2/openapi.yaml">Kisan Help Center grievances</a></p><ul><li><code>POST /auth/send-otp</code> · init</li><li><code>POST /auth/verify-otp</code> · confirm</li><li><code>GET /v1/state/reference/states</code></li><li><code>GET /v1/state/reference/districts</code></li><li><code>GET /v1/state/reference/sub-districts</code></li><li><code>GET /v1/state/reference/villages</code></li><li><code>GET /v1/state/reference/schemes</code></li><li><code>GET /v1/state/reference/categories</code></li><li><code>GET /v1/state/reference/sub-categories</code></li><li><code>POST /v1/state/grievances</code> · support</li><li><code>POST /v1/state/grievances/check-status</code> · select</li><li><code>POST /v1/state/grievances/verify-otp</code> · status</li><li><code>GET /v1/state/grievances/status</code></li></ul>
+
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for Kisan Help Center grievance"><table>
+  <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
+  <tbody><tr><td><code>init</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post">KhcStart</a><br><code>POST /auth/send-otp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStartRequest">KhcStartRequest</a></p><details><summary>Example: KhcStart</summary><pre><code>{
+  &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStartResponse">KhcStartResponse</a></p><details><summary>Example: KhcStart</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: null
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1send-otp/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>confirm</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post">KhcVerify</a><br><code>POST /auth/verify-otp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcVerifyRequest">KhcVerifyRequest</a></p><details><summary>Example: KhcVerify</summary><pre><code>{
+  &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;otp&quot;: &quot;000000&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcVerifyResponse">KhcVerifyResponse</a></p><details><summary>Example: KhcVerify</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: {
+    &quot;isRegistered&quot;: true,
+    &quot;mobile&quot;: &quot;&lt;mobile&gt;&quot;,
+    &quot;token&quot;: &quot;&lt;redacted&gt;&quot;
+  }
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1auth~1verify-otp/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>support</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post">KhcCreate</a><br><code>POST /v1/state/grievances</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcCreateRequest">KhcCreateRequest</a></p><details><summary>Example: KhcCreate</summary><pre><code>{
+  &quot;externalReferenceNo&quot;: &quot;BV-example&quot;,
+  &quot;farmerMobileNumber&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;farmerText&quot;: &quot;Example issue&quot;,
+  &quot;farmerLanguage&quot;: &quot;en&quot;,
+  &quot;stateId&quot;: 1,
+  &quot;villageId&quot;: 2,
+  &quot;scheme&quot;: 3,
+  &quot;division&quot;: 4,
+  &quot;problemCategory&quot;: 5,
+  &quot;problemSubCategory&quot;: 6
+}</code></pre></details><details><summary>Example: newFarmer</summary><pre><code>{
+  &quot;externalReferenceNo&quot;: &quot;BV-example&quot;,
+  &quot;farmerMobileNumber&quot;: &quot;&lt;mobile&gt;&quot;,
+  &quot;farmerText&quot;: &quot;Example issue&quot;,
+  &quot;farmerLanguage&quot;: &quot;en&quot;,
+  &quot;stateId&quot;: 1,
+  &quot;villageId&quot;: 2,
+  &quot;scheme&quot;: 3,
+  &quot;division&quot;: 4,
+  &quot;problemCategory&quot;: 5,
+  &quot;problemSubCategory&quot;: 6,
+  &quot;farmerName&quot;: &quot;Example&quot;,
+  &quot;gender&quot;: &quot;O&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post/responses/200">200</a> · Native success payload; examples are synthetic.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcCreateResponse">KhcCreateResponse</a></p><details><summary>Example: KhcCreate</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: {
+    &quot;grievanceNo&quot;: &quot;EXAMPLE&quot;
+  }
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances/post/responses/default">default</a> · Provider error or unconfirmed result. Do not treat as a successful callback.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>select</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post">KhcStatusStart</a><br><code>POST /v1/state/grievances/check-status</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><code>grievanceNo</code> (query, required) · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/GrievanceNumber">GrievanceNumber</a><details><summary>Parameter example</summary><pre><code>&quot;MH/123456/1&quot;</code></pre></details></li></ul><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStatusStartRequest">KhcStatusStartRequest</a></p><details><summary>Example: KhcStatusStart</summary><pre><code>{
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post/responses/200">200</a> · An OTP was sent to the mobile the grievance is filed against.<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStatusStartResponse">KhcStatusStartResponse</a></p><details><summary>Example: KhcStatusStart</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;message&quot;: &quot;OTP sent&quot;
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1check-status/post/responses/default">default</a> · Provider error, or no such grievance. A 404 here carries message &quot;Grievance not found&quot;.
+</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post">KhcStatusVerify</a><br><code>POST /v1/state/grievances/verify-otp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcStatusVerifyRequest">KhcStatusVerifyRequest</a></p><details><summary>Example: KhcStatusVerify</summary><pre><code>{
+  &quot;grievanceNo&quot;: &quot;MH/123456/1&quot;,
+  &quot;otp&quot;: &quot;123456&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post/responses/200">200</a> · The grievance as KHC holds it. Carries the farmer&#39;s own words, so it is private in full, not only in its identifiers.
+<p><code>application/json</code> · <a href="../external/khc/tickets/v0.2/openapi.yaml#/components/schemas/KhcReadGrievanceResponse">KhcReadGrievanceResponse</a></p><details><summary>Example: KhcStatusVerify</summary><pre><code>{
+  &quot;status&quot;: &quot;200 OK&quot;,
+  &quot;data&quot;: {
+    &quot;grievanceNo&quot;: &quot;MH/123456/1&quot;,
+    &quot;currentStatus&quot;: &quot;Open&quot;
+  }
+}</code></pre></details></li><li><a href="../external/khc/tickets/v0.2/openapi.yaml#/paths/~1v1~1state~1grievances~1verify-otp/post/responses/default">default</a> · Wrong or expired OTP, or provider error.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+</table></div>
+
+  <ul><li><a href="../external/khc/tickets/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
+  <ul><li><a href="../external/khc/tickets/v0.2/mappings/confirm.yaml">confirm · existing · confirm mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/categories.yaml">internal · source-traced · categories mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/districts.yaml">internal · source-traced · districts mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/schemes.yaml">internal · source-traced · schemes mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/states.yaml">internal · source-traced · states mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/sub-categories.yaml">internal · source-traced · sub-categories mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/sub-districts.yaml">internal · source-traced · sub-districts mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/internal/villages.yaml">internal · source-traced · villages mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/select.yaml">select · existing · select mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/status.yaml">status · existing · status mapping</a></li><li><a href="../external/khc/tickets/v0.2/mappings/support.yaml">support · existing · support mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -1384,11 +2073,23 @@ permalink: /api/providers/index.html
     },
     &quot;actions&quot;: [
       {
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask PMFBY to send a six-digit OTP to the farmer&#39;s registered mobile number. Call this before confirm.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;confirm&quot;,
+        &quot;description&quot;: &quot;Answer the OTP sent by init. A correct answer opens the session the filing spends; nothing else proves the mobile number is the farmer&#39;s.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post&quot;
+      },
+      {
         &quot;action&quot;: &quot;support&quot;,
+        &quot;description&quot;: &quot;File the grievance against an application. Needs the session confirm opened.&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post&quot;
       },
       {
         &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;Read a filed grievance back by its ticket number.&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post&quot;
       }
     ]
@@ -1418,11 +2119,32 @@ permalink: /api/providers/index.html
 }</code></pre></details>
 
   <h4>Actions and mappings</h4>
-  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/grievance/v0.2/openapi.yaml">PMFBY grievance provider API</a></p><ul><li><code>POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket</code> · support</li><li><code>POST /krphapi/FGMS/GetGrievenceTicketsStatus</code> · status</li></ul>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/grievance/v0.2/openapi.yaml">PMFBY grievance provider API</a></p><ul><li><code>POST /api/v1/services/nic/getOtp</code> · init</li><li><code>POST /api/v1/services/nic/verifyMobile</code> · confirm</li><li><code>POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket</code> · support</li><li><code>POST /krphapi/FGMS/GetGrievenceTicketsStatus</code> · status</li></ul>
 
   <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for PMFBY grievance filing and tracking"><table>
   <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
-  <tbody><tr><td><code>support</code></td><td><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post">filePmfbyGrievance</a><br><code>POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/FilePmfbyGrievanceRequest">FilePmfbyGrievanceRequest</a></p><details><summary>Example</summary><pre><code>{
+  <tbody><tr><td><code>init</code></td><td><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post">sendPmfbyGrievanceOtp</a><br><code>POST /api/v1/services/nic/getOtp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/SendOtpRequest">SendOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;9000000000&quot;,
+  &quot;otpType&quot;: &quot;SMS&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;OTP sent&quot;
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>confirm</code></td><td><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post">verifyPmfbyGrievanceOtp</a><br><code>POST /api/v1/services/nic/verifyMobile</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/VerifyOtpRequest">VerifyOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;9000000000&quot;,
+  &quot;otp&quot;: 123456
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: {
+    &quot;verified&quot;: true,
+    &quot;farmerID&quot;: 1001
+  }
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>support</code></td><td><a href="../external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post">filePmfbyGrievance</a><br><code>POST /krphapi/FGMS/AddKRPHNCIPGrievenceSupportTicket</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/grievance/v0.2/openapi.yaml#/components/schemas/FilePmfbyGrievanceRequest">FilePmfbyGrievanceRequest</a></p><details><summary>Example</summary><pre><code>{
   &quot;requestorMobileNo&quot;: &quot;9000000000&quot;,
   &quot;applicationNo&quot;: &quot;DEMO-APP-01&quot;,
   &quot;requestYear&quot;: &quot;2026&quot;,
@@ -1454,7 +2176,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/pmfby/grievance/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/pmfby/grievance/v0.2/mappings/support.yaml">support · existing · support mapping</a></li><li><a href="../external/pmfby/grievance/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
+  <ul><li><a href="../external/pmfby/grievance/v0.2/mappings/confirm.yaml">confirm · existing · confirm mapping</a></li><li><a href="../external/pmfby/grievance/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/pmfby/grievance/v0.2/mappings/status.yaml">status · existing · status mapping</a></li><li><a href="../external/pmfby/grievance/v0.2/mappings/support.yaml">support · existing · support mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -1462,10 +2184,10 @@ permalink: /api/providers/index.html
 <article class="capability" id="cap-pmfby-insurance" tabindex="-1">
   <h3><a href="#cap-pmfby-insurance">PMFBY policy and claim lookup</a></h3>
   <div class="capability-detail">
-  <p><a href="#prov-pmfby">PMFBY example provider</a> · <code>openagrinet:AgricultureResource</code></p>
-  <p>Look up policies or claims with the corresponding status operation.</p>
+  <p><a href="#prov-pmfby">PMFBY example provider</a> · <code>openagrinet:SchemeApplication</code></p>
+  <p>Verify a farmer by OTP, then read insurance policies or crop-loss claims for one season and crop year.</p>
   <h4>Registry binding example</h4>
-  <p>Illustrative key: <code>prov-pmfby|openagrinet:AgricultureResource</code>. This is not a registry export.</p>
+  <p>Illustrative key: <code>prov-pmfby|openagrinet:SchemeApplication</code>. This is not a registry export.</p>
 
   <h4>Published catalog fixture</h4>
   <p><code>cat-pmfby</code> contains <code>res-pmfby-insurance</code> in <code>OnDemand</code> mode. <a href="../external/pmfby/insurance/v0.2/openapi.yaml">Read the catalog/publish fixture</a>.</p>
@@ -1474,7 +2196,7 @@ permalink: /api/providers/index.html
   &quot;descriptor&quot;: {
     &quot;code&quot;: &quot;pmfby-insurance&quot;,
     &quot;name&quot;: &quot;PMFBY policy and claim lookup&quot;,
-    &quot;shortDesc&quot;: &quot;Look up policies or claims with the corresponding status operation.&quot;,
+    &quot;shortDesc&quot;: &quot;Verify a farmer by OTP, then read insurance policies or crop-loss claims for one season and crop year.&quot;,
     &quot;docs&quot;: [
       {
         &quot;label&quot;: &quot;Provider HTTP contract&quot;,
@@ -1484,19 +2206,42 @@ permalink: /api/providers/index.html
     ]
   },
   &quot;resourceAttributes&quot;: {
-    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld&quot;,
-    &quot;@type&quot;: &quot;openagrinet:AgricultureResource&quot;,
+    &quot;@context&quot;: &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld&quot;,
+    &quot;@type&quot;: &quot;openagrinet:SchemeApplication&quot;,
     &quot;informationMode&quot;: &quot;OnDemand&quot;,
-    &quot;subjectCategories&quot;: [
-      &quot;Scheme&quot;
-    ],
+    &quot;scheme&quot;: {
+      &quot;code&quot;: &quot;PMFBY&quot;,
+      &quot;name&quot;: &quot;Pradhan Mantri Fasal Bima Yojana&quot;
+    },
+    &quot;challenge&quot;: {
+      &quot;methods&quot;: [
+        {
+          &quot;method&quot;: &quot;OTP&quot;,
+          &quot;channel&quot;: &quot;SMS&quot;,
+          &quot;length&quot;: 6,
+          &quot;valueType&quot;: &quot;NUMERIC&quot;
+        }
+      ]
+    },
     &quot;actions&quot;: [
       {
-        &quot;action&quot;: &quot;status&quot;,
-        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get&quot;
+        &quot;action&quot;: &quot;init&quot;,
+        &quot;description&quot;: &quot;Ask PMFBY to send a six-digit OTP to the farmer&#39;s registered mobile number. Call this before confirm.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post&quot;
+      },
+      {
+        &quot;action&quot;: &quot;confirm&quot;,
+        &quot;description&quot;: &quot;Answer the OTP sent by init. A correct answer opens the verified session that status and select spend; nothing else identifies the farmer.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post&quot;
       },
       {
         &quot;action&quot;: &quot;status&quot;,
+        &quot;description&quot;: &quot;List the farmer&#39;s insurance policies and the applications under them for one season and crop year. Needs the session confirm opened.&quot;,
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get&quot;
+      },
+      {
+        &quot;action&quot;: &quot;select&quot;,
+        &quot;description&quot;: &quot;Read the farmer&#39;s crop-loss claims for one season and crop year. Needs the session confirm opened.&quot;,
         &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get&quot;
       }
     ]
@@ -1512,25 +2257,45 @@ permalink: /api/providers/index.html
     &quot;messageId&quot;: &quot;fade0000-0000-4000-8000-000000000016&quot;,
     &quot;timestamp&quot;: &quot;2026-11-19T01:00:00Z&quot;,
     &quot;schemaContext&quot;: [
-      &quot;https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld#openagrinet:AgricultureResource&quot;
+      &quot;https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld#openagrinet:SchemeApplication&quot;
     ]
   },
   &quot;message&quot;: {
     &quot;intent&quot;: {
       &quot;filters&quot;: {
         &quot;type&quot;: &quot;jsonpath&quot;,
-        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:AgricultureResource\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.subjectCategories[*] == \&quot;Scheme\&quot;)&quot;
+        &quot;expression&quot;: &quot;$.catalogs[*].resources[*] ? (@.resourceAttributes.\&quot;@type\&quot; == \&quot;openagrinet:SchemeApplication\&quot; &amp;&amp; @.resourceAttributes.informationMode == \&quot;OnDemand\&quot; &amp;&amp; @.resourceAttributes.scheme.code == \&quot;PMFBY\&quot;)&quot;
       }
     }
   }
 }</code></pre></details>
 
   <h4>Actions and mappings</h4>
-  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/insurance/v0.2/openapi.yaml">PMFBY policy and claim lookup</a></p><ul><li><code>GET /api/v1/policy/policy/farmerpolicylist</code> · status</li><li><code>GET /api/v1/claims/claims/claimSearchReport</code> · status</li></ul>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/pmfby/insurance/v0.2/openapi.yaml">PMFBY policy and claim lookup</a></p><ul><li><code>POST /api/v1/services/nic/verifyMobile</code> · confirm</li><li><code>POST /api/v1/services/nic/getOtp</code> · init</li><li><code>GET /api/v1/policy/policy/farmerpolicylist</code> · status</li><li><code>GET /api/v1/claims/claims/claimSearchReport</code> · select</li></ul>
   <p>Policy and claim reads require a session and an authorized farmer ID.</p>
   <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for PMFBY policy and claim lookup"><table>
   <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
-  <tbody><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get">listPmfbyInsurancePolicies</a><br><code>GET /api/v1/policy/policy/farmerpolicylist</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>listType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter">ListPmfbyInsurancePoliciesListTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;POLICY_LIST&quot;</code></pre></details></li><li><code>sssyID</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter">ListPmfbyInsurancePoliciesSssyIDParameter</a><details><summary>Parameter example</summary><pre><code>&quot;04010026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/200">200</a> · The adapter reads the policy array directly or from data. An empty array contains no policies for the selection.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/PolicyListResponse">PolicyListResponse</a></p><details><summary>Example: onePolicy</summary><pre><code>{
+  <tbody><tr><td><code>init</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post">sendPmfbyInsuranceOtp</a><br><code>POST /api/v1/services/nic/getOtp</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/SendOtpRequest">SendOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;0000000000&quot;,
+  &quot;otpType&quot;: &quot;SMS&quot;
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1getOtp/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: &quot;OTP sent&quot;
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>confirm</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post">verifyPmfbyInsuranceOtp</a><br><code>POST /api/v1/services/nic/verifyMobile</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/VerifyOtpRequest">VerifyOtpRequest</a></p><details><summary>Example</summary><pre><code>{
+  &quot;mobile&quot;: &quot;0000000000&quot;,
+  &quot;otp&quot;: 123456
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1services~1nic~1verifyMobile/post/responses/200">200</a> · Provider reply; a false status is a business failure.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/OtpReply">OtpReply</a></p><details><summary>Example: accepted</summary><pre><code>{
+  &quot;status&quot;: true,
+  &quot;data&quot;: {
+    &quot;verified&quot;: true
+  }
+}</code></pre></details><details><summary>Example: rejected</summary><pre><code>{
+  &quot;status&quot;: false,
+  &quot;error&quot;: &quot;Request rejected&quot;
+}</code></pre></details></li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get">listPmfbyInsurancePolicies</a><br><code>GET /api/v1/policy/policy/farmerpolicylist</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>listType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesListTypeParameter">ListPmfbyInsurancePoliciesListTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;POLICY_LIST&quot;</code></pre></details></li><li><code>sssyID</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsurancePoliciesSssyIDParameter">ListPmfbyInsurancePoliciesSssyIDParameter</a><details><summary>Parameter example</summary><pre><code>&quot;04010026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/200">200</a> · The adapter reads the policy array directly or from data. An empty array contains no policies for the selection.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/PolicyListResponse">PolicyListResponse</a></p><details><summary>Example: onePolicy</summary><pre><code>{
   &quot;data&quot;: [
     {
       &quot;policyID&quot;: &quot;EXAMPLE-POLICY&quot;,
@@ -1548,7 +2313,7 @@ permalink: /api/providers/index.html
   ]
 }</code></pre></details><details><summary>Example: noPolicies</summary><pre><code>[
 
-]</code></pre></details></li><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/default">default</a> · Error body not established. Do not report authentication or transport failure as no policies.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>status</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get">listPmfbyInsuranceClaims</a><br><code>GET /api/v1/claims/claims/claimSearchReport</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>searchType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter">ListPmfbyInsuranceClaimsSearchTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;farmerID&quot;</code></pre></details></li><li><code>season</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter">ListPmfbyInsuranceClaimsSeasonParameter</a><details><summary>Parameter example</summary><pre><code>&quot;1&quot;</code></pre></details></li><li><code>year</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsYearParameter">ListPmfbyInsuranceClaimsYearParameter</a><details><summary>Parameter example</summary><pre><code>&quot;2026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get/responses/200">200</a> · Claim records use different field names from policy applications. The adapter displays ClaimStatus or falls back to Status.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ClaimListResponse">ClaimListResponse</a></p><details><summary>Example: oneClaim</summary><pre><code>[
+]</code></pre></details></li><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1policy~1policy~1farmerpolicylist/get/responses/default">default</a> · Error body not established. Do not report authentication or transport failure as no policies.</li></ul></details></td><td>Documented upstream operation</td></tr><tr><td><code>select</code></td><td><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get">listPmfbyInsuranceClaims</a><br><code>GET /api/v1/claims/claims/claimSearchReport</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/parameters/FarmerId">FarmerId</a></li><li><code>searchType</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSearchTypeParameter">ListPmfbyInsuranceClaimsSearchTypeParameter</a><details><summary>Parameter example</summary><pre><code>&quot;farmerID&quot;</code></pre></details></li><li><code>season</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsSeasonParameter">ListPmfbyInsuranceClaimsSeasonParameter</a><details><summary>Parameter example</summary><pre><code>&quot;1&quot;</code></pre></details></li><li><code>year</code> (query, required) · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ListPmfbyInsuranceClaimsYearParameter">ListPmfbyInsuranceClaimsYearParameter</a><details><summary>Parameter example</summary><pre><code>&quot;2026&quot;</code></pre></details></li></ul><p><strong>Responses</strong></p><ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml#/paths/~1api~1v1~1claims~1claims~1claimSearchReport/get/responses/200">200</a> · Claim records use different field names from policy applications. The adapter displays ClaimStatus or falls back to Status.<p><code>application/json</code> · <a href="../external/pmfby/insurance/v0.2/openapi.yaml#/components/schemas/ClaimListResponse">ClaimListResponse</a></p><details><summary>Example: oneClaim</summary><pre><code>[
   {
     &quot;applicationNo&quot;: &quot;EXAMPLE-APPLICATION&quot;,
     &quot;ClaimStatus&quot;: &quot;Example claim status&quot;,
@@ -1562,7 +2327,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/pmfby/insurance/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/pmfby/insurance/v0.2/mappings/status/policies.yaml">status · draft-native · policies mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/status/claims.yaml">status · draft-native · claims mapping</a></li></ul>
+  <ul><li><a href="../external/pmfby/insurance/v0.2/mappings/confirm.yaml">confirm · existing · confirm mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/init.yaml">init · existing · init mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/select.yaml">select · existing · select mapping</a></li><li><a href="../external/pmfby/insurance/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -1733,7 +2498,7 @@ permalink: /api/providers/index.html
     &quot;actions&quot;: [
       {
         &quot;action&quot;: &quot;select&quot;,
-        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post&quot;
+        &quot;operationRef&quot;: &quot;https://openagrinet.github.io/network-specs/api/external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post&quot;
       }
     ]
   }
@@ -1762,17 +2527,17 @@ permalink: /api/providers/index.html
 }</code></pre></details>
 
   <h4>Actions and mappings</h4>
-  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/sathi/stock/v0.2/openapi.yaml">SATHI certified seed stock</a></p><ul><li><code>POST /inv-apis/stock/getSeedAvailability</code> · select</li></ul>
+  <h5>Provider HTTP contracts and examples</h5><p><a href="../external/sathi/stock/v0.2/openapi.yaml">SATHI certified seed stock</a></p><ul><li><code>POST /inv-apis2/stock/getSeedAvailability</code> · select</li></ul>
 
   <div class="table-wrap" tabindex="0" role="region" aria-label="Actions for SATHI certified seed stock"><table>
   <thead><tr><th scope="col">Advertised action</th><th scope="col">OpenAPI operation</th><th scope="col">Contract</th></tr></thead>
-  <tbody><tr><td><code>select</code></td><td><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post">getSeedAvailability</a><br><code>POST /inv-apis/stock/getSeedAvailability</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/sathi/stock/v0.2/openapi.yaml#/components/schemas/SathiStockRequest">SathiStockRequest</a></p><details><summary>Example</summary><pre><code>{
+  <tbody><tr><td><code>select</code></td><td><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post">getSeedAvailability</a><br><code>POST /inv-apis2/stock/getSeedAvailability</code><details class="operation"><summary>Request and responses</summary><p><strong>Request</strong></p><p><code>application/json</code> · <a href="../external/sathi/stock/v0.2/openapi.yaml#/components/schemas/SathiStockRequest">SathiStockRequest</a></p><details><summary>Example</summary><pre><code>{
   &quot;cropCode&quot;: &quot;EXAMPLE-CROP&quot;,
   &quot;seedClass&quot;: &quot;CERTIFIED I&quot;,
   &quot;stateCode&quot;: &quot;EXAMPLE-STATE&quot;,
   &quot;districtCode&quot;: &quot;EXAMPLE-DISTRICT&quot;,
   &quot;apiKey&quot;: &quot;NOT-A-KEY&quot;
-}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post/responses/200">200</a> · The adapter checks numeric statusCode 200, reads data as stock rows and converts them into Beckn catalog items. Do not interpret an error as confirmed zero stock.<p><code>application/json</code> · <a href="../external/sathi/stock/v0.2/openapi.yaml#/components/schemas/SathiStockResponse">SathiStockResponse</a></p><details><summary>Example: found</summary><pre><code>{
+}</code></pre></details><p><strong>Responses</strong></p><ul><li><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post/responses/200">200</a> · The adapter returns this reply unchanged in the on_select resourceAttributes. Do not interpret an error as confirmed zero stock.<p><code>application/json</code> · <a href="../external/sathi/stock/v0.2/openapi.yaml#/components/schemas/SathiStockResponse">SathiStockResponse</a></p><details><summary>Example: found</summary><pre><code>{
   &quot;statusCode&quot;: 200,
   &quot;message&quot;: &quot;Success&quot;,
   &quot;data&quot;: [
@@ -1786,19 +2551,21 @@ permalink: /api/providers/index.html
       ]
     }
   ]
-}</code></pre></details><details><summary>Example: noStock</summary><pre><code>{
-  &quot;statusCode&quot;: 200,
-  &quot;data&quot;: [
-
-  ]
 }</code></pre></details><details><summary>Example: upstreamFailure</summary><pre><code>{
   &quot;statusCode&quot;: 500,
   &quot;message&quot;: &quot;Example upstream failure&quot;
-}</code></pre></details></li><li><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis~1stock~1getSeedAvailability/post/responses/default">default</a> · Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
+}</code></pre></details></li><li><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post/responses/409">409</a> · No stock for this crop and district. A normal answer, not a failure.<p><code>application/json</code> · <a href="../external/sathi/stock/v0.2/openapi.yaml#/components/schemas/SathiStockResponse">SathiStockResponse</a></p><details><summary>Example: noStock</summary><pre><code>{
+  &quot;statusCode&quot;: 409,
+  &quot;status&quot;: &quot;Error&quot;,
+  &quot;message&quot;: &quot;Data Not Found&quot;,
+  &quot;data&quot;: [
+
+  ]
+}</code></pre></details></li><li><a href="../external/sathi/stock/v0.2/openapi.yaml#/paths/~1inv-apis2~1stock~1getSeedAvailability/post/responses/default">default</a> · Unspecified upstream HTTP failure. No authoritative error body or retry guarantee is documented.</li></ul></details></td><td>Documented upstream operation</td></tr></tbody>
 </table></div>
 
   <ul><li><a href="../external/sathi/stock/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/sathi/stock/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <ul><li><a href="../external/sathi/stock/v0.2/mappings/select.yaml">select · existing · select mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -2016,7 +2783,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/smam/benefit-status/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/smam/benefit-status/v0.2/mappings/status.yaml">status · draft-native · status mapping</a></li></ul>
+  <ul><li><a href="../external/smam/benefit-status/v0.2/mappings/status.yaml">status · existing · status mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>
@@ -2134,7 +2901,7 @@ permalink: /api/providers/index.html
 </table></div>
 
   <ul><li><a href="../external/shc/reports/v0.2/openapi.yaml">Provider HTTP contract</a></li></ul>
-  <ul><li><a href="../external/shc/reports/v0.2/mappings/select.yaml">select · draft-native · select mapping</a></li></ul>
+  <ul><li><a href="../external/shc/reports/v0.2/mappings/select.yaml">select · existing · select mapping</a></li></ul>
   <p><a href="#capabilities">Back to capability index</a></p>
   </div>
 </article>

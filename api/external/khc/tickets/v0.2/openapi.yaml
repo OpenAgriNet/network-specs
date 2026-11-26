@@ -1,54 +1,37 @@
 openapi: 3.1.1
 info:
-  title: khc/tickets native requests (implementation draft)
-  version: 0.2.0-draft
   x-contract-role: provider-native
+  title: Kisan Help Center grievances
+  version: 0.2.0
+  description: >
+    Registers a farmer's grievance with the Kisan Help Center and reads its
+    status back. Filing is a three-step journey -- an OTP to the farmer's
+    mobile, a verification that returns a session token, then the grievance
+    itself -- because a grievance is written against a real desk under a real
+    farmer's name. The free text a farmer writes, their mobile number, name,
+    gender and village are all private.
+
+    Seven reference lookups resolve the state, district, sub-district, village,
+    scheme, category and sub-category identifiers a filing has to quote. They
+    are deliberately left unbound; see the note on each.
+security:
+- serviceToken: []
 servers:
-- url: https://provider.example.invalid
-  description: Non-routable placeholder; configure the provider service base URL.
-x-draft:
-  catalogCandidate:
-    descriptorCode: khc-tickets
-    resourceType: openagrinet:Grievance
-    informationMode: OnDemand
-    publicationStatus: inactive-proposal
-    actions:
-    - action: init
-      operationRef: '#/paths/~1auth~1send-otp/post'
-      variant: KhcStart
-      mapping: mappings/init/send-otp.yaml
-    - action: init
-      operationRef: '#/paths/~1auth~1verify-otp/post'
-      variant: KhcVerify
-      mapping: mappings/init/verify-otp.yaml
-    - action: support
-      operationRef: '#/paths/~1v1~1state~1grievances/post'
-      variant: KhcCreate
-      mapping: mappings/support.yaml
-    - action: status
-      operationRef: '#/paths/~1v1~1state~1grievances~1check-status/post'
-      variant: KhcStatusStart
-      mapping: mappings/status/KHCStartCaseLookup.yaml
-    - action: status
-      operationRef: '#/paths/~1v1~1state~1grievances~1verify-otp/post'
-      variant: KhcStatusRead
-      mapping: mappings/status/KHCReadCase.yaml
-  proposedActions:
-  - init
-  - support
-  - status
-  needsConfirmation:
-  - Pin deployed revision; validate sanitized success and failure responses and session
-    handling before activation.
+  - url: https://khc.example.invalid
+    description: Placeholder only. Obtain the service base URL from the provider.
 paths:
   "/auth/send-otp":
     post:
       operationId: KhcStart
+      summary: Send an OTP to the farmer's mobile to open a filing session
+      x-oan-mapping: {href: ./mappings/init.yaml, status: source-traced}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: init
       description: 'get_otp: farmerMobileNumber → mobile. Enforce resend limits and
         bind mobile to transaction.'
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L344
-      x-mappings:
-      - mappings/init/send-otp.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -64,8 +47,6 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       requestBody:
         required: true
         content:
@@ -79,11 +60,15 @@ paths:
   "/auth/verify-otp":
     post:
       operationId: KhcVerify
+      summary: Verify the OTP and receive the session token a filing must quote
+      x-oan-mapping: {href: ./mappings/confirm.yaml, status: source-traced}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: confirm
       description: 'verify_otp: farmerMobileNumber → mobile. Keep verification and
         registration state private.'
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L384
-      x-mappings:
-      - mappings/init/verify-otp.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -102,8 +87,6 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       requestBody:
         required: true
         content:
@@ -118,12 +101,18 @@ paths:
   "/v1/state/reference/states":
     get:
       operationId: KhcRefstates
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/states.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -141,18 +130,22 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters: []
   "/v1/state/reference/districts":
     get:
       operationId: KhcRefdistricts
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/districts.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -170,24 +163,28 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: stateId
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 10
   "/v1/state/reference/sub-districts":
     get:
       operationId: KhcRefsubdistricts
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/sub-districts.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -205,24 +202,28 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: districtId
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 221
   "/v1/state/reference/villages":
     get:
       operationId: KhcRefvillages
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/villages.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -240,24 +241,28 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: subDistrictId
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 1067
   "/v1/state/reference/schemes":
     get:
       operationId: KhcRefschemes
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/schemes.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -275,24 +280,28 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: stateId
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 10
   "/v1/state/reference/categories":
     get:
       operationId: KhcRefcategories
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/categories.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -310,24 +319,28 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: scheme
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 38
   "/v1/state/reference/sub-categories":
     get:
       operationId: KhcRefsubcategories
+      x-oan-unbound-reason: >
+        Unbound on purpose. A provider binding holds one path per action
+        name (`pkg/model/model.go:94` keys `Actions` by action, and a
+        second row with the same name overwrites the first), and the filing
+        journey already spends every routable action. The tool resolves
+        these seven through the published catalog's `grievanceOptions` and
+        `coverageAreas` instead of a live call. See
+        migration-plan/khc/plan.md.
       description: Reference data for location, grievance options and filing; use
         provider IDs from lookup. Legacy name/page filter the lookup; not native HTTP
         parameters.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L447
-      x-mappings:
-      - mappings/internal/sub-categories.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -345,25 +358,27 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       parameters:
       - name: problemCategory
         in: query
         required: true
         schema:
-          type: integer
-        example: 1
+          "$ref": "#/components/schemas/ReferenceId"
+        example: 39
   "/v1/state/grievances":
     post:
       operationId: KhcCreate
+      summary: File the grievance against the resolved desk and return its number
+      x-oan-mapping: {href: ./mappings/support.yaml, status: source-traced}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: support
       description: Legacy init/create_grievance → proposed v2 support. Require explicit
         confirmation, verified registration and resolved IDs. New farmers also send
         farmerName and gender. Do not equate externalReferenceNo with returned grievanceNo;
         ambiguous submission must not auto-retry.
       x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L588
-      x-mappings:
-      - mappings/support.yaml
       responses:
         '200':
           description: Native success payload; examples are synthetic.
@@ -380,8 +395,6 @@ paths:
         default:
           description: Provider error or unconfirmed result. Do not treat as a successful
             callback.
-      security:
-      - service: []
       requestBody:
         required: true
         content:
@@ -418,14 +431,46 @@ paths:
   "/v1/state/grievances/check-status":
     post:
       operationId: KhcStatusStart
-      description: 'get_status_otp: query only, no HTTP body. Starts a separate challenge
-        for this grievance.'
-      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L568
-      x-mappings:
-      - mappings/status/KHCStartCaseLookup.yaml
+      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: select
+      summary: Ask KHC to send an OTP before a gated status read
+      description: >
+        Bound to the Grievance capability's `select` action. The only input is a
+        query parameter on a POST -- verified against the provider on
+        2026-11-24, where grievanceNo in the body returns
+        400 "grievanceNo is required" and the same value in the query string
+        reaches the grievance. A registry Path cannot hold a query, so the
+        mapping names the field under the reserved `_query` key and the adapter
+        lifts it onto the URL whatever the method (util/query.go, Split).
+
+        The request body below is empty and required because this repository's
+        contract checker requires one on every POST. Nothing is read from it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/KhcStatusStartRequest"
+            examples:
+              KhcStatusStart:
+                value: {}
+      parameters:
+      - name: grievanceNo
+        in: query
+        required: true
+        x-oan-from: grievance.id
+        description: >
+          KHC's own number for the grievance, not the externalReferenceNo the
+          filing sent.
+        schema:
+          "$ref": "#/components/schemas/GrievanceNumber"
+        example: MH/123456/1
       responses:
         '200':
-          description: Native success payload; examples are synthetic.
+          description: An OTP was sent to the mobile the grievance is filed against.
           content:
             application/json:
               schema:
@@ -436,55 +481,100 @@ paths:
                     status: 200 OK
                     message: OTP sent
         default:
-          description: Provider error or unconfirmed result. Do not treat as a successful
-            callback.
-      security:
-      - service: []
-      parameters:
-      - name: grievanceNo
-        in: query
-        required: true
-        schema:
-          type: string
-        example: EXAMPLE
+          description: >
+            Provider error, or no such grievance. A 404 here carries
+            message "Grievance not found".
   "/v1/state/grievances/verify-otp":
     post:
-      operationId: KhcStatusRead
-      description: 'verify_status_otp: check grievanceNo matches request. Preserve
-        address and escalationHistory where returned.'
-      x-source: https://github.com/OpenAgriNet/bharat-provider-backend/blob/dev/src/services/khc/khc.service.ts#L576
-      x-mappings:
-      - mappings/status/KHCReadCase.yaml
-      responses:
-        '200':
-          description: Native success payload; examples are synthetic.
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/KhcStatusReadResponse"
-              examples:
-                KhcStatusRead:
-                  value:
-                    status: 200 OK
-                    data:
-                      grievanceNo: EXAMPLE
-                      currentStatus: Open
-        default:
-          description: Provider error or unconfirmed result. Do not treat as a successful
-            callback.
-      security:
-      - service: []
+      operationId: KhcStatusVerify
+      x-oan-mapping: {href: ./mappings/status.yaml, status: draft-native}
+      x-oan-binding:
+        descriptorCode: khc-grievance
+        resourceType: openagrinet:Grievance
+        action: status
+      summary: Verify the status OTP and read the grievance
+      description: >
+        Bound to the Grievance capability's `status` action, the second step of
+        the gated read. Takes both values in a JSON body, unlike check-status.
+        Verified on 2026-11-24: a body of grievanceNo plus otp returns
+        401 "Invalid or expired OTP" when no check-status preceded it, which is
+        the gate -- a caller cannot reach a grievance with a number alone.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/KhcStatusReadRequest"
+              "$ref": "#/components/schemas/KhcStatusVerifyRequest"
             examples:
-              KhcStatusRead:
+              KhcStatusVerify:
                 value:
-                  grievanceNo: EXAMPLE
-                  otp: '000000'
+                  grievanceNo: MH/123456/1
+                  otp: '123456'
+      responses:
+        '200':
+          description: >
+            The grievance as KHC holds it. Carries the farmer's own words, so it
+            is private in full, not only in its identifiers.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcReadGrievanceResponse"
+              examples:
+                KhcStatusVerify:
+                  value:
+                    status: 200 OK
+                    data:
+                      grievanceNo: MH/123456/1
+                      currentStatus: Open
+        default:
+          description: Wrong or expired OTP, or provider error.
+  "/v1/state/grievances/status":
+    get:
+      operationId: KhcReadGrievance
+      summary: Read a grievance by its number
+      x-oan-unbound-reason: >
+        Unbound on purpose, and not pending anything. It reads a grievance on a
+        number alone, with no OTP, and the reply carries the free text the
+        farmer wrote -- so binding it would publish a read with no gate at all.
+        v1 prompts for a six-digit OTP before reaching this endpoint, but the
+        provider backend's status branch ignores the request type that prompt
+        sets, so the prompt may never have gated anything.
+
+        The gated pair above is bound instead: check-status sends an OTP to the
+        mobile the grievance was filed against, and verify-otp answers it and
+        returns the same body this operation would. Nothing is lost by leaving
+        this one out.
+      parameters:
+      - name: grievanceNo
+        in: query
+        required: true
+        x-oan-from: grievance.id
+        description: >
+          KHC's own number for the grievance, not the externalReferenceNo the
+          filing sent. Accepted shape is two letters, a six-digit block and a
+          serial, e.g. MH/123456/1.
+        schema:
+          "$ref": "#/components/schemas/GrievanceNumber"
+        example: MH/123456/1
+      responses:
+        '200':
+          description: >
+            The grievance as KHC holds it. Carries the farmer's own words, so
+            it is private in full, not only in its identifiers.
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/KhcReadGrievanceResponse"
+              examples:
+                KhcReadGrievance:
+                  value:
+                    status: 200 OK
+                    data:
+                      grievanceNo: MH/123456/1
+                      currentStatus: Open
+        default:
+          description: Provider error or unconfirmed result. Does not establish
+            that the grievance is absent.
 components:
   schemas:
     KhcStartRequest:
@@ -492,6 +582,7 @@ components:
       properties:
         mobile:
           type: string
+          x-oan-from: subject.mobile
       required:
       - mobile
     KhcStartResponse:
@@ -505,8 +596,10 @@ components:
       properties:
         mobile:
           type: string
+          x-oan-from: subject.mobile
         otp:
           type: string
+          x-oan-from: challenge.otp
       required:
       - mobile
       - otp
@@ -627,27 +720,39 @@ components:
       properties:
         externalReferenceNo:
           type: string
+          x-oan-from: grievance.reference
         farmerMobileNumber:
           type: string
+          x-oan-from: subject.mobile
         farmerText:
           type: string
+          x-oan-from: grievance.text
         farmerLanguage:
           type: string
+          x-oan-from: subject.language
         stateId:
           type: integer
+          x-oan-from: subject.state
         villageId:
           type: integer
+          x-oan-from: subject.village
         scheme:
           type: integer
+          x-oan-from: scheme.id
         division:
           type: integer
+          x-oan-from: scheme.division
         problemCategory:
           type: integer
+          x-oan-from: grievance.category
         problemSubCategory:
           type: integer
+          x-oan-from: grievance.subCategory
         farmerName:
           type: string
+          x-oan-from: subject.name
         gender:
+          x-oan-from: subject.gender
           enum:
           - M
           - F
@@ -673,6 +778,22 @@ components:
           properties:
             grievanceNo:
               type: string
+    ReferenceId:
+      type: integer
+      minimum: 1
+      description: >
+        A KHC reference identifier. Every list returns its own id field --
+        stateid, districtid, subdistrictid, villageid, scheme, problemcategory,
+        problemsubcategory -- and the parent is sent back under a camelCase
+        name, so stateId goes out and stateid comes back.
+    KhcStatusStartRequest:
+      type: object
+      additionalProperties: false
+      description: >
+        Deliberately empty. This POST carries no body fields: grievanceNo
+        travels in the query string, which is why no registry row can express
+        it. Declared only because an empty body is what the provider accepts
+        and every POST in this repository must declare one.
     KhcStatusStartResponse:
       type: object
       properties:
@@ -680,17 +801,29 @@ components:
           type: string
         message:
           type: string
-    KhcStatusReadRequest:
+    KhcStatusVerifyRequest:
       type: object
+      required: [grievanceNo, otp]
+      additionalProperties: false
       properties:
         grievanceNo:
-          type: string
+          x-oan-from: grievance.id
+          "$ref": "#/components/schemas/GrievanceNumber"
         otp:
           type: string
-      required:
-      - grievanceNo
-      - otp
-    KhcStatusReadResponse:
+          x-oan-from: challenge.otp
+          pattern: '^[0-9]{6}$'
+          description: >
+            Six digits. The length KHC's filing challenge advertises; the status
+            OTP has not been separately stated.
+    GrievanceNumber:
+      type: string
+      pattern: '^[A-Za-z]{2}/[0-9]{6}/0*[1-9][0-9]*$'
+      description: >
+        Two letters, a six-digit block and a serial with no leading zero.
+        Carried over from the guard in agents/tools/khc.py, which is the only
+        place the shape is written down; KHC has not stated it.
+    KhcReadGrievanceResponse:
       type: object
       properties:
         status:
@@ -703,7 +836,7 @@ components:
             currentStatus:
               type: string
   securitySchemes:
-    service:
+    serviceToken:
       type: apiKey
       in: header
       name: Authorization

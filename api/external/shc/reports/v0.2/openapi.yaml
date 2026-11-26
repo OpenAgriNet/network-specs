@@ -12,7 +12,7 @@ paths:
   /:
     post:
       operationId: getTestForAuthUser
-      x-oan-mapping: {href: ./mappings/select.yaml, status: draft-native}
+      x-oan-mapping: {href: ./mappings/select.yaml, status: existing}
       x-oan-binding: {descriptorCode: shc-reports, resourceType: "openagrinet:AgricultureResource", action: select}
       requestBody:
         required: true
@@ -87,15 +87,21 @@ components:
           properties:
             phone:
               type: string
-              writeOnly: true
+              x-oan-from: subject.mobile
             cycle:
               type: string
+              x-oan-from: report.cycle
             locale:
               type: string
+              x-oan-from: subject.language
+              default: en
             limit:
               type: integer
+              default: 10
+              description: A farmer's card list, not a page the caller scrolls.
             skip:
               type: integer
+              default: 0
           required:
           - cycle
           - phone
