@@ -18,7 +18,7 @@
   "actions": [
     {
       "action": "select",
-      "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get"
+      "operationRef": "https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get"
     }
   ]
 }

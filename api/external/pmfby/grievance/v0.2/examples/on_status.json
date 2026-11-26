@@ -46,7 +46,7 @@
               "payload": {"@id": "example:payload", "@type": "@json"}
             },
             "@type": "ProviderOperationPayload",
-            "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
+            "operationRef": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post",
             "payload": {
               "responseCode": "1",
               "responseDynamic": [

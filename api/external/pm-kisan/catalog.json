@@ -35,7 +35,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -61,11 +61,11 @@
               "actions": [
                 {
                   "action": "init",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post"
                 },
                 {
                   "action": "status",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post"
                 }
               ]
             }
@@ -79,7 +79,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -189,15 +189,15 @@
               "actions": [
                 {
                   "action": "init",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post"
                 },
                 {
                   "action": "status",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post"
                 },
                 {
                   "action": "support",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post"
                 }
               ]
             }

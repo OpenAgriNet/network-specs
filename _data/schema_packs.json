@@ -860,7 +860,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -884,7 +884,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -1957,7 +1957,7 @@
         "name": "On Demand Weather Advisory",
         "file": "examples/on-demand-weather-advisory.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\",\n    \"Crop\"\n  ],\n  \"topics\": [\n    \"District crop bulletin\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureAdvisory/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureAdvisory\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\",\n    \"Crop\"\n  ],\n  \"topics\": [\n    \"District crop bulletin\"\n  ],\n  \"languages\": [\n    \"en\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/agromet/v0.2/openapi.yaml#/paths/~1index.php~1api~1moag~1district_rv_adv~1%7Bdate%7D~1%7Bselector%7D/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Point Short Horizon Advisory",
@@ -3054,7 +3054,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3078,7 +3078,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -3473,7 +3473,7 @@
         "name": "On Demand Facility Discovery",
         "file": "examples/on-demand-facility-discovery.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureFacility\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Facility\"\n  ],\n  \"supportedFacilityTypes\": [\n    \"Warehouse\",\n    \"CustomHiringCentre\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureFacility/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureFacility\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Facility\"\n  ],\n  \"supportedFacilityTypes\": [\n    \"Warehouse\",\n    \"CustomHiringCentre\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pocra/facilities/v0.2/openapi.yaml#/paths/~1search/post\"\n    }\n  ]\n}"
       },
       {
         "name": "Seed Processing Centre",
@@ -3904,7 +3904,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -3928,7 +3928,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -4085,7 +4085,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -4109,7 +4109,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -4265,7 +4265,7 @@
         "name": "General Agriculture",
         "file": "examples/general-agriculture.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureResource\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/AgricultureResource/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:AgricultureResource\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Crop\"\n  ],\n  \"languages\": [\n    \"en\",\n    \"hi\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/gfr/crop-registry/v0.2/openapi.yaml#/paths/~1/post\"\n    }\n  ]\n}"
       },
       {
         "name": "Specific Crop",
@@ -7657,7 +7657,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -7705,7 +7705,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -7985,7 +7985,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "Grievance",
-        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"support\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -8033,7 +8033,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "Grievance",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -8130,13 +8130,13 @@
         "name": "PMFBY On Demand Capability",
         "file": "examples/pmfby-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PMFBY\",\n    \"name\": \"Pradhan Mantri Fasal Bima Yojana\"\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"3\",\n        \"name\": \"Enrollment / Portal Issues\",\n        \"help\": \"Something about your enrolment, or about the portal itself, is not working.\"\n      }\n    ],\n    \"subCategories\": [\n      {\n        \"code\": \"10\",\n        \"name\": \"Login\",\n        \"help\": \"You cannot sign in to the portal to see your enrolment.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1AddKRPHNCIPGrievenceSupportTicket/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml#/paths/~1krphapi~1FGMS~1GetGrievenceTicketsStatus/post\"\n    }\n  ]\n}"
       },
       {
         "name": "PM-KISAN On Demand Capability",
         "file": "examples/pmkisan-on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/Grievance/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:Grievance\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"grievanceOptions\": {\n    \"categories\": [\n      {\n        \"code\": \"G001\",\n        \"name\": \"Account number not correct\",\n        \"help\": \"The bank account held against your registration is wrong, so money cannot reach you.\"\n      },\n      {\n        \"code\": \"G002\",\n        \"name\": \"Online application pending for approval\",\n        \"help\": \"You applied online and the application has not yet been approved.\"\n      },\n      {\n        \"code\": \"G003\",\n        \"name\": \"Installment not received\",\n        \"help\": \"Your registration is approved but an instalment has not reached your account.\"\n      },\n      {\n        \"code\": \"G004\",\n        \"name\": \"Transaction failed\",\n        \"help\": \"A payment was attempted and the transfer did not go through.\"\n      },\n      {\n        \"code\": \"G005\",\n        \"name\": \"Problem in Aadhaar correction\",\n        \"help\": \"A correction to your Aadhaar details has not gone through.\"\n      },\n      {\n        \"code\": \"G006\",\n        \"name\": \"Gender not correct\",\n        \"help\": \"The gender recorded against your registration is wrong.\"\n      },\n      {\n        \"code\": \"G007\",\n        \"name\": \"Payment related\",\n        \"help\": \"Any other problem with a payment that the options above do not cover.\"\n      },\n      {\n        \"code\": \"G008\",\n        \"name\": \"Problem in OTP-based eKYC\",\n        \"help\": \"eKYC by OTP is failing.\"\n      },\n      {\n        \"code\": \"G009\",\n        \"name\": \"Problem in biometric-based eKYC\",\n        \"help\": \"eKYC by fingerprint or iris is failing.\"\n      },\n      {\n        \"code\": \"G010\",\n        \"name\": \"Problem in facial-based eKYC\",\n        \"help\": \"eKYC by face scan is failing.\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1GrievanceStatusCheck/post\"\n    },\n    {\n      \"action\": \"support\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml#/paths/~1LodgeGrievance/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -8151,11 +8151,11 @@
     "generic_catalog": true,
     "api_docs": [
       {
-        "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/grievance/v0.2/openapi.yaml",
         "description": "Provider HTTP: PM-KISAN grievance provider API"
       },
       {
-        "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pmfby/grievance/v0.2/openapi.yaml",
+        "url": "https://openagrinet.github.io/network-specs/api/external/pmfby/grievance/v0.2/openapi.yaml",
         "description": "Provider HTTP: PMFBY grievance provider API"
       }
     ],
@@ -12283,7 +12283,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -12307,7 +12307,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -12870,7 +12870,7 @@
         "name": "On Demand Mandi Prices",
         "file": "examples/on-demand-mandi-prices.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"market\": {\n    \"marketName\": \"Illustrative mandi\"\n  },\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/MandiPrice/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:MandiPrice\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Market\"\n  ],\n  \"supportedCommodities\": [\n    {\n      \"code\": \"COTTON\",\n      \"name\": \"Cotton\"\n    },\n    {\n      \"code\": \"PADDY\",\n      \"name\": \"Paddy\"\n    }\n  ],\n  \"supportedPriceFields\": [\n    \"Minimum\",\n    \"Maximum\",\n    \"Modal\"\n  ],\n  \"historicalDataAvailable\": true,\n  \"historyPeriod\": \"P5Y\",\n  \"updateFrequency\": \"P1D\",\n  \"market\": {\n    \"marketName\": \"Illustrative mandi\"\n  },\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/agmarknet/market-prices/v0.2/openapi.yaml#/paths/~1v1~1fetch-agmarknet-vistaar/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Onion Lasalgaon",
@@ -16729,7 +16729,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -16777,7 +16777,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -16949,7 +16949,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"init\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n  },\n  {\n    \"action\": \"status\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -16997,7 +16997,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "SchemeApplication",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"",
         "enum": null,
         "enum_details": null
       },
@@ -17022,7 +17022,7 @@
         "name": "On Demand Capability",
         "file": "examples/on-demand-capability.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/SchemeApplication/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:SchemeApplication\",\n  \"informationMode\": \"OnDemand\",\n  \"scheme\": {\n    \"code\": \"PM-KISAN\",\n    \"name\": \"Pradhan Mantri Kisan Samman Nidhi\"\n  },\n  \"challenge\": {\n    \"methods\": [\n      {\n        \"method\": \"OTP\",\n        \"channel\": \"SMS\",\n        \"length\": 4,\n        \"valueType\": \"NUMERIC\"\n      }\n    ]\n  },\n  \"actions\": [\n    {\n      \"action\": \"init\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotOTP/post\"\n    },\n    {\n      \"action\": \"status\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml#/paths/~1ChatbotUserDetails/post\"\n    }\n  ]\n}"
       }
     ],
     "artifacts": [
@@ -17037,11 +17037,11 @@
     "generic_catalog": true,
     "api_docs": [
       {
-        "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/pm-kisan/application/v0.2/openapi.yaml",
+        "url": "https://openagrinet.github.io/network-specs/api/external/pm-kisan/application/v0.2/openapi.yaml",
         "description": "Provider HTTP: PM-KISAN application status provider API"
       },
       {
-        "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/smam/benefit-status/v0.2/openapi.yaml",
+        "url": "https://openagrinet.github.io/network-specs/api/external/smam/benefit-status/v0.2/openapi.yaml",
         "description": "Provider HTTP: SMAM benefit application status"
       }
     ],
@@ -19587,7 +19587,7 @@
         "constraints": "minItems: 1 · uniqueItems: true",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n  }\n]",
+        "example": "[\n  {\n    \"action\": \"select\",\n    \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n  }\n]",
         "enum": null,
         "enum_details": null
       },
@@ -19611,7 +19611,7 @@
         "constraints": "format: \"uri\" · pattern: \"^https?://[^#]+/openapi\\\\.yaml#/paths/[^/]+/(get|post|put|patch|delete|head|options|trace)$\"",
         "reference": null,
         "origin": "AgricultureResource",
-        "example": "\"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"",
+        "example": "\"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"",
         "enum": null,
         "enum_details": null
       },
@@ -20192,7 +20192,7 @@
         "name": "On Demand Weather Information",
         "file": "examples/on-demand-weather-information.json",
         "mode": "OnDemand",
-        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"supportedObservationTypes\": [\n    \"Forecast\"\n  ],\n  \"supportedParameters\": [\n    \"Rainfall\",\n    \"Temperature\"\n  ],\n  \"geographicGranularities\": [\n    \"Point\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n    }\n  ]\n}"
+        "json": "{\n  \"@context\": \"https://openagrinet.github.io/network-specs/schema/WeatherObservation/v0.2/context.jsonld\",\n  \"@type\": \"openagrinet:WeatherObservation\",\n  \"informationMode\": \"OnDemand\",\n  \"subjectCategories\": [\n    \"Weather\"\n  ],\n  \"supportedObservationTypes\": [\n    \"Forecast\"\n  ],\n  \"supportedParameters\": [\n    \"Rainfall\",\n    \"Temperature\"\n  ],\n  \"geographicGranularities\": [\n    \"Point\"\n  ],\n  \"actions\": [\n    {\n      \"action\": \"select\",\n      \"operationRef\": \"https://openagrinet.github.io/network-specs/api/external/imd/mausamgram/v0.2/openapi.yaml#/paths/~1get-daily/get\"\n    }\n  ]\n}"
       },
       {
         "name": "Point Forecast",

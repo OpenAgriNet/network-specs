@@ -12,30 +12,6 @@ from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
 ROOT = Path(__file__).resolve().parents[1]
-
-# Packs are served from the site; contracts are served from the branch until
-# v0.2 is published. A URL resolves locally through whichever base it carries.
-origin = 'https://openagrinet.github.io/network-specs/'
-BASES = (
-    'https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/',
-    'https://openagrinet.github.io/network-specs/',
-)
-
-
-def published(path):
-    """The URL a catalog carries for a repo-relative path."""
-    return ('https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/'
-            if path.startswith('api/') else
-            'https://openagrinet.github.io/network-specs/') + path
-
-
-def local_path(url):
-    """The repo path a published URL names."""
-    for base in BASES:
-        if url.startswith(base):
-            return url[len(base):]
-    raise AssertionError(url)
-
 checks = 0
 external = ROOT/'api/external'
 inventory = json.loads((external/'mappings-index.json').read_text())
@@ -131,7 +107,7 @@ for mapping in inventory['mappings']:
         assert resources and all(any(a['action'] == draft['action'] and a['operationRef'] == draft['operationRef']
                                      for a in r['resourceAttributes']['actions']) for r in resources)
         api_url, fragment = draft['operationRef'].split('#')
-        spec = ROOT/local_path(api_url)
+        spec = ROOT/api_url.removeprefix('https://openagrinet.github.io/network-specs/')
         operation = yaml.safe_load(spec.read_text())
         for token in unquote(fragment)[1:].split('/'):
             operation = operation[token.replace('~1', '/').replace('~0', '~')]
@@ -263,7 +239,7 @@ for code, (publisher, service, expected) in linked_reads.items():
     catalog = json.loads(catalog_file.read_text())
     descriptor, = [r['descriptor'] for c in catalog['message']['catalogs'] for r in c['resources']
                    if r['descriptor']['code'] == code]
-    assert any(d['url'] == published(file.relative_to(ROOT).as_posix())
+    assert any(d['url'] == 'https://openagrinet.github.io/network-specs/'+file.relative_to(ROOT).as_posix()
                for d in descriptor['docs']), code
     doc = yaml.safe_load(file.read_text())
     actual = {}
@@ -298,8 +274,11 @@ for path in list((ROOT/'api').rglob('*.yaml')) + list((ROOT/'schema').glob('*/v0
             target = target[part.replace('~1', '/').replace('~0', '~')]
         checks += 1
 
+origin = 'https://openagrinet.github.io/network-specs/'
+
 def local_document(url):
-    path, _, fragment = local_path(url).partition('#')
+    assert url.startswith(origin), url
+    path, _, fragment = url[len(origin):].partition('#')
     file = ROOT/path
     document = yaml.safe_load(file.read_text())
     target = document

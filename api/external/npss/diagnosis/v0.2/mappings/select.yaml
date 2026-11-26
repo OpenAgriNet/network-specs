@@ -1,7 +1,7 @@
 status: incomplete
 deployable: false
 action: select
-operationRef: https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post
+operationRef: https://openagrinet.github.io/network-specs/api/external/npss/diagnosis/v0.2/openapi.yaml#/paths/~1api~1Vistaar~1analyze-image/post
 request:
   contentType: multipart/form-data
   filePart: File

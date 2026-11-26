@@ -35,7 +35,7 @@
               "docs": [
                 {
                   "label": "Provider HTTP contract",
-                  "url": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/knowledge/search/v0.2/openapi.yaml",
+                  "url": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml",
                   "mimeType": "application/vnd.oai.openapi"
                 }
               ]
@@ -50,7 +50,7 @@
               "actions": [
                 {
                   "action": "discover",
-                  "operationRef": "https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post"
+                  "operationRef": "https://openagrinet.github.io/network-specs/api/external/knowledge/search/v0.2/openapi.yaml#/paths/~1search/post"
                 }
               ],
               "topics": [

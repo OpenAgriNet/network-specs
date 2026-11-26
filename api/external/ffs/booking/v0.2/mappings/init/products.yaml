@@ -2,7 +2,7 @@ status: draft-native
 deployable: false
 action: init
 source: https://github.com/OpenAgriNet/bharat-oan-api/blob/bh-main/app/services/ffs.py#L515
-operationRef: https://raw.githubusercontent.com/OpenAgriNet/network-specs/bv-migration/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post
+operationRef: https://openagrinet.github.io/network-specs/api/external/ffs/booking/v0.2/openapi.yaml#/paths/~1ufa-master-service~1ufa-master~1v1~1api~1product~1getProductsByAvailability/post
 request:
   in: body
   jsonata: 'payload'
